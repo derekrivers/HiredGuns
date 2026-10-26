@@ -1,4 +1,6 @@
-import { cellIndex, inBounds, type Facing, type LevelData, type PlayerCommand, type Position, type SimulationEvent, type WorldState } from '../contracts';
+import { cellIndex, inBounds, type Facing, type LevelData, type MissionRules, type PlayerCommand, type Position, type SimulationEvent, type WorldState } from '../contracts';
+import { initialMission, isExitBlock, resolveMission } from './mission';
+import { missionRulesForLevel } from './mission-profile';
 
 export const TICK_MS = 20;
 /** About 2.7 years at 50 Hz. Exhaustion pauses; reset or restore an earlier checkpoint. */
@@ -20,7 +22,7 @@ export function obstruction(level: LevelData, p: Position): string | null {
   return null;
 }
 
-export function createWorld(level: LevelData, seed = 0x48475231): WorldState {
+export function createWorld(level: LevelData, seed = 0x48475231, rules: MissionRules = missionRulesForLevel(level)): WorldState {
   for (const start of level.starts) {
     const reason = obstruction(level, start);
     if (reason) throw new Error(`Start cannot navigate: ${reason} at ${start.x},${start.y},${start.z}`);
@@ -29,8 +31,9 @@ export function createWorld(level: LevelData, seed = 0x48475231): WorldState {
     throw new Error('Overlapping starts require an explicit reference rule');
   }
   return {
-    schemaVersion: 1, levelId: level.id, tick: 0, rng: seed >>> 0,
+    schemaVersion: 2, levelId: level.id, tick: 0, rng: seed >>> 0,
     mercenaries: level.starts.map((start, id) => ({ ...start, id })) as WorldState['mercenaries'],
+    mission: initialMission(level,rules),
   };
 }
 
@@ -43,6 +46,7 @@ export function nextRandom(seed: number): number {
 
 export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[]): { world: WorldState; events: SimulationEvent[] } {
   if (previous.levelId !== level.id) throw new Error('World/level mismatch');
+  if (previous.mission.outcome !== 'active') return {world:structuredClone(previous),events:[]};
   if (!Number.isSafeInteger(previous.tick) || previous.tick < 0 || previous.tick >= MAX_WORLD_TICK) {
     throw new Error('Simulation time limit reached. Reset positions or load an earlier checkpoint.');
   }
@@ -57,6 +61,7 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
   const events: SimulationEvent[] = [];
   // Stable ID order is intentional. Occupied-at-start cells cannot be entered, so swaps fail.
   for (const command of [...commands].sort((a, b) => a.mercenaryId - b.mercenaryId)) {
+    if (world.mission.exited[command.mercenaryId]) continue;
     const actor = world.mercenaries[command.mercenaryId]!;
     const event = { tick: world.tick, mercenaryId: actor.id };
     if (command.action === 'turn-left' || command.action === 'turn-right') {
@@ -66,10 +71,16 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
     const offset = command.action === 'backward' ? 2 : command.action === 'strafe-left' ? 3 : command.action === 'strafe-right' ? 1 : 0;
     const delta = DIRECTIONS[(actor.facing + offset) % 4]!;
     const target = { x: actor.x + delta.x, y: actor.y + delta.y, z: actor.z };
+    if (world.mission.rules.mode !== 'navigation' && isExitBlock(level,target)) {
+      world.mission.exited[actor.id] = true;
+      events.push({...event,kind:'exited'});
+      continue;
+    }
     const reason = obstruction(level, target)
-      ?? (previous.mercenaries.some(other => other.id !== actor.id && sameCell(other, target)) || world.mercenaries.some(other => other.id !== actor.id && sameCell(other, target)) ? 'occupied' : null);
+      ?? (previous.mercenaries.some(other => !previous.mission.exited[other.id] && other.id !== actor.id && sameCell(other, target)) || world.mercenaries.some(other => !world.mission.exited[other.id] && other.id !== actor.id && sameCell(other, target)) ? 'occupied' : null);
     if (reason) events.push({ ...event, kind: 'blocked', reason });
     else { Object.assign(actor, target); events.push({ ...event, kind: 'moved' }); }
   }
+  resolveMission(world,events);
   return { world, events };
 }
