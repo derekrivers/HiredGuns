@@ -126,6 +126,11 @@ counter scheduling remain outside this observation.
 
 ## Smallest next implementable transition
 
+The disconnected implementation is now documented in
+[drowning-decision-contract.md](drowning-decision-contract.md), with authored
+synthetic regression tests. It does not compose the original caller or activate
+environmental mechanics.
+
 The evidence now supports a **disconnected pure drowning-decision transition**
 for an already-qualified nonimmune immersion invocation. Its inputs are
 unsigned 16-bit underwater count, physique and fitness, plus the existing
