@@ -1,5 +1,6 @@
-import { cellIndex, inBounds, type LevelData, type MissionClock, type MissionRules, type MissionState, type Position, type SimulationEvent, type WorldState } from '../contracts';
+import { cellIndex, inBounds, type Facing, type LevelData, type MissionClock, type MissionRules, type MissionState, type Position, type SimulationEvent, type Spawn, type WorldState } from '../contracts';
 import { missionRulesForLevel } from './mission-profile';
+import { resolveTraversal } from './traversal';
 
 /** Source resets a counter to 600 after it decrements past zero: 601 steps. */
 export const SOURCE_CLOCK_PERIOD = 601;
@@ -29,8 +30,13 @@ export function isExitBlock(level: LevelData, p: Position): boolean {
   return (word & 2) !== 0 && ((word >>> 11) & 63) === 3;
 }
 
-export function besideExitBlock(level: LevelData, p: Position): boolean {
-  return [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}].some(d => isExitBlock(level,{x:p.x+d.x,y:p.y+d.y,z:p.z}));
+/** A retired approach pose must resolve to an exit, including dry stairs.
+ * Current occupancy cannot reconstruct other actors' positions at retirement. */
+export function besideExitBlock(level: LevelData, p: Spawn): boolean {
+  return ([0,1,2,3] as Facing[]).some(direction => {
+    const { target, reason } = resolveTraversal(level,p,direction);
+    return (reason === null || reason === 'block') && isExitBlock(level,target);
+  });
 }
 
 /** Resolve once after stable-ID command processing; timeout wins deadline ties. */

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { createDemoLevel, createExtractionDemo } from '../src/demo';
+import { createDemoLevel, createExtractionDemo, createStairsDemo } from '../src/demo';
 import { cellIndex, type LevelData, type PlayerCommand, type WorldState } from '../src/contracts';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from '../src/sim/checkpoint';
 import { createWorld, MAX_WORLD_TICK, nextRandom, stepWorld } from '../src/sim/world';
@@ -22,6 +22,24 @@ async function fixture() {
   return { level, world, json, envelope: JSON.parse(json) as EditableEnvelope };
 }
 describe('checkpoint v2 and navigation v1 migration', () => {
+  it('round trips stair exit approach poses and rejects obstructed or hazardous approaches', async () => {
+    const level = createStairsDemo();
+    level.id = 'synthetic-extraction-v1';
+    const p = level.starts[0];
+    level.layers[0][cellIndex(level,{...p,y:7,z:2})] = (3 << 11) | 2;
+    const retired = stepWorld(level,createWorld(level),[{mercenaryId:0,action:'forward'}]).world;
+    expect(retired.mission.exited[0]).toBe(true);
+    expect(retired.mercenaries[0].z).toBe(1);
+    expect(await importCheckpoint(level,await exportCheckpoint(level,retired))).toEqual(retired);
+    for (const word of [1,2,4,64]) {
+      const blocked = structuredClone(level);
+      blocked.layers[0][cellIndex(blocked,{...p,z:2})] = word;
+      await expect(exportCheckpoint(blocked,retired)).rejects.toThrow('beside an exit');
+    }
+    const wetExit = structuredClone(level);
+    wetExit.layers[0][cellIndex(wetExit,{...p,y:7,z:2})]! |= 4;
+    await expect(exportCheckpoint(wetExit,retired)).rejects.toThrow('beside an exit');
+  });
   it('round trips all state and continues with identical moves, events and explicit RNG', async () => {
     const { level } = await fixture(); let world = createWorld(level);
     for (let i = 0; i < 3; i++) {

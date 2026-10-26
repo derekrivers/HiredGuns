@@ -43,6 +43,7 @@ export class FourViews {
     };
     addSurface(surfaces.walls, new THREE.MeshStandardMaterial({ color: 0x56646b, roughness: 0.9 }));
     addSurface(surfaces.exits, new THREE.MeshStandardMaterial({ color: 0x66f7d1, emissive: 0x44d4b8, emissiveIntensity: 1.3, roughness: 0.5 }));
+    addSurface(surfaces.stairs, new THREE.MeshStandardMaterial({ color: 0xe9b15e, roughness: 0.85 }));
     const floorGeometry = () => new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
     addInstances(floorGeometry(), new THREE.MeshStandardMaterial({ color: 0x7d8990, roughness: 1, side: THREE.DoubleSide }), floors);
     addInstances(floorGeometry(), new THREE.MeshStandardMaterial({ color: 0x347a94, transparent: true, opacity: 0.7, side: THREE.DoubleSide }), water);

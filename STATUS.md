@@ -1,8 +1,15 @@
 # Status â€” 26 October 2026
 
-Four-view navigation and recovery are merged through PR #4. Current branch adds bounded Training 43 extraction; no complete faithful original level or campaign is validated yet. OCS patched 39.26 is the behavioral reference candidate; editor data remains a separate unverified revision. No original executable boot/rebuild has been established.
+Four-view navigation, recovery and bounded Training 43 extraction are merged through PR #5. Current branch adds dry static stairs; no complete faithful original level or campaign is validated yet. OCS patched 39.26 is the behavioral reference candidate; editor data remains a separate unverified revision. No original executable boot/rebuild has been established.
 
-## Current extraction batch
+## Current dry-stair batch
+
+- Pure traversal resolver handles all four source stair directions for forward/back/strafe, overhead clearance, target collision and team occupancy. Shared standing validation supports stone/stairs below and tree block4 two levels below; unsafe drops, water, dynamic floors and unknown auxiliaries remain blocked.
+- A newly authored four-lane Dry stair drill exposes climbing/descent and elevated checkpoint continuation through normal controls. Amber placeholders distinguish stair blocks. No original map/asset data is added.
+- Exit approach validation now follows the same traversal rules, so a stair exit can round-trip its retired lower approach pose; hazardous or obstructed approaches reject. World/save schemas stay at version2 because no persistent state was added.
+- Validation and independent review are pending integration. One implementation worker (Sol medium), coordinator UI/save integration, high simulation/save review; allowance 2–3 human-equivalent hours each, two failed repairs without new evidence then reassess. Aggregate usage unavailable.
+
+## Extraction baseline
 
 - Exact Training 43 SHA-256 646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c enables exit missions. Other original revisions stay navigation-only.
 - Type-3 block bumps retire mercenaries. Cooperative extraction requires all four; original alive-only first-exit race is an explicit alternative. Source countdown preserves 601-tick integer borrow; timeout wins deadline ties. Candidate 50 Hz is not original wall-clock parity.

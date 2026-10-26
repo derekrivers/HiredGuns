@@ -43,3 +43,10 @@ test('exit colour remains distinct while solid neighbours hide shared faces', ()
   expect(area(mesh.walls)).toBe(5); expect(area(mesh.exits)).toBe(5);
   expect(mesh.exits.positions.length).toBeGreaterThan(0);
 });
+
+test('stair blocks retain their own material and hide faces against walls', () => {
+  const level = empty(); level.layers[0][0] = 2; level.layers[0][1] = (16 << 11) | 2;
+  const mesh = blockSurfaces(level);
+  expect(area(mesh.walls)).toBe(5); expect(area(mesh.stairs)).toBe(5);
+  expect(mesh.exits.positions).toHaveLength(0);
+});

@@ -1,6 +1,6 @@
 import './styles.css';
 import type { LevelData, MissionMode, SimulationEvent } from './contracts';
-import { createDemoLevel, createExtractionDemo } from './demo';
+import { createDemoLevel, createExtractionDemo, createStairsDemo } from './demo';
 import { extractionProfile, missionRulesForLevel } from './sim/mission-profile';
 import { InputRouter, KEY_GROUPS, type InputSource, type PadSnapshot } from './input/router';
 import { FixedClock } from './sim/clock';
@@ -13,7 +13,7 @@ import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
   <header><div class="brand"><div class="logo" aria-hidden="true">HG</div><div><div class="eyebrow">Operation revival / 001</div><h1>HIRED GUNS</h1></div></div>
-    <div class="actions"><label class="file-button">Open local .map<input id="map-file" aria-label="Open local editor map" type="file" accept=".map"></label><button id="demo">Synthetic map</button><button id="drill">Extraction drill</button><button id="reset">Reset positions</button><button class="primary" id="play">Start navigation</button></div></header>
+    <div class="actions"><label class="file-button">Open local .map<input id="map-file" aria-label="Open local editor map" type="file" accept=".map"></label><button id="demo">Synthetic map</button><button id="drill">Extraction drill</button><button id="stairs">Dry stair drill</button><button id="reset">Reset positions</button><button class="primary" id="play">Start navigation</button></div></header>
   <div class="brief"><div><strong id="level-name"></strong> <span id="source-label"></span></div><div class="badge" id="prototype-label">STATIC NAVIGATION PROTOTYPE</div></div>
   <div class="mission-bar"><span id="mission-objective"></span><span id="mission-progress" role="status"></span><label id="mission-mode-label">Rules <select id="mission-mode" aria-label="Mission rules"><option value="cooperative-extraction">Cooperative extraction</option><option value="first-exit">Original first-exit race</option><option value="navigation">Navigation only</option></select></label><span id="mission-time"></span></div>
   <div id="error" role="alert"></div>
@@ -50,7 +50,7 @@ function updateMissionHud(): void {
   get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : 'Reset positions';
   get('mission-mode-label').hidden = extractionProfile(level) === null;
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
-  get('mission-objective').textContent = !active ? 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
+  get('mission-objective').textContent = !active ? level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : '';
   get('prototype-label').textContent = active ? 'EXTRACTION PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
@@ -116,7 +116,7 @@ function updateLevelInfo(): void {
     'Keyboard: forward/back, strafe left/right; Q/E, U/O, comma/period or numpad 7/9 turn. Numbers 1–4 move keyboard A assignment. Keyboard rollover depends on hardware.',
     'Standard gamepads: left stick or D-pad moves/turns; shoulder buttons strafe. Assign each pad above. Press a pad button if the browser has not exposed it yet. Non-standard mappings require future remapping support.',
     'Disconnect stops that controller. Matching index and device ID can reconnect; otherwise reassign. Four physical controllers on the event PC/TV have NOT been tested.',
-    '50 Hz prototype clock; movement repeats at 160 ms while held. Static block collision, explicit floors or solid type-0 block support below. No gravity, special block shapes, dynamic objects, combat, inventory, sound or campaign travel. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
+    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. No gravity, dynamic objects, combat, inventory, sound or campaign travel. Water, pressure pads and lifts remain blocked. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
     'Mission support is restricted to the exact verified Training43 editor revision and the newly authored extraction drill. Moving into a type-3 exit block retires that mercenary. Cooperative extraction requires all four; Original first-exit race preserves the alive-player source success rule. Source countdown counters borrow after 601 logical ticks. The UI converts this prototype 50 Hz clock to time; original wall-clock parity has not been verified. Unsupported original areas remain blocked, so this proves an extraction route rather than the complete original level.',
     `Source: ${level.source.revision}; SHA-256: ${level.source.sha256 ?? 'synthetic'}`,
     `Unsupported source mechanics: ${level.unsupportedMechanics.join('; ') || 'none detected, mission behaviour not validated'}`,
@@ -145,6 +145,10 @@ get<HTMLButtonElement>('demo').addEventListener('click', () => {
 get<HTMLButtonElement>('drill').addEventListener('click', () => {
   loadGeneration++; loading = false; get('error').textContent = '';
   try { installLevel(createExtractionDemo()); } catch (error) { get('error').textContent = errorText(error); }
+});
+get<HTMLButtonElement>('stairs').addEventListener('click', () => {
+  loadGeneration++; loading = false; get('error').textContent = '';
+  try { installLevel(createStairsDemo()); } catch (error) { get('error').textContent = errorText(error); }
 });
 get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
   const mode = (event.currentTarget as HTMLSelectElement).value as MissionMode;
