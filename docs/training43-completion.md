@@ -71,14 +71,22 @@ extension/comparison and counter wrap. Original traces and exact private
 cell/approach remain local; synthetic death entries are intercepted and do not
 establish real death behavior. This evidence owns diagnostic inputs/outputs only.
 
-The smallest next implementable step is a disconnected pure drowning-decision
-transition with word counter/physique/fitness and prior indicator inputs, wrapped
-counter/threshold/indicator and optional damage-request outputs. It must preserve
-literal two-DIVU/EXT/signed-comparison behavior. Qualification and ordered
-inventory effects remain separate caller prerequisites. The linked observation
-specifies concrete boundaries and vectors; it nominates no live wet activation.
-Full wet-region outcome and integrated descent/death/checkpoint behavior remain
-unknown.
+That arithmetic step now exists as the disconnected
+[drowning decision](drowning-decision-contract.md), with validated word inputs,
+literal two-DIVU/EXT/signed comparison, indicator and optional hit outputs. The
+one adjacent prerequisite completed in the same batch is the disconnected
+[water-inventory transition](water-inventory-contract.md): literal equipment plus
+first-sixteen carried scan, preserved other bytes/tail/actions, spell-100 bypass
+and supported full-inventory weight recalculation. Neither has a live caller.
+
+The smallest next task is one validated pure immersion caller that orders actor
+qualification and water depth, inventory processing, breath immunity/reset and
+the drowning decision, returning an optional damage request without dispatching
+it. Source and existing isolated CPU evidence define those branches; composition
+still needs synthetic tests and independent review. This would remove the caller
+ordering gap, not authorize live wet activation. Integrated descent/fall, actual
+death/control/occupancy, full wet-region outcome and atomic checkpoint recovery
+remain separate unresolved gates.
 
 Reproduction from this worktree, with the exact local editor file supplied:
 

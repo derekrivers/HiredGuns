@@ -1,28 +1,97 @@
 # Status — 26 October 2026
 
-Launch baseline: **bb8908822fd630becffd69be7784f51c4616bed0**, accepted PR #14, pinned as `codex/wet-adele-base`. Fetch/main, no open PRs, 22 clean pre-existing worktrees and idle prior ownership were verified before dispatch. PR #14's automatic review still reported running with no posted findings; it is not counted as approval. Coordinator owns final review/CI/merge disposition in the PR and ignored `.local/batch-next.txt`.
+This gameplay batch adds two **disconnected executable transitions**. It changes
+no playable browser behavior and does not establish a complete Training43 level.
+The browser retains four views, assignments, bounded dry navigation/extraction,
+retry/checkpoints, authored dry stairs/falls and separate team preparation.
+Original shooting, live inventory/backpack, environmental damage and coherent
+original death/recovery are not demonstrated.
 
-Four views, reassignment, navigation/checkpoints, bounded Training43 extraction, authored dry stairs/falls and source-bound team preparation work. **No complete faithful original level/campaign or physical four-controller event-PC/TV test is established.** This batch produces one bounded gameplay observation and one new portrait proposal; it activates no mechanics.
+Verified launch main: **07da26b6d678a9334e3ade1e696b216e4d0e964a** (PR #15),
+pinned as `codex/drowning-batch-base`. No open PRs, all 24 existing worktrees clean,
+and idle prior owners were checked before dispatch. PR #14's automatic review
+still reports running with no posted findings; PR #15 completed on `598feed`
+without findings and has no subsequent findings. Neither is this batch's approval.
+Final reviewed head, CI and accepted merge are recorded in the PR and ignored
+`.local/batch-next.txt`; coordinator alone owns integration.
 
-## Two-task result
+## Two completed implementation tasks
 
-- **Wet entry:** [executable observation](docs/wet-entry-observation.md) completes the single observation nominated by the [Training43 contract](docs/training43-completion.md). The selected nonimmune actor computes threshold **38**. Post-increment counts **37/38 skip damage; 39 calls `damage_fitness(7800)`**, which applies effective damage 5100 and leaves fitness 60435 without death. Thirty-one isolated CPU cases cover both DIVU overflows, EXT, signed comparison and counter wrap. Four synthetic cases intercept death before its instructions; their subsequent state is conditional. This is executable helper evidence, not a walked wet route or full-system run.
-- **Next implementable transition:** a disconnected, pure drowning decision with validated underwater count/physique/fitness/indicator words; output wrapped count, threshold, indicator and optional damage request. Preserve both divisions and signed comparison. Caller qualification/order, integrated falling, inventory effects, death/control/occupancy and atomic checkpoints remain prerequisites for wet activation. No third task was started.
-- **Adele:** [art-direction note](docs/adele-art-direction.md) records one built-in imagegen interpretation, **1706 × 922**, based on inspected recovered portrait and character sheet. Short dark hair, green costume, warm skin and ivory industrial forms are retained; face, fabric, wear and lighting are newly painted artistic interpretation. Standalone local comparison labels **Original** / **Proposed enhanced artwork**, equal display widths and an enlarged view. Original PNG and faithful asset-proof viewer are unchanged. No additional artwork or environment redesign.
+- **Drowning decision:** `decideDrowning` validates four unsigned words, wraps
+  the counter, preserves both DIVU results/overflow, sign extension and signed
+  comparison, preserves the indicator on skip, and returns indicator 150 plus
+  an optional unsigned damage request on call. Zero hit differs from no call.
+  [Contract](docs/drowning-decision-contract.md). Worker commit:
+  `419eb53e6b85ec815e3920990cd10224fefb2de6`.
+- **Adjacent prerequisite removed:** `transitionDrowningWaterInventory` supplies
+  the missing pure inventory candidate for the observed OCS drowning caller.
+  Equipment plus carried indices 0–15 receive literal word-wrapped water damage
+  and ID-only replacement; actions/tail/other bytes remain intact. Spell 100
+  skips scan and weight; otherwise all equipment/carried weight is recomputed
+  within the existing supported quotient boundary. Unsupported candidates reject
+  atomically. [Contract](docs/water-inventory-contract.md). Worker commit:
+  `10f1a8978fc2fd0fbef1deebf10e809d078e7621`.
 
-## Validation and ownership
+Neither API installs actors, dispatches damage/death, changes rendering, or alters
+world/checkpoint v3 or roster-plan v1. Qualification and composition remain
+external. The [Training43 completion contract](docs/training43-completion.md)
+continues to require the optional wet stairs; a dry extraction route is insufficient.
 
-One isolated gpt-6.1-sol medium worker owned the two gameplay evidence documents and private diagnostic. Independent gpt-6.1-sol high review reproduced the CPU and portrait checks; its coverage-digest enforcement finding was fixed and rerun with identical results. Coordinator owns status, local portrait/comparison and integration; exact final-head approval and CI disposition are in the PR/handoff. No recursive delegation; token usage unavailable. All original bytes, coordinates, traces, references and generated artwork stay local; public changes are documentation only.
+## Evidence, validation and reproduction
 
-Local `npm run check` passes lint/typecheck/build and 127 unit tests; 25 Python tests pass. All four extraction browser cases passed, including the explicitly supplied local Training43 input. The portrait comparison passes two deterministic Chromium loads, exact original RGBA verification, equal comparison widths, identical new-image hashes across both views, zero HTTP requests/errors and a narrow-screen overflow check. Independent review and passing relevant CI are required before accepted-main integration; exact heads and results are recorded in the PR/local handoff.
+One isolated gpt-6.1-sol medium implementation worker; independent gpt-6.1-sol
+high binary/simulation reviewer; no recursive delegation. Each transition took
+one implementation attempt with no failed repair cycle. Token usage unavailable.
+Public fixtures are synthetic. Original bytes, coordinates and traces stay local.
 
-Worker commits: `633432e6bf901d030acff0251a33f4e835f8812f` and coverage-pin correction `3486bfd44130b95d5368c5babcba737dd49bf56a`; coordinator art record `598feed79b7518f6cd88ad8afeca17eb341a4266`. Integration: [PR #15](https://github.com/derekrivers/HiredGuns/pull/15). From `wet-entry-observation`, reproduce with `python .local/wet-entry/observe.py > .local/wet-entry/summary.json`. From `repo`, run `node .local/adele-enhanced/build-comparison.mjs` then `node .local/adele-enhanced/smoke.mjs`; open [local comparison](.local/adele-enhanced/index.html), including the enlarged artwork. Exact artifact hashes and validation commands are in the two result documents; the short `.local/batch-next.txt` records the final accepted commit.
+Independent review reproduced the original 31 wet-entry cases with the pinned
+result digest, then compared the drowning API with 364 isolated CPU outcomes and
+100,000 independent BigInt cases. Thirteen direct original item-helper executions
+cover destruction/container and word-wrap edges. These are bounded CPU evidence;
+weight composition is source-derived, and the earlier wet harness intercepts
+death before its instructions. None proves a traversed wet route or real death.
 
-## Remaining gates
+Reproduce checks from `repo` (the explicit map is private and excluded from CI):
 
-- Training43 editor SHA-256 remains `646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c`. Optional wet stairs still block complete-level acceptance; the wider water region remains unknown. Full-team dry extraction, timeout/retry and static checkpoints remain bounded evidence. See [fallback assessment](docs/fallback-assessment.md).
-- Original team preparation, damage/ordinary-floor death and CPU evidence remain disconnected. Drowning/falling, live inventory/weight, full-team occupancy, pad/corpse effects, all-dead recovery and atomic saves remain gates. World/checkpoints stay v3; roster plans v1. Loads must not replay death or acquire prepared actors implicitly.
-- Campaign table revisions remain different; runtime travel/completion/source binding/saves are unverified. Campaign travel stays disabled. The game still renders placeholder geometry. Using Adele as a HUD portrait needs an approved crop, roster binding, local loading and four-pane/TV readability checks; extending the style requires authored, verified assets and renderer material/UV work. No engine migration is needed for a portrait.
-- The [faithful asset proof](docs/original-asset-proof.md) retains runtime palette/mask provenance and the explicit IFF high-plane discrepancy. Style00 recovery establishes CRC-correct bytes only; frame/palette/mask/direction proof remains unresolved. The new painting supplies none of that historical evidence.
+```powershell
+npm run check
+npx vitest run tests/drowning-decision.test.ts tests/water-inventory.test.ts
+$env:HIRED_GUNS_TRAINING_MAP = (Resolve-Path '../research/original/HiredGunsCD32_DevFiles/Maps/Game/Map43_Training/43.map').Path
+npx playwright test tests/browser/extraction.spec.ts tests/browser/checkpoints.spec.ts tests/browser/items.spec.ts
+```
 
-Keep **3 November** physical four-controller evidence, **9 November** complete-level evidence, **16 November** campaign/fallback decision, **20 November** feature freeze and **21–26 November** rehearsal for **27 November**. Full campaign remains high risk. Stop after this observation and one portrait for Derek's assessment.
+`npm run check` passes lint, TypeScript, 159 tests and the production build.
+Local browser validation passes ten extraction/checkpoint/item cases, including
+the explicit private Training43 route; the optional original-item preparation
+case is skipped because its separate source environment variables were not set.
+Private reviewer reproduction and exact results are
+in `.local/batch-next.txt` and `.local/drowning-review/`; preserved source evidence
+remains in the earlier worktrees. Final exact-head review and relevant CI must
+pass before accepted-main integration.
+
+Browser demo: `npm run dev`, open the shown local URL, use **Open local .map** for
+the same Training43 editor file, then **Start mission**. Keys 1–4 assign WASD/QE;
+**Save checkpoint**, **Load checkpoint** and **Retry mission** exercise existing
+bounded recovery. The focused tests demonstrate the new disconnected APIs;
+the browser demo does not invoke them. No physical four-controller test is claimed.
+
+## Next task and remaining gates
+
+Smallest next task: compose one validated pure immersion caller, ordering
+qualification/depth, inventory, breath immunity/reset and the drowning decision,
+with an inert damage request. It must preserve the inventory-before-immunity rule.
+Wet activation still requires integrated falling, actual death/control/occupancy,
+pad/corpse consequences and source-bound atomic checkpoints. Loads must never
+replay effects or attach prepared original actors implicitly. Usable inventory,
+shooting and complete-level completion/retry/recovery remain undemonstrated.
+
+Derek approved the enhanced Adele portrait as the visual direction. Artwork,
+originals and the local comparison are unchanged; no new artwork, environment
+graphics investigation, campaign expansion or engine migration occurred. The
+comparison remains `repo/.local/adele-enhanced/index.html`. Campaign travel stays
+disabled because editor/runtime Locations revisions differ. Existing original
+asset provenance and renderer limitations remain as previously documented.
+
+Keep **3 November** physical-controller evidence, **9 November** complete-level
+evidence, **16 November** campaign/fallback decision, **20 November** freeze and
+**21–26 November** rehearsal for **27 November**. Full campaign remains high risk.
