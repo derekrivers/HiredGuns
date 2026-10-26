@@ -1,40 +1,37 @@
 # Status — 26 October 2026
 
-This batch observes initial immediate-below **inert type-one block support**
-from the real original per-player fall helper before guards, on accepted PR #22
-main `ece0ab935dea2e477ce7a36acdd278c7be72546a`.
-[Evidence and next contract](docs/type1-support-observation.md) records 57 complete
-eligible no-call/survival returns, three guard returns and one fatal continuation
-stopped before the first unsupported death support-search instruction. No fatal
-return, corpse placement or later pending clear is claimed for that fixture.
-No implementation, world, save, UI, inventory, artwork or scheduler changed.
+The disconnected [pure initial TYPE1 support transition](docs/type1-support-contract.md)
+now implements exactly one bounded dry no-call/computed-survival slice on accepted
+main `e1e9d11d278d82eddcc23d45b35e1ecd77f3b46f`. Complete exact own-data snapshots
+validate unsigned storage, initialized lifecycle/ownership/feedback, bounded logical
+current/old/vertical correspondence and inert TYPE1 geometry before any candidate.
+Pending zero preserves even fitness zero. Nonzero pending uses full shield/DIVU/
+overflow/low-word multiplication and rejects fatal outcomes atomically, including
+zero damage with fitness below 655. Weight and agility stay unchanged and are not
+division inputs. Shared arithmetic leaves the ordinary-floor death validator intact.
 
-The dry no-floor/type-one-below slice clears delay, retains pose/current/old
-references and occupancy, then lands using current-cell water and unchanged
-pending. Actual nonzero requests may deal zero damage; a real requested-hit zero
-cannot arise on this strict dry branch. Surviving actual damage returns before
-pending clear and final current-cell reread. Exact ordered writes/before values,
-initialized reads and full-memory preservation pass. The stopped fatal prefix
-executes actual death flags, leader/old-reference/occupancy updates and non-pad
-release; pending remains uncleared when the unsupported prerequisite is reached.
-Synthetic storage and explicit invocation establish neither cadence nor reachability.
+Candidates preserve pose, heads, refs, cells and other modeled storage; records
+retain exact ordered delay, feedback, fitness/redraw, actual helper return, pending
+clear and final current reread, including redundant writes. No descent or live
+installation occurs. The private comparator accounts for all 57 worker and 55
+independent completed eligible fixtures: 23 + 16 full candidates match, including
+108 + 80 writes and 152 + 112 ordered records. The remaining 34 + 39 exact inputs
+intentionally reject for incoherent incoming head/feedback variants under this
+stricter contract; no input is rewritten or silently excluded. Five stopped fatal
+prefixes atomically reject; no fatal return is invented. Six guards stay excluded.
+Fresh original reports and frozen 18/71 descent reports reproduce unchanged.
 
-Existing request API decisions match all 57 eligible completed cases. Existing
-ordinary-floor composition rejects all 57 unmodified inputs atomically because
-current floor is absent and the below cell contains a block. No geometry is
-invented to force acceptance. Exactly one next implementation is nominated,
-unstarted: a disconnected pure initial type-one support transition restricted
-to no-call/computed survival, with atomic fatal-result rejection and complete
-initialized owned dry storage. Actual supported death-search/placement/return
-remains a prerequisite to any later fatal extension; dependent work stopped.
-Other block types, wet paths, pads/mines, stairs and multi-cell fall stay excluded.
+`npm run check` passes lint/types, 373 tests (299 prior plus 74 new) and build.
+Coordinator public browser baseline passes 19 with four optional-private skips;
+explicit local Training43 extraction passes all four checks, including the all-four route.
+independent exact-commit review and CI remain coordinator gates. Original material,
+scripts, addresses, traces and worker handoff stay ignored. One Sol medium worker,
+one authored redraw-band expectation correction; token usage unavailable. No worker
+commit. No world, save, UI, inventory, artwork or scheduler change.
 
-Baseline and final-worktree `npm run check` pass lint/types, 299 tests and build;
-frozen 18/71 CPU reports reproduce unchanged. Public browser passes 19 with four
-optional-private skips. Fresh private observer/comparator assertions pass;
-independent review and CI are coordinator gates. Original
-material, diagnostic scripts/results and the worker handoff remain ignored.
-One Sol medium evidence worker; token usage unavailable. No worker commit.
+Exactly one next nomination, unstarted: smallest bounded fatal TYPE1 support
+search/placement/return observation at the already reached unsupported prerequisite.
+Actual corpse/search/return evidence is required before any fatal extension.
 
 The accepted [pure dry descent](docs/dry-descent-contract.md) remains disconnected.
 Four views, assignments, bounded dry extraction, retry/checkpoints, authored dry

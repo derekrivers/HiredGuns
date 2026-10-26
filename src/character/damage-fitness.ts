@@ -1,4 +1,5 @@
 import { transitionOrdinaryFloorDeath, type DeathEffect, type OrdinaryFloorDeathSlice } from './death-transition';
+import { computeNormalDamage } from './damage-arithmetic';
 
 /** Authored normal-mode input only; not an adapter for live actors or saves. */
 export interface DamageFitnessSlice {
@@ -56,13 +57,7 @@ export function damageOrdinaryFloorFitness(input: DamageFitnessSlice, requestedH
     return { status: 'already-dead', candidate, arithmetic: null, effects: [] };
   }
 
-  const shieldedHit = input.spellShield === 87 ? requestedHit >>> 3 : requestedHit;
-  const quotient = Math.floor(shieldedHit / input.physique);
-  const quotientOverflow = quotient > 65535;
-  // DIVU's packed remainder is irrelevant to MULU, which reads the low word.
-  // The overflow fallback also passes through that low-word truncation.
-  const multiplierWord = quotientOverflow ? Math.floor(0x0fffffff / 100) & 65535 : quotient;
-  const damage = multiplierWord * 100;
+  const { shieldedHit, quotient, quotientOverflow, damage } = computeNormalDamage(requestedHit, input.physique, input.spellShield);
   const arithmetic = { requestedHit, shieldedHit, quotient, quotientOverflow, damage };
   candidate.fireWhite = 255;
   candidate.fitnessFlashDuration = (candidate.fitnessFlashDuration + ((damage >>> 9) + 1 & 255)) & 255;
