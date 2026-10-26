@@ -12,9 +12,11 @@ Four views, reassignment, navigation/checkpoints, bounded Training43 extraction,
 
 ## Validation and ownership
 
-One isolated gpt-6.1-sol medium worker owned the two gameplay evidence documents and private diagnostic. Independent gpt-6.1-sol high review is reserved for binary/simulation claims and final head. Coordinator owns status, local portrait/comparison and integration. No recursive delegation; token usage unavailable. All original bytes, coordinates, traces, references and generated artwork stay local; public changes are documentation only.
+One isolated gpt-6.1-sol medium worker owned the two gameplay evidence documents and private diagnostic. Independent gpt-6.1-sol high review reproduced the CPU and portrait checks; its coverage-digest enforcement finding was fixed and rerun with identical results. Coordinator owns status, local portrait/comparison and integration; exact final-head approval and CI disposition are in the PR/handoff. No recursive delegation; token usage unavailable. All original bytes, coordinates, traces, references and generated artwork stay local; public changes are documentation only.
 
 Local `npm run check` passes lint/typecheck/build and 127 unit tests; 25 Python tests pass. All four extraction browser cases passed, including the explicitly supplied local Training43 input. The portrait comparison passes two deterministic Chromium loads, exact original RGBA verification, equal comparison widths, identical new-image hashes across both views, zero HTTP requests/errors and a narrow-screen overflow check. Independent review and passing relevant CI are required before accepted-main integration; exact heads and results are recorded in the PR/local handoff.
+
+Worker commits: `633432e6bf901d030acff0251a33f4e835f8812f` and coverage-pin correction `3486bfd44130b95d5368c5babcba737dd49bf56a`; coordinator art record `598feed79b7518f6cd88ad8afeca17eb341a4266`. Integration: [PR #15](https://github.com/derekrivers/HiredGuns/pull/15). From `wet-entry-observation`, reproduce with `python .local/wet-entry/observe.py > .local/wet-entry/summary.json`. From `repo`, run `node .local/adele-enhanced/build-comparison.mjs` then `node .local/adele-enhanced/smoke.mjs`; open [local comparison](.local/adele-enhanced/index.html), including the enlarged artwork. Exact artifact hashes and validation commands are in the two result documents; the short `.local/batch-next.txt` records the final accepted commit.
 
 ## Remaining gates
 
