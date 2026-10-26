@@ -159,13 +159,24 @@ return or corpse placement is claimed. Existing request decisions match 57/57;
 ordinary-floor composition rejects 57/57 unchanged inputs atomically because
 this support geometry is outside its contract.
 
-Exactly one next implementation is nominated, unstarted: a disconnected pure
-initial type-one support transition restricted to dry no-call/computed survival,
-with atomic fatal-result rejection. Complete initialized owned storage and
-logical vertical correspondence are required. Actual type-one death placement
-and return remains an explicit prerequisite before a later fatal extension;
-dependent work stopped rather than expanding the support-search scope.
-No second task, implementation, live installation or schema change was started.
+The [pure initial TYPE1 support transition](type1-support-contract.md) now
+implements exactly one disconnected dry no-call/computed-survival slice. Complete
+own-data storage, coherent head/feedback priority and bounded logical vertical
+correspondence validate atomically. Nonzero requests compute full unsigned damage
+arithmetic before rejecting any fatal result; pending zero retains low fitness.
+Exact ordered writes, actual helper return and current reread preserve references,
+packed cells and all unchanged modeled storage. Shared arithmetic preserves the
+ordinary-floor damage API and death validator; no geometry is fabricated.
+
+All 57 worker plus 55 independent completed fixtures are explicitly accounted for:
+23 plus 16 full candidates match outputs and ordered writes/records; 34 plus 39
+exact inputs intentionally reject because original fixture head variants disagree
+with this API's stricter coherent feedback priority. No fixture is rewritten or
+silently excluded. Five stopped fatal prefixes reject atomically; no fatal return
+is claimed. Public synthetic tests cover coherent fatal boundaries separately.
+The full check passes 373 tests, lint/types and build; review/CI are coordinator gates.
+No live installation or schema change occurs. Exactly one next nomination,
+unstarted: bounded actual fatal TYPE1 support search/placement/return observation.
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
 unresolved gates. Completing the pure caller does not authorize wet activation.
