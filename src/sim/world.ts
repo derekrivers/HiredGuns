@@ -1,6 +1,8 @@
-import { cellIndex, inBounds, type Facing, type LevelData, type MissionRules, type PlayerCommand, type Position, type SimulationEvent, type WorldState } from '../contracts';
+import { type Facing, type LevelData, type MissionRules, type PlayerCommand, type Position, type SimulationEvent, type WorldState } from '../contracts';
 import { initialMission, isExitBlock, resolveMission } from './mission';
 import { missionRulesForLevel } from './mission-profile';
+import { obstruction, resolveTraversal } from './traversal';
+export { obstruction } from './traversal';
 
 export const TICK_MS = 20;
 /** About 2.7 years at 50 Hz. Exhaustion pauses; reset or restore an earlier checkpoint. */
@@ -8,19 +10,6 @@ export const MAX_WORLD_TICK = 0xffffffff;
 export const DIRECTIONS = [{ x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }] as const;
 const ACTIONS = new Set(['forward', 'backward', 'strafe-left', 'strafe-right', 'turn-left', 'turn-right']);
 const sameCell = (a: Position, b: Position) => a.x === b.x && a.y === b.y && a.z === b.z;
-
-/** Conservative static navigation rules, not original movement compatibility. */
-export function obstruction(level: LevelData, p: Position): string | null {
-  if (!inBounds(level, p)) return 'boundary';
-  const flags = level.layers[0][cellIndex(level, p)]!;
-  if (flags & (2 | 64)) return 'block';
-  if (flags & (4 | 16 | 32 | 256)) return 'unsupported environment';
-  // Floor in current cell, or a solid cuboid directly below. Special block shapes are deferred.
-  const below = p.z > 0 ? level.layers[0][cellIndex(level, { ...p, z: p.z - 1 })]! : 0;
-  const solidBelow = (below & 2) !== 0 && ((below >>> 11) & 63) === 0;
-  if (!(flags & 1) && !solidBelow) return 'unsupported drop';
-  return null;
-}
 
 export function createWorld(level: LevelData, seed = 0x48475231, rules: MissionRules = missionRulesForLevel(level)): WorldState {
   for (const start of level.starts) {
@@ -69,15 +58,14 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
       events.push({ ...event, kind: 'turned' }); continue;
     }
     const offset = command.action === 'backward' ? 2 : command.action === 'strafe-left' ? 3 : command.action === 'strafe-right' ? 1 : 0;
-    const delta = DIRECTIONS[(actor.facing + offset) % 4]!;
-    const target = { x: actor.x + delta.x, y: actor.y + delta.y, z: actor.z };
-    if (world.mission.rules.mode !== 'navigation' && isExitBlock(level,target)) {
+    const travelDirection = (actor.facing + offset) % 4 as Facing;
+    const occupied = (p: Position) => previous.mercenaries.some(other => !previous.mission.exited[other.id] && other.id !== actor.id && sameCell(other,p)) || world.mercenaries.some(other => !world.mission.exited[other.id] && other.id !== actor.id && sameCell(other,p));
+    const {target,reason} = resolveTraversal(level,actor,travelDirection,occupied);
+    if ((reason === null || reason === 'block') && world.mission.rules.mode !== 'navigation' && isExitBlock(level,target)) {
       world.mission.exited[actor.id] = true;
       events.push({...event,kind:'exited'});
       continue;
     }
-    const reason = obstruction(level, target)
-      ?? (previous.mercenaries.some(other => !previous.mission.exited[other.id] && other.id !== actor.id && sameCell(other, target)) || world.mercenaries.some(other => !world.mission.exited[other.id] && other.id !== actor.id && sameCell(other, target)) ? 'occupied' : null);
     if (reason) events.push({ ...event, kind: 'blocked', reason });
     else { Object.assign(actor, target); events.push({ ...event, kind: 'moved' }); }
   }

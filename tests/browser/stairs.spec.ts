@@ -1,0 +1,47 @@
+import { readFile } from 'node:fs/promises';
+import { expect, test, type Page } from '@playwright/test';
+
+// Expected coordinates are hand-authored for the four dry lanes, not derived
+// from the traversal resolver. Observe the HUD to release before key repeat.
+async function move(page: Page, id: number, key: 'w' | 's', y: number, z: number): Promise<void> {
+  const x = 2 + id * 2;
+  const target = `X ${String(x).padStart(2, '0')}  Y ${String(y).padStart(2, '0')}  Z ${String(z).padStart(2, '0')} / N`;
+  await page.keyboard.press(`Digit${id + 1}`);
+  await page.evaluate(({ id, target, code }) => {
+    const position = document.getElementById(`position-${id}`)!;
+    const release = () => { window.dispatchEvent(new KeyboardEvent('keyup', { code, bubbles: true })); observer.disconnect(); clearTimeout(timer); };
+    const observer = new MutationObserver(() => { if (position.textContent === target) release(); });
+    const timer = window.setTimeout(release, 4000);
+    observer.observe(position, { childList: true, subtree: true });
+  }, { id, target, code: `Key${key.toUpperCase()}` });
+  await page.keyboard.down(key);
+  await expect(page.locator(`#position-${id}`)).toHaveText(target, { timeout: 3000 });
+  await page.keyboard.up(key);
+}
+
+test('all four dry stair lanes climb, restore at elevation, and descend through normal controls', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Dry stair drill', exact: true }).click();
+  await expect(page.locator('#level-name')).toHaveText('Dry stair drill');
+  await page.getByRole('button', { name: 'Start navigation' }).click();
+  for (let id = 0; id < 4; id++) {
+    await move(page, id, 'w', 7, 2);
+    await move(page, id, 'w', 6, 2);
+    await move(page, id, 's', 7, 2);
+  }
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save checkpoint' }).click();
+  const download = await downloadPromise;
+  const saved = await readFile((await download.path())!, 'utf8');
+  await page.screenshot({ path: 'test-results/dry-stairs-elevated.png' });
+  await page.getByRole('button', { name: 'Reset positions' }).click();
+  for (let id = 0; id < 4; id++) await expect(page.locator(`#position-${id}`)).toContainText('Z 01');
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({ name: 'elevated.json', mimeType: 'application/json', buffer: Buffer.from(saved) });
+  await expect(page.locator('#recovery-status')).toContainText('restored');
+  for (let id = 0; id < 4; id++) await expect(page.locator(`#position-${id}`)).toContainText('Z 02');
+  await page.getByRole('button', { name: 'Start navigation' }).click();
+  for (let id = 0; id < 4; id++) await move(page, id, 's', 8, 1);
+  await expect(page.locator('#error')).toBeEmpty();
+  expect(errors).toEqual([]);
+});

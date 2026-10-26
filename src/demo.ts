@@ -32,3 +32,30 @@ export function createExtractionDemo(): LevelData {
   level.unsupportedMechanics = ['Synthetic extraction drill; not an original mission'];
   return level;
 }
+
+/** Four dry source-shaped stair lanes, with no original map data. */
+export function createStairsDemo(): LevelData {
+  const level: LevelData = {
+    schemaVersion: 1, id: 'synthetic-stairs-v1', name: 'Dry stair drill',
+    source: { kind: 'synthetic', sha256: null, revision: 'synthetic' },
+    size: { width: 12, depth: 12, height: 5 },
+    layers: [Array<number>(720).fill(0), Array<number>(720).fill(0), Array<number>(720).fill(0)],
+    starts: [2, 4, 6, 8].map(x => ({ x, y: 8, z: 1, facing: 0 })) as LevelData['starts'],
+    exit: { x: 6, y: 1, z: 2 }, unsupportedMechanics: ['Dry static stairs only; no falling, water, combat or mission objective'],
+  };
+  const put = (x: number, y: number, z: number, word: number) => { level.layers[0][cellIndex(level, { x, y, z })] = word; };
+  for (let y = 0; y < 12; y++) for (let x = 0; x < 12; x++) {
+    put(x, y, 0, 2);
+    if (x === 0 || y === 0 || x === 11 || y === 11) {
+      for (let z = 1; z < 5; z++) put(x, y, z, 2);
+    } else {
+      put(x, y, 1, 1);
+      if (y <= 6) put(x, y, 2, 1);
+    }
+  }
+  for (const x of [2, 4, 6, 8]) {
+    put(x, 8, 1, ((8 << 28) | 32 | 1) >>> 0);
+    put(x, 7, 1, (16 << 11) | 2);
+  }
+  return level;
+}

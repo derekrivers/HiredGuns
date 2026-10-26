@@ -86,7 +86,7 @@ Each mercenary position must pass the same conservative `obstruction()` predicat
 as navigation, including boundary, solid/opaque obstruction, unsupported
 environment and missing support. Active mercenaries cannot overlap; retired
 positions may overlap other retired or active positions, but must still be
-supported, bounded and horizontally beside an exit block of source type3.
+supported and bounded, with a valid dry traversal into an exit block of source type3. This includes an elevation-changing stair approach. Overhead clearance and environment guards apply; current actor occupancy cannot reconstruct occupancy at retirement.
 Navigation mode forbids all retired flags.
 
 Mission fields and nested rules/clock have exact key sets. Rules must match the
