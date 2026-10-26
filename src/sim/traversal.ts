@@ -72,9 +72,10 @@ export function resolveTraversal(level: LevelData, from: Spawn, travelDirection:
   if (targetWord === null) return {...result,reason:'boundary'};
   const environment = environmentReason(targetWord);
   if (environment) return {...result,reason:environment};
+  // Source bumps solid targets (including exits) before empty-cell support.
+  if (targetWord & (2|64)) return {...result,reason:'block'};
   const targetBelow = wordAt(level,{...result.target,z:result.target.z-1});
   if (!(targetWord & 1) && staticBlock(targetBelow,[4])) return {...result,reason:'block4 entry'};
-  if (targetWord & (2|64)) return {...result,reason:'block'};
   if (occupied(result.target)) return {...result,reason:'occupied'};
   return {...result,reason:obstruction(level,result.target)};
 }

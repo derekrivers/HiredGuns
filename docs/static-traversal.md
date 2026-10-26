@@ -64,8 +64,9 @@ Turns, retirement and terminal freeze retain their existing behavior.
 
 Mission exit checks use the **transformed** target, after current support,
 clearance and environmental guards. Only a clear result or final target block
-collision can activate an exit. Coordinator integration extends retired-pose
-exit validation for transformed approaches; a stair exit can retire an actor
+collision can activate an exit. Target-block bump is classified before empty-cell
+support/entry checks, including exits above tree support. Retired-pose
+exit validation follows the same resolver for transformed approaches; a stair exit can retire an actor
 at a different z from its target, without moving into that block.
 
 No mutable environment or new persistent fields are introduced. World schema2
@@ -80,7 +81,10 @@ Synthetic tests independently specify ascent/descent coordinates for all four
 travel directions through four movement actions, plus ceiling/landing floors,
 vertical occupancy, blockers, boundaries, hazards, source flags, support types,
 block4 entry, retirement, transformed exits and checkpoint continuation.
-`npm ci` and `npm run check` passed: 54 tests total, including11 traversal tests.
+`npm ci` and worker checks passed54 tests, including11 traversal tests. Integrated
+checks passed57 tests, including elevated exit and exit-over-tree save regressions.
+All12 local Chromium checks passed before the ordering repair; PR #6 records the
+final recheck/review/CI disposition.
 Implementation: gpt-6.1-sol, one bounded attempt, no failed repair cycle; one
 source-review refinement added the nominal descent environment guard. Aggregate
 token usage unavailable. Browser/original-level evidence is coordinated separately.

@@ -22,6 +22,16 @@ async function fixture() {
   return { level, world, json, envelope: JSON.parse(json) as EditableEnvelope };
 }
 describe('checkpoint v2 and navigation v1 migration', () => {
+  it('bumps an exit above tree support before testing empty-cell entry support', async () => {
+    const level = createExtractionDemo();
+    const p = level.starts[0], exit = {...p,y:p.y-1};
+    level.layers[0][cellIndex(level,exit)] = (3 << 11) | 2;
+    level.layers[0][cellIndex(level,{...exit,z:exit.z-1})] = (4 << 11) | 2;
+    const result = stepWorld(level,createWorld(level),[{mercenaryId:0,action:'forward'}]);
+    expect(result.events[0]!.kind).toBe('exited');
+    expect(result.world.mercenaries[0]).toEqual({...p,id:0});
+    expect(await importCheckpoint(level,await exportCheckpoint(level,result.world))).toEqual(result.world);
+  });
   it('round trips stair exit approach poses and rejects obstructed or hazardous approaches', async () => {
     const level = createStairsDemo();
     level.id = 'synthetic-extraction-v1';
