@@ -79,7 +79,9 @@ must retain a zero request and must not claim damage, survival or completed
 post-damage state before the helper returns. A later actual composition with
 [ordinary-floor damage/death](damage-death-contract.md) must validate its full
 accepted actor/map slice and establish the continuation's preserved references
-before committing its post-call clear. No such caller is implemented here.
+before committing its post-call clear. This observation did not implement that
+caller; the subsequent [pure staged API](supported-landing-contract.md) now
+implements only the explicit storage-preserving modeled-return boundary.
 
 Validation is the 56 private CPU assertions; the primary code commit separately
 passed `npm run check` with 191 tests. This evidence-only follow-up changes no

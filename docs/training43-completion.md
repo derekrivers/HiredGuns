@@ -94,9 +94,21 @@ The one adjacent prerequisite is the bounded
 synthetic original-instruction cases settle full/quarter/no-hit requests,
 unreachable half-hit branch, real zero-hit calls and pending-clear order.
 Damage entry is intercepted with an immediate-return model; no damage/death or
-descent executes. The smallest next task is exactly one pure supported-floor
-landing request/clear caller with explicit pre-dispatch and after-return state.
-This removes an evidence gap, not the remaining landing implementation gate.
+descent executes. The [pure supported-floor landing caller](supported-landing-contract.md)
+now implements this request/clear boundary. Preparation retains the original
+pending value and a nullable inert hit, including real zero-hit requests.
+Separate completion accepts only an explicit storage-preserving modeled return
+or the matching no-call branch, then records the first clear and final reread
+clear in order, including redundant zero writes. Invalid/changed return storage
+rejects atomically; unrelated packed cell bits remain unchanged. No actual
+damage/death state is committed and no live browser behavior changes.
+
+This removes the pure landing implementation dependency under that return model.
+Exactly one next task is a bounded actual landing-to-damage/death composition
+observation for the accepted ordinary-floor slice: surviving/fatal hits,
+A0/A2/reference preservation and post-return pending-write targets/order.
+The current intercepted observation cannot establish those real-helper facts.
+No second task or composed helper implementation is part of this batch.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
