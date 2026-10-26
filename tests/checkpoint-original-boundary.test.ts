@@ -30,7 +30,7 @@ describe('original-team persistence remains gated', () => {
       saved.version = version; saved.world.schemaVersion = version;
       if (version < 3) delete saved.world.physics;
       if (version === 1) delete saved.world.mission;
-      for (const field of ['originalTeam', 'sources', 'inventory', 'originalDeath', 'occupancy', 'corpses', 'padEffects']) {
+      for (const field of ['originalTeam', 'sources', 'inventory', 'originalDeath', 'originalDamage', 'occupancy', 'corpses', 'padEffects']) {
         const injected = structuredClone(saved); injected.world[field] = pair;
         await expect(importCheckpoint(level, JSON.stringify(injected))).rejects.toThrow('extra');
       }
