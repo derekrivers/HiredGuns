@@ -39,6 +39,26 @@ test('oversized checkpoint is rejected before replacing the current state', asyn
   await expect(page.locator('#position-0')).toHaveText(initial!);
 });
 
+test('original damage and death candidates cannot attach through checkpoint recovery', async ({ page }) => {
+  await page.goto('/');
+  const save = async () => {
+    const download = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Save checkpoint', exact: true }).click();
+    return JSON.parse(await readFile((await (await download).path())!, 'utf8'));
+  };
+  const checkpoint = await save();
+  for (const field of ['originalDamage', 'originalDeath']) {
+    const invalid = structuredClone(checkpoint);
+    invalid.world[field] = { fitness: 500, statsDeadWord: 0xff00, fallDamage: 12345 };
+    await page.getByLabel('Load navigation checkpoint').setInputFiles({
+      name: `${field}.json`, mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(invalid)),
+    });
+    await expect(page.getByRole('alert')).toContainText('extra');
+    await expect(page.locator('#pause-overlay')).toBeVisible();
+    expect(await save()).toEqual(checkpoint);
+  }
+});
+
 test('last accepted tick pauses safely at exhaustion and reset recovers', async ({ page }) => {
   await page.goto('/');
   const downloadPromise = page.waitForEvent('download');
