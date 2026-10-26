@@ -16,19 +16,31 @@ export interface LevelData {
   unsupportedMechanics: string[];
 }
 export interface Mercenary extends Spawn { id: number }
+export type MissionMode = 'navigation' | 'cooperative-extraction' | 'first-exit';
+export interface MissionRules { mode: MissionMode; timeLimit: number | null }
+/** Original countdown: decrement subticks through zero, reset to 600, borrow decimal units/tens. */
+export interface MissionClock { tens: number; units: number; subticks: number }
+export interface MissionState {
+  rules: MissionRules;
+  outcome: 'active' | 'complete' | 'failed';
+  exited: [boolean, boolean, boolean, boolean];
+  clock: MissionClock | null;
+  winner: number | null;
+}
 export interface WorldState {
-  schemaVersion: 1;
+  schemaVersion: 2;
   levelId: string;
   tick: number;
   rng: number;
   mercenaries: [Mercenary, Mercenary, Mercenary, Mercenary];
+  mission: MissionState;
 }
 export type Action = 'forward' | 'backward' | 'strafe-left' | 'strafe-right' | 'turn-left' | 'turn-right';
 /** At most one command per mercenary per tick; reject duplicates. */
 export interface PlayerCommand { mercenaryId: number; action: Action }
-export interface SimulationEvent { tick: number; mercenaryId: number; kind: 'moved' | 'turned' | 'blocked'; reason?: string }
+export interface SimulationEvent { tick: number; mercenaryId: number; kind: 'moved' | 'turned' | 'blocked' | 'exited' | 'complete' | 'failed'; reason?: string }
 /** Reserved envelope: loading must validate every field before use. */
-export interface SaveEnvelope { format: 'hired-guns-save'; version: 1; levelHash: string; world: WorldState }
+export interface SaveEnvelope { format: 'hired-guns-save'; version: 2; levelHash: string; world: WorldState }
 export function cellIndex(level: LevelData, p: Position): number {
   return (p.z * level.size.depth + p.y) * level.size.width + p.x;
 }

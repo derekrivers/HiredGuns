@@ -1,0 +1,52 @@
+import { cellIndex, inBounds, type LevelData, type MissionClock, type MissionRules, type MissionState, type Position, type SimulationEvent, type WorldState } from '../contracts';
+import { missionRulesForLevel } from './mission-profile';
+
+/** Source resets a counter to 600 after it decrements past zero: 601 steps. */
+export const SOURCE_CLOCK_PERIOD = 601;
+
+export function validatedMissionRules(level: LevelData, rules: MissionRules): MissionRules {
+  if (!rules || Reflect.ownKeys(rules).length !== 2 || !Object.hasOwn(rules,'mode') || !Object.hasOwn(rules,'timeLimit')) throw new Error('Invalid mission rules fields');
+  const allowed = missionRulesForLevel(level, rules.mode);
+  if (rules.mode !== allowed.mode || rules.timeLimit !== allowed.timeLimit) throw new Error('Mission rules do not match this level revision');
+  return { ...allowed };
+}
+
+export function sourceClockAtTick(timeLimit: number, tick: number): MissionClock {
+  if (!Number.isSafeInteger(timeLimit) || timeLimit < 1 || timeLimit > 99 || !Number.isSafeInteger(tick) || tick < 0 || tick > timeLimit * SOURCE_CLOCK_PERIOD) throw new Error('Invalid source clock range');
+  const remaining = timeLimit - Math.floor(tick / SOURCE_CLOCK_PERIOD);
+  return { tens: Math.floor(remaining / 10), units: remaining % 10, subticks: 600 - tick % SOURCE_CLOCK_PERIOD };
+}
+
+export function initialMission(level: LevelData, rules: MissionRules = missionRulesForLevel(level)): MissionState {
+  const validated = validatedMissionRules(level, rules);
+  return { rules: validated, outcome: 'active', exited: [false,false,false,false], clock: validated.timeLimit === null ? null : sourceClockAtTick(validated.timeLimit,0), winner: null };
+}
+
+/** Exit markers are source block type 3, independently of the header exit triple. */
+export function isExitBlock(level: LevelData, p: Position): boolean {
+  if (!inBounds(level,p)) return false;
+  const word = level.layers[0][cellIndex(level,p)]!;
+  return (word & 2) !== 0 && ((word >>> 11) & 63) === 3;
+}
+
+export function besideExitBlock(level: LevelData, p: Position): boolean {
+  return [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}].some(d => isExitBlock(level,{x:p.x+d.x,y:p.y+d.y,z:p.z}));
+}
+
+/** Resolve once after stable-ID command processing; timeout wins deadline ties. */
+export function resolveMission(world: WorldState, events: SimulationEvent[]): void {
+  const mission = world.mission;
+  if (mission.rules.mode === 'navigation') return;
+  mission.clock = sourceClockAtTick(mission.rules.timeLimit!,world.tick);
+  if (mission.clock.tens === 0 && mission.clock.units === 0) {
+    mission.outcome = 'failed';
+    events.push({tick:world.tick,mercenaryId:0,kind:'failed',reason:'time expired'});
+    return;
+  }
+  const complete = mission.rules.mode === 'first-exit' ? mission.exited.some(Boolean) : mission.exited.every(Boolean);
+  if (!complete) return;
+  mission.outcome = 'complete';
+  const exitedNow = events.filter(e => e.kind === 'exited');
+  if (mission.rules.mode === 'first-exit') mission.winner = mission.exited.findIndex(Boolean);
+  events.push({tick:world.tick,mercenaryId:mission.winner ?? exitedNow.at(-1)!.mercenaryId,kind:'complete'});
+}

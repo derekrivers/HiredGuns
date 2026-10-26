@@ -22,3 +22,13 @@ export function createDemoLevel(): LevelData {
   }
   return level;
 }
+
+/** A separate newly authored mission fixture; the navigation map remains unchanged. */
+export function createExtractionDemo(): LevelData {
+  const level = createDemoLevel();
+  level.id = 'synthetic-extraction-v1'; level.name = 'Extraction drill';
+  level.exit = { x: 6, y: 1, z: 1 };
+  level.layers[0][cellIndex(level, level.exit)] = (3 << 11) | 2;
+  level.unsupportedMechanics = ['Synthetic extraction drill; not an original mission'];
+  return level;
+}

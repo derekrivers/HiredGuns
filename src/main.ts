@@ -1,6 +1,7 @@
 import './styles.css';
-import type { LevelData, SimulationEvent } from './contracts';
-import { createDemoLevel } from './demo';
+import type { LevelData, MissionMode, SimulationEvent } from './contracts';
+import { createDemoLevel, createExtractionDemo } from './demo';
+import { extractionProfile, missionRulesForLevel } from './sim/mission-profile';
 import { InputRouter, KEY_GROUPS, type InputSource, type PadSnapshot } from './input/router';
 import { FixedClock } from './sim/clock';
 import { createWorld, stepWorld } from './sim/world';
@@ -12,17 +13,19 @@ import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
   <header><div class="brand"><div class="logo" aria-hidden="true">HG</div><div><div class="eyebrow">Operation revival / 001</div><h1>HIRED GUNS</h1></div></div>
-    <div class="actions"><label class="file-button">Open local .map<input id="map-file" aria-label="Open local editor map" type="file" accept=".map"></label><button id="demo">Synthetic map</button><button id="reset">Reset positions</button><button class="primary" id="play">Start navigation</button></div></header>
-  <div class="brief"><div><strong id="level-name"></strong> <span id="source-label"></span></div><div class="badge">STATIC NAVIGATION PROTOTYPE</div></div>
+    <div class="actions"><label class="file-button">Open local .map<input id="map-file" aria-label="Open local editor map" type="file" accept=".map"></label><button id="demo">Synthetic map</button><button id="drill">Extraction drill</button><button id="reset">Reset positions</button><button class="primary" id="play">Start navigation</button></div></header>
+  <div class="brief"><div><strong id="level-name"></strong> <span id="source-label"></span></div><div class="badge" id="prototype-label">STATIC NAVIGATION PROTOTYPE</div></div>
+  <div class="mission-bar"><span id="mission-objective"></span><span id="mission-progress" role="status"></span><label id="mission-mode-label">Rules <select id="mission-mode" aria-label="Mission rules"><option value="cooperative-extraction">Cooperative extraction</option><option value="first-exit">Original first-exit race</option><option value="navigation">Navigation only</option></select></label><span id="mission-time"></span></div>
   <div id="error" role="alert"></div>
   <div class="stage"><canvas aria-label="Four synchronized game views"></canvas><div class="view-grid">
-    ${[0, 1, 2, 3].map(i => `<section class="view" aria-label="Mercenary ${i + 1} viewport"><div class="view-head"><div><span class="player-name" style="color:${['#70ded1', '#f1bf70', '#8eaef5', '#e995b8'][i]}">0${i + 1} / MERCENARY</span><span class="player-sub" id="device-${i}"></span></div><select aria-label="Control mercenary ${i + 1}" id="assign-${i}"></select></div><div class="reticle"></div><div class="view-foot"><span id="position-${i}"></span><span id="event-${i}">READY</span></div></section>`).join('')}
+    ${[0, 1, 2, 3].map(i => `<section class="view" aria-label="Mercenary ${i + 1} viewport"><div class="view-head"><div><span class="player-name" style="color:${['#70ded1', '#f1bf70', '#8eaef5', '#e995b8'][i]}">0${i + 1} / MERCENARY</span><span class="player-sub" id="device-${i}"></span></div><select aria-label="Control mercenary ${i + 1}" id="assign-${i}"></select></div><div class="reticle"></div><div class="extracted" id="extracted-${i}" hidden>EXTRACTED<span>Waiting for the team</span></div><div class="view-foot"><span id="position-${i}"></span><span id="event-${i}">READY</span></div></section>`).join('')}
   </div><div class="paused" id="pause-overlay"><b>TEAM STANDING BY</b><small>Assign controls, then start navigation</small></div></div>
   <footer><div class="controls"><span><kbd>WASD + Q/E</kbd> · <kbd>IJKL + U/O</kbd> · <kbd>Arrows + ,/.</kbd> · <kbd>Numpad 8456 + 7/9</kbd></span><span><kbd>1–4</kbd> assign WASD to a mercenary · <kbd>Esc</kbd> pause</span></div><div class="recovery"><span id="recovery-status" role="status">Checkpoints restore navigation. Reopen the same map first.</span><div class="actions"><button id="save-checkpoint">Save checkpoint</button><label class="file-button">Load checkpoint<input id="checkpoint-file" aria-label="Load navigation checkpoint" type="file" accept=".json"></label></div></div><details><summary>Controls, source and prototype limitations <span id="tick"></span></summary><div id="diagnostics"></div></details></footer>`;
 
 const get = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 let level = createDemoLevel(), world = createWorld(level);
 let renderer: FourViews | null = null;
+let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
 let extraDiagnostics = '';
 let padInventory = '';
@@ -36,8 +39,34 @@ const selects = [0, 1, 2, 3].map(i => get<HTMLSelectElement>(`assign-${i}`));
 function errorText(error: unknown): string { return error instanceof Error ? error.message : String(error); }
 function setPaused(value: boolean): void {
   paused = value; keys.clear(); router.reset(); clock.reset();
-  get<HTMLButtonElement>('play').textContent = paused ? 'Start navigation' : 'Pause';
-  get('pause-overlay').hidden = !paused;
+  updateMissionHud();
+}
+function updateMissionHud(): void {
+  const mission = world.mission, active = mission.rules.mode !== 'navigation', terminal = mission.outcome !== 'active';
+  const escaped = mission.exited.filter(Boolean).length;
+  const play = get<HTMLButtonElement>('play');
+  play.disabled = !renderer || graphicsLost || terminal;
+  play.textContent = terminal ? 'Mission finished' : paused ? active ? 'Start mission' : 'Start navigation' : 'Pause';
+  get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : 'Reset positions';
+  get('mission-mode-label').hidden = extractionProfile(level) === null;
+  get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
+  get('mission-objective').textContent = !active ? 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
+  get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : '';
+  get('prototype-label').textContent = active ? 'EXTRACTION PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  let time = '';
+  if (mission.clock) {
+    const units = mission.clock.tens * 10 + mission.clock.units;
+    const seconds = Math.ceil((units ? (units - 1) * 601 + mission.clock.subticks + 1 : 0) / 50);
+    time = `TIME ${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  }
+  get('mission-time').textContent = time;
+  const overlay = get('pause-overlay'); overlay.hidden = !paused && !terminal;
+  overlay.querySelector('b')!.textContent = mission.outcome === 'failed' ? 'TIME EXPIRED' : mission.outcome === 'complete' ? mission.winner === null ? 'TEAM EXTRACTED' : `MERCENARY ${mission.winner + 1} WINS` : 'TEAM STANDING BY';
+  overlay.querySelector('small')!.textContent = terminal ? 'Retry the mission or load an earlier checkpoint' : 'Assign controls, then start';
+  for (let i = 0; i < 4; i++) {
+    get(`extracted-${i}`).hidden = !mission.exited[i];
+    get(`extracted-${i}`).querySelector('span')!.textContent = terminal ? mission.outcome === 'complete' ? 'Extraction complete' : 'Mission timed out' : 'Waiting for the team';
+  }
 }
 function deviceKey(source: InputSource): string {
   return !source ? 'none' : source.kind === 'keyboard' ? `key:${source.index}` : `pad:${source.index}:${source.id}`;
@@ -78,15 +107,17 @@ function updateHud(pads: PadSnapshot[]): void {
     get(`device-${i}`).textContent = !source ? 'UNASSIGNED' : source.kind === 'keyboard' ? `KEYBOARD ${String.fromCharCode(65 + source.index)}` : pad?.mapping === 'standard' ? `PAD ${source.index + 1} CONNECTED` : 'PAD DISCONNECTED / CHECK ASSIGNMENT';
   }
   get('tick').textContent = `· tick ${world.tick} · ${frameMs.toFixed(1)} ms/frame`;
+  updateMissionHud();
 }
 function updateLevelInfo(): void {
-  get('level-name').textContent = level.name || 'Untitled editor map';
+  get('level-name').textContent = extractionProfile(level)?.title ?? (level.name || 'Untitled editor map');
   get('source-label').textContent = level.source.kind === 'synthetic' ? '/ newly authored test geometry' : '/ local editor revision · not a validated mission';
   get('diagnostics').textContent = [
     'Keyboard: forward/back, strafe left/right; Q/E, U/O, comma/period or numpad 7/9 turn. Numbers 1–4 move keyboard A assignment. Keyboard rollover depends on hardware.',
     'Standard gamepads: left stick or D-pad moves/turns; shoulder buttons strafe. Assign each pad above. Press a pad button if the browser has not exposed it yet. Non-standard mappings require future remapping support.',
     'Disconnect stops that controller. Matching index and device ID can reconnect; otherwise reassign. Four physical controllers on the event PC/TV have NOT been tested.',
-    '50 Hz prototype clock; movement repeats at 160 ms while held. Static block collision, explicit floors or solid type-0 block support below. No gravity, special block shapes, dynamic objects, combat, inventory, completion, sound or campaign travel. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints contain navigation positions, facing, tick and RNG; they require the exact same map and do not save device assignments.',
+    '50 Hz prototype clock; movement repeats at 160 ms while held. Static block collision, explicit floors or solid type-0 block support below. No gravity, special block shapes, dynamic objects, combat, inventory, sound or campaign travel. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
+    'Mission support is restricted to the exact verified Training43 editor revision and the newly authored extraction drill. Moving into a type-3 exit block retires that mercenary. Cooperative extraction requires all four; Original first-exit race preserves the alive-player source success rule. Source countdown counters borrow after 601 logical ticks. The UI converts this prototype 50 Hz clock to time; original wall-clock parity has not been verified. Unsupported original areas remain blocked, so this proves an extraction route rather than the complete original level.',
     `Source: ${level.source.revision}; SHA-256: ${level.source.sha256 ?? 'synthetic'}`,
     `Unsupported source mechanics: ${level.unsupportedMechanics.join('; ') || 'none detected, mission behaviour not validated'}`,
     extraDiagnostics,
@@ -95,7 +126,7 @@ function updateLevelInfo(): void {
 function installLevel(nextLevel: LevelData, diagnostics = ''): void {
   const nextWorld = createWorld(nextLevel); // Validate before replacing the current working level.
   renderer?.dispose(); renderer = null;
-  try { renderer = new FourViews(canvas, panes, nextLevel); }
+  try { renderer = new FourViews(canvas, panes, nextLevel); graphicsLost = false; }
   catch (error) { get<HTMLButtonElement>('play').disabled = true; throw new Error(`WebGL2 unavailable: ${errorText(error)}`); }
   level = nextLevel; world = nextWorld; extraDiagnostics = diagnostics;
   events.fill('READY'); setPaused(true); updateLevelInfo(); updateHud(readPads());
@@ -104,12 +135,25 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
 }
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
-  loadGeneration++; loading = false; world = createWorld(level); events.fill('READY'); get('error').textContent = ''; setPaused(true);
+  loadGeneration++; loading = false; world = createWorld(level, undefined, world.mission.rules); events.fill('READY'); get('error').textContent = ''; setPaused(true);
   get('recovery-status').textContent = 'Positions reset. Saved checkpoints remain available.';
 });
 get<HTMLButtonElement>('demo').addEventListener('click', () => {
   loadGeneration++; loading = false; get('error').textContent = '';
   try { installLevel(createDemoLevel()); } catch (error) { get('error').textContent = errorText(error); }
+});
+get<HTMLButtonElement>('drill').addEventListener('click', () => {
+  loadGeneration++; loading = false; get('error').textContent = '';
+  try { installLevel(createExtractionDemo()); } catch (error) { get('error').textContent = errorText(error); }
+});
+get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
+  const mode = (event.currentTarget as HTMLSelectElement).value as MissionMode;
+  try {
+    const next = createWorld(level, undefined, missionRulesForLevel(level, mode));
+    loadGeneration++; loading = false; world = next; events.fill('READY'); get('error').textContent = ''; setPaused(true);
+    get('recovery-status').textContent = 'Rules changed. Mission restarted; saved checkpoints retain their own rules.';
+  } catch (error) { get('error').textContent = errorText(error); }
+  (event.currentTarget as HTMLSelectElement).blur();
 });
 get<HTMLInputElement>('map-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
@@ -146,7 +190,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     const restored = await importCheckpoint(level, await file.text());
     if (generation !== loadGeneration) return;
     world = restored; events.fill('RESTORED'); updateHud(readPads());
-    get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. Review controls, then start navigation.`;
+    get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
   finally { if (generation === loadGeneration) loading = false; }
 });
@@ -164,7 +208,7 @@ window.addEventListener('keydown', event => {
 window.addEventListener('keyup', event => { keys.delete(event.code); });
 window.addEventListener('blur', () => setPaused(true));
 document.addEventListener('visibilitychange', () => { if (document.hidden) setPaused(true); });
-canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); setPaused(true); get('error').textContent = 'Graphics context lost. Reload the page to recover.'; get<HTMLButtonElement>('play').disabled = true; });
+canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); graphicsLost = true; setPaused(true); get('error').textContent = 'Graphics context lost. Reload the page to recover.'; });
 
 function frame(now: number): void {
   const elapsed = Math.max(0, now - lastTime); lastTime = now; frameMs += (elapsed - frameMs) * 0.05;
@@ -174,6 +218,7 @@ function frame(now: number): void {
       const result = stepWorld(level, world, router.commands(world.tick, keys, pads)); world = result.world;
       result.events.forEach((event: SimulationEvent) => { events[event.mercenaryId] = event.kind === 'blocked' ? `BLOCKED: ${event.reason}`.toUpperCase() : event.kind.toUpperCase(); });
     }); } catch (error) { setPaused(true); get('error').textContent = errorText(error); }
+    if (world.mission.outcome !== 'active') setPaused(true);
   }
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }

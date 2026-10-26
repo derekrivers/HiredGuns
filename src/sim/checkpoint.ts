@@ -1,5 +1,6 @@
-import type { LevelData, Mercenary, SaveEnvelope, Spawn, WorldState } from '../contracts';
+import type { LevelData, Mercenary, MissionMode, MissionState, SaveEnvelope, Spawn, WorldState } from '../contracts';
 import { MAX_WORLD_TICK, obstruction } from './world';
+import { besideExitBlock, initialMission, sourceClockAtTick, validatedMissionRules } from './mission';
 
 /** A checkpoint must be smaller than 16 KiB, including UTF-8 encoding. */
 export const MAX_CHECKPOINT_BYTES = 16 * 1024;
@@ -60,10 +61,37 @@ function levelSnapshot(value: LevelData): LevelData {
   };
 }
 
+function missionSnapshot(level: LevelData, value: unknown, tick: number): MissionState {
+  const mission = object(value,['rules','outcome','exited','clock','winner'],'mission');
+  const rawRules = object(mission.rules,['mode','timeLimit'],'mission.rules');
+  if (!['navigation','cooperative-extraction','first-exit'].includes(String(rawRules.mode))) throw new Error('Unsupported mission mode');
+  const rules = validatedMissionRules(level,{mode:rawRules.mode as MissionMode,timeLimit:rawRules.timeLimit === null ? null : integer(rawRules.timeLimit,1,99,'mission.timeLimit')});
+  if (mission.outcome !== 'active' && mission.outcome !== 'complete' && mission.outcome !== 'failed') throw new Error('Invalid mission outcome');
+  const exited = array(mission.exited,4,'mission.exited').map(v => { if (typeof v !== 'boolean') throw new Error('Mission exited flags must be boolean'); return v; }) as MissionState['exited'];
+  let clock: MissionState['clock'] = null;
+  if (rules.mode === 'navigation') {
+    if (mission.clock !== null || mission.outcome !== 'active' || mission.winner !== null || exited.some(Boolean)) throw new Error('Navigation mission must have zeroed exit state');
+  } else {
+    const expectedClock = sourceClockAtTick(rules.timeLimit!,tick);
+    const savedClock = object(mission.clock,['tens','units','subticks'],'mission.clock');
+    if (savedClock.tens !== expectedClock.tens || savedClock.units !== expectedClock.units || savedClock.subticks !== expectedClock.subticks) throw new Error('Mission clock does not match tick');
+    clock = expectedClock;
+    if (tick === 0 && exited.some(Boolean)) throw new Error('Mission cannot exit before its first tick');
+    const expired = clock.tens === 0 && clock.units === 0;
+    const completed = rules.mode === 'first-exit' ? exited.some(Boolean) : exited.every(Boolean);
+    if (expired ? mission.outcome !== 'failed' : mission.outcome !== (completed ? 'complete' : 'active')) throw new Error('Mission outcome inconsistent with clock/exits');
+    const winner = !expired && completed && rules.mode === 'first-exit' ? exited.findIndex(Boolean) : null;
+    if (mission.winner !== winner) throw new Error('Mission winner inconsistent with outcome/exits');
+  }
+  return {rules,outcome:mission.outcome,exited,clock,winner:mission.winner as number | null};
+}
+
 function worldSnapshot(level: LevelData, value: unknown): WorldState {
-  const world = object(value, ['schemaVersion','levelId','tick','rng','mercenaries'], 'world');
-  if (world.schemaVersion !== 1) throw new Error('Unsupported world schemaVersion');
+  const world = object(value, ['schemaVersion','levelId','tick','rng','mercenaries','mission'], 'world');
+  if (world.schemaVersion !== 2) throw new Error('Unsupported world schemaVersion');
   if (world.levelId !== level.id) throw new Error('Checkpoint world/level mismatch');
+  const tick = integer(world.tick,0,MAX_WORLD_TICK-1,'world.tick');
+  const mission = missionSnapshot(level,world.mission,tick);
   const occupied = new Set<string>();
   const mercenaries = array(world.mercenaries, 4, 'world.mercenaries').map((value, id) => {
     const mercenary = object(value, ['id','x','y','z','facing'], `mercenary${id}`);
@@ -72,11 +100,15 @@ function worldSnapshot(level: LevelData, value: unknown): WorldState {
     const reason = obstruction(level, p);
     if (reason) throw new Error(`Mercenary ${id} obstructed: ${reason}`);
     const cell = `${p.x},${p.y},${p.z}`;
-    if (occupied.has(cell)) throw new Error('Checkpoint mercenaries overlap');
-    occupied.add(cell);
+    if (mission.exited[id]) {
+      if (!besideExitBlock(level,p)) throw new Error(`Exited mercenary ${id} must remain beside an exit block`);
+    } else {
+      if (occupied.has(cell)) throw new Error('Checkpoint mercenaries overlap');
+      occupied.add(cell);
+    }
     return { id, ...p } as Mercenary;
   }) as WorldState['mercenaries'];
-  return { schemaVersion: 1, levelId: level.id, tick: integer(world.tick, 0, MAX_WORLD_TICK - 1, 'world.tick'), rng: integer(world.rng, 0, 0xffffffff, 'world.rng'), mercenaries };
+  return { schemaVersion: 2, levelId: level.id, tick, rng: integer(world.rng, 0, 0xffffffff, 'world.rng'), mercenaries, mission };
 }
 
 // Sort object keys recursively; array/source-word and start order remain meaningful.
@@ -96,11 +128,11 @@ function checkTextSize(json: string): void {
   if (typeof json !== 'string' || json.length >= MAX_CHECKPOINT_BYTES || new TextEncoder().encode(json).byteLength >= MAX_CHECKPOINT_BYTES) throw new Error('Checkpoint must be a string smaller than 16 KiB');
 }
 
-/** Navigation-only v1 save. No original map words or artwork enter the envelope. */
+/** Complete current mission state in v2; map words and artwork stay outside saves. */
 export async function exportCheckpoint(level: LevelData, world: WorldState): Promise<string> {
   const snapshot = levelSnapshot(level);
   const state = worldSnapshot(snapshot, world);
-  const envelope: SaveEnvelope = { format: 'hired-guns-save', version: 1, levelHash: await fingerprint(snapshot), world: state };
+  const envelope: SaveEnvelope = { format: 'hired-guns-save', version: 2, levelHash: await fingerprint(snapshot), world: state };
   const json = JSON.stringify(envelope);
   checkTextSize(json);
   return json;
@@ -112,10 +144,16 @@ export async function importCheckpoint(level: LevelData, json: string): Promise<
   let parsed: unknown;
   try { parsed = JSON.parse(json); } catch { throw new Error('Invalid checkpoint JSON'); }
   const envelope = object(parsed, ['format','version','levelHash','world'], 'checkpoint');
-  if (envelope.format !== 'hired-guns-save' || envelope.version !== 1) throw new Error('Unsupported checkpoint format/version');
+  if (envelope.format !== 'hired-guns-save' || (envelope.version !== 1 && envelope.version !== 2)) throw new Error('Unsupported checkpoint format/version');
   if (typeof envelope.levelHash !== 'string' || !/^[0-9a-f]{64}$/.test(envelope.levelHash)) throw new Error('Invalid checkpoint levelHash');
   const snapshot = levelSnapshot(level);
-  const world = worldSnapshot(snapshot, envelope.world);
+  let savedWorld = envelope.world;
+  if (envelope.version === 1) {
+    const legacy = object(savedWorld,['schemaVersion','levelId','tick','rng','mercenaries'],'legacy world');
+    if (legacy.schemaVersion !== 1) throw new Error('Unsupported legacy world schemaVersion');
+    savedWorld = {...legacy,schemaVersion:2,mission:initialMission(snapshot,{mode:'navigation',timeLimit:null})};
+  }
+  const world = worldSnapshot(snapshot, savedWorld);
   if (envelope.levelHash !== await fingerprint(snapshot)) throw new Error('Checkpoint level content mismatch');
   return world;
 }
