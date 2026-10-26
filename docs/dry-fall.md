@@ -63,7 +63,10 @@ check that overflow and this subset does not invent its behavior.
 word**, giving damage 6291400. Normal damage is the integer quotient times 100.
 `decr_fitness` around 1400–1462 kills when damage exceeds fitness or remaining
 fitness is below 655. This subset normalizes dead fitness to 0, clearing pending
-damage; the source can retain nonzero sub-band residue. It emits `damaged` when
+damage; the source can retain nonzero sub-band residue or the entire pre-hit
+fitness when damage exceeds it. The separate disconnected
+[damage-to-death contract](damage-death-contract.md) preserves those source
+writes; this authored drill retains its existing normalization. It emits `damaged` when
 fitness falls and then `died` on death. `fell` identifies each actual descent;
 blocked gravity emits an explicit reason. No presentation consumes world RNG.
 
