@@ -126,6 +126,11 @@ Fitness death is also not a guaranteed write of zero: damage exceeding fitness
 calls death before subtraction; subtraction leaving a fitness band below 655
 also calls death (`Main.s:1444-1455`). Existing synthetic normalization to zero
 is documented in [dry-fall.md](dry-fall.md), not original parity.
+The selected matched-executable boundaries and isolated CPU observations are now
+recorded in [damage-fitness-evidence.md](damage-fitness-evidence.md). The separate
+[pure damage contract](damage-death-contract.md) composes only the accepted
+ordinary-floor death slice; it preserves both overdamage fitness and sub-band
+residue without activating original actors.
 
 ## Water damages inventory before drowning immunity
 
@@ -199,7 +204,7 @@ Activation still needs resolution of 68000 edge arithmetic, explicit death/contr
 and occupancy transitions, pad/corpse map effects, and checkpoint migration for
 all newly live state. The isolated initialization and immune inventory
 observations do not replace full transition evidence. Obtain bounded traces
-for drowning threshold, landing/death and extraction before claiming original
+for drowning threshold, full landing/death effects and extraction before claiming original
 parity. Campaign travel remains separately blocked by the
 known Locations revision mismatch.
 
