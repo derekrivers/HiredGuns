@@ -76,6 +76,13 @@ this API a slice is insufficient evidence for live installation. Integrated
 descent, death/control/occupancy and pads/corpses, full wet-region outcomes and
 atomic source-bound recovery remain unresolved. No wet activation follows.
 
+The later [actual helper composition observation](landing-damage-composition-observation.md)
+executes damage and ordinary-floor death without interception on its explicitly
+restricted synthetic slice. It establishes preserved actor/stats/cell references
+but observes a changed cell after death. This API remains unchanged and rejects
+that changed storage; a new validated composition is a separate implementation
+task. The earlier modeled-return evidence and its limits above remain accurate.
+
 Public tests use authored synthetic integers only: every mask, unsigned maxima
 and high-bit logical shifts, null versus zero hits, retained pre-dispatch pending,
 ordered/redundant writes, exact opaque-bit preservation, independent outputs,
