@@ -1,4 +1,4 @@
-# Fallback assessment — 26 October 2026
+# Fallback assessment - 26 October 2026
 
 Dropzone (map 13) establishes imported four-view navigation. It has no exit block or verified complete-mission objective, so it cannot satisfy the birthday fallback alone.
 
@@ -8,7 +8,7 @@ A local, single-character flood check using only the current conservative static
 
 The same bounded flood check found no static exit approach in any campaign-related map. Original mechanics are therefore still a concrete blocker for the campaign fallback, rather than presentation work alone. Stopover (development map 22) also has a nearby static exit, but is not selected as a birthday mission on that basis.
 
-Source evidence: OCS `Controls&Movement.s` movement/bump path (around 4720–4870) enters the exit UI when bumping a type-3 block. `Main.s` `check_exit` (around 379–497) uses exit-window/dead/control states, not the map header exit coordinate. In action mode the location's recommended-player field affects success conditions. Training 43 stores four; cooperative all-team completion must therefore be an explicit policy decision, not silently inferred from the campaign rule. `Front.s` `choose_training_map` selects records 43–47. No original executable observation has yet corroborated these paths.
+Source evidence: OCS `Controls&Movement.s` movement/bump path (around 4720-4870) enters the exit UI when bumping a type-3 block. `Main.s` `check_exit` (around 379-497) uses exit-window/dead/control states, not the map header exit coordinate. In action mode the location's recommended-player field affects success conditions. Training 43 stores four; cooperative all-team completion must therefore be an explicit policy decision, not silently inferred from the campaign rule. `Front.s` `choose_training_map` selects records 43-47. No original executable observation has yet corroborated these paths.
 
 Implemented evidence: the exact Training43 digest enables source type-3 exit retirement, source integer countdown, timeout failure, retry and complete-state checkpoint recovery. Cooperative all-four extraction is explicitly labelled as a variant; the original alive-only first-exit rule is separately selectable. All four mercenaries reached the exit in a local Chromium run through keyboard controls, with active team occupancy respected. This proves the supported static route, not optional original areas, all original mechanics or physical four-player compatibility. Detailed rules and source references are in [mission-rules.md](mission-rules.md).
 
@@ -20,4 +20,4 @@ The source investigation confirmed that both lower stair cells carry type-2 wate
 
 Campaign travel remains disabled: editor location CRC `df31` differs from archived runtime header CRC `5c21`. This discrepancy is isolated from local level navigation and checkpoints; neither establishes a matching campaign baseline.
 
-Dry stairs now have a separate synthetic four-lane drill and source-backed directional transforms, with bounded stone/stair/tree support. This does not unlock Training43�s wet staircase. See [static-traversal.md](static-traversal.md) for source mappings, conservative exclusions and validation.
+Dry stairs now have a separate synthetic four-lane drill and source-backed directional transforms, with bounded stone/stair/tree support. This does not unlock Training43's wet staircase. See [static-traversal.md](static-traversal.md) for source mappings, conservative exclusions and validation.

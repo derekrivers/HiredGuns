@@ -20,7 +20,7 @@ labels in `Equates.i` do not describe the same travel directions.
 
 ## Ascent, descent and support
 
-`Controls&Movement.s` `move` around 4720–4895 checks ascent clearance immediately
+`Controls&Movement.s` `move` around 4720-4895 checks ascent clearance immediately
 above the **current** cell, then raises the horizontal destination by one level.
 Both that overhead cell and the elevated destination are checked here. Floor,
 block, opaque geometry or an active actor overhead prevents ascent; destination
@@ -29,7 +29,7 @@ valid; a floor above the current cell is a ceiling.
 
 For descent, a floor at the nominal horizontal destination keeps movement level.
 Otherwise a matching stair block below the actor lowers the target when the
-lower destination is clear, or contains the source's player-block range32–47;
+lower destination is clear, or contains the source's player-block range32-47;
 the final target must still pass collision and active occupancy checks. Other
 lower block/opaque geometry keeps the target level. The source does not impose
 a generic block/actor ceiling check at the nominal upper descent cell; neither
@@ -38,7 +38,7 @@ final-feet-cell checks, water, explosion, pushable or unsupported auxiliary data
 at that nominal upper cell prevents descent too.
 
 Standing is allowed on an explicit floor (types0/3), stone block0 or stair
-blocks16–19 immediately below, or block4 two levels below with a clear dry
+blocks16-19 immediately below, or block4 two levels below with a clear dry
 intermediate cell. Source block4 is labelled **tree** in `Equates.i`; its
 two-level support behavior should not be mistaken for a new bridge object.
 Entry immediately above block4 without an explicit floor is refused. The source
@@ -49,7 +49,7 @@ Pushable-flagged blocks cannot provide static support.
 
 Every accessed position is bounded explicitly; original safety nets do not
 extend the legal grid. Unsupported drops remain blocked. Water, explosions,
-pushables, auxiliary types outside8–11, button-floor type1 and lift-floor type2
+pushables, auxiliary types outside8-11, button-floor type1 and lift-floor type2
 remain unsupported. Stair presence flags are required. Training43's actual
 stair pair contains water and remains blocked; synthetic dry traversal does not
 claim that original environmental mechanic is implemented.
@@ -81,9 +81,9 @@ Synthetic tests independently specify ascent/descent coordinates for all four
 travel directions through four movement actions, plus ceiling/landing floors,
 vertical occupancy, blockers, boundaries, hazards, source flags, support types,
 block4 entry, retirement, transformed exits and checkpoint continuation.
-`npm ci` and worker checks passed54 tests, including11 traversal tests. Integrated
-checks passed57 tests, including elevated exit and exit-over-tree save regressions.
-All12 local Chromium checks passed before the ordering repair; PR #6 records the
+`npm ci` and worker checks passed 54 tests, including 11 traversal tests. Integrated
+checks passed 57 tests, including elevated exit and exit-over-tree save regressions.
+All 12 local Chromium checks passed after the ordering repair; PR #6 records the
 final recheck/review/CI disposition.
 Implementation: gpt-6.1-sol, one bounded attempt, no failed repair cycle; one
 source-review refinement added the nominal descent environment guard. Aggregate
