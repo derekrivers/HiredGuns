@@ -10,6 +10,7 @@ import { FourViews } from './render/four-views';
 // Importer stays browser-only here: original data enters explicitly through a local file.
 import { importEditorMap } from './import/editor-map';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
+import { installRosterPanel } from './roster-panel';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -36,6 +37,9 @@ const events: string[] = ['READY', 'READY', 'READY', 'READY'];
 const canvas = app.querySelector<HTMLCanvasElement>('canvas')!;
 const panes = [...app.querySelectorAll<HTMLElement>('.view')];
 const selects = [0, 1, 2, 3].map(i => get<HTMLSelectElement>(`assign-${i}`));
+const rosterHost = document.createElement('div');
+app.querySelector('footer')!.append(rosterHost);
+installRosterPanel(rosterHost, () => setPaused(true));
 
 function errorText(error: unknown): string { return error instanceof Error ? error.message : String(error); }
 function setPaused(value: boolean): void {
