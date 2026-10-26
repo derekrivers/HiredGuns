@@ -19,6 +19,15 @@ batch needs no world/save migration. A future live-character change must review
 its own schema version, verified source binding, inventory and death invariants;
 loading an old checkpoint must not silently attach the current preparation.
 
+The pure original-team initializer described in [live-character-contract.md](live-character-contract.md)
+is a separate in-memory contract, with no checkpoint export or attachment path.
+Version 1/2 migration and version 3 recovery still obtain only the level; local
+roster/items are neither required nor consulted. Added source/team/inventory
+fields reject before exposing a replacement world. A future original-team save
+must require both local sources, rehash them, and validate the complete candidate
+before the UI replaces its working world. The proposed migration design remains
+unimplemented; no version 4 save is accepted by this build.
+
 Item-table inspection is session-only. Neither the version1 roster plan nor any
 checkpoint stores an item table, inventory preview or calculated weight. Reopen
 both local sources to inspect their pairing again; restoring a roster plan never
