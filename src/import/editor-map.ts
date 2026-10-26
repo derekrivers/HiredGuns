@@ -69,7 +69,8 @@ export async function importEditorMap(input: Uint8Array): Promise<{ level: Level
   const counts: Record<string, number> = {};
   for (const [label, mask] of [['floor',1],['block',2],['water',4],['panel',8],['explosion',16],['auxiliary',32],['opaque',64],['invisible',128],['pushable',256]] as const) counts[label] = layers[0].filter(v => (v & mask) !== 0).length;
   counts.items = layers[2].filter(v => (v & 255) !== 0).length;
-  counts.eggs = layers[1].filter(v => (v >>> 20) !== 0).length;
+  // Egg presence is auxiliary type 0 with aux_here; a zero hatch timer is valid.
+  counts.eggs = layers[0].filter(v => (v & 32) !== 0 && (v >>> 28) === 0).length;
   for (const [label, rows] of Object.entries(records)) counts[`${label}NonzeroRecords`] = rows.filter(r => r.nonzero).length;
   const unsupportedMechanics = ['campaign-travel-unverified-revision', 'source-start-facing-unspecified', 'source-exit-semantics-unverified', 'source-cell-behavior-unverified'];
   for (const [label, count] of Object.entries(counts)) if (count && !['floor','block','opaque'].includes(label)) unsupportedMechanics.push(`${label}:${count}`);

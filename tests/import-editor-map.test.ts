@@ -63,4 +63,19 @@ describe('bounded editor map import', () => {
     expect(level.unsupportedMechanics).toContain('water:1'); expect(level.unsupportedMechanics).toContain('items:1');
     expect(report.starts[0]).toMatchObject({explicitFloor:false,obstructed:false,belowWord:null});
   });
+  it('inventories eggs by auxiliary presence/type even with a zero hatch timer', async () => {
+    const b = fixture(); const v = new DataView(b.buffer);
+    // Closed egg with timer zero; closed egg with timer seven; open egg;
+    // unrelated auxiliary type; stale timer without auxiliary presence.
+    v.setUint32(28478, 0x20, false);
+    v.setUint32(28482, 0x20, false); v.setUint32(71722, 7 << 20, false);
+    v.setUint32(28486, 0x10000020, false);
+    v.setUint32(28490, 0xf0000020, false); v.setUint32(71730, 9 << 20, false);
+    v.setUint32(71734, 11 << 20, false);
+    const { level, report } = await importEditorMap(b);
+    expect(report.counts.eggs).toBe(2);
+    expect(report.counts.auxiliary).toBe(4);
+    expect(level.unsupportedMechanics).toContain('eggs:2');
+    expect(level.layers[1].slice(0, 5)).toEqual([0,7 << 20,0,9 << 20,11 << 20]);
+  });
 });

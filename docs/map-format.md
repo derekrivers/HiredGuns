@@ -82,9 +82,14 @@ data here. The browser navigation layer must implement a bounded, explicit subse
 and block unsupported behavior, rather than silently treating imported maps as
 complete games.
 
+Egg inventory follows the source auxiliary encoding: layer 1 `aux_here` bit set
+with auxiliary type zero identifies a closed egg. Layer 2's hatch timer may be
+zero; a nonzero timer alone does not establish egg presence. Open eggs (auxiliary
+type one) and other auxiliary types are excluded from the closed-egg count.
+
 ## Local use and verification
 
-The coordinator provides `tsx` and the `import:map` package script. Run:
+The package pins `tsx@4.23.15` and provides the `import:map` script. Run:
 
 ```text
 npm run import:map -- <local-source.map> --out .local/map13.json
@@ -115,12 +120,12 @@ It does not establish campaign travel, a functional exit or complete original
 level behavior. Source title is empty; its trailing bytes remain preserved.
 
 All 47 Game editor maps were locally imported and their digests matched the
-independent campaign catalogue. `npm run check` passed lint, TypeScript, eight
+independent campaign catalogue. `npm run check` passed lint, TypeScript, nine
 synthetic tests and production build. A CLI smoke run using `tsx@4.23.15` wrote
 Map13 output into ignored `.local/`; a requested output outside `.local/` was
 rejected without creating that file. No original/generated content was staged.
 
-Implementation record: gpt-6.1-sol, one implementation attempt, no repair cycle
-required for the initial lint/typecheck/synthetic tests/build. Aggregate token
-usage unavailable. Independent review and any subsequent repairs are recorded
-by the coordinator.
+Implementation record: gpt-6.1-sol, one implementation attempt and one repair
+after independent review identified a hatch-timer/presence inventory error.
+The repair adds a synthetic zero-timer egg, timed egg, open egg, unrelated
+auxiliary and stale-timer case. Aggregate token usage unavailable.
