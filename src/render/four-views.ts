@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { cellIndex, type LevelData, type WorldState } from '../contracts';
+import { blockSurfaces, type SurfaceData } from './grid-mesh';
 
 export const TEAM_COLOURS = [0x70ded1, 0xf1bf70, 0x8eaef5, 0xe995b8];
 export class FourViews {
@@ -19,11 +20,10 @@ export class FourViews {
     this.buildLevel(level);
   }
   private buildLevel(level: LevelData): void {
-    const blocks: THREE.Matrix4[] = [], floors: THREE.Matrix4[] = [], water: THREE.Matrix4[] = [];
+    const floors: THREE.Matrix4[] = [], water: THREE.Matrix4[] = [];
     const matrix = new THREE.Matrix4();
     for (let z = 0; z < level.size.height; z++) for (let y = 0; y < level.size.depth; y++) for (let x = 0; x < level.size.width; x++) {
       const word = level.layers[0][cellIndex(level, { x, y, z })]!;
-      if (word & (2 | 64)) blocks.push(matrix.makeTranslation(x + 0.5, z + 0.5, y + 0.5).clone());
       if (word & 1) floors.push(matrix.makeTranslation(x + 0.5, z + 0.01, y + 0.5).clone());
       if (word & 4) water.push(matrix.makeTranslation(x + 0.5, z + 0.35, y + 0.5).clone());
     }
@@ -33,7 +33,16 @@ export class FourViews {
       matrices.forEach((m, i) => mesh.setMatrixAt(i, m));
       mesh.computeBoundingSphere(); this.scene.add(mesh);
     };
-    addInstances(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x56646b, roughness: 0.9 }), blocks);
+    const surfaces = blockSurfaces(level);
+    const addSurface = (surface: SurfaceData, material: THREE.Material) => {
+      if (!surface.positions.length) { material.dispose(); return; }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(surface.positions, 3));
+      geometry.setAttribute('normal', new THREE.Float32BufferAttribute(surface.normals, 3));
+      geometry.computeBoundingSphere(); this.scene.add(new THREE.Mesh(geometry, material));
+    };
+    addSurface(surfaces.walls, new THREE.MeshStandardMaterial({ color: 0x56646b, roughness: 0.9 }));
+    addSurface(surfaces.exits, new THREE.MeshStandardMaterial({ color: 0x66f7d1, emissive: 0x44d4b8, emissiveIntensity: 1.3, roughness: 0.5 }));
     const floorGeometry = () => new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
     addInstances(floorGeometry(), new THREE.MeshStandardMaterial({ color: 0x7d8990, roughness: 1, side: THREE.DoubleSide }), floors);
     addInstances(floorGeometry(), new THREE.MeshStandardMaterial({ color: 0x347a94, transparent: true, opacity: 0.7, side: THREE.DoubleSide }), water);
@@ -63,7 +72,7 @@ export class FourViews {
       const w = Math.max(1, Math.round(pane.width)), h = Math.max(1, Math.round(pane.height));
       camera.aspect = w / h; camera.updateProjectionMatrix();
       this.renderer.setViewport(x, y, w, h); this.renderer.setScissor(x, y, w, h);
-      this.avatars.forEach((avatar, j) => { avatar.visible = i !== j; });
+      this.avatars.forEach((avatar, j) => { avatar.visible = i !== j && !world.mission.exited[j]; });
       this.renderer.render(this.scene, camera);
     }
     this.initialized = true;
