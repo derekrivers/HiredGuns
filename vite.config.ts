@@ -1,2 +1,3 @@
 import { defineConfig } from 'vite';
-export default defineConfig({ server: { strictPort: true, port: 5173 } });
+// Local assets enter through an explicit file picker, never an auto-copied public directory.
+export default defineConfig({ publicDir: false, server: { strictPort: true, port: 5173 } });
