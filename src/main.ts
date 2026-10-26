@@ -105,6 +105,7 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
   loadGeneration++; loading = false; world = createWorld(level); events.fill('READY'); get('error').textContent = ''; setPaused(true);
+  get('recovery-status').textContent = 'Positions reset. Saved checkpoints remain available.';
 });
 get<HTMLButtonElement>('demo').addEventListener('click', () => {
   loadGeneration++; loading = false; get('error').textContent = '';
@@ -168,10 +169,12 @@ canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); s
 function frame(now: number): void {
   const elapsed = Math.max(0, now - lastTime); lastTime = now; frameMs += (elapsed - frameMs) * 0.05;
   const pads = readPads(); refreshAssignments(pads);
-  if (!paused && !loading) clock.advance(elapsed, () => {
-    const result = stepWorld(level, world, router.commands(world.tick, keys, pads)); world = result.world;
-    result.events.forEach((event: SimulationEvent) => { events[event.mercenaryId] = event.kind === 'blocked' ? `BLOCKED: ${event.reason}`.toUpperCase() : event.kind.toUpperCase(); });
-  });
+  if (!paused && !loading) {
+    try { clock.advance(elapsed, () => {
+      const result = stepWorld(level, world, router.commands(world.tick, keys, pads)); world = result.world;
+      result.events.forEach((event: SimulationEvent) => { events[event.mercenaryId] = event.kind === 'blocked' ? `BLOCKED: ${event.reason}`.toUpperCase() : event.kind.toUpperCase(); });
+    }); } catch (error) { setPaused(true); get('error').textContent = errorText(error); }
+  }
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }

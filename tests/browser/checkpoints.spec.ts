@@ -38,3 +38,23 @@ test('oversized checkpoint is rejected before replacing the current state', asyn
   await expect(page.getByRole('alert')).toContainText('smaller than 16 KiB');
   await expect(page.locator('#position-0')).toHaveText(initial!);
 });
+
+test('last accepted tick pauses safely at exhaustion and reset recovers', async ({ page }) => {
+  await page.goto('/');
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save checkpoint' }).click();
+  const download = await downloadPromise;
+  const checkpoint = JSON.parse(await readFile((await download.path())!, 'utf8'));
+  checkpoint.world.tick = 0xfffffffe;
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({ name: 'last-tick.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(checkpoint)) });
+  await expect(page.locator('#recovery-status')).toContainText('restored');
+  await page.getByRole('button', { name: 'Start navigation' }).click();
+  await expect(page.getByRole('alert')).toContainText('Simulation time limit reached');
+  await expect(page.locator('#pause-overlay')).toBeVisible();
+  await page.getByRole('button', { name: 'Reset positions' }).click();
+  await expect(page.locator('#error')).toBeEmpty();
+  await page.getByRole('button', { name: 'Start navigation' }).click();
+  await page.keyboard.down('w');
+  await expect(page.locator('#position-0')).not.toContainText('Y 08');
+  await page.keyboard.up('w');
+});

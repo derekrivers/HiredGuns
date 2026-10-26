@@ -9,6 +9,10 @@ public/
 *.lha
 *.zip
 *.dms
+*.adf
+*.rnc
+*.bin
+*.iff
 *.gfx
 *.bob
 *.8svx
