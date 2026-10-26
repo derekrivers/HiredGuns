@@ -16,7 +16,8 @@
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "test:browser": "playwright test",
     "import:map": "tsx tools/import-map.ts",
-    "import:characters": "tsx tools/import-characters.ts"
+    "import:characters": "tsx tools/import-characters.ts",
+    "import:items": "tsx tools/import-items.ts"
   },
   "dependencies": {
     "three": "0.186.1"
