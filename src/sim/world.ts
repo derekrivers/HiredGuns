@@ -1,6 +1,8 @@
 import { cellIndex, inBounds, type Facing, type LevelData, type PlayerCommand, type Position, type SimulationEvent, type WorldState } from '../contracts';
 
 export const TICK_MS = 20;
+/** About 2.7 years at 50 Hz. Exhaustion pauses; reset or restore an earlier checkpoint. */
+export const MAX_WORLD_TICK = 0xffffffff;
 export const DIRECTIONS = [{ x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }] as const;
 const ACTIONS = new Set(['forward', 'backward', 'strafe-left', 'strafe-right', 'turn-left', 'turn-right']);
 const sameCell = (a: Position, b: Position) => a.x === b.x && a.y === b.y && a.z === b.z;
@@ -41,6 +43,9 @@ export function nextRandom(seed: number): number {
 
 export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[]): { world: WorldState; events: SimulationEvent[] } {
   if (previous.levelId !== level.id) throw new Error('World/level mismatch');
+  if (!Number.isSafeInteger(previous.tick) || previous.tick < 0 || previous.tick >= MAX_WORLD_TICK) {
+    throw new Error('Simulation time limit reached. Reset positions or load an earlier checkpoint.');
+  }
   const ids = new Set<number>();
   for (const command of commands) {
     if (!Number.isInteger(command.mercenaryId) || command.mercenaryId < 0 || command.mercenaryId > 3 || !ACTIONS.has(command.action)) throw new Error('Invalid command');
