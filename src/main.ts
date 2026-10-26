@@ -7,6 +7,7 @@ import { createWorld, stepWorld } from './sim/world';
 import { FourViews } from './render/four-views';
 // Importer stays browser-only here: original data enters explicitly through a local file.
 import { importEditorMap } from './import/editor-map';
+import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -17,7 +18,7 @@ app.innerHTML = `
   <div class="stage"><canvas aria-label="Four synchronized game views"></canvas><div class="view-grid">
     ${[0, 1, 2, 3].map(i => `<section class="view" aria-label="Mercenary ${i + 1} viewport"><div class="view-head"><div><span class="player-name" style="color:${['#70ded1', '#f1bf70', '#8eaef5', '#e995b8'][i]}">0${i + 1} / MERCENARY</span><span class="player-sub" id="device-${i}"></span></div><select aria-label="Control mercenary ${i + 1}" id="assign-${i}"></select></div><div class="reticle"></div><div class="view-foot"><span id="position-${i}"></span><span id="event-${i}">READY</span></div></section>`).join('')}
   </div><div class="paused" id="pause-overlay"><b>TEAM STANDING BY</b><small>Assign controls, then start navigation</small></div></div>
-  <footer><div class="controls"><span><kbd>WASD + Q/E</kbd> · <kbd>IJKL + U/O</kbd> · <kbd>Arrows + ,/.</kbd> · <kbd>Numpad 8456 + 7/9</kbd></span><span><kbd>1–4</kbd> assign WASD to a mercenary · <kbd>Esc</kbd> pause</span></div><details><summary>Controls, source and prototype limitations <span id="tick"></span></summary><div id="diagnostics"></div></details></footer>`;
+  <footer><div class="controls"><span><kbd>WASD + Q/E</kbd> · <kbd>IJKL + U/O</kbd> · <kbd>Arrows + ,/.</kbd> · <kbd>Numpad 8456 + 7/9</kbd></span><span><kbd>1–4</kbd> assign WASD to a mercenary · <kbd>Esc</kbd> pause</span></div><div class="recovery"><span id="recovery-status" role="status">Checkpoints restore navigation. Reopen the same map first.</span><div class="actions"><button id="save-checkpoint">Save checkpoint</button><label class="file-button">Load checkpoint<input id="checkpoint-file" aria-label="Load navigation checkpoint" type="file" accept=".json"></label></div></div><details><summary>Controls, source and prototype limitations <span id="tick"></span></summary><div id="diagnostics"></div></details></footer>`;
 
 const get = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 let level = createDemoLevel(), world = createWorld(level);
@@ -85,7 +86,7 @@ function updateLevelInfo(): void {
     'Keyboard: forward/back, strafe left/right; Q/E, U/O, comma/period or numpad 7/9 turn. Numbers 1–4 move keyboard A assignment. Keyboard rollover depends on hardware.',
     'Standard gamepads: left stick or D-pad moves/turns; shoulder buttons strafe. Assign each pad above. Press a pad button if the browser has not exposed it yet. Non-standard mappings require future remapping support.',
     'Disconnect stops that controller. Matching index and device ID can reconnect; otherwise reassign. Four physical controllers on the event PC/TV have NOT been tested.',
-    '50 Hz prototype clock; movement repeats at 160 ms while held. Static block collision, explicit floors or solid type-0 block support below. No gravity, special block shapes, dynamic objects, combat, inventory, completion, checkpoints, sound or campaign travel. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity.',
+    '50 Hz prototype clock; movement repeats at 160 ms while held. Static block collision, explicit floors or solid type-0 block support below. No gravity, special block shapes, dynamic objects, combat, inventory, completion, sound or campaign travel. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints contain navigation positions, facing, tick and RNG; they require the exact same map and do not save device assignments.',
     `Source: ${level.source.revision}; SHA-256: ${level.source.sha256 ?? 'synthetic'}`,
     `Unsupported source mechanics: ${level.unsupportedMechanics.join('; ') || 'none detected, mission behaviour not validated'}`,
     extraDiagnostics,
@@ -99,6 +100,7 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
   level = nextLevel; world = nextWorld; extraDiagnostics = diagnostics;
   events.fill('READY'); setPaused(true); updateLevelInfo(); updateHud(readPads());
   get<HTMLButtonElement>('play').disabled = false;
+  get('recovery-status').textContent = 'Checkpoints restore navigation. Reopen the same map first.';
 }
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
@@ -118,6 +120,33 @@ get<HTMLInputElement>('map-file').addEventListener('change', async event => {
     if (generation !== loadGeneration) return;
     installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
+  finally { if (generation === loadGeneration) loading = false; }
+});
+
+get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => {
+  if (loading) return;
+  const generation = ++loadGeneration; setPaused(true); loading = true; get('error').textContent = '';
+  try {
+    const json = await exportCheckpoint(level, world);
+    if (generation !== loadGeneration) return;
+    const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+    const link = document.createElement('a'); link.href = url; link.download = `hired-guns-checkpoint-${world.tick}.json`;
+    link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. Keep the same source map for recovery.`;
+  } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
+  finally { if (generation === loadGeneration) loading = false; }
+});
+get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
+  const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
+  if (!file) return;
+  const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
+  try {
+    if (file.size >= MAX_CHECKPOINT_BYTES) throw new Error('Checkpoint must be smaller than 16 KiB.');
+    const restored = await importCheckpoint(level, await file.text());
+    if (generation !== loadGeneration) return;
+    world = restored; events.fill('RESTORED'); updateHud(readPads());
+    get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. Review controls, then start navigation.`;
+  } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
   finally { if (generation === loadGeneration) loading = false; }
 });
 
