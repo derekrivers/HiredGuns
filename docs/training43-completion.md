@@ -123,10 +123,24 @@ remain explicit; unsupported geometry/lifecycle/audio cases reject even on no-ca
 branches. The coordinator compared all 61 frozen original cases without exclusions.
 This pure candidate is not installed into a world, and grants no source authority.
 
-Exactly one next task is a bounded original-instruction observation of one-cell
-dry descent into ordinary non-pad support: eligibility, pending generation and
-occupancy ordering through later supported landing, explicitly excluding unsupported
-neighboring geometry/pad/audio branches. No second task was started in this batch.
+The [one-cell dry descent observation](dry-descent-observation.md) now executes
+18 bounded original-instruction cases from the real per-player helper before
+eligibility: 15 explicit descent/landing sequences, three guard cases and five
+actual deaths. It records the incoming-A2 guard reread, word-wrapped seed and
+signed long cap, source occupancy removal, old/current references, floor and
+pending writes, real non-pad checks, unconditional third-layer no-monster-bit
+clear, actual head insertion and later damage-return/clear order. All 15 naturally
+produced landing inputs satisfy the accepted pure composition slice. This is
+synthetic initialized storage and explicit helper invocation, with no real tick
+cadence, full-map authority or live browser activation established.
+
+Exactly one next task is the report's disconnected pure one-cell dry descent
+transition: atomically validate the observed eligible owned dry empty-block
+ordinary-destination slice and logical adjacency, then return changed pose/refs,
+pending, packed source/destination occupancy, third-layer word, redraw and ordered
+inert records. Return with injury pending; leave the later supported landing to
+the existing composition. No implementation or second task was started here.
+Unsupported support geometry, pads/mines, wet paths and scheduling stay excluded.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
