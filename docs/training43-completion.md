@@ -147,11 +147,25 @@ reproduce byte-for-byte; this does not establish whole-map authority or cadence.
 The full check passes 299 tests; public browser 19/4 optional skips and explicit
 local Training43 extraction 4/4 pass. Training43 remains incomplete and unchanged live.
 
-Exactly one next supported task, unstarted: bounded original-instruction observation
-of initial immediate-below inert type-one block support from the real per-player
-helper through supported landing, in dry non-pad/no-aux synthetic storage without
-teleport/squash. Unsupported support geometry, pads/mines, wet paths and scheduling
-stay excluded from the implemented descent. No second task was started.
+The [initial inert type-one support observation](type1-support-observation.md)
+now records 57 complete eligible no-call/survival returns from the real helper
+before guards, three guard returns and one deliberately stopped fatal
+continuation. Dry support clears delay without descent and retains current/old
+references, pose and occupancy. Actual surviving damage returns before pending
+clear and current-cell reread. Full-memory and exact ordered-write assertions
+pass. The fatal case reaches the excluded death support-search prerequisite;
+execution stops before its first instruction, with pending uncleared. No fatal
+return or corpse placement is claimed. Existing request decisions match 57/57;
+ordinary-floor composition rejects 57/57 unchanged inputs atomically because
+this support geometry is outside its contract.
+
+Exactly one next implementation is nominated, unstarted: a disconnected pure
+initial type-one support transition restricted to dry no-call/computed survival,
+with atomic fatal-result rejection. Complete initialized owned storage and
+logical vertical correspondence are required. Actual type-one death placement
+and return remains an explicit prerequisite before a later fatal extension;
+dependent work stopped rather than expanding the support-search scope.
+No second task, implementation, live installation or schema change was started.
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
 unresolved gates. Completing the pure caller does not authorize wet activation.
