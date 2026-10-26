@@ -2,6 +2,7 @@ import { type Facing, type LevelData, type MissionRules, type PlayerCommand, typ
 import { initialMission, isExitBlock, resolveMission } from './mission';
 import { missionRulesForLevel } from './mission-profile';
 import { obstruction, resolveTraversal } from './traversal';
+import { advanceGravity, dryFallEnabled, fallObstruction, initialPhysics, isDead, teamDead } from './fall';
 export { obstruction } from './traversal';
 
 export const TICK_MS = 20;
@@ -20,9 +21,10 @@ export function createWorld(level: LevelData, seed = 0x48475231, rules: MissionR
     throw new Error('Overlapping starts require an explicit reference rule');
   }
   return {
-    schemaVersion: 2, levelId: level.id, tick: 0, rng: seed >>> 0,
+    schemaVersion: 3, levelId: level.id, tick: 0, rng: seed >>> 0,
     mercenaries: level.starts.map((start, id) => ({ ...start, id })) as WorldState['mercenaries'],
     mission: initialMission(level,rules),
+    physics: initialPhysics(level),
   };
 }
 
@@ -35,7 +37,7 @@ export function nextRandom(seed: number): number {
 
 export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[]): { world: WorldState; events: SimulationEvent[] } {
   if (previous.levelId !== level.id) throw new Error('World/level mismatch');
-  if (previous.mission.outcome !== 'active') return {world:structuredClone(previous),events:[]};
+  if (previous.mission.outcome !== 'active' || teamDead(previous)) return {world:structuredClone(previous),events:[]};
   if (!Number.isSafeInteger(previous.tick) || previous.tick < 0 || previous.tick >= MAX_WORLD_TICK) {
     throw new Error('Simulation time limit reached. Reset positions or load an earlier checkpoint.');
   }
@@ -48,9 +50,10 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
   const world = structuredClone(previous);
   world.tick++;
   const events: SimulationEvent[] = [];
+  advanceGravity(level,world,events);
   // Stable ID order is intentional. Occupied-at-start cells cannot be entered, so swaps fail.
   for (const command of [...commands].sort((a, b) => a.mercenaryId - b.mercenaryId)) {
-    if (world.mission.exited[command.mercenaryId]) continue;
+    if (world.mission.exited[command.mercenaryId] || isDead(world,command.mercenaryId)) continue;
     const actor = world.mercenaries[command.mercenaryId]!;
     const event = { tick: world.tick, mercenaryId: actor.id };
     if (command.action === 'turn-left' || command.action === 'turn-right') {
@@ -59,8 +62,11 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
     }
     const offset = command.action === 'backward' ? 2 : command.action === 'strafe-left' ? 3 : command.action === 'strafe-right' ? 1 : 0;
     const travelDirection = (actor.facing + offset) % 4 as Facing;
-    const occupied = (p: Position) => previous.mercenaries.some(other => !previous.mission.exited[other.id] && other.id !== actor.id && sameCell(other,p)) || world.mercenaries.some(other => !world.mission.exited[other.id] && other.id !== actor.id && sameCell(other,p));
-    const {target,reason} = resolveTraversal(level,actor,travelDirection,occupied);
+    const occupied = (p: Position) => previous.mercenaries.some(other => !previous.mission.exited[other.id] && !isDead(world,other.id) && other.id !== actor.id && sameCell(other,p)) || world.mercenaries.some(other => !world.mission.exited[other.id] && !isDead(world,other.id) && other.id !== actor.id && sameCell(other,p));
+    const falling = dryFallEnabled(level) && world.physics.mode === 'dry-fall';
+    const traversal = resolveTraversal(level,actor,travelDirection,occupied,falling);
+    const target = traversal.target;
+    const reason = traversal.reason ?? (falling ? fallObstruction(level,actor) ?? fallObstruction(level,target) : null);
     if ((reason === null || reason === 'block') && world.mission.rules.mode !== 'navigation' && isExitBlock(level,target)) {
       world.mission.exited[actor.id] = true;
       events.push({...event,kind:'exited'});

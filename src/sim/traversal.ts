@@ -37,12 +37,12 @@ export function obstruction(level: LevelData, p: Position): string | null {
 }
 
 /** Resolve a dry static step. Occupancy includes active actors at tick start/current. */
-export function resolveTraversal(level: LevelData, from: Spawn, travelDirection: Facing, occupied: (p: Position) => boolean = () => false): TraversalResult {
+export function resolveTraversal(level: LevelData, from: Spawn, travelDirection: Facing, occupied: (p: Position) => boolean = () => false, allowDrops = false): TraversalResult {
   if (!Number.isInteger(travelDirection) || travelDirection < 0 || travelDirection > 3) throw new Error('Invalid travel direction');
   const delta = DELTAS[travelDirection];
   const result: TraversalResult = {target:{x:from.x+delta.x,y:from.y+delta.y,z:from.z},reason:null,kind:'level'};
   const currentReason = obstruction(level,from);
-  if (currentReason) return {...result,reason:`current ${currentReason}`};
+  if (currentReason && !(allowDrops && currentReason === 'unsupported drop')) return {...result,reason:`current ${currentReason}`};
   const current = wordAt(level,from)!;
   const below = wordAt(level,{...from,z:from.z-1});
   if ((current & 32) && (current >>> 28) === UP_AUX[travelDirection]) {
@@ -77,5 +77,6 @@ export function resolveTraversal(level: LevelData, from: Spawn, travelDirection:
   const targetBelow = wordAt(level,{...result.target,z:result.target.z-1});
   if (!(targetWord & 1) && staticBlock(targetBelow,[4])) return {...result,reason:'block4 entry'};
   if (occupied(result.target)) return {...result,reason:'occupied'};
-  return {...result,reason:obstruction(level,result.target)};
+  const standingReason = obstruction(level,result.target);
+  return {...result,reason:allowDrops && standingReason === 'unsupported drop' ? null : standingReason};
 }
