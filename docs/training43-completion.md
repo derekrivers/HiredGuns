@@ -62,21 +62,23 @@ CD32 raw SHA-256 is
 Their panel words agree with the no-op classification. Neither header agreement
 nor those selected agreements establish whole-map/runtime equivalence.
 
-Exactly one next observation is nominated, using the card's unresolved-boundary
-alternative: **execute the drowning threshold and damage-call decision at the
-identified wet-entry boundary**. One serialized binary/simulation evidence owner
-consumes the pinned OCS executable, the private wet cell/approach, eligible
-nonimmune actor and copied selected stats/inventory. At `Main.s drown` 600–645
-(executable helper anchor documented in `water-executable-evidence.md`), observe
-counts immediately below/at/above the computed threshold, including DIVU
-quotient overflow and signed-extension/comparison edges. Output is an original
-instruction trace, threshold/counter values, and whether `damage_fitness` is
-called with which damage. Intercepted death must be labelled outside that
-observation. This owns diagnostic inputs/outputs only, not world/save mutation.
-Existing immunity/item-scan cases do not establish those threshold edges;
-therefore no live wet implementation is nominated prematurely. The exact
-private cell and routine references are in `coverage.json.nextObservation`.
-Full wet-region outcome remains unknown even after that arithmetic slice.
+The single nominated wet-entry observation is now complete in
+[wet-entry-observation.md](wet-entry-observation.md): the pinned OCS instructions
+give threshold 38 for the copied selected nonimmune actor. Post-increment counts
+37/38 skip damage; 39 calls `damage_fitness` with 7800 and survives with fitness
+60435. Thirty-one isolated cases cover that boundary, DIVU overflow, signed
+extension/comparison and counter wrap. Original traces and exact private
+cell/approach remain local; synthetic death entries are intercepted and do not
+establish real death behavior. This evidence owns diagnostic inputs/outputs only.
+
+The smallest next implementable step is a disconnected pure drowning-decision
+transition with word counter/physique/fitness and prior indicator inputs, wrapped
+counter/threshold/indicator and optional damage-request outputs. It must preserve
+literal two-DIVU/EXT/signed-comparison behavior. Qualification and ordered
+inventory effects remain separate caller prerequisites. The linked observation
+specifies concrete boundaries and vectors; it nominates no live wet activation.
+Full wet-region outcome and integrated descent/death/checkpoint behavior remain
+unknown.
 
 Reproduction from this worktree, with the exact local editor file supplied:
 
