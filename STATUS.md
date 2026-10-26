@@ -1,8 +1,15 @@
 # Status - 26 October 2026
 
-Four-view navigation, recovery and bounded Training43 extraction are merged through PR #5. PR #6 adds dry static stairs. No complete faithful original level or campaign is validated. OCS patched 39.26 is the behavioral reference candidate; editor data is a separate unverified revision. No original executable boot/rebuild has been established.
+Four-view navigation, recovery and bounded Training43 extraction are merged through PR #5. PR #6 adds dry static stairs and is merged. Current branch adds the bounded dry-fall drill. No complete faithful original level or campaign is validated. OCS patched 39.26 is the behavioral reference candidate; editor data is a separate unverified revision. No original executable boot/rebuild has been established.
 
-## Current dry-stair batch
+## Current dry-fall batch
+
+- Source-derived integer fall accumulation and fitness/death are restricted to a newly authored four-lane drill. Physique/agility100, empty inventory and fitness65535 are explicit synthetic values, not an original roster. Gravity uses the source >6/subtract6 cadence on the candidate50Hz clock, before controls; landing damage occurs on the next gravity pulse.
+- Version3 world/checkpoints persist physics profile, cadence, actor fitness/death and pending damage. Strict v1/v2 migration adds static physics only; legacy saves cannot invent fall history. Safe dry fall-path validation keeps water, dynamic support, unknown hazards and voids blocked.
+- UI shows fitness and incapacitation, retry and recoverable all-dead state. The intended browser proof includes actual mid-fall download/load/continuation and four different fall heights. No corpse-map mutation, actor squash, inventory damage, original roster or original water behavior is claimed.
+- Ownership: Sol medium core worker (health/fall/world/traversal and new unit tests); coordinator contracts, codec, drill/UI/browser integration; independent high simulation/save review. Allowance2-3 hours per coherent task; two unsuccessful repairs without new evidence then reassess. Validation/review pending. Aggregate usage unavailable.
+
+## Dry-stair baseline
 
 - Pure traversal resolver handles all four source stair directions through forward/back/strafe, current-cell overhead clearance, target collision and active-team occupancy. Shared standing validation supports stone/stairs below and tree block4 two levels below. Unsafe drops, water, pressure pads, lift floors, dynamic support and unknown auxiliaries remain blocked.
 - Newly authored four-lane **Dry stair drill** exposes climbing/descent and elevated checkpoint continuation through normal controls. Amber blocks distinguish stairs; shapes remain placeholders. Training43's actual staircase stays blocked because both lower cells carry type-2 water.
@@ -18,7 +25,7 @@ Four-view navigation, recovery and bounded Training43 extraction are merged thro
 
 ## Next bounded batch
 
-1. **Fall/health/water state** - Sol medium simulation worker, coordinator contract/UI integration, independent high review. Training43's wet stairs require explicit fall cadence, accumulated damage, water slowdown/drowning and health/death state before traversal can be enabled. Source `fall_count` triggers when greater than 6 and subtracts 6 once per main iteration; water has a separate per-actor fall delay. Persist reviewed state with a schema extension and meaningful continuation tests. Allow 2-3 hours per coherent mechanic group; escalate contradictory source/runtime evidence after two failed repairs. Do not bypass water/drop guards to claim coverage.
+1. **Original roster/inventory and water state** - Sol medium simulation worker, coordinator contract/UI integration, independent high review. Training43's wet stairs require explicit fall cadence, accumulated damage, water slowdown/drowning and health/death state before traversal can be enabled. Source `fall_count` triggers when greater than 6 and subtracts 6 once per main iteration; water has a separate per-actor fall delay. Continue from the dry synthetic schema only after original roster/inventory and death/corpse semantics are established. Character selection loads Characters.dat; map starts do not supply physical stats. Water damages inventory before mech drowning immunity. Allow 2-3 hours per coherent mechanic group; escalate contradictory source/runtime evidence after two failed repairs. Do not bypass water/drop guards to claim coverage.
 2. **Original-area validation** - verify executable mode/timing and the training button where area evidence requires it, then select a compact campaign fallback. Raw Training43 lift/door slots have no position-bearing records; stale nonzero bytes are not proof of active objects. Acceptance is covered original behavior and recorded deviations, not another import count.
 3. **Campaign baseline** - decode/compare archived runtime locations against editor headers. CRC `df31` versus `5c21` remains isolated; travel stays disabled until a matching baseline is established.
 

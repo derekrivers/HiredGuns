@@ -1,125 +1,76 @@
-# Mission checkpoints, version 2
+# Team checkpoints, version 3
 
-`src/sim/checkpoint.ts` provides two browser-compatible asynchronous functions:
+`src/sim/checkpoint.ts` exports browser-compatible `exportCheckpoint(level, world)`
+and `importCheckpoint(level, json)`. Export pauses through the UI and downloads
+compact JSON. Import returns a fresh state after full validation; the UI stays
+paused so assignments can be checked. Both operations snapshot inputs before
+asynchronous SHA-256 hashing, preventing later mutation from mixing states.
 
-```ts
-exportCheckpoint(level: LevelData, world: WorldState): Promise<string>
-importCheckpoint(level: LevelData, json: string): Promise<WorldState>
-```
+## Envelope and level binding
 
-Export returns compact JSON using the existing `SaveEnvelope` contract:
-`{ format: "hired-guns-save", version: 2, levelHash, world }`. Import returns a
-fresh state only after validation. Neither operation mutates its level/world
-arguments. Each operation snapshots validated input synchronously before its
-first asynchronous digest operation, preventing caller mutation during hashing
-from producing a mixed checkpoint. Callers should replace their live state only
-after the import promise resolves successfully.
+The envelope is exactly `{format:"hired-guns-save", version:3, levelHash, world}`.
+The world uses schema3 and contains levelId, tick, RNG, four mercenaries, mission
+and physics. No original map arrays, artwork or controller assignments are saved.
 
-Version 2 saves the entire current bounded simulation: world schema 2, level ID,
-tick, RNG, four mercenaries and mission rules, outcome, retired/exited flags,
-source clock and winner. It contains no original map arrays, artwork, campaign
-graph, inventory, monsters, combat, triggers or dynamic doors. Adding persistent
-state still requires a reviewed schema/version bump with validation or explicit
-migration. Unknown fields reject rather than silently dropping future state.
-These checkpoints cover the bounded extraction/navigation model, not complete
-original Hired Guns mission saves. See [mission-rules.md](mission-rules.md).
+`levelHash` is SHA-256 of UTF-8 canonical JSON for ALL LevelData fields. Object
+keys sort lexically; arrays/source-word/start order remain meaningful. Geometry,
+source descriptor/digest/revision, dimensions, exit, name and mechanics all
+participate. Source hash or level ID alone is insufficient. Reordering object
+insertion order has no effect. The digest prevents accidental wrong-map loading;
+it is not a signature or a defense against deliberate save editing.
 
-Version 1 navigation envelopes remain readable through explicit migration. Their
-world must have schema 1 and exactly its original five fields; a mission field
-is rejected. The result has schema 2 and navigation rules with null clock/winner,
-active outcome and all exits false. This remains navigation even for Training43
-or another currently profiled mission level. Legacy saves never invent elapsed
-mission counters or activate mission objectives. Re-export always emits version
-2. Unsupported envelope/world versions and mixed schemas reject.
+Level data remains schema1. Structural validation requires exact fields, three
+dense unsigned-32 arrays of the expected bounded grid size, four valid starts,
+a bounded exit, defined source enums/digest and mechanics strings.
 
-## Level binding
+## Physics and migration
 
-`levelHash` is SHA-256 of the canonical JSON representation of **all current
-LevelData fields**. The canonical representation recursively sorts object keys
-using JavaScript's lexical string ordering, retains array order and uses JSON
-primitive encoding. Hash input is UTF-8; the result is lowercase hexadecimal.
-The exact current unsigned layer words, grid dimensions, starts/facings, exit,
-source descriptor/digest/revision, schema, ID, name and unsupported-mechanics
-list participate. Source SHA-256 and level ID alone are insufficient: editing
-geometry while retaining them produces a different checkpoint fingerprint.
-Reordering object insertion order produces the same fingerprint. Changing any
-array order is significant. No hash is stored in or trusted from the level.
+Static worlds save exactly `physics:{mode:"static"}`. The newly authored
+`synthetic-fall-v1` level with synthetic source enables `dry-fall` physics only.
+It saves profileId `synthetic-empty-v1`, fallCounter and four ordered actors.
+Each actor has physique, agility, weight, fitness, dead and fallDamage. The
+fixed empty-inventory profile is authored: physique100/agility100/weight0,
+initial fitness65535. It is not an imported original character or chosen roster.
 
-The codec first validates and copies the current level contract. Sizes are
-positive safe integers with a safe-integer cell count; exactly three dense
-unsigned-32 arrays must match it. Source enums/digest, four bounded starts and
-facings, exit coordinates and mechanics strings must have their defined shapes.
-Extra or missing contract fields reject. This is structural validation, not
-proof that the level implements original Hired Guns mechanics.
+Validation binds stats/profile to that mode, requires the fall phase derived
+from tick (0 at tick0; 1+(tick-1)%6 thereafter), bounded fitness/death consistency,
+and the profile's possible accumulated damage sequence or cap. Dead actors have
+fitness0 and pending damage0. Living poses may be midair only over a safely
+bounded dry fall path; dead poses must be supported. Active actors cannot overlap;
+dead/extracted actors no longer occupy cells. Retired extraction poses must have
+a valid traversal to a type3 exit, including stair-transformed approaches.
+The codec validates representable state and invariants, not a full input replay.
 
-The fingerprint prevents accidental loading against different level content.
-It is an integrity/compatibility identifier, not a cryptographic signature or a
-mechanism to prevent a user editing both the state and its hash.
+Version1 envelopes require exactly world schema1's five fields. They migrate to
+schema3 static navigation with zero exit state, even on profiled mission maps.
+Version2 envelopes require world schema2's six fields and preserve their mission
+rules, clock, exits and outcome, adding static physics. Neither migration invents
+character stats, fitness or elapsed fall history. Both reject the dry-fall drill.
+Version3 requires schema3 and explicit physics; mixed versions, extra/missing
+fields and unknown profile/mode data reject. Re-export always writes version3.
+Older game builds cannot load version3 saves.
 
-## Defensive loading
+## Defensive loading and limits
 
-Input must be a string smaller than 16,384 characters **and** smaller than
-16,384 UTF-8 bytes. Both checks run before `JSON.parse`; UTF-8 encoding is only
-attempted after the character bound passes. Oversized multibyte text therefore
-cannot bypass the byte limit. Export enforces the same limit on its output.
+Input must be smaller than16,384 characters AND16,384 UTF-8 bytes, checked before
+JSON parsing. Export enforces the same limit. Each nested object has exact keys;
+arrays are dense with exact lengths. Primitive replacements, numeric strings,
+non-finite/fractional/out-of-range numbers and extra fields reject.
 
-The envelope accepts exactly `format`, `version`, `levelHash` and `world`.
-Format and a supported version must match exactly, and `levelHash` must be 64 lowercase hex
-digits matching the current level. The world accepts exactly `schemaVersion`,
-`levelId`, `tick`, `rng`, `mercenaries` and `mission`; its schema is 2 and level ID must
-match. Tick is an integer in 0..4294967294 (`MAX_WORLD_TICK - 1`). RNG is an integer in 0..4294967295,
-including zero. Mercenaries form a dense array of exactly four entries with
-ordered, unique IDs 0,1,2,3. Each entry accepts exactly `id,x,y,z,facing`.
-Coordinates must be finite integers inside the grid and facing must be 0..3.
-Nulls, primitive replacements, fractions, numeric strings, unsafe integers,
-non-finite values, unknown versions and extra/missing fields reject.
+Tick is an integer in0..4294967294 (`MAX_WORLD_TICK-1`); RNG is0..4294967295.
+The last resumable tick advances once to4294967295, then further stepping fails
+atomically and the UI pauses for retry/reset or an earlier checkpoint. The
+exhausted tick itself cannot be saved. Mission clock must match tick exactly;
+mission rules, outcome, winner and exits retain their existing validation.
 
-The shared navigation limit `MAX_WORLD_TICK` is 4294967295 (`0xffffffff`). A
-checkpoint at the last resumable tick, 4294967294, loads and can advance once
-safely to that limit. Navigation refuses the next step before changing state;
-the UI pauses and offers Reset or loading an earlier checkpoint. The terminal
-tick itself cannot be exported or imported as a resumable checkpoint. This
-bounded continuation rule prevents safe-integer overflow and frozen tick-based
-input repeat; a checkpoint never silently clamps, wraps or resets the clock.
+Navigation poses share the same collision/support predicate as runtime movement.
+Dry-fall poses use the safe-path predicate: water, dynamic/unknown environments,
+unsafe voids and unsupported support do not become save backdoors. All-dead
+fall drills restore frozen and offer Retry drill; mid-fall saves continue the
+same cadence, accumulated damage and eventual landing injury/death.
 
-Each mercenary position must pass the same conservative `obstruction()` predicate
-as navigation, including boundary, solid/opaque obstruction, unsupported
-environment and missing support. Active mercenaries cannot overlap; retired
-positions may overlap other retired or active positions, but must still be
-supported and bounded, with a valid dry traversal into an exit block of source type3. This includes an elevation-changing stair approach. Overhead clearance and environment guards apply; current actor occupancy cannot reconstruct occupancy at retirement.
-Navigation mode forbids all retired flags.
-
-Mission fields and nested rules/clock have exact key sets. Rules must match the
-current level's allowlisted mode/time-limit profile. The source clock must equal
-the counter derived from the saved tick, including the 601-tick borrow period.
-Navigation requires null clock/winner and active outcome. A mission cannot exit
-at tick0. Timed missions fail exactly when the derived display reaches zero;
-before that, cooperative completion requires all four exits, while first-exit
-completion requires any exit and winner equal to the lowest exited ID. All other
-outcome/winner combinations reject. Timeout takes precedence over completion.
-Terminal mission snapshots are saved at their frozen completion/failure tick;
-later continuation does not advance them.
-
-The codec never
-repairs, repositions, clamps or discards invalid state. A failed import leaves
-the caller's existing world untouched; a failed export leaves its input intact.
-
-## Verification and implementation record
-
-Public tests use only newly authored synthetic levels. They cover JSON round
-trips, continued simulation/event equality and explicit RNG continuation;
-independent Node SHA-256 reproduction of canonical level hashing; object key
-reordering; same-ID changes to every layer, dimensions, starts, source, exit and
-metadata; malformed/oversized/multibyte input; all missing/extra field classes;
-versions, identities, safe integer and unsigned bounds; ordered IDs, overlaps,
-blocked/unsupported cells; and snapshots during asynchronous hashing. Version2
-tests also cover full mission continuation/terminal state, retired overlaps,
-clock/outcome/winner/rule tampering and strict legacy migration.
-
-Implementation model: gpt-6.1-sol. The earlier version1 tick-limit review repair
-is retained. Version2 adds mission state and explicit migration in one bounded
-implementation attempt; one TypeScript test-helper assignment was corrected
-after compiler feedback. `npm ci` and `npm run check` passed (40 total tests,
-including 14 checkpoint and 8 mission tests). Aggregate token usage unavailable.
-Independent review is coordinated separately before integration. The codec is
-independent of DOM/UI; browser export/load checks belong to its integration.
+Unit tests cover canonical hashing, malformed/oversized inputs, strict legacy
+migration, mission state, dry profile/phase/stat tampering, mid-fall continuation,
+death occupancy and immutable snapshots. Browser tests exercise actual downloads,
+reset/load/continue, dead and all-dead restoration and mismatched-map rejection.
+See dry-fall.md and PR validation for source rules and current test totals.

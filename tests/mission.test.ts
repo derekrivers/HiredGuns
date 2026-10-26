@@ -20,7 +20,7 @@ function run(level: LevelData, world: WorldState, ticks: number): WorldState {
 describe('bounded extraction missions', () => {
   it('enables only revision-profile rules and retains explicit navigation mode', () => {
     const navigation = createWorld(createDemoLevel());
-    expect(navigation.schemaVersion).toBe(2);
+    expect(navigation.schemaVersion).toBe(3);
     expect(navigation.mission).toEqual({rules:{mode:'navigation',timeLimit:null},outcome:'active',exited:[false,false,false,false],clock:null,winner:null});
     const synthetic = createExtractionDemo();
     expect(createWorld(synthetic).mission.clock).toEqual({tens:0,units:2,subticks:600});
@@ -115,7 +115,7 @@ describe('bounded extraction missions', () => {
     expect(stepWorld(level,before,[forward(0),forward(1),forward(2),forward(3)]).world.mission.outcome).toBe('complete');
   });
 
-  it('preserves mission state, retired overlaps and deterministic continuation in v2 saves', async () => {
+  it('preserves mission state, retired overlaps and deterministic continuation in v3 saves', async () => {
     const level = exitFixture(); let world = createWorld(level);
     world.mercenaries[1] = {...world.mercenaries[0],id:1,y:9};
     world = stepWorld(level,world,[forward(0)]).world;

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { cellIndex, type LevelData, type WorldState } from '../contracts';
+import { isDead } from '../sim/fall';
 import { blockSurfaces, type SurfaceData } from './grid-mesh';
 
 export const TEAM_COLOURS = [0x70ded1, 0xf1bf70, 0x8eaef5, 0xe995b8];
@@ -73,7 +74,7 @@ export class FourViews {
       const w = Math.max(1, Math.round(pane.width)), h = Math.max(1, Math.round(pane.height));
       camera.aspect = w / h; camera.updateProjectionMatrix();
       this.renderer.setViewport(x, y, w, h); this.renderer.setScissor(x, y, w, h);
-      this.avatars.forEach((avatar, j) => { avatar.visible = i !== j && !world.mission.exited[j]; });
+      this.avatars.forEach((avatar, j) => { avatar.visible = i !== j && !world.mission.exited[j] && !isDead(world,j); });
       this.renderer.render(this.scene, camera);
     }
     this.initialized = true;

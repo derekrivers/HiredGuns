@@ -21,7 +21,7 @@ async function fixture() {
   const json = await exportCheckpoint(level, world);
   return { level, world, json, envelope: JSON.parse(json) as EditableEnvelope };
 }
-describe('checkpoint v2 and navigation v1 migration', () => {
+describe('checkpoint v3 and legacy migration', () => {
   it('bumps an exit above tree support before testing empty-cell entry support', async () => {
     const level = createExtractionDemo();
     const p = level.starts[0], exit = {...p,y:p.y-1};
@@ -113,9 +113,9 @@ describe('checkpoint v2 and navigation v1 migration', () => {
   it('rejects wrong formats, versions, hashes, schemas and level identities', async () => {
     const {level, envelope} = await fixture();
     const mutations: ((e: EditableEnvelope) => void)[] = [
-      e => { e.format = 'other'; }, e => { e.version = 3; }, e => { e.version = '2'; },
+      e => { e.format = 'other'; }, e => { e.version = 4; }, e => { e.version = '2'; },
       e => { e.levelHash = '0'.repeat(64); }, e => { e.levelHash = 'ABC'; }, e => { e.levelHash = null; },
-      e => { e.world.schemaVersion = 3; }, e => { e.world.schemaVersion = '2'; }, e => { e.world.levelId = 'other'; },
+      e => { e.world.schemaVersion = 4; }, e => { e.world.schemaVersion = '2'; }, e => { e.world.levelId = 'other'; },
     ];
     for (const mutate of mutations) { const bad = structuredClone(envelope); mutate(bad); await expect(importCheckpoint(level,JSON.stringify(bad))).rejects.toThrow(); }
   });
@@ -132,7 +132,7 @@ describe('checkpoint v2 and navigation v1 migration', () => {
         await expect(importCheckpoint(level,JSON.stringify(bad))).rejects.toThrow();
       }
     }
-    const polluted = JSON.stringify(envelope).replace('"version":2', '"__proto__":{},"version":2');
+    const polluted = JSON.stringify(envelope).replace('"version":3', '"__proto__":{},"version":3');
     await expect(importCheckpoint(level,polluted)).rejects.toThrow('extra');
   });
 
@@ -210,16 +210,16 @@ describe('checkpoint v2 and navigation v1 migration', () => {
     expect(await pendingImport).toEqual(original);
   });
 
-  it('migrates strict legacy v1 saves explicitly to v2 navigation even on mission-profile levels', async () => {
+  it('migrates strict legacy v1 saves explicitly to v3 static navigation even on mission-profile levels', async () => {
     for (const training of [false,true]) {
       const level = training ? createExtractionDemo() : createDemoLevel();
       if (training) level.source = {kind:'editor-map',sha256:TRAINING_43_SHA256,revision:'unverified-editor'};
       const world = createWorld(level,1,{mode:'navigation',timeLimit:null});
       const legacy = JSON.parse(await exportCheckpoint(level,world)) as EditableEnvelope;
-      legacy.version = 1; legacy.world.schemaVersion = 1; delete legacy.world.mission;
+      legacy.version = 1; legacy.world.schemaVersion = 1; delete legacy.world.mission; delete legacy.world.physics;
       const loaded = await importCheckpoint(level,JSON.stringify(legacy));
       expect(loaded).toEqual(world); expect(loaded.mission.rules.mode).toBe('navigation');
-      expect(JSON.parse(await exportCheckpoint(level,loaded)).version).toBe(2);
+      expect(JSON.parse(await exportCheckpoint(level,loaded)).version).toBe(3);
       const extra = structuredClone(legacy); extra.world.inventory = [];
       await expect(importCheckpoint(level,JSON.stringify(extra))).rejects.toThrow('extra');
       const mixed = structuredClone(legacy); mixed.world.schemaVersion = 2;

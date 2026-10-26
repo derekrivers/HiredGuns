@@ -176,12 +176,12 @@ describe('dry static traversal', () => {
     }
   });
 
-  it('round trips a standing stair pose through unchanged world2/save2 and continues down identically', async () => {
+  it('round trips a standing stair pose through world3/save3 and continues down identically', async () => {
     const {level,from}=upFixture();put(level,{x:4,y:3,z:1},(16<<11)|2);
     const world=createWorld(level);world.mercenaries[0]={...from,id:0};
     const high=stepWorld(level,world,[{mercenaryId:0,action:'forward'}]).world;
-    const json=await exportCheckpoint(level,high);expect(JSON.parse(json).version).toBe(2);
-    const loaded=await importCheckpoint(level,json);expect(loaded.schemaVersion).toBe(2);
+    const json=await exportCheckpoint(level,high);expect(JSON.parse(json).version).toBe(3);
+    const loaded=await importCheckpoint(level,json);expect(loaded.schemaVersion).toBe(3);
     expect(loaded).toEqual(high);
     const commands=[{mercenaryId:0,action:'backward'} as const];
     const continued=stepWorld(level,loaded,commands);
