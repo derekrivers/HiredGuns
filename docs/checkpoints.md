@@ -19,6 +19,12 @@ batch needs no world/save migration. A future live-character change must review
 its own schema version, verified source binding, inventory and death invariants;
 loading an old checkpoint must not silently attach the current preparation.
 
+Item-table inspection is session-only. Neither the version1 roster plan nor any
+checkpoint stores an item table, inventory preview or calculated weight. Reopen
+both local sources to inspect their pairing again; restoring a roster plan never
+restores or authorizes an item-weight result. No persistence format changes are
+part of the item baseline batch.
+
 `levelHash` is SHA-256 of UTF-8 canonical JSON for ALL LevelData fields. Object
 keys sort lexically; arrays/source-word/start order remain meaningful. Geometry,
 source descriptor/digest/revision, dimensions, exit, name and mechanics all
