@@ -1,0 +1,106 @@
+# Training43 completion boundary
+
+Evidence-only result, 26 October 2026, accepted base
+`68e689b525b4c949c8f1ac587f1d47d02064c262`. This does not deliver a
+complete level or enable environmental mechanics. The selected editor source is
+SHA-256 `646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c`.
+The unchanged importer is the input boundary; the auditor never mutates its
+level or report. Original positions, words, references and routes stay private.
+
+| Interaction | Classification and acceptance consequence |
+| --- | --- |
+| Four starts, movement, support, collision and exit bump | Required. All four actors replay the existing static route with the full team present, in the browser helper's order. Every command is checked through `stepWorld`; retirement releases occupancy on the next tick. This proves the bounded route, not original gameplay parity. |
+| Panel/button records | Inactive on the inspected initial map. Both panel-flagged cells are type zero: executable source dispatch treats them as signs/no-ops. One referenced record is editor-valid and has a block-off action; that flag alone cannot make a sign invoke it. Both directions and targets are retained, including the other sign's stale lift-toggle record and the unreferenced stale block-off record. No functional floor pad is present. |
+| Wet stair pair | Reachable optional, source-only. A dry reachable upper approach descends toward the wet lower stair cell using the source's travel mapping. The live resolver refuses that destination. The static exit route bypasses it; fallback acceptance still requires this interaction to work. |
+| Remaining water region | Unknown beyond the wet-entry boundary. Every water cell and its words are recorded, including water on the stair block. Presence does not prove a traversed or survivable route. Header water speed is zero, so the inspected `move_water` path does not advance tides; that does not disable immersion, inventory effects, falling or drowning. |
+| Lift hydraulics and door slots | Inactive machinery: each lift/door position sentinel is zero despite other nonzero bytes. Hydraulic blocks remain collision/support geometry, not moving lifts. |
+| Enemies and items | Selected editor source has no enemy records, enemy block cells, item low-byte cells or closed eggs. Graphics selectors and high item-layer flags do not establish live objects. OCS runtime43 also has no item cells; CD32 runtime43 has one and requires separate revision-specific coverage. |
+| Completion, timeout and retry | Required bounded behavior exists; original death/control cases remain unresolved. |
+| Checkpoint recovery | Required; current static route/retirement/terminal state round-trips. Live environmental state is outside this save contract. |
+
+Button interpretation is grounded in OCS `Controls&Movement.s` activation and
+panel table around 6521–6646, `button_in`/`button_out` around 6667–6735 and
+`do_button_action`/block-off around 6744–6931. Panel type one invokes
+`button_in`, which reads **actionOut**; type two invokes `button_out`, which
+reads **actionIn**. Floor pads instead read actionIn on entry and actionOut on
+release. Runtime dispatch does not test the editor `used` flag. Block-off data
+is relative to the map structure; lift/door position fields use the data-layer
+origin. The auditor checks alignment, bounds and table strides, records both
+action domains and marks unsupported action interpretations unknown. A zero
+nothing-action datum is not treated as a cell pointer. A dormant valid action
+is not a required mechanic.
+
+Stair reachability follows `Controls&Movement.s` movement around 4720–4895 and
+its direction callers from 4901. The dry approach search assumes other actors
+can vacate and records that limitation; only the separately replayed extraction
+route establishes full-team occupancy. No water-removal transform or invented
+wet path is used. `Main.s` player fall around 3970–4075 and drowning around
+577–645 show why simply admitting a wet destination would be incomplete.
+
+The reference completion mode is the source-derived first-exit race;
+cooperative all-four extraction is a labelled variant. The auditor replays both.
+`Main.s check_exit` 379–497 counts dead/uncontrolled participants separately,
+handles all-dead before action timeout, then resolves completion. The current
+all-alive bounded world is not evidence for those original cases. Timeout has
+priority over success in that bounded model; original counter sequence is not
+wall-clock parity. Retry must reset the whole mission without developer repair.
+Before hazards activate, real death, all-dead recovery, participant controls,
+occupancy and pad/corpse consequences must be integrated and independently
+reviewed. Current checkpoints round-trip after each retirement and at timeout;
+future checkpoints must atomically bind source/roster/item identities, actors,
+inventory/weight, environment counters, mutable cells, mission and RNG, restore
+paused, reject wrong-source/malformed loads without mutation and never replay
+effects. No schema change is proposed here.
+
+Runtime comparison was limited to map43. Reusing the existing private RNC1
+recovery tool, the OCS map expands to 157,738 bytes; CD32 is already that length.
+Both share the editor location header and inspected object-table region, but
+**all three map layers differ**. OCS raw SHA-256 is
+`0ebafa59120809fb58e2924921e8f47a4f8b1e15a927c915e934c03c6123f5d7`;
+CD32 raw SHA-256 is
+`c6d188bf099a546bce78174b1ea5388000192fcd56e4c246f30d5b2f82e5e097`.
+Their panel words agree with the no-op classification. Neither header agreement
+nor those selected agreements establish whole-map/runtime equivalence.
+
+Exactly one next observation is nominated, using the card's unresolved-boundary
+alternative: **execute the drowning threshold and damage-call decision at the
+identified wet-entry boundary**. One serialized binary/simulation evidence owner
+consumes the pinned OCS executable, the private wet cell/approach, eligible
+nonimmune actor and copied selected stats/inventory. At `Main.s drown` 600–645
+(executable helper anchor documented in `water-executable-evidence.md`), observe
+counts immediately below/at/above the computed threshold, including DIVU
+quotient overflow and signed-extension/comparison edges. Output is an original
+instruction trace, threshold/counter values, and whether `damage_fitness` is
+called with which damage. Intercepted death must be labelled outside that
+observation. This owns diagnostic inputs/outputs only, not world/save mutation.
+Existing immunity/item-scan cases do not establish those threshold edges;
+therefore no live wet implementation is nominated prematurely. The exact
+private cell and routine references are in `coverage.json.nextObservation`.
+Full wet-region outcome remains unknown even after that arithmetic slice.
+
+Reproduction from this worktree, with the exact local editor file supplied:
+
+```powershell
+npx tsx tools/audit-training43.ts $env:HIRED_GUNS_TRAINING_MAP
+npm run check
+npx playwright test tests/browser/extraction.spec.ts
+```
+
+The tool verifies the digest and exclusively creates ignored
+`.local/training43/coverage.json`; retain or rename an earlier report before a
+repeat. It contains digest-tagged interaction records, target classification,
+evidence/blocker, all starts, full routes, dry approaches, wet frontier and
+mission/checkpoint results. Private `inspect.py` and `compare.py` in that same
+directory reproduce the map43-only recovery and `runtime-comparison.json`
+against existing local recovery tooling. They and original output remain
+outside Git and public CI. Public tests use synthetic input only and cover
+reference units/bounds, no-op versus functional dispatch, missing references,
+active versus stale sentinels/item flags, and wrong-source rejection.
+
+Validation: `npm ci`; `npm run check` (127 unit tests, lint, TypeScript and
+production build); local extraction browser checks (4/4, including exact
+Training43 all-four route) passed. Route helper and browser procedure were
+unchanged. Independent exact-head review and CI are coordinator-owned gates.
+Model: gpt-6.1-sol, one implementation attempt, one diagnostic correction for
+object-key-order-sensitive checkpoint comparison; no failed repair cycle or
+recursive delegation. Token usage unavailable.
