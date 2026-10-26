@@ -2,7 +2,7 @@
 
 Physics is enabled only when `source.kind === 'synthetic'` and level ID is
 `synthetic-fall-v1`. The authored `synthetic-empty-v1` profile gives four
-independent actors physique100, agility100, inventory weight0, fitness65535,
+independent actors physique 100, agility 100, inventory weight 0, fitness 65535,
 alive status and zero accumulated fall damage. These are newly authored test
 characters, not recovered original mercenaries. All other levels retain static
 physics; original Training43 water/falling and roster selection remain disabled.
@@ -10,17 +10,17 @@ physics; original Training43 water/falling and roster selection remain disabled.
 `fall.ts` exports `initialPhysics`, `dryFallEnabled`, `fallCounterAtTick`,
 `fallObstruction`, `isDead`, `teamDead` and the world integration helper
 `advanceGravity`. `health.ts` exports `nextFallDamage` and `damageFitness`.
-World schema3 adds tagged static/dry-fall physics; checkpoint version3 and its
-migration/validation are integrated separately by the coordinator.
+World schema 3 adds tagged static/dry-fall physics; checkpoint version 3
+preserves the complete state and explicitly migrates static v1/v2 saves.
 
 ## Cadence and safe movement
 
 Each active logical tick validates commands, clones the world, increments tick
-and fallCounter, then runs gravity before controls. A counter greater than6
-subtracts6 exactly once and runs one gravity pulse. Starting from0, pulses occur
-at ticks7,13,19,...; the persisted counter is0 at tick0 and
-`1 + (tick - 1) % 6` thereafter. This follows `Main.s` `stuff_falls` around320
-and its before-controls ordering around264–278. The browser's candidate50Hz
+and fallCounter, then runs gravity before controls. A counter greater than 6
+subtracts 6 exactly once and runs one gravity pulse. Starting from 0, pulses occur
+at ticks 7,13,19,...; the persisted counter is 0 at tick 0 and
+`1 + (tick - 1) % 6` thereafter. This follows `Main.s` `stuff_falls` around 320
+and its before-controls ordering around264–278. The browser's candidate 50 Hz
 logical clock does not establish original interrupt/main-loop wall-clock parity.
 
 Starts must already stand on supported cells. A dry actor may subsequently be
@@ -38,9 +38,9 @@ Each gravity pulse processes alive actors in ID order. Supported actors apply
 pending injury and clear it. Unsupported actors descend one level and grow the
 accumulator. Reaching support during that descent does not immediately damage
 fitness: landing injury occurs on the **next gravity pulse**, following
-`Main.s:3950–4055`. With empty weight/physique100, successive falls accumulate
-6400,12800,25600,51200,..., capped at16777216. Two drops therefore land with
-12800 pending and subsequently leave fitness52735. Six drops are fatal.
+`Main.s:3950–4055`. With empty weight/physique 100, successive falls accumulate
+6400,12800,25600,51200,..., capped at 16777216. Two drops therefore land with
+12800 pending and subsequently leave fitness 52735. Six drops are fatal.
 
 An active actor immediately below suspends descent and retains accumulated
 damage; no source squash injury is implemented. Occupied-at-start/current
@@ -53,16 +53,16 @@ the navigation mission outcome remains unchanged. Retry creates a fresh world.
 ## Integer arithmetic and explicit omissions
 
 Fall seeding uses unsigned weight/agility DIVU quotient, wraps the physique
-addition to16 bits, shifts the result left5, then doubles on each fall. The cap
+addition to 16 bits, shifts the result left 5, then doubles on each fall. The cap
 matches the source's signed comparison within a deliberately positive bounded
 range. Zero divisors and fall-seed DIVU overflow reject: the source does not
 check that overflow and this subset does not invent its behavior.
 
 `damage_fitness` at `Main.s:1356` divides by physique. Quotient overflow selects
 `floor(0x0fffffff/100)`; subsequent unsigned multiplication consumes its **low
-word**, giving damage6291400. Normal damage is the integer quotient times100.
-`decr_fitness` around1400–1462 kills when damage exceeds fitness or remaining
-fitness is below655. This subset normalizes dead fitness to0, clearing pending
+word**, giving damage 6291400. Normal damage is the integer quotient times 100.
+`decr_fitness` around 1400–1462 kills when damage exceeds fitness or remaining
+fitness is below 655. This subset normalizes dead fitness to 0, clearing pending
 damage; the source can retain nonzero sub-band residue. It emits `damaged` when
 fitness falls and then `died` on death. `fell` identifies each actual descent;
 blocked gravity emits an explicit reason. No presentation consumes world RNG.
@@ -82,6 +82,7 @@ immutability, static navigation and terminal retry. The coordinator covers v3
 checkpoint continuation and browser UI independently.
 
 Model: gpt-6.1-sol, one bounded implementation attempt; aggregate usage
-unavailable. Targeted health/fall/navigation tests and lint passed. Worktree
-typecheck currently reports only the two older checkpoint schema/version2
-assignments awaiting coordinator v3 integration; no owned-file type errors.
+unavailable. Integrated lint/typecheck/build and all 74 unit tests passed. All 15 local
+Chromium checks passed, including four fall heights, actual mid-fall download
+and restoration, all-dead failure/retry, and opt-in original-map regressions.
+Independent high review and final CI disposition are recorded on the PR.

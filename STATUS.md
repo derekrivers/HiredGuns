@@ -4,10 +4,10 @@ Four-view navigation, recovery and bounded Training43 extraction are merged thro
 
 ## Current dry-fall batch
 
-- Source-derived integer fall accumulation and fitness/death are restricted to a newly authored four-lane drill. Physique/agility100, empty inventory and fitness65535 are explicit synthetic values, not an original roster. Gravity uses the source >6/subtract6 cadence on the candidate50Hz clock, before controls; landing damage occurs on the next gravity pulse.
+- Source-derived integer fall accumulation and fitness/death are restricted to a newly authored four-lane drill. Physique/agility 100, empty inventory and fitness 65535 are explicit synthetic values, not an original roster. Gravity uses the source >6/subtract6 cadence on the candidate 50 Hz clock, before controls; landing damage occurs on the next gravity pulse.
 - Version3 world/checkpoints persist physics profile, cadence, actor fitness/death and pending damage. Strict v1/v2 migration adds static physics only; legacy saves cannot invent fall history. Safe dry fall-path validation keeps water, dynamic support, unknown hazards and voids blocked.
 - UI shows fitness and incapacitation, retry and recoverable all-dead state. The intended browser proof includes actual mid-fall download/load/continuation and four different fall heights. No corpse-map mutation, actor squash, inventory damage, original roster or original water behavior is claimed.
-- Ownership: Sol medium core worker (health/fall/world/traversal and new unit tests); coordinator contracts, codec, drill/UI/browser integration; independent high simulation/save review. Allowance2-3 hours per coherent task; two unsuccessful repairs without new evidence then reassess. Validation/review pending. Aggregate usage unavailable.
+- Ownership: Sol medium core worker (health/fall/world/traversal and new unit tests); coordinator contracts, codec, drill/UI/browser integration; independent high simulation/save review. Allowance 2-3 hours per coherent task; two unsuccessful repairs without new evidence then reassess. Local full check passed 74 unit tests plus lint/typecheck/build. All 15 Chromium checks passed, including actual mid-fall recovery, four injuries/death, all-dead restoration and opt-in original-map regressions. Independent high review and CI disposition are recorded on the PR before merge. Aggregate usage unavailable.
 
 ## Dry-stair baseline
 

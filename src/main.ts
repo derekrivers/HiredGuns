@@ -21,7 +21,7 @@ app.innerHTML = `
   <div class="stage"><canvas aria-label="Four synchronized game views"></canvas><div class="view-grid">
     ${[0, 1, 2, 3].map(i => `<section class="view" aria-label="Mercenary ${i + 1} viewport"><div class="view-head"><div><span class="player-name" style="color:${['#70ded1', '#f1bf70', '#8eaef5', '#e995b8'][i]}">0${i + 1} / MERCENARY</span><span class="player-sub" id="device-${i}"></span></div><select aria-label="Control mercenary ${i + 1}" id="assign-${i}"></select></div><div class="reticle"></div><div class="extracted" id="extracted-${i}" hidden>EXTRACTED<span>Waiting for the team</span></div><div class="extracted incapacitated" id="dead-${i}" hidden>INCAPACITATED<span>Retry the drill or restore a checkpoint</span></div><div class="view-foot"><span id="position-${i}"></span><span id="fitness-${i}" hidden></span><span id="event-${i}">READY</span></div></section>`).join('')}
   </div><div class="paused" id="pause-overlay"><b>TEAM STANDING BY</b><small>Assign controls, then start navigation</small></div></div>
-  <footer><div class="controls"><span><kbd>WASD + Q/E</kbd> · <kbd>IJKL + U/O</kbd> · <kbd>Arrows + ,/.</kbd> · <kbd>Numpad 8456 + 7/9</kbd></span><span><kbd>1–4</kbd> assign WASD to a mercenary · <kbd>Esc</kbd> pause</span></div><div class="recovery"><span id="recovery-status" role="status">Checkpoints restore navigation. Reopen the same map first.</span><div class="actions"><button id="save-checkpoint">Save checkpoint</button><label class="file-button">Load checkpoint<input id="checkpoint-file" aria-label="Load navigation checkpoint" type="file" accept=".json"></label></div></div><details><summary>Controls, source and prototype limitations <span id="tick"></span></summary><div id="diagnostics"></div></details></footer>`;
+  <footer><div class="controls"><span><kbd>WASD + Q/E</kbd> · <kbd>IJKL + U/O</kbd> · <kbd>Arrows + ,/.</kbd> · <kbd>Numpad 8456 + 7/9</kbd></span><span><kbd>1–4</kbd> assign WASD to a mercenary · <kbd>Esc</kbd> pause</span></div><div class="recovery"><span id="recovery-status" role="status">Checkpoints restore team state. Reopen the same map or drill first.</span><div class="actions"><button id="save-checkpoint">Save checkpoint</button><label class="file-button">Load checkpoint<input id="checkpoint-file" aria-label="Load navigation checkpoint" type="file" accept=".json"></label></div></div><details><summary>Controls, source and prototype limitations <span id="tick"></span></summary><div id="diagnostics"></div></details></footer>`;
 
 const get = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 let level = createDemoLevel(), world = createWorld(level);
@@ -136,7 +136,7 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
   level = nextLevel; world = nextWorld; extraDiagnostics = diagnostics;
   events.fill('READY'); setPaused(true); updateLevelInfo(); updateHud(readPads());
   get<HTMLButtonElement>('play').disabled = false;
-  get('recovery-status').textContent = 'Checkpoints restore navigation. Reopen the same map first.';
+  get('recovery-status').textContent = 'Checkpoints restore team state. Reopen the same map or drill first.';
 }
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
