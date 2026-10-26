@@ -1,7 +1,10 @@
 # Live original character prerequisites
 
 26 October 2026. Bounded inspection of supplied OCS source and previously
-recovered data. This records source behavior, not observed executable parity.
+recovered data, supplemented by selected executable anchors and isolated CPU
+observations in [water-executable-evidence.md](water-executable-evidence.md).
+Most behavior below remains source-derived; the added evidence is identified
+explicitly and does not establish whole-game executable parity.
 Original source, data and derived reports remain local and ignored. No live
 original actor activation, implementation or save-schema change is implemented
 here. Existing synthetic dry fall remains a bounded adaptation.
@@ -25,8 +28,11 @@ and OCS English item digest
 `633249c73e99c9019e653a0054ab0a613b3a2c313f60d93f7d0075e8bc94e6bc`.
 See [character-format.md](character-format.md) and [item-format.md](item-format.md)
 for archive identities, recovery CRCs, field offsets and revision boundaries.
-These data matches do not establish that an archived executable implements the
-inspected source. CD32 item source matches CD32 data, not the OCS item payload.
+These data matches alone do not establish that an archived executable implements
+the inspected source. The separately recovered OCS executable matches the local
+OCS build artifact, with selected water/initialization anchors inspected; see
+[water-executable-evidence.md](water-executable-evidence.md#identity-and-recovery).
+CD32 item source matches CD32 data, not the OCS item payload.
 
 ## Selection becomes live state through a separate initialization
 
@@ -46,6 +52,11 @@ of its roster value; copies the dead word into the runtime dead word; sets
 bumping target to -1; advances the source RNG for direction; reads x/y/floor;
 requests view redraw; and calculates weight. A roster selection or weight
 preview therefore cannot itself constitute a live actor.
+
+The bounded synthetic CPU run of the identified OCS initialization helper
+observed the fitness override, dead-word copy, inventory copy, position and RNG
+setup. It does not cover full game startup or occupancy; see the linked
+executable evidence for inputs and limits.
 
 Verified storage needed by these paths includes stats race, fitness, physique,
 agility and dead word, plus runtime x/y/floor, direction, old/current map
@@ -132,15 +143,21 @@ or 22). It does not clear the other entry bytes on replacement
 (`Controls&Movement.s:5870-5914`). Weight is recalculated after the scan.
 Do not silently turn this into floating-point durability or erase the entry.
 
-**Unresolved loop discrepancy:** `5859` loads the intended thirty-slot loop
+**Confirmed baseline loop discrepancy:** `5859` loads the thirty-slot loop
 count into **d0**, while `5862` decrements **d1**. The per-item helper does not
 write d1. At the inspected drowning call site `Main.s:612` sets d1.w to
 `32-water_shift`, which is 15 (`Equates.i:573`), and the subsequent rotate does
 not change d1. Register tracing therefore yields equipment plus **sixteen**
 carried entries on this source path, rather than thirty. The routine saves and
-restores d1 around the scan. This is source-derived behavior, not a confirmed
-released-game bug. Resolve against matching executable disassembly or a local
-execution trace before choosing either the literal behavior or an adaptation.
+restores d1 around the scan. The recovered archived OCS executable confirms
+these instructions and caller register value. Bounded isolated CPU runs with
+synthetic inventory observed equipment plus carried indices 0–15 damaged for
+race 1 and spell-water 97, followed by a breath reset; spell-water 100 skipped
+inventory damage and did not give that reset. See
+[water-executable-evidence.md](water-executable-evidence.md) for hashes, offsets,
+recovery checks and harness limits. This resolves the discrepancy for that
+baseline, without proving all released versions share it. Choosing literal
+behavior or an explicit adaptation remains a separate implementation decision.
 
 After immunity checks, underwater count increments as a word. The breath
 threshold uses unsigned physique-times-fitness, DIVU by the assembled constant
@@ -176,15 +193,17 @@ synthetic drill omits/adapts those interactions explicitly.
 
 Keep live original stats, health, drowning and falling disabled. Recovered
 roster/items establish input identities and preparation arithmetic only.
-Activation needs a matched executable/source baseline, resolution of the water
-scan discrepancy and 68000 edge arithmetic, explicit death/control/extraction
+Selected OCS executable/source anchors and the water scan discrepancy now have
+bounded evidence; whole-build source correspondence is not established.
+Activation still needs resolution of 68000 edge arithmetic, explicit death/control/extraction
 and occupancy transitions, pad/corpse map effects, and checkpoint migration for
-all newly live state. Obtain bounded traces for initialization, immune actor
-inventory immersion, drowning threshold, landing/death and extraction before
-claiming original parity. Campaign travel remains separately blocked by the
+all newly live state. The isolated initialization and immune inventory
+observations do not replace full transition evidence. Obtain bounded traces
+for drowning threshold, landing/death and extraction before claiming original
+parity. Campaign travel remains separately blocked by the
 known Locations revision mismatch.
 
-Research: one bounded source-inspection pass; no source repairs, executable
-disassembly, emulator comparison or recursive delegation. Model: gpt-6.1-sol;
-token usage unavailable. Original payloads/recovery reports were read locally
-and were not added to public output.
+Research: one bounded source-inspection pass, followed by the linked executable
+inspection and synthetic CPU observations; no source repairs, full-system
+emulator comparison or recursive delegation. Model: gpt-6.1-sol; token usage
+unavailable. Original payloads/recovery reports remain local and ignored.
