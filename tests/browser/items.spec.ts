@@ -55,3 +55,31 @@ test('opt-in matching OCS sources show verified preparation weight without chang
   await page.getByRole('button', { name: 'Clear item inspection' }).click();
   await expect(page.locator('#fitness-0')).toContainText('100%');
 });
+
+test('prepared choices do not attach to a legacy checkpoint and rejected team saves preserve recovery', async ({ page }) => {
+  await page.goto('/');
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save checkpoint', exact: true }).click();
+  const checkpoint = JSON.parse(await readFile((await (await download).path())!, 'utf8'));
+  checkpoint.version = 1; checkpoint.world.schemaVersion = 1;
+  delete checkpoint.world.physics; delete checkpoint.world.mission;
+  await page.locator('#roster-panel summary').first().click();
+  await page.getByLabel('Open local Characters data').setInputFiles(raw(characterFixture()));
+  await page.getByLabel('Open local Items data').setInputFiles(raw(new Uint8Array(32604)));
+  for (const [slot, choice] of [7, 2, 9, 0].entries()) await page.getByLabel(`Character for team slot ${slot + 1}`).selectOption(String(choice));
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({ name: 'legacy.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(checkpoint)) });
+  await expect(page.locator('#recovery-status')).toContainText('restored');
+  const position = await page.locator('#position-0').textContent();
+  const restoredDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save checkpoint', exact: true }).click();
+  const restored = JSON.parse(await readFile((await (await restoredDownload).path())!, 'utf8'));
+  expect(restored.version).toBe(3);
+  expect(Object.keys(restored.world).sort()).toEqual(['levelId', 'mercenaries', 'mission', 'physics', 'rng', 'schemaVersion', 'tick']);
+  expect(restored.world.physics).toEqual({ mode: 'static' });
+  restored.world.originalTeam = { characters: [7, 2, 9, 0] };
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({ name: 'unsupported-team.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(restored)) });
+  await expect(page.getByRole('alert')).toContainText('extra');
+  await expect(page.locator('#position-0')).toHaveText(position!);
+  await expect(page.getByLabel('Character for team slot 1')).toHaveValue('7');
+  await expect(page.locator('#pause-overlay')).toBeVisible();
+});
