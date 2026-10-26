@@ -1,97 +1,101 @@
 # Status — 26 October 2026
 
-This gameplay batch adds two **disconnected executable transitions**. It changes
-no playable browser behavior and does not establish a complete Training43 level.
-The browser retains four views, assignments, bounded dry navigation/extraction,
-retry/checkpoints, authored dry stairs/falls and separate team preparation.
-Original shooting, live inventory/backpack, environmental damage and coherent
-original death/recovery are not demonstrated.
+This batch supplies the complete **disconnected pure immersion caller** for one
+actor invocation. It changes no playable browser behavior and does not establish
+a complete Training43 level. Four views, assignments, bounded dry extraction,
+retry/checkpoints, authored dry stairs/falls and separate team preparation remain
+the demonstrated browser boundary. Original shooting, a usable live backpack,
+environmental damage and coherent original death/recovery remain undemonstrated.
 
-Verified launch main: **07da26b6d678a9334e3ade1e696b216e4d0e964a** (PR #15),
-pinned as `codex/drowning-batch-base`. No open PRs, all 24 existing worktrees clean,
-and idle prior owners were checked before dispatch. PR #14's automatic review
-still reports running with no posted findings; PR #15 completed on `598feed`
-without findings and has no subsequent findings. Neither is this batch's approval.
-Final reviewed head, CI and accepted merge are recorded in the PR and ignored
-`.local/batch-next.txt`; coordinator alone owns integration.
+Launch main was fetched and verified at **dd9a0f70579ff638575633328fc4cc72a876ba2c**
+(PR #16), pinned as `codex/immersion-batch-base`. There were no open PRs. All 26
+existing worktrees were inspected: 25 clean; the isolated presentation prototype
+had owned dirty edits and was preserved. Previous gameplay ownership was idle.
+PR #14/#16 automatic reviews still reported running without findings; #15 had
+completed without findings. Earlier review approvals are not this batch's approval.
 
-## Two completed implementation tasks
+## Implemented caller
 
-- **Drowning decision:** `decideDrowning` validates four unsigned words, wraps
-  the counter, preserves both DIVU results/overflow, sign extension and signed
-  comparison, preserves the indicator on skip, and returns indicator 150 plus
-  an optional unsigned damage request on call. Zero hit differs from no call.
-  [Contract](docs/drowning-decision-contract.md). Worker commit:
-  `419eb53e6b85ec815e3920990cd10224fefb2de6`.
-- **Adjacent prerequisite removed:** `transitionDrowningWaterInventory` supplies
-  the missing pure inventory candidate for the observed OCS drowning caller.
-  Equipment plus carried indices 0–15 receive literal word-wrapped water damage
-  and ID-only replacement; actions/tail/other bytes remain intact. Spell 100
-  skips scan and weight; otherwise all equipment/carried weight is recomputed
-  within the existing supported quotient boundary. Unsupported candidates reject
-  atomically. [Contract](docs/water-inventory-contract.md). Worker commit:
-  `10f1a8978fc2fd0fbef1deebf10e809d078e7621`.
+`transitionImmersion` validates an explicit actor/inventory/weight slice and packed
+cell long, then orders the full stats-dead-word, window-7 and control-byte guards,
+water presence/depth, the existing equipment-plus-first-sixteen inventory scan,
+race-1/spell-97 breath reset and the literal drowning decision. Guard returns
+preserve the counter; dry/shallow and immune branches reset only that counter.
+Spell 100 skips inventory/weight but does not provide breath immunity. Returned
+independent candidates preserve opaque slot bytes, unvisited tail/actions and
+unrelated packed cell bits. The optional damage request is inert; zero is a call,
+not absence. Existing weight is retained unless the actual supported scan updates
+it. Malformed inputs and unsupported calculations reject atomically.
 
-Neither API installs actors, dispatches damage/death, changes rendering, or alters
-world/checkpoint v3 or roster-plan v1. Qualification and composition remain
-external. The [Training43 completion contract](docs/training43-completion.md)
-continues to require the optional wet stairs; a dry extraction route is insufficient.
+The [caller contract](docs/immersion-caller-contract.md) states exact accepted
+fields, strict API validation versus original execution, word wrapping, supported
+weight limitations and source/evidence boundaries. No live actor installation,
+damage/death dispatch, world mutation, wet traversal or save-schema change follows.
 
-## Evidence, validation and reproduction
+## Adjacent evidence prerequisite
 
-One isolated gpt-6.1-sol medium implementation worker; independent gpt-6.1-sol
-high binary/simulation reviewer; no recursive delegation. Each transition took
-one implementation attempt with no failed repair cycle. Token usage unavailable.
-Public fixtures are synthetic. Original bytes, coordinates and traces stay local.
+The second and final task establishes the supported-floor landing continuation's
+request/clear order in [supported landing observation](docs/supported-landing-observation.md).
+Fifty-six synthetic cases execute that original instruction slice across all eight
+masked water encodings and pending-damage edges. It requests full, quarter or no
+damage; the apparent half-damage path is unreachable. Zero-hit calls remain calls.
+The observer models an immediate return at damage entry; no damage/death, descent,
+pad/mine/head placement or actual wet route executes. This removes the missing
+landing request/clear evidence, not the landing implementation dependency.
 
-Independent review reproduced the original 31 wet-entry cases with the pinned
-result digest, then compared the drowning API with 364 isolated CPU outcomes and
-100,000 independent BigInt cases. Thirteen direct original item-helper executions
-cover destruction/container and word-wrap edges. These are bounded CPU evidence;
-weight composition is source-derived, and the earlier wet harness intercepts
-death before its instructions. None proves a traversed wet route or real death.
+## Evidence and validation
 
-Reproduce checks from `repo` (the explicit map is private and excluded from CI):
+One gpt-6.1-sol medium implementation worker; independent gpt-6.1-sol high
+binary/simulation reviewer; coordinator-only integration; no recursive delegation.
+The primary took one implementation attempt without failed repair; the adjacent
+observer needed one evidenced JSR-stack setup correction. No original code was
+changed. Worker commits are `6a597b26af7a8a4e7112069a4e4d466a56576558`
+(primary) and `2dbe3b3281c3d9aa074fc5b3b722a1ce1a7ecda0` (landing evidence).
+Token usage unavailable. Public tests use synthetic data only. Original payloads,
+coordinates, instruction listings, observers and reports remain ignored locally.
+
+The existing drowning and inventory evidence is retained. An additional 28
+bounded caller probes execute the pinned original instructions with synthetic
+state: guards, every presence/depth encoding, ignored runtime-dead storage,
+immunity/spell distinctions and a wrapped zero-hit call. Damage is intercepted at
+entry; no damage/death instructions execute in those new probes. They do not prove
+full-system timing or scan/destruction/weight composition. Private reproduction is
+recorded in `.local/batch-next.txt` and `.local/immersion-review/` in `repo`.
+
+Reproduction from this branch:
 
 ```powershell
 npm run check
-npx vitest run tests/drowning-decision.test.ts tests/water-inventory.test.ts
+npx vitest run tests/immersion-caller.test.ts tests/drowning-decision.test.ts tests/water-inventory.test.ts
 $env:HIRED_GUNS_TRAINING_MAP = (Resolve-Path '../research/original/HiredGunsCD32_DevFiles/Maps/Game/Map43_Training/43.map').Path
 npx playwright test tests/browser/extraction.spec.ts tests/browser/checkpoints.spec.ts tests/browser/items.spec.ts
 ```
 
-`npm run check` passes lint, TypeScript, 159 tests and the production build.
-Local browser validation passes ten extraction/checkpoint/item cases, including
-the explicit private Training43 route; the optional original-item preparation
-case is skipped because its separate source environment variables were not set.
-Private reviewer reproduction and exact results are
-in `.local/batch-next.txt` and `.local/drowning-review/`; preserved source evidence
-remains in the earlier worktrees. Final exact-head review and relevant CI must
-pass before accepted-main integration.
+`npm run check` passes lint, TypeScript, all **191 tests** and the production
+build. Local extraction/checkpoint/item browser checks pass **10 cases**, including
+the explicit private Training43 route; the optional original-item preparation case
+skips because its separate source inputs were not supplied. Final exact commits,
+independent review and relevant CI are recorded in the PR and ignored handoff.
+Browser demo:
+`npm run dev`, open the shown local URL, **Open local .map** with the same local
+Training43 editor file, then **Start mission**. Keys 1–4 assign WASD/QE. **Save
+checkpoint**, **Load checkpoint** and **Retry mission** exercise existing bounded
+recovery. The new caller is demonstrated by synthetic tests, not the browser.
 
-Browser demo: `npm run dev`, open the shown local URL, use **Open local .map** for
-the same Training43 editor file, then **Start mission**. Keys 1–4 assign WASD/QE;
-**Save checkpoint**, **Load checkpoint** and **Retry mission** exercise existing
-bounded recovery. The focused tests demonstrate the new disconnected APIs;
-the browser demo does not invoke them. No physical four-controller test is claimed.
+## Completion gates
 
-## Next task and remaining gates
-
-Smallest next task: compose one validated pure immersion caller, ordering
-qualification/depth, inventory, breath immunity/reset and the drowning decision,
-with an inert damage request. It must preserve the inventory-before-immunity rule.
-Wet activation still requires integrated falling, actual death/control/occupancy,
-pad/corpse consequences and source-bound atomic checkpoints. Loads must never
-replay effects or attach prepared original actors implicitly. Usable inventory,
-shooting and complete-level completion/retry/recovery remain undemonstrated.
-
-Derek approved the enhanced Adele portrait as the visual direction. Artwork,
-originals and the local comparison are unchanged; no new artwork, environment
-graphics investigation, campaign expansion or engine migration occurred. The
-comparison remains `repo/.local/adele-enhanced/index.html`. Campaign travel stays
-disabled because editor/runtime Locations revisions differ. Existing original
-asset provenance and renderer limitations remain as previously documented.
+The caller ordering gap and the supported landing evidence gap are removed.
+Exactly one next task is nominated: implement a pure supported-floor landing
+request/clear caller using the observed complete continuation, preserving the
+pre-dispatch pending state and explicit after-return clearing without dispatching
+damage/death. Full descent remains separate; no third task was started.
+[Training43 completion](docs/training43-completion.md) still requires the optional wet stair interaction; dry extraction does not satisfy
+it. Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
+the full wet-region outcome and source-bound atomic checkpoint recovery still gate
+wet activation. Loading must never replay effects or attach prepared actors
+implicitly. World/checkpoint v3 and roster-plan v1 remain unchanged.
 
 Keep **3 November** physical-controller evidence, **9 November** complete-level
 evidence, **16 November** campaign/fallback decision, **20 November** freeze and
-**21–26 November** rehearsal for **27 November**. Full campaign remains high risk.
+**21–26 November** rehearsal for **27 November**. Full campaign remains high risk;
+known editor/runtime Locations revisions still prevent campaign travel.

@@ -71,22 +71,36 @@ extension/comparison and counter wrap. Original traces and exact private
 cell/approach remain local; synthetic death entries are intercepted and do not
 establish real death behavior. This evidence owns diagnostic inputs/outputs only.
 
-That arithmetic step now exists as the disconnected
-[drowning decision](drowning-decision-contract.md), with validated word inputs,
-literal two-DIVU/EXT/signed comparison, indicator and optional hit outputs. The
-one adjacent prerequisite completed in the same batch is the disconnected
-[water-inventory transition](water-inventory-contract.md): literal equipment plus
-first-sixteen carried scan, preserved other bytes/tail/actions, spell-100 bypass
-and supported full-inventory weight recalculation. Neither has a live caller.
+The arithmetic and literal inventory candidates now compose in the disconnected
+[pure immersion caller](immersion-caller-contract.md). It implements the full
+per-actor guard/depth/inventory/immunity/reset/decision order. Ineligible actors
+preserve breath state; dry/shallow water resets only the counter. Inventory
+precedes race-1/spell-97 breath immunity, and spell 100 bypasses inventory/weight
+without granting breath immunity. The optional damage request is inert and
+preserves zero versus no call. Unsupported candidates reject atomically; no
+actor/world/save state is installed. This removes the caller-ordering dependency,
+with no new playable browser behavior.
 
-The smallest next task is one validated pure immersion caller that orders actor
-qualification and water depth, inventory processing, breath immunity/reset and
-the drowning decision, returning an optional damage request without dispatching
-it. Source and existing isolated CPU evidence define those branches; composition
-still needs synthetic tests and independent review. This would remove the caller
-ordering gap, not authorize live wet activation. Integrated descent/fall, actual
-death/control/occupancy, full wet-region outcome and atomic checkpoint recovery
-remain separate unresolved gates.
+The existing [drowning decision](drowning-decision-contract.md) and
+[water inventory](water-inventory-contract.md) remain unchanged. Twenty-eight
+additional bounded original-instruction observations cover all actor guard and
+water-presence/depth branches, exact immunity, early-return state and a zero-hit
+request. They use synthetic state and intercept damage at entry; no damage/death
+instructions execute in those probes. Source deduction, original instruction
+observation and public synthetic composition tests remain distinct evidence.
+
+The one adjacent prerequisite is the bounded
+[supported-floor landing observation](supported-landing-observation.md): 56
+synthetic original-instruction cases settle full/quarter/no-hit requests,
+unreachable half-hit branch, real zero-hit calls and pending-clear order.
+Damage entry is intercepted with an immediate-return model; no damage/death or
+descent executes. The smallest next task is exactly one pure supported-floor
+landing request/clear caller with explicit pre-dispatch and after-return state.
+This removes an evidence gap, not the remaining landing implementation gate.
+
+Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
+full wet-region outcome and source-bound atomic checkpoint recovery remain
+unresolved gates. Completing the pure caller does not authorize wet activation.
 
 Reproduction from this worktree, with the exact local editor file supplied:
 
