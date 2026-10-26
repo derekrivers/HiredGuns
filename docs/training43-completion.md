@@ -103,12 +103,24 @@ clear in order, including redundant zero writes. Invalid/changed return storage
 rejects atomically; unrelated packed cell bits remain unchanged. No actual
 damage/death state is committed and no live browser behavior changes.
 
-This removes the pure landing implementation dependency under that return model.
-Exactly one next task is a bounded actual landing-to-damage/death composition
-observation for the accepted ordinary-floor slice: surviving/fatal hits,
-A0/A2/reference preservation and post-return pending-write targets/order.
-The current intercepted observation cannot establish those real-helper facts.
-No second task or composed helper implementation is part of this batch.
+The subsequent [actual landing-to-damage/death observation](landing-damage-composition-observation.md)
+now executes 61 bounded original continuations, including 14 actual ordinary-floor
+deaths, with no helper interception. Natural gender-0/grunt-99 branches avoid
+audio; gender is an additional observation restriction beyond the pure API.
+A0/A1/A2 return to the same actor/stats/current-cell references, and the caller
+clears that actor's pending long only after actual helper return. The final reread
+sees death's changed occupancy/corpse cell. All pending masks, zero-hit requests
+and redundant skip-branch clears are covered; this remains direct continuation
+entry, without descent or proof that every synthetic combination is reachable.
+
+This removes the missing return/reference evidence for that observed slice.
+The existing completion API still rejects changed cell storage, so it cannot
+represent a fatal composition. Exactly one next task is a disconnected pure
+ordinary-floor landing and damage/death composition: validate the full alive
+slice and observation restrictions, preserve null versus zero requests, apply the
+existing damage/death candidate, then clear pending and reread that changed cell
+in original order. Unsupported geometry/lifecycle/audio cases must reject
+atomically. No composed implementation or second task was started in this batch.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
