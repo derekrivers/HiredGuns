@@ -30,12 +30,15 @@ describe('original-team persistence remains gated', () => {
       saved.version = version; saved.world.schemaVersion = version;
       if (version < 3) delete saved.world.physics;
       if (version === 1) delete saved.world.mission;
-      for (const field of ['originalTeam', 'sources', 'inventory']) {
+      for (const field of ['originalTeam', 'sources', 'inventory', 'originalDeath', 'occupancy', 'corpses', 'padEffects']) {
         const injected = structuredClone(saved); injected.world[field] = pair;
         await expect(importCheckpoint(level, JSON.stringify(injected))).rejects.toThrow('extra');
       }
       const actor = structuredClone(saved); actor.world.mercenaries[0].canonicalIndex = 3;
       await expect(importCheckpoint(level, JSON.stringify(actor))).rejects.toThrow('extra');
+      const death = structuredClone(saved);
+      Object.assign(death.world.mercenaries[0], { statsDead: 0xff00, runtimeDead: 0xff00, deathCommitted: true });
+      await expect(importCheckpoint(level, JSON.stringify(death))).rejects.toThrow('extra');
     }
     const future = structuredClone(current); future.version = 4; future.world.schemaVersion = 4;
     await expect(importCheckpoint(level, JSON.stringify(future))).rejects.toThrow('version');

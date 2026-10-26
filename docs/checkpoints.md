@@ -28,6 +28,13 @@ must require both local sources, rehash them, and validate the complete candidat
 before the UI replaces its working world. The proposed migration design remains
 unimplemented; no version 4 save is accepted by this build.
 
+The bounded [ordinary-floor death slice](death-transition-contract.md) is also
+an isolated in-memory contract, not a checkpoint candidate. Recovery never
+replays its effects. Future original saves must atomically preserve actor and
+inventory state, occupancy removal, pad consequences and corpse ownership; a
+dead flag alone cannot prove those effects completed. Death/map-effect fields
+added to legacy or current checkpoints reject before any world replacement.
+
 Item-table inspection is session-only. Neither the version1 roster plan nor any
 checkpoint stores an item table, inventory preview or calculated weight. Reopen
 both local sources to inspect their pairing again; restoring a roster plan never

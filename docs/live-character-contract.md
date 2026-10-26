@@ -7,6 +7,13 @@ selection plan version 1. Death and environmental prerequisites remain separate
 gates. Character/item evidence is documented in character-format.md and
 item-format.md; it establishes source-derived initialization, not runtime parity.
 
+The separate [ordinary-floor death contract](death-transition-contract.md)
+establishes only a bounded pure transition. It does not attach these initialized
+actors to positions, occupancy, simulation or saves. See also the selected
+[executable and CPU water observations](water-executable-evidence.md), which
+resolve the scan discrepancy for the identified OCS caller while leaving the
+remaining environmental and recovery gates in place.
+
 `initializeOriginalTeam(roster, items, indices)` requires four explicit, ordered,
 different canonical indices in 0..11. Inputs are local raw Uint8Arrays or imported
 catalogs. Catalogs reconstruct the complete 60-by-272 roster and 114-by-286 item
