@@ -1,6 +1,7 @@
-import type { LevelData, Mercenary, MissionMode, MissionState, SaveEnvelope, Spawn, WorldState } from '../contracts';
+import type { FallActor, LevelData, Mercenary, MissionMode, MissionState, PhysicsState, SaveEnvelope, Spawn, WorldState } from '../contracts';
 import { MAX_WORLD_TICK, obstruction } from './world';
 import { besideExitBlock, initialMission, sourceClockAtTick, validatedMissionRules } from './mission';
+import { dryFallEnabled, fallCounterAtTick, fallObstruction, initialPhysics } from './fall';
 
 /** A checkpoint must be smaller than 16 KiB, including UTF-8 encoding. */
 export const MAX_CHECKPOINT_BYTES = 16 * 1024;
@@ -86,29 +87,54 @@ function missionSnapshot(level: LevelData, value: unknown, tick: number): Missio
   return {rules,outcome:mission.outcome,exited,clock,winner:mission.winner as number | null};
 }
 
+function physicsSnapshot(level: LevelData, value: unknown, tick: number): PhysicsState {
+  const expected = initialPhysics(level);
+  if (expected.mode === 'static') {
+    if (object(value,['mode'],'physics').mode !== 'static') throw new Error('Physics profile does not match this level');
+    return {mode:'static'};
+  }
+  const physics = object(value,['mode','profileId','fallCounter','actors'],'physics');
+  if (physics.mode !== 'dry-fall' || physics.profileId !== expected.profileId) throw new Error('Physics profile does not match this level');
+  if (physics.fallCounter !== fallCounterAtTick(tick)) throw new Error('Fall counter does not match tick');
+  const actors = array(physics.actors,4,'physics.actors').map((value,id) => {
+    const actor = object(value,['physique','agility','weight','fitness','dead','fallDamage'],`physics.actor${id}`);
+    const profile = expected.actors[id]!;
+    for (const field of ['physique','agility','weight'] as const) if (actor[field] !== profile[field]) throw new Error('Character stats do not match the synthetic profile');
+    const fitness = integer(actor.fitness,0,65535,'fitness');
+    if (typeof actor.dead !== 'boolean' || (actor.dead ? fitness !== 0 : fitness < 655)) throw new Error('Fitness and death state disagree');
+    const fallDamage = integer(actor.fallDamage,0,0x1000000,'fallDamage');
+    const validDamage = fallDamage === 0 || fallDamage === 0x1000000 || Array.from({length:12},(_,i) => 6400 * 2 ** i).includes(fallDamage);
+    if (!validDamage || (actor.dead && fallDamage !== 0) || (tick < 7 && (fallDamage !== 0 || actor.dead))) throw new Error('Invalid accumulated fall damage');
+    return {...profile,fitness,dead:actor.dead,fallDamage} as FallActor;
+  }) as Extract<PhysicsState,{mode:'dry-fall'}>['actors'];
+  return {mode:'dry-fall',profileId:expected.profileId,fallCounter:fallCounterAtTick(tick),actors};
+}
+
 function worldSnapshot(level: LevelData, value: unknown): WorldState {
-  const world = object(value, ['schemaVersion','levelId','tick','rng','mercenaries','mission'], 'world');
-  if (world.schemaVersion !== 2) throw new Error('Unsupported world schemaVersion');
+  const world = object(value, ['schemaVersion','levelId','tick','rng','mercenaries','mission','physics'], 'world');
+  if (world.schemaVersion !== 3) throw new Error('Unsupported world schemaVersion');
   if (world.levelId !== level.id) throw new Error('Checkpoint world/level mismatch');
   const tick = integer(world.tick,0,MAX_WORLD_TICK-1,'world.tick');
   const mission = missionSnapshot(level,world.mission,tick);
+  const physics = physicsSnapshot(level,world.physics,tick);
   const occupied = new Set<string>();
   const mercenaries = array(world.mercenaries, 4, 'world.mercenaries').map((value, id) => {
     const mercenary = object(value, ['id','x','y','z','facing'], `mercenary${id}`);
     if (mercenary.id !== id) throw new Error('Mercenary IDs must be ordered 0,1,2,3');
     const p = position({ x: mercenary.x, y: mercenary.y, z: mercenary.z, facing: mercenary.facing }, level, true, `mercenary${id}`);
-    const reason = obstruction(level, p);
+    const dead = physics.mode === 'dry-fall' && physics.actors[id]!.dead;
+    const reason = physics.mode === 'dry-fall' && !dead ? fallObstruction(level,p) : obstruction(level, p);
     if (reason) throw new Error(`Mercenary ${id} obstructed: ${reason}`);
     const cell = `${p.x},${p.y},${p.z}`;
     if (mission.exited[id]) {
       if (!besideExitBlock(level,p)) throw new Error(`Exited mercenary ${id} must remain beside an exit block`);
-    } else {
+    } else if (!dead) {
       if (occupied.has(cell)) throw new Error('Checkpoint mercenaries overlap');
       occupied.add(cell);
     }
     return { id, ...p } as Mercenary;
   }) as WorldState['mercenaries'];
-  return { schemaVersion: 2, levelId: level.id, tick, rng: integer(world.rng, 0, 0xffffffff, 'world.rng'), mercenaries, mission };
+  return { schemaVersion: 3, levelId: level.id, tick, rng: integer(world.rng, 0, 0xffffffff, 'world.rng'), mercenaries, mission, physics };
 }
 
 // Sort object keys recursively; array/source-word and start order remain meaningful.
@@ -128,11 +154,11 @@ function checkTextSize(json: string): void {
   if (typeof json !== 'string' || json.length >= MAX_CHECKPOINT_BYTES || new TextEncoder().encode(json).byteLength >= MAX_CHECKPOINT_BYTES) throw new Error('Checkpoint must be a string smaller than 16 KiB');
 }
 
-/** Complete current mission state in v2; map words and artwork stay outside saves. */
+/** Complete current mission/physics state in v3; map words and artwork stay outside saves. */
 export async function exportCheckpoint(level: LevelData, world: WorldState): Promise<string> {
   const snapshot = levelSnapshot(level);
   const state = worldSnapshot(snapshot, world);
-  const envelope: SaveEnvelope = { format: 'hired-guns-save', version: 2, levelHash: await fingerprint(snapshot), world: state };
+  const envelope: SaveEnvelope = { format: 'hired-guns-save', version: 3, levelHash: await fingerprint(snapshot), world: state };
   const json = JSON.stringify(envelope);
   checkTextSize(json);
   return json;
@@ -144,14 +170,15 @@ export async function importCheckpoint(level: LevelData, json: string): Promise<
   let parsed: unknown;
   try { parsed = JSON.parse(json); } catch { throw new Error('Invalid checkpoint JSON'); }
   const envelope = object(parsed, ['format','version','levelHash','world'], 'checkpoint');
-  if (envelope.format !== 'hired-guns-save' || (envelope.version !== 1 && envelope.version !== 2)) throw new Error('Unsupported checkpoint format/version');
+  if (envelope.format !== 'hired-guns-save' || ![1,2,3].includes(envelope.version as number)) throw new Error('Unsupported checkpoint format/version');
   if (typeof envelope.levelHash !== 'string' || !/^[0-9a-f]{64}$/.test(envelope.levelHash)) throw new Error('Invalid checkpoint levelHash');
   const snapshot = levelSnapshot(level);
   let savedWorld = envelope.world;
-  if (envelope.version === 1) {
-    const legacy = object(savedWorld,['schemaVersion','levelId','tick','rng','mercenaries'],'legacy world');
-    if (legacy.schemaVersion !== 1) throw new Error('Unsupported legacy world schemaVersion');
-    savedWorld = {...legacy,schemaVersion:2,mission:initialMission(snapshot,{mode:'navigation',timeLimit:null})};
+  if (envelope.version === 1 || envelope.version === 2) {
+    if (dryFallEnabled(snapshot)) throw new Error('Legacy checkpoints cannot supply dry-fall history');
+    const legacy = object(savedWorld,envelope.version === 1 ? ['schemaVersion','levelId','tick','rng','mercenaries'] : ['schemaVersion','levelId','tick','rng','mercenaries','mission'],'legacy world');
+    if (legacy.schemaVersion !== envelope.version) throw new Error('Unsupported legacy world schemaVersion');
+    savedWorld = {...legacy,schemaVersion:3,physics:{mode:'static'},mission:envelope.version === 1 ? initialMission(snapshot,{mode:'navigation',timeLimit:null}) : legacy.mission};
   }
   const world = worldSnapshot(snapshot, savedWorld);
   if (envelope.levelHash !== await fingerprint(snapshot)) throw new Error('Checkpoint level content mismatch');

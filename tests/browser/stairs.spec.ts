@@ -9,14 +9,44 @@ async function move(page: Page, id: number, key: 'w' | 's', y: number, z: number
   await page.keyboard.press(`Digit${id + 1}`);
   await page.evaluate(({ id, target, code }) => {
     const position = document.getElementById(`position-${id}`)!;
-    const release = () => { window.dispatchEvent(new KeyboardEvent('keyup', { code, bubbles: true })); observer.disconnect(); clearTimeout(timer); };
-    const observer = new MutationObserver(() => { if (position.textContent === target) release(); });
-    const timer = window.setTimeout(release, 4000);
+    const record = { armedAt: performance.now(), downAt: null as number | null, upAt: null as number | null, releasedAt: null as number | null, releaseReason: '', playAtDown: '', targetAtDown: '' };
+    const save = () => { position.dataset.stairInput = JSON.stringify(record); };
+    let timer: number | undefined;
+    const onUp = (event: KeyboardEvent) => { if (event.code === code) { record.upAt = performance.now(); save(); } };
+    const onDown = (event: KeyboardEvent) => {
+      if (event.code !== code || record.downAt !== null) return;
+      record.downAt = performance.now(); record.playAtDown = document.getElementById('play')!.textContent!;
+      record.targetAtDown = (event.target as Element)?.tagName ?? 'window'; save();
+      timer = window.setTimeout(() => release('timeout'), 6000);
+    };
+    const release = (reason: string) => {
+      record.releasedAt = performance.now(); record.releaseReason = reason;
+      window.dispatchEvent(new KeyboardEvent('keyup', { code, bubbles: true }));
+      observer.disconnect(); clearTimeout(timer);
+      window.removeEventListener('keydown',onDown); window.removeEventListener('keyup',onUp); save();
+    };
+    const observer = new MutationObserver(() => { if (position.textContent === target) release('target'); });
+    window.addEventListener('keydown',onDown); window.addEventListener('keyup',onUp); save();
     observer.observe(position, { childList: true, subtree: true });
   }, { id, target, code: `Key${key.toUpperCase()}` });
   await page.keyboard.down(key);
-  await expect(page.locator(`#position-${id}`)).toHaveText(target, { timeout: 3000 });
-  await page.keyboard.up(key);
+  try {
+    await expect(page.locator(`#position-${id}`)).toHaveText(target, { timeout: 5000 });
+  } catch (error) {
+    const state = await page.evaluate(id => ({
+      position: document.getElementById(`position-${id}`)!.textContent,
+      event: document.getElementById(`event-${id}`)!.textContent,
+      assignment: (document.getElementById(`assign-${id}`) as HTMLSelectElement).value,
+      play: document.getElementById('play')!.textContent,
+      tick: document.getElementById('tick')!.textContent,
+      error: document.getElementById('error')!.textContent,
+      visibility: document.visibilityState, focused: document.hasFocus(),
+      activeElement: document.activeElement?.tagName,
+      paused: !document.getElementById('pause-overlay')!.hidden,
+      keyboard: document.getElementById(`position-${id}`)!.dataset.stairInput,
+    }),id);
+    throw new Error(`${String(error)}\nStair input diagnostics: ${JSON.stringify(state)}`);
+  } finally { await page.keyboard.up(key); }
 }
 
 test('all four dry stair lanes climb, restore at elevation, and descend through normal controls', async ({ page }) => {
