@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createDemoLevel } from '../src/demo';
 import { cellIndex, type LevelData, type PlayerCommand, type WorldState } from '../src/contracts';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from '../src/sim/checkpoint';
-import { createWorld, nextRandom, stepWorld } from '../src/sim/world';
+import { createWorld, MAX_WORLD_TICK, nextRandom, stepWorld } from '../src/sim/world';
 
 type EditableEnvelope = {
   format: unknown; version: unknown; levelHash: unknown;
@@ -117,14 +117,34 @@ describe('navigation checkpoint v1', () => {
 
   it('rejects unsafe ticks, unsigned RNG violations and non-finite parsed numbers', async () => {
     const {level, world, envelope} = await fixture();
-    for (const [field, values] of Object.entries({ tick:[-1,1.5,Number.MAX_SAFE_INTEGER+1,'1',null,true], rng:[-1,0x100000000,0.5,'1',null,false] })) {
+    for (const [field, values] of Object.entries({ tick:[-1,1.5,MAX_WORLD_TICK,MAX_WORLD_TICK+1,Number.MAX_SAFE_INTEGER,Number.MAX_SAFE_INTEGER+1,'1',null,true], rng:[-1,0x100000000,0.5,'1',null,false] })) {
       for (const value of values) { const bad = structuredClone(envelope); bad.world[field] = value; await expect(importCheckpoint(level,JSON.stringify(bad))).rejects.toThrow(); }
     }
     await expect(importCheckpoint(level,JSON.stringify(envelope).replace('"tick":0','"tick":1e309'))).rejects.toThrow();
     for (const value of [NaN,Infinity,-Infinity]) { const bad = structuredClone(world); bad.rng = value; await expect(exportCheckpoint(level,bad)).rejects.toThrow(); }
-    world.tick = Number.MAX_SAFE_INTEGER; world.rng = 0xffffffff;
+    world.tick = MAX_WORLD_TICK - 1; world.rng = 0xffffffff;
     expect(await importCheckpoint(level,await exportCheckpoint(level,world))).toEqual(world);
     world.rng = 0; expect((await importCheckpoint(level,await exportCheckpoint(level,world))).rng).toBe(0);
+  });
+
+  it('round trips the last resumable tick, steps once safely and rejects further continuation atomically', async () => {
+    const {level, world} = await fixture();
+    world.tick = MAX_WORLD_TICK - 1;
+    const loaded = await importCheckpoint(level,await exportCheckpoint(level,world));
+    const continued = stepWorld(level,loaded,[{mercenaryId:0,action:'turn-right'}]);
+    expect(continued.world.tick).toBe(MAX_WORLD_TICK);
+    expect(Number.isSafeInteger(continued.world.tick)).toBe(true);
+    expect(loaded.tick).toBe(MAX_WORLD_TICK - 1);
+    const terminal = structuredClone(continued.world);
+    expect(() => stepWorld(level,terminal,[{mercenaryId:0,action:'forward'}])).toThrow();
+    expect(terminal).toEqual(continued.world);
+    await expect(exportCheckpoint(level,terminal)).rejects.toThrow('world.tick');
+    const original = structuredClone(world);
+    for (const tick of [MAX_WORLD_TICK,MAX_WORLD_TICK+1,Number.MAX_SAFE_INTEGER]) {
+      const bad = structuredClone(world); bad.tick = tick;
+      await expect(exportCheckpoint(level,bad)).rejects.toThrow('world.tick');
+    }
+    expect(world).toEqual(original);
   });
 
   it('rejects overlaps and conservative obstructions rather than repositioning mercenaries', async () => {

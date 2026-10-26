@@ -1,5 +1,5 @@
 import type { LevelData, Mercenary, SaveEnvelope, Spawn, WorldState } from '../contracts';
-import { obstruction } from './world';
+import { MAX_WORLD_TICK, obstruction } from './world';
 
 /** A checkpoint must be smaller than 16 KiB, including UTF-8 encoding. */
 export const MAX_CHECKPOINT_BYTES = 16 * 1024;
@@ -76,7 +76,7 @@ function worldSnapshot(level: LevelData, value: unknown): WorldState {
     occupied.add(cell);
     return { id, ...p } as Mercenary;
   }) as WorldState['mercenaries'];
-  return { schemaVersion: 1, levelId: level.id, tick: integer(world.tick, 0, Number.MAX_SAFE_INTEGER, 'world.tick'), rng: integer(world.rng, 0, 0xffffffff, 'world.rng'), mercenaries };
+  return { schemaVersion: 1, levelId: level.id, tick: integer(world.tick, 0, MAX_WORLD_TICK - 1, 'world.tick'), rng: integer(world.rng, 0, 0xffffffff, 'world.rng'), mercenaries };
 }
 
 // Sort object keys recursively; array/source-word and start order remain meaningful.

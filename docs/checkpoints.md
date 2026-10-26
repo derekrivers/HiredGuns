@@ -59,12 +59,20 @@ The envelope accepts exactly `format`, `version`, `levelHash` and `world`.
 Format/version must match exactly, and `levelHash` must be 64 lowercase hex
 digits matching the current level. The world accepts exactly `schemaVersion`,
 `levelId`, `tick`, `rng` and `mercenaries`; its schema is 1 and level ID must
-match. Tick is a nonnegative safe integer. RNG is an integer in 0..4294967295,
+match. Tick is an integer in 0..4294967294 (`MAX_WORLD_TICK - 1`). RNG is an integer in 0..4294967295,
 including zero. Mercenaries form a dense array of exactly four entries with
 ordered, unique IDs 0,1,2,3. Each entry accepts exactly `id,x,y,z,facing`.
 Coordinates must be finite integers inside the grid and facing must be 0..3.
 Nulls, primitive replacements, fractions, numeric strings, unsafe integers,
 non-finite values, unknown versions and extra/missing fields reject.
+
+The shared navigation limit `MAX_WORLD_TICK` is 4294967295 (`0xffffffff`). A
+checkpoint at the last resumable tick, 4294967294, loads and can advance once
+safely to that limit. Navigation refuses the next step before changing state;
+the UI pauses and offers Reset or loading an earlier checkpoint. The terminal
+tick itself cannot be exported or imported as a resumable checkpoint. This
+bounded continuation rule prevents safe-integer overflow and frozen tick-based
+input repeat; a checkpoint never silently clamps, wraps or resets the clock.
 
 Each occupied cell must pass the same conservative `obstruction()` predicate
 as navigation, including boundary, solid/opaque obstruction, unsupported
@@ -82,8 +90,12 @@ metadata; malformed/oversized/multibyte input; all missing/extra field classes;
 versions, identities, safe integer and unsigned bounds; ordered IDs, overlaps,
 blocked/unsupported cells; and snapshots during asynchronous hashing.
 
-Implementation model: gpt-6.1-sol. One implementation attempt; no failed repair
-cycle. `npm ci` and `npm run check` passed (28 tests total, including 10 checkpoint
-tests). Aggregate token usage unavailable. Independent review is coordinated
+Implementation model: gpt-6.1-sol. One implementation attempt and one repair
+after review reproduced unsafe tick continuation at the previous safe-integer
+boundary. The repair tests the last resumable tick, safe first continuation,
+terminal export/import rejection and atomic failure on a further step.
+`npm run check` passed after the repair (29 tests total, including 11 checkpoint
+tests), with the shared world tick guard present.
+Aggregate token usage unavailable. Independent review is coordinated
 separately before integration. The codec is independent of DOM/UI; browser UI
 export/load verification belongs to its integration change.
