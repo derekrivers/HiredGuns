@@ -113,14 +113,20 @@ sees death's changed occupancy/corpse cell. All pending masks, zero-hit requests
 and redundant skip-branch clears are covered; this remains direct continuation
 entry, without descent or proof that every synthetic combination is reachable.
 
-This removes the missing return/reference evidence for that observed slice.
-The existing completion API still rejects changed cell storage, so it cannot
-represent a fatal composition. Exactly one next task is a disconnected pure
-ordinary-floor landing and damage/death composition: validate the full alive
-slice and observation restrictions, preserve null versus zero requests, apply the
-existing damage/death candidate, then clear pending and reread that changed cell
-in original order. Unsupported geometry/lifecycle/audio cases must reject
-atomically. No composed implementation or second task was started in this batch.
+The [pure landing/damage composition](landing-damage-contract.md) now implements
+that bounded continuation separately from the unchanged-cell completion API.
+It atomically validates the complete observed alive/window-0/control-1/gender-0/
+grunt-99 slice, preserves null versus zero requests, applies the existing actual
+damage/death candidate, accounts for redraw, then clears the same logical actor's
+pending and rereads its changed cell in original order. Ordered redundant clears
+remain explicit; unsupported geometry/lifecycle/audio cases reject even on no-call
+branches. The coordinator compared all 61 frozen original cases without exclusions.
+This pure candidate is not installed into a world, and grants no source authority.
+
+Exactly one next task is a bounded original-instruction observation of one-cell
+dry descent into ordinary non-pad support: eligibility, pending generation and
+occupancy ordering through later supported landing, explicitly excluding unsupported
+neighboring geometry/pad/audio branches. No second task was started in this batch.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
