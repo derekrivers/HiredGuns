@@ -36,8 +36,9 @@ export function computeSourceWeight(items: ItemCatalog, inventory: SelectionInve
   }
   if (spellWings === 24) totalWeight = 0;
   const quotient = Math.floor(totalWeight / 140);
-  // DIVU overflow leaves its destination undefined; no authoritative CMP/BLE result.
-  if (quotient > 65535) return { status: 'unavailable', reason: '68000 DIVU quotient overflow; comparison is undefined.', totalWeight };
+  // DIVU overflow retains the dividend. This bounded preview does not model that
+  // subsequent low-word comparison; it must not invent a representable quotient.
+  if (quotient > 65535) return { status: 'unavailable', reason: '68000 DIVU quotient overflow is outside this inspection profile.', totalWeight };
   return { status: 'computed', totalWeight, quotient, tooHeavy: signedWord(quotient) > signedWord(physique), usingGrenade };
 }
 function rawBytes(records: readonly { rawHex: string }[], count: number, width: number): Uint8Array {
