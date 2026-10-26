@@ -11,6 +11,21 @@ const actionKeys = { forward: 'w', backward: 's', 'strafe-left': 'a', 'strafe-ri
 async function driveMercenary(page: Page, level: LevelData, world: WorldState, id: number): Promise<WorldState> {
   await page.keyboard.press(`Digit${id + 1}`);
   for (const move of exitRoute(level, world, id)) {
+    // Release inside the page at the observed target: protocol latency must not
+    // turn a single planned command into held-key repeats on a busy renderer.
+    await page.evaluate(({ id, target, exits, code }) => {
+      const position = document.getElementById(`position-${id}`)!;
+      const retired = document.getElementById(`extracted-${id}`)!;
+      const observer = new MutationObserver(() => {
+        const text = position.textContent!;
+        const reached = exits ? !retired.hidden : text.includes(`X ${String(target.x).padStart(2, '0')}`) && text.includes(`Y ${String(target.y).padStart(2, '0')}`) && text.includes(`Z ${String(target.z).padStart(2, '0')}`);
+        if (reached) release();
+      });
+      const release = () => { window.dispatchEvent(new KeyboardEvent('keyup', { code, bubbles: true })); observer.disconnect(); clearTimeout(timer); };
+      const timer = window.setTimeout(release, 4000);
+      observer.observe(position, { childList: true, subtree: true });
+      observer.observe(retired, { attributes: true, attributeFilter: ['hidden'] });
+    }, { id, target: move.target, exits: move.exits, code: `Key${actionKeys[move.action].toUpperCase()}` });
     await page.keyboard.down(actionKeys[move.action]);
     if (move.exits) await expect(page.locator(`#extracted-${id}`)).toBeVisible();
     else await page.waitForFunction(({ id, x, y, z }) => {

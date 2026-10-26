@@ -7,9 +7,10 @@ Four-view navigation and recovery are merged through PR #4. Current branch adds 
 - Exact Training 43 SHA-256 646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c enables exit missions. Other original revisions stay navigation-only.
 - Type-3 block bumps retire mercenaries. Cooperative extraction requires all four; original alive-only first-exit race is an explicit alternative. Source countdown preserves 601-tick integer borrow; timeout wins deadline ties. Candidate 50 Hz is not original wall-clock parity.
 - Retry resets mission state. V2 checkpoints preserve rules, counter, exits and outcome; strict V1 navigation migration remains supported. Retired mercenaries no longer occupy cells.
-- Local full check passes 43 unit tests, lint/typecheck/build. All 11 Chromium checks passed, including actual Training 43 all-four keyboard extraction, Dropzone navigation, synthetic completion/retry/timeout, partial/completed restoration, first-exit race, assignment and simulated-pad reconnect. Independent review/CI pending for this batch.
+- Local full check passes 43 unit tests, lint/typecheck/build. All 11 Chromium checks passed, including actual Training 43 all-four keyboard extraction, Dropzone navigation, synthetic completion/retry/timeout, partial/completed restoration, first-exit race, assignment and simulated-pad reconnect. PR #5 records independent review, CI and merge disposition.
 - Rendering proof: hidden faces removed and coplanar placeholder faces merged; Training 43 block triangles reduced 83,112 to 922. Initial slow software-rendered route test failed, the geometry change resolved it, and the original route passed. Synthetic mesh tests verify winding/area, cavities and distinct exit surfaces. No event-hardware performance claim.
 - Model/attempts: Sol medium core worker, one implementation with one test-helper compiler correction; coordinator UI/renderer integration, one evidence-driven geometry repair. Aggregate token usage unavailable. Source, maps, artwork and route data stay out of public commits.
+- Independent review passed production logic checks and a full local suite. One intermittent original-route test overshot a planned cell after delayed key-up; its driver now releases inside the page at the observed HUD target and still uses production keyboard handlers. No simulation hook or direct state changes are used for the route proof.
 
 | Task | Owner / files | Acceptance / allowance / escalation |
 |---|---|---|
@@ -18,7 +19,7 @@ Four-view navigation and recovery are merged through PR #4. Current branch adds 
 
 ## Next bounded batch
 
-1. Reference and training mechanics: identify a runnable original reference and verify mode/timing; implement source-backed stairs/bridge/falling plus required pressure-pad behavior using bounded synthetic cases. Add water/lift/button coverage only from area/route evidence. Acceptance is original-area coverage and recorded deviations, not another import count. Sol medium; 2–3 hours per coherent mechanic group; escalate contradictory source/runtime evidence.
+1. Reference and training mechanics: identify a runnable original reference and verify mode/timing. Both Training 43 lower stair cells contain water; preserve that coupling. Implement source-backed static stairs/block-4 support first with dry synthetic cases, then extend cadence/fall/health/water state explicitly before claiming original staircase traversal. Add pressure-pad/lift/button coverage only from area evidence. Acceptance is original-area coverage and recorded deviations, not another import count. Sol medium; 2–3 hours per coherent mechanic group; escalate contradictory source/runtime evidence.
 2. Campaign baseline: decode/compare archived runtime locations against editor headers before enabling travel. CRC mismatch df31 versus 5c21 remains isolated. Keep individual campaign records imported/blocked until their required mechanics and playthroughs are proven.
 
 ## Evidence and delivery gates
