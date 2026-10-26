@@ -1,6 +1,6 @@
 # Status - 26 October 2026
 
-Main through PR #10 (`b8ce8c2`) provides four views, control reassignment, navigation/checkpoints, bounded Training43 extraction, authored dry stairs/falls and source-bound team preparation. No complete faithful original level/campaign or physical four-controller event-PC/TV test is validated.
+The foundation through PR #10 (`b8ce8c2`) provides four views, control reassignment, navigation/checkpoints, bounded Training43 extraction, authored dry stairs/falls and source-bound team preparation. No complete faithful original level/campaign or physical four-controller event-PC/TV test is validated.
 
 ## Death and water evidence batch
 
@@ -8,6 +8,7 @@ Main through PR #10 (`b8ce8c2`) provides four views, control reassignment, navig
 - `transitionOrdinaryFloorDeath` is a disconnected pure same-cell ordinary-floor contract: explicit death flags, matching leader removal, owned occupancy removal, no-action pad-release check, corpse type/zero-based owner writes. It preserves fitness, pose and pending environmental storage. Pressure pads, supporting-block/search/stair/door placement and existing auxiliary objects reject atomically. A coherent completed slice emits no effects on repetition. This does not provide general death, pad actions, corpse recovery or original simulation activation. See `docs/death-transition-contract.md`.
 - World/checkpoints remain version 3; roster plans remain version 1. The pure slice is not a save. Atomic future recovery must bind actor/inventory/environment, occupancy, pad consequences and corpse ownership; no death replay on load. Legacy saves never acquire prepared actors. New injection regressions cover death/map effects; no migration or codec change is implemented.
 - Ownership/allowance: isolated Sol medium executable evidence (1-3 human-equivalent hours), isolated Sol medium contract (2-3 hours), coordinator integration/guards (1-2 hours), independent Sol high current-head review (about 1 hour). No recursive delegation. Tokens unavailable. Validation/review/CI disposition is recorded in the PR and ignored `.local/death-water-next.txt` before merge.
+- Local validation passes 106 unit tests, lint/typecheck/build and all 22 browser checks with local-source opt-ins. Independent high review reproduces CPU diagnostics and 48 additional head/direction/variant cases. CI uses Node24-native checkout/setup-node v7 actions; application tests retain Node 22. Final current-head review/CI gates are recorded in PR #11.
 
 ## Working limits and next gates
 
