@@ -12,6 +12,13 @@ The envelope is exactly `{format:"hired-guns-save", version:3, levelHash, world}
 The world uses schema 3 and contains levelId, tick, RNG, four mercenaries, mission
 and physics. No original map arrays, artwork or controller assignments are saved.
 
+Character preparation is a separate version1 `hired-guns-roster-selection` plan,
+containing only the raw roster source identity and four ordered canonical indices.
+It is never applied to this world or included in checkpoints. Thus this import
+batch needs no world/save migration. A future live-character change must review
+its own schema version, verified source binding, inventory and death invariants;
+loading an old checkpoint must not silently attach the current preparation.
+
 `levelHash` is SHA-256 of UTF-8 canonical JSON for ALL LevelData fields. Object
 keys sort lexically; arrays/source-word/start order remain meaningful. Geometry,
 source descriptor/digest/revision, dimensions, exit, name and mechanics all
