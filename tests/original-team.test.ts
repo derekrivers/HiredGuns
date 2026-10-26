@@ -111,12 +111,17 @@ describe('exact-hash original authority', () => {
       const indices = [...order], rawRoster = rosterBytes(), rawItems = itemBytes();
       const rawPending = initializeOriginalTeam(rawRoster, rawItems, indices);
       const pending = initializeOriginalTeam(roster, items, indices);
+      // Both operations may reject on the same event-loop turn. Observe both
+      // before releasing the hashes so neither failure is temporarily unhandled.
+      const rejections = Promise.all([
+        expect(rawPending).rejects.toThrow('exact verified OCS'),
+        expect(pending).rejects.toThrow('exact verified OCS'),
+      ]);
       rawRoster.fill(0); rawItems.fill(0); indices.fill(0);
       roster.records[0]!.rawHex = '00'; items.records[0]!.rawHex = '00'; roster.source.sha256 = 'forged'; items.source.sha256 = 'forged';
       expect(seen).toEqual([rosterBytes(), itemBytes(), rosterBytes(), itemBytes()]);
       gates.forEach(resolve => resolve());
-      await expect(rawPending).rejects.toThrow('exact verified OCS');
-      await expect(pending).rejects.toThrow('exact verified OCS');
+      await rejections;
     } finally { spy.mockRestore(); }
   });
 });
