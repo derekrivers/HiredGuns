@@ -146,4 +146,3 @@ describe('initial inert type-one support', () => {
     expect(r.candidate.leaders).toEqual([1, 4]); expect(r.candidate.cells).not.toBe(i.cells);
   });
 });
-
