@@ -134,14 +134,24 @@ produced landing inputs satisfy the accepted pure composition slice. This is
 synthetic initialized storage and explicit helper invocation, with no real tick
 cadence, full-map authority or live browser activation established.
 
-Exactly one next task is the report's disconnected pure one-cell dry descent
-transition: atomically validate the observed eligible owned dry empty-block
-ordinary-destination slice and logical adjacency, then return changed pose/refs,
-pending, packed source/destination occupancy, third-layer word, redraw and ordered
-inert records. Return with injury pending; leave the later supported landing to
-the existing composition. No implementation or second task was started here.
-Unsupported support geometry, pads/mines, wet paths and scheduling stay excluded.
+The [pure one-cell dry descent transition](dry-descent-contract.md) now implements
+that nominated slice independently of the world. Exact own-data snapshots validate
+unsigned storage, initialized ownership, bounded logical current/old correspondence,
+dry geometry and DIVU before exposing a candidate. It preserves wrapped arithmetic,
+packed bits, eleven ordered writes, non-pad checks, third-layer no-monster clearing,
+head insertion/redraw and source-cell helper return while current names destination.
+Injury remains pending; later landing is an explicit separate composition. Public
+synthetic tests and the private 15-case first-return comparator pass, including 165
+ordered writes and 225 interleaved records. Frozen 18 and independent 71 reports
+reproduce byte-for-byte; this does not establish whole-map authority or cadence.
+The full check passes 299 tests; public browser 19/4 optional skips and explicit
+local Training43 extraction 4/4 pass. Training43 remains incomplete and unchanged live.
 
+Exactly one next supported task, unstarted: bounded original-instruction observation
+of initial immediate-below inert type-one block support from the real per-player
+helper through supported landing, in dry non-pad/no-aux synthetic storage without
+teleport/squash. Unsupported support geometry, pads/mines, wet paths and scheduling
+stay excluded from the implemented descent. No second task was started.
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
 unresolved gates. Completing the pure caller does not authorize wet activation.
