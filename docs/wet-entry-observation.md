@@ -171,12 +171,14 @@ Training43 case run separately with its explicit private map input.
 
 | Local artifact | SHA-256 |
 | --- | --- |
-| `observe.py` | `0cb7c4c9e73c3d56a2fd77ea04e76ce4ab14a7368a547c317a9045252c2b3297` |
+| `observe.py` | `e279ac50c1530e24b2d646347f90e7a935e4df19d1050950360fd04bb4be52e0` |
 | `results.json` | `53c54ba8aa1ba77322c1ce9314c465055f60994a17b1b1f978ba3e83fbe8e180` |
 
 Model: gpt-6.1-sol, medium implementation. One bounded harness implementation,
 successful initial 28-case execution, then explicit target-coordinate setup and
 one adjacent first-DIVU boundary profile added for the final 31-case run; no
 failed repair cycle, no original instruction changes, no recursive delegation.
+Independent reproduction prompted an explicit coverage-input digest assertion;
+the subsequent 31-case rerun preserves the exact results digest above.
 Token usage unavailable. Independent exact-head review and integration remain
 coordinator-owned gates.
