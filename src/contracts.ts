@@ -27,20 +27,36 @@ export interface MissionState {
   clock: MissionClock | null;
   winner: number | null;
 }
+/** Newly authored empty-inventory test characters; not an original roster. */
+export interface FallActor {
+  physique: number;
+  agility: number;
+  weight: number;
+  fitness: number;
+  dead: boolean;
+  fallDamage: number;
+}
+export type PhysicsState = { mode: 'static' } | {
+  mode: 'dry-fall';
+  profileId: 'synthetic-empty-v1';
+  fallCounter: number;
+  actors: [FallActor, FallActor, FallActor, FallActor];
+};
 export interface WorldState {
-  schemaVersion: 2;
+  schemaVersion: 3;
   levelId: string;
   tick: number;
   rng: number;
   mercenaries: [Mercenary, Mercenary, Mercenary, Mercenary];
   mission: MissionState;
+  physics: PhysicsState;
 }
 export type Action = 'forward' | 'backward' | 'strafe-left' | 'strafe-right' | 'turn-left' | 'turn-right';
 /** At most one command per mercenary per tick; reject duplicates. */
 export interface PlayerCommand { mercenaryId: number; action: Action }
-export interface SimulationEvent { tick: number; mercenaryId: number; kind: 'moved' | 'turned' | 'blocked' | 'exited' | 'complete' | 'failed'; reason?: string }
+export interface SimulationEvent { tick: number; mercenaryId: number; kind: 'moved' | 'turned' | 'blocked' | 'exited' | 'complete' | 'failed' | 'fell' | 'damaged' | 'died'; reason?: string }
 /** Reserved envelope: loading must validate every field before use. */
-export interface SaveEnvelope { format: 'hired-guns-save'; version: 2; levelHash: string; world: WorldState }
+export interface SaveEnvelope { format: 'hired-guns-save'; version: 3; levelHash: string; world: WorldState }
 export function cellIndex(level: LevelData, p: Position): number {
   return (p.z * level.size.depth + p.y) * level.size.width + p.x;
 }
