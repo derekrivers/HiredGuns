@@ -58,7 +58,7 @@ let bitmap: ImageBitmap | null = null;
 let createdBitmaps = 0, closedBitmaps = 0, frameChanges = 0, previousFrame = -1;
 let assetChecks: ReturnType<typeof inspectAtlas> | null = null;
 let busy = false, contextLost = false, showOverlay = true, lastTime = 0, activeRun: Run | null = null;
-let comparison: { baseline: Measurement; overlay: Measurement } | null = null;
+let comparison: { baseline: Measurement; overlay: Measurement | null } | null = null;
 const lifecycle: { cycle: number; afterDispose: Record<string, number>; afterReload: Record<string, number>; liveBitmapsAfterDispose: number }[] = [];
 
 function inspectAtlas(source: HTMLCanvasElement) {
@@ -142,13 +142,22 @@ function distribution(values: number[]) {
   return { count: values.length, min: sorted[0] ?? null, median: percentile(0.5), p95: percentile(0.95), p99: percentile(0.99),
     max: sorted.at(-1) ?? null, mean: values.length ? values.reduce((sum, n) => sum + n, 0) / values.length : null };
 }
+/** Keep deadline comparison and reporting in the same timestamp domain/grouping. */
+export function measurementTiming(start: number, warmupMs: number, durationMs: number, now: number) {
+  const sampleStartTimestampMs = start + warmupMs;
+  const sampleEndTimestampMs = sampleStartTimestampMs + durationMs;
+  return { sampleStartTimestampMs, sampleEndTimestampMs, finishedTimestampMs: now,
+    sampleWindowObservedThroughMs: now - sampleStartTimestampMs, endOverrunMs: now - sampleEndTimestampMs };
+}
 function finish(run: Run, now: number) {
+  const timing = measurementTiming(run.start, run.warmupMs, run.durationMs, now);
   const endEnvironment = environment();
+  if (contextLost || context.isContextLost()) run.invalidReasons.add('WebGL context lost.');
+  if (timing.endOverrunMs < 0) run.invalidReasons.add('Measurement interrupted before requested sample boundary.');
   if (JSON.stringify(run.environment) !== JSON.stringify(endEnvironment)) run.invalidReasons.add('Environment changed during window.');
   if (!run.samples.length) run.invalidReasons.add('No complete frame intervals in the measurement window.');
   return { mode: run.mode, valid: run.invalidReasons.size === 0, invalidReasons: [...run.invalidReasons],
-    warmupMs: run.warmupMs, requestedSampleMs: run.durationMs, sampleWindowObservedThroughMs: now - run.start - run.warmupMs,
-    endOverrunMs: now - run.start - run.warmupMs - run.durationMs,
+    warmupMs: run.warmupMs, requestedSampleMs: run.durationMs, ...timing,
     environment: run.environment, endEnvironment, frames: run.samples.length,
     frameIntervalsMs: distribution(run.samples.map(s => s.intervalMs)),
     cpuSubmissionMs: distribution(run.samples.map(s => s.submissionMs)),
@@ -158,6 +167,7 @@ function finish(run: Run, now: number) {
 }
 type Measurement = ReturnType<typeof finish>;
 function measure(mode: string, warmupMs: number, durationMs: number): Promise<Measurement> {
+  if (contextLost || context.isContextLost()) return Promise.reject(new Error('WebGL context lost; reload preview before measuring.'));
   showOverlay = mode === 'current-renderer-plus-canvas-overlay';
   return new Promise(complete => { activeRun = { mode, warmupMs, durationMs, start: 0, previous: 0,
     environment: environment(), samples: [], invalidReasons: new Set(), complete }; });
@@ -165,6 +175,7 @@ function measure(mode: string, warmupMs: number, durationMs: number): Promise<Me
 function frame(now: number): void {
   const elapsed = lastTime ? now - lastTime : 0; lastTime = now;
   const before = { ...totals }, start = performance.now();
+  if (context.isContextLost()) contextLost = true;
   if (!contextLost) renderer.render(world, elapsed);
   const index = Math.floor(now / 250) % 2;
   if (index !== previousFrame && bitmap) { previousFrame = index; frameChanges++; }
@@ -179,11 +190,12 @@ function frame(now: number): void {
   if (run) {
     if (!run.start) { run.start = now; run.previous = now; run.environment = environment(); }
     if (document.hidden) run.invalidReasons.add('Document hidden during measurement.');
-    const boundary = run.start + run.warmupMs, end = boundary + run.durationMs;
-    if (run.previous >= boundary && now <= end) run.samples.push({ intervalMs: now - run.previous, submissionMs,
+    const timing = measurementTiming(run.start, run.warmupMs, run.durationMs, now);
+    if (contextLost) run.invalidReasons.add('WebGL context lost.');
+    if (!contextLost && run.previous >= timing.sampleStartTimestampMs && now <= timing.sampleEndTimestampMs) run.samples.push({ intervalMs: now - run.previous, submissionMs,
       drawCalls: totals.drawCalls - before.drawCalls, submittedTriangles: totals.submittedTriangles - before.submittedTriangles });
     run.previous = now;
-    if (now >= end) { activeRun = null; run.complete(finish(run, now)); }
+    if (contextLost || now >= timing.sampleEndTimestampMs) { activeRun = null; run.complete(finish(run, now)); }
   }
   requestAnimationFrame(frame);
 }
@@ -212,10 +224,10 @@ async function guarded(action: () => Promise<void>): Promise<void> {
   busy = true; buttons.forEach(button => { button.disabled = true; });
   element('error').textContent = '';
   try {
-    if (contextLost) throw new Error('WebGL context lost; reload preview before measuring.');
+    if (contextLost || context.isContextLost()) { contextLost = true; throw new Error('WebGL context lost; reload preview before measuring.'); }
     await action(); updateReport();
   }
-  catch (error) { element('error').textContent = error instanceof Error ? error.message : String(error); }
+  catch (error) { element('error').textContent = error instanceof Error ? error.message : String(error); updateReport(); }
   finally { busy = false; buttons.forEach(button => { button.disabled = false; }); }
 }
 element('load').onclick = () => { void guarded(async () => { await loadAtlas(); element('status').textContent = 'Synthetic atlas loaded.'; }); };
@@ -234,12 +246,18 @@ element('benchmark').onclick = () => { void guarded(async () => {
   const warmupMs = Number(element<HTMLInputElement>('warmup').value), durationMs = Number(element<HTMLInputElement>('duration').value);
   if (!Number.isInteger(warmupMs) || warmupMs < 100 || warmupMs > 5000 || !Number.isInteger(durationMs) || durationMs < 500 || durationMs > 10000) throw new Error('Warm-up must be 100–5000 ms; sample must be 500–10000 ms, both integers.');
   if (!bitmap) throw new Error('Load the synthetic atlas before comparison.');
+  comparison = null;
   element('status').textContent = 'Measuring current renderer baseline…';
   const baseline = await measure('current-renderer', warmupMs, durationMs);
+  comparison = { baseline, overlay: null };
+  if (contextLost || context.isContextLost()) {
+    element('status').textContent = 'Comparison interrupted: WebGL context lost; overlay not started.';
+    throw new Error('WebGL context lost; overlay not started. Reload preview before measuring.');
+  }
   element('status').textContent = 'Measuring current renderer plus synthetic overlay…';
   const overlay = await measure('current-renderer-plus-canvas-overlay', warmupMs, durationMs);
   comparison = { baseline, overlay }; showOverlay = true;
-  element('status').textContent = 'Comparison complete. Review validity and environment before interpreting timings.';
+  element('status').textContent = contextLost ? 'Comparison interrupted: WebGL context lost.' : 'Comparison complete. Review validity and environment before interpreting timings.';
 }); };
 element('export').onclick = () => {
   updateReport(); const url = URL.createObjectURL(new Blob([JSON.stringify(report(), null, 2)], { type: 'application/json' }));

@@ -39,6 +39,8 @@ test('synthetic four-view preview validates assets, measures both modes and disp
     expect(measurement.drawCallsPerFrame.min).toBeGreaterThan(0);
     expect(measurement.submittedTrianglesPerFrame.min).toBeGreaterThan(0);
     expect(measurement.endOverrunMs).toBeGreaterThanOrEqual(0);
+    expect(measurement.finishedTimestampMs).toBeGreaterThanOrEqual(measurement.sampleEndTimestampMs);
+    expect(measurement.endOverrunMs).toBe(measurement.finishedTimestampMs - measurement.sampleEndTimestampMs);
     expect(measurement.environment.viewport).toEqual({ width: 1440, height: 1000 });
   }
   expect(report.worldUnchanged).toBe(true);
@@ -77,5 +79,54 @@ test('synthetic four-view preview validates assets, measures both modes and disp
   await expect(page.getByRole('alert')).toContainText('WebGL context lost');
   await page.getByRole('button', { name: 'Compare both modes' }).click();
   await expect(page.getByRole('alert')).toContainText('reload preview');
+  expect(errors).toEqual([]);
+});
+
+test('fractional deadline arithmetic preserves exact-boundary zero and genuinely shortened windows', async ({ page }) => {
+  await page.goto('/tools/render-preview.html');
+  await expect(page.getByRole('status')).toContainText('Ready:');
+  const result = await page.evaluate(async () => {
+    const modulePath = '/tools/render-preview.ts';
+    const { measurementTiming } = await import(modulePath);
+    // The old differently grouped subtraction gives a negative artifact for this deadline.
+    const start = 848.2, warmup = 200, duration = 1000, deadline = start + warmup + duration;
+    return { oldOverrun: deadline - start - warmup - duration,
+      exact: measurementTiming(start, warmup, duration, deadline),
+      short: measurementTiming(start, warmup, duration, deadline - 0.25),
+      late: measurementTiming(start, warmup, duration, deadline + 0.25) };
+  });
+  expect(result.oldOverrun).toBeLessThan(0);
+  expect(result.exact.endOverrunMs).toBe(0);
+  expect(result.short.endOverrunMs).toBe(-0.25);
+  expect(result.late.endOverrunMs).toBe(0.25);
+});
+
+test('native context loss during baseline interrupts the comparison without starting the overlay', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/tools/render-preview.html');
+  await expect(page.getByRole('status')).toContainText('Ready:');
+  await page.getByLabel('Warm-up ms').fill('500');
+  await page.getByLabel('Sample ms per mode').fill('1000');
+  await page.getByRole('button', { name: 'Compare both modes' }).click();
+  await expect(page.getByRole('status')).toContainText('baseline');
+  await page.evaluate(() => {
+    document.querySelector<HTMLCanvasElement>('#scene')!.getContext('webgl2')!.getExtension('WEBGL_lose_context')!.loseContext();
+  });
+  await expect(page.getByRole('status')).toContainText('overlay not started');
+  // Native loss notification may arrive after the RAF state check and refresh this alert.
+  await expect(page.getByRole('alert')).toContainText('reload preview');
+  const report = JSON.parse(await page.locator('#report').innerText());
+  expect(report.contextLost).toBe(true);
+  expect(report.comparison.baseline.valid).toBe(false);
+  expect(report.comparison.baseline.invalidReasons).toContain('WebGL context lost.');
+  expect(report.comparison.baseline.endOverrunMs).toBeLessThan(0);
+  expect(report.comparison.baseline.invalidReasons).toContain('Measurement interrupted before requested sample boundary.');
+  expect(report.comparison.overlay).toBeNull();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export JSON' }).click();
+  await (await downloadPromise).saveAs('test-results/synthetic-render-interrupted.json');
+  await page.getByRole('button', { name: 'Compare both modes' }).click();
+  await expect(page.getByRole('alert')).toContainText('reload preview');
+  expect(JSON.parse(await page.locator('#report').innerText()).comparison).toEqual(report.comparison);
   expect(errors).toEqual([]);
 });
