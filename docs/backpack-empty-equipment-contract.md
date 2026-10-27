@@ -113,8 +113,13 @@ One implementation worker, no delegation. Targeted synthetic tests, lint,
 typecheck and private comparison precede coordinator full checks, browser checks,
 independent review, commit and PR gates. Private scripts, inputs, outputs and
 handoff remain ignored under `.local/backpack-empty-equipment-core/`. Token usage
-is unavailable. Next smallest nomination is an evidence-only investigation of the source
-post-weight selection-decrement branch: establish a reachable bounded arrangement
-from initialized caller/storage, or document that it is unreachable under
-contiguous inputs. This nominates no branch behavior and starts no evidence work.
+is unavailable. The [post-weight selection investigation](backpack-post-weight-selection-observation.md)
+proves the later decrement unreachable for non-full contiguous prefixes and
+records one conditional full-prefix/selection-29 exception with nonzero first
+padding ID. That diagnostic does not establish gameplay provenance of its padding;
+the exception remains rejected by this API. Next smallest nomination is
+evidence-only downward inventory navigation from selection zero in the already
+supported two-entry prefix: establish selection one, caller bookkeeping and
+redraw with entries/count/weight/feedback retained, using an initialized eligible
+caller and separately verified downward-action dispatch. No successor is started.
 Any wider transition first needs separate original execution evidence.
