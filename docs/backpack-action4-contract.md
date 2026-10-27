@@ -117,6 +117,10 @@ browser checks, exact-final independent review, commit and PR gates. One
 implementation worker, no recursive delegation; token usage unavailable. Private
 scripts, raw fixtures, comparison reports and handoff stay ignored under
 `.local/backpack-action4-core/`; no original content enters public tests or CI.
-The next smallest evidence nomination is an observation of the same eligible
-manual action-4 caller with occupied selected storage and empty equipment through
-its actual compaction, weight and return path. It remains unstarted.
+The next evidence nomination is now complete for three bounded arrangements:
+the [empty-equipment observation](backpack-empty-equipment-observation.md)
+executes the same eligible manual action-4 caller through actual compaction,
+ID-only clear, selection handling, both weight passes and natural return. The
+smallest next implementation is that explicitly bounded empty-equipment path
+with its recorded prerequisites and ordered writes. It remains unstarted; this
+occupied-exchange API is unchanged.
