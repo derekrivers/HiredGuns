@@ -116,7 +116,9 @@ refusal and recovery without an existing team. Delayed real file reads and real
 digest results test cancellation during both phases without replacing hashes.
 A delayed real map read also verifies that Retry and rule changes immediately
 restore Apply availability on the retained verified map, and that the stale map
-result cannot clear a subsequently applied team.
+result cannot clear a subsequently applied team. Malformed, oversized and
+wrong-source team-plan refusals also refresh Apply immediately after cancelling
+a pending map import, while retaining the existing choices and matching sources.
 Optional screenshots are written only when `HIRED_GUNS_SESSION_SCREENSHOT` names
 a private local path. Physical-controller/TV and complete-level acceptance remain
 separate.

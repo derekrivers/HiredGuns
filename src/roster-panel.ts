@@ -137,7 +137,7 @@ export function installRosterPanel(host: HTMLElement, pause: () => void, session
   get<HTMLInputElement>('roster-plan').addEventListener('change', async event => {
     const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
     if (!file) return;
-    const current = ++generation; pause(); session.cancel();
+    const current = ++generation; pause(); session.cancel(); update();
     try {
       if (!catalog) throw new Error('Open Characters data first.');
       if (file.size >= MAX_SELECTION_BYTES) throw new Error('Roster selection must be smaller than 2 KiB.');

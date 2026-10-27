@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { characterFixture } from '../helpers/character-fixture';
 import { ITEM_FILE_BYTES } from '../../src/import/items';
 import { importCharacters } from '../../src/import/characters';
+import { exportRosterSelection } from '../../src/import/roster-selection';
 import { initializeOriginalTeam } from '../../src/import/original-team';
 import { importEditorMap } from '../../src/import/editor-map';
 import { createWorld } from '../../src/sim/world';
@@ -237,48 +238,76 @@ test('opt-in hashing races cannot install a cancelled candidate or restore a cle
   expect(errors).toEqual([]);
 });
 
+
+async function holdMapRead(page: Page) {
+  await page.evaluate(() => {
+    const state = window as unknown as { mapReadWaiting: boolean; mapHashDone: boolean; releaseMapRead: () => void };
+    const originalRead = File.prototype.arrayBuffer, originalDigest = SubtleCrypto.prototype.digest;
+    // Observe completion of a genuine original map digest; never substitute its result.
+    SubtleCrypto.prototype.digest = async function (...args: Parameters<SubtleCrypto['digest']>) {
+      const result = await originalDigest.call(this, ...args);
+      if (args[1].byteLength === 157738) { state.mapHashDone = true; SubtleCrypto.prototype.digest = originalDigest; }
+      return result;
+    };
+    File.prototype.arrayBuffer = async function () {
+      if (this.name !== 'held-training-map.map') return originalRead.call(this);
+      File.prototype.arrayBuffer = originalRead; state.mapReadWaiting = true;
+      await new Promise<void>(resolve => { state.releaseMapRead = resolve; });
+      return originalRead.call(this);
+    };
+  });
+  await page.getByLabel('Open local editor map').setInputFiles({
+    name: 'held-training-map.map', mimeType: 'application/octet-stream',
+    buffer: await readFile(process.env.HIRED_GUNS_TRAINING_MAP!),
+  });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { mapReadWaiting: boolean }).mapReadWaiting)).toBe(true);
+  await expect(page.getByRole('button', { name: 'Apply team to Training43' })).toBeDisabled();
+}
+async function releaseMapRead(page: Page) {
+  await page.evaluate(() => (window as unknown as { releaseMapRead: () => void }).releaseMapRead());
+  await expect.poll(() => page.evaluate(() => (window as unknown as { mapHashDone: boolean }).mapHashDone)).toBe(true);
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+}
+
 for (const cancel of ['retry', 'rules'] as const) {
   test(`opt-in cancelling a pending map read by ${cancel} immediately restores Apply on the retained map`, async ({ page }) => {
     test.skip(!privateInputs, 'Exact original sources stay private and must be supplied explicitly.');
     const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
     await openLocal(page); await choose(page);
     const button = page.getByRole('button', { name: 'Apply team to Training43' });
-    await expect(button).toBeEnabled();
-    await page.evaluate(() => {
-      const state = window as unknown as { mapReadWaiting: boolean; mapHashDone: boolean; releaseMapRead: () => void };
-      const originalRead = File.prototype.arrayBuffer, originalDigest = SubtleCrypto.prototype.digest;
-      // Observe completion of a genuine original map digest; never substitute its result.
-      SubtleCrypto.prototype.digest = async function (...args: Parameters<SubtleCrypto['digest']>) {
-        const result = await originalDigest.call(this, ...args);
-        if (args[1].byteLength === 157738) { state.mapHashDone = true; SubtleCrypto.prototype.digest = originalDigest; }
-        return result;
-      };
-      File.prototype.arrayBuffer = async function () {
-        if (this.name !== 'held-training-map.map') return originalRead.call(this);
-        File.prototype.arrayBuffer = originalRead; state.mapReadWaiting = true;
-        await new Promise<void>(resolve => { state.releaseMapRead = resolve; });
-        return originalRead.call(this);
-      };
-    });
-    await page.getByLabel('Open local editor map').setInputFiles({
-      name: 'held-training-map.map', mimeType: 'application/octet-stream',
-      buffer: await readFile(process.env.HIRED_GUNS_TRAINING_MAP!),
-    });
-    await expect.poll(() => page.evaluate(() => (window as unknown as { mapReadWaiting: boolean }).mapReadWaiting)).toBe(true);
-    await expect(button).toBeDisabled();
+    await expect(button).toBeEnabled(); await holdMapRead(page);
     if (cancel === 'retry') await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
     else await page.getByLabel('Mission rules').selectOption('navigation');
     // No unrelated selection/source refresh: cancellation itself must make Apply usable.
-    await expect(button).toBeEnabled();
-    await apply(page);
-    await page.evaluate(() => (window as unknown as { releaseMapRead: () => void }).releaseMapRead());
-    await expect.poll(() => page.evaluate(() => (window as unknown as { mapHashDone: boolean }).mapHashDone)).toBe(true);
-    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+    await expect(button).toBeEnabled(); await apply(page); await releaseMapRead(page);
     // The old map result cannot clear the team just applied after cancellation.
     await expect(page.locator('#session-status')).toContainText('Standalone imported Training43 session');
-    await expect(page.locator('#pause-overlay')).toBeVisible();
-    await expect(button).toBeEnabled();
-    expect((await save(page)).indices).toEqual(order);
-    expect(errors).toEqual([]);
+    await expect(page.locator('#pause-overlay')).toBeVisible(); await expect(button).toBeEnabled();
+    expect((await save(page)).indices).toEqual(order); expect(errors).toEqual([]);
+  });
+}
+
+for (const failure of ['malformed', 'oversized', 'wrong-source'] as const) {
+  test(`opt-in ${failure} plan cancellation restores Apply despite a pending map import`, async ({ page }) => {
+    test.skip(!privateInputs, 'Exact original sources stay private and must be supplied explicitly.');
+    const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+    await openLocal(page); await choose(page); await holdMapRead(page);
+    let plan = failure === 'oversized' ? ' '.repeat(2048) : '{';
+    if (failure === 'wrong-source') {
+      const catalog = await importCharacters(new Uint8Array(await readFile(process.env.HIRED_GUNS_CHARACTERS!)));
+      const wrong = JSON.parse(exportRosterSelection(catalog, order));
+      wrong.source.sha256 = '0'.repeat(64); plan = JSON.stringify(wrong);
+    }
+    await page.getByLabel('Load team plan').setInputFiles(jsonUpload(plan, 'invalid-plan.json'));
+    await expect(page.locator('#roster-status')).toContainText('Plan not loaded:');
+    if (failure === 'oversized') await expect(page.locator('#roster-status')).toContainText('smaller than 2 KiB');
+    if (failure === 'wrong-source') await expect(page.locator('#roster-status')).toContainText('identity mismatch');
+    const button = page.getByRole('button', { name: 'Apply team to Training43' });
+    // Refusal must retain the explicit choices and usable matching sources without a workaround.
+    for (const [slot, index] of order.entries()) await expect(page.getByLabel(`Character for team slot ${slot + 1}`)).toHaveValue(String(index));
+    await expect(button).toBeEnabled(); await expect(page.locator('#pause-overlay')).toBeVisible();
+    await apply(page); await releaseMapRead(page);
+    await expect(page.locator('#session-status')).toContainText('Standalone imported Training43 session');
+    expect((await save(page)).indices).toEqual(order); expect(errors).toEqual([]);
   });
 }
