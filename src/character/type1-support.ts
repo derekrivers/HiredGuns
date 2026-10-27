@@ -13,14 +13,15 @@ export interface Type1SupportSlice {
   leaders: [number, number];
   redrawFlag: number;
 }
-type WriteTarget = 'actor.waterFallDelay' | 'feedback.fireWhite' | 'feedback.fitnessFlashDuration' | 'actor.fitness' | 'redrawFlag' | 'actor.fallDamage';
+type WriteTarget = 'actor.waterFallDelay' | 'feedback.fireWhite' | 'feedback.fitnessFlashDuration' | 'actor.fitness' | 'redrawFlag' | 'actor.fallDamage' | 'actor.statsDeadWord' | 'actor.runtimeDeadWord' | 'actor.oldMapPosition' | 'leaders.0' | 'leaders.1' | 'cells.currentFirst' | 'cells.currentSecond';
 export type Type1SupportRecord =
   | { kind: 'write'; target: WriteTarget; width: 1 | 2 | 4; before: number; after: number }
-  | { kind: 'helper-return'; actor: 'actor'; stats: 'stats'; cell: 'current' }
+  | { kind: 'release-return' | 'death-return'; cell: 'current' }
+  | { kind: 'damage-return' | 'helper-return'; actor: 'actor'; stats: 'stats'; cell: 'current' }
   | { kind: 'cell-reread'; cell: 'current'; first: number; mask: number };
 export interface Type1SupportResult {
   candidate: Type1SupportSlice;
-  status: 'damage-skipped' | 'survived';
+  status: 'damage-skipped' | 'survived' | 'died';
   records: Type1SupportRecord[];
   arithmetic: ReturnType<typeof computeNormalDamage> | null;
   helperReturn: { actor: 'actor'; stats: 'stats'; cell: 'current' };
@@ -84,12 +85,16 @@ function dataLeaders(value: unknown): [number, number] {
   return [values[0]!, values[1]!];
 }
 
-/** Initial inert type-one support only; computed fatal outcomes reject atomically. */
+/** Disconnected initial inert type-one support, including bounded corpse placement. */
 export function transitionType1Support(input: Type1SupportSlice): Type1SupportResult {
   const candidate = snapshot(input), records: Type1SupportRecord[] = [];
   const a = candidate.actor, f = candidate.feedback;
   const arithmetic = a.fallDamage === 0 ? null : computeNormalDamage(a.fallDamage, candidate.stats.physique, f.spellShield);
-  if (arithmetic !== null && (arithmetic.damage > a.fitness || a.fitness - arithmetic.damage < 655)) throw new Error('Fatal type-one support continuation is unsupported.');
+  const fatal = arithmetic !== null && (arithmetic.damage > a.fitness || a.fitness - arithmetic.damage < 655);
+  const returned = (kind: 'release-return' | 'death-return' | 'damage-return' | 'helper-return'): void => {
+    if (kind === 'release-return' || kind === 'death-return') records.push({ kind, cell: 'current' });
+    else records.push({ kind, actor: 'actor', stats: 'stats', cell: 'current' });
+  };
   const write = (target: WriteTarget, width: 1 | 2 | 4, before: number, after: number): number => {
     records.push({ kind: 'write', target, width, before, after }); return after;
   };
@@ -98,11 +103,30 @@ export function transitionType1Support(input: Type1SupportSlice): Type1SupportRe
     f.fireWhite = write('feedback.fireWhite', 1, f.fireWhite, 255);
     f.fitnessFlashDuration = write('feedback.fitnessFlashDuration', 1, f.fitnessFlashDuration, (f.fitnessFlashDuration + (arithmetic.damage >>> 9) + 1) & 255);
     const before = a.fitness;
-    a.fitness = write('actor.fitness', 2, before, before - arithmetic.damage);
-    if (Math.floor(before / 655) !== Math.floor(a.fitness / 655)) candidate.redrawFlag = write('redrawFlag', 1, candidate.redrawFlag, 255);
-    records.push({ kind: 'helper-return', actor: 'actor', stats: 'stats', cell: 'current' });
+    if (arithmetic.damage <= before) a.fitness = write('actor.fitness', 2, before, before - arithmetic.damage);
+    if (fatal) {
+      // The original writes only the high byte of each initialized zero dead word.
+      a.statsDeadWord = write('actor.statsDeadWord', 1, a.statsDeadWord >>> 8, 255) << 8;
+      a.runtimeDeadWord = write('actor.runtimeDeadWord', 1, a.runtimeDeadWord >>> 8, 255) << 8;
+      for (const n of [0, 1] as const) if (candidate.leaders[n] === a.partyIndex + 1) {
+        candidate.leaders[n] = write(n === 0 ? 'leaders.0' : 'leaders.1', 2, candidate.leaders[n], 0);
+      }
+      a.oldMapPosition = write('actor.oldMapPosition', 4, a.oldMapPosition, a.mapPosition);
+      candidate.oldCell = { mapPosition: a.mapPosition, x: a.x, y: a.y, floor: a.floor };
+      const c = candidate.cells;
+      c.currentFirst = write('cells.currentFirst', 4, c.currentFirst, (c.currentFirst & 0xf07e07fd) >>> 0);
+      returned('release-return');
+      c.currentFirst = write('cells.currentFirst', 4, c.currentFirst, (c.currentFirst & 0x0fffffdf) >>> 0);
+      c.currentFirst = write('cells.currentFirst', 4, c.currentFirst, (c.currentFirst | 0x70000020) >>> 0);
+      c.currentSecond = write('cells.currentSecond', 4, c.currentSecond, (c.currentSecond & 0xfff00fff) >>> 0);
+      c.currentSecond = write('cells.currentSecond', 4, c.currentSecond, (c.currentSecond | a.partyIndex << 12) >>> 0);
+      returned('death-return');
+    }
+    if (fatal || Math.floor(before / 655) !== Math.floor(a.fitness / 655)) candidate.redrawFlag = write('redrawFlag', 1, candidate.redrawFlag, 255);
+    returned('damage-return');
     a.fallDamage = write('actor.fallDamage', 4, a.fallDamage, 0);
   }
   records.push({ kind: 'cell-reread', cell: 'current', first: candidate.cells.currentFirst, mask: candidate.cells.currentFirst & 0x60004 });
-  return { candidate, status: arithmetic === null ? 'damage-skipped' : 'survived', arithmetic, records, helperReturn: { actor: 'actor', stats: 'stats', cell: 'current' } };
+  returned('helper-return');
+  return { candidate, status: arithmetic === null ? 'damage-skipped' : fatal ? 'died' : 'survived', arithmetic, records, helperReturn: { actor: 'actor', stats: 'stats', cell: 'current' } };
 }
