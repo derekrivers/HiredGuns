@@ -229,9 +229,25 @@ Both exact-final independent and automatic reviews pass without unresolved
 findings, and relevant CI passes. Coordinator's combined accepted-tree check
 passes 503 tests, lint/types and build. Browser behavior remains unchanged.
 
-Next independent evidence lanes are the actual first control-selection boundary
-after a fatal current actor and action-4 transfer into empty equipment through
-compaction. Neither is accepted yet; no automatic transfer is presumed.
+Those next evidence nominations are now accepted in PR33 and PR34. The
+[empty-equipment observation](backpack-empty-equipment-observation.md) executes
+three original action-4 transfer/compaction cases, preserving opaque tails on
+ID-only clears and executing both weight passes (62 helper calls per case).
+Its distinct post-weight selection-decrement branch remains unobserved.
+The [after-death control observation](after-death-control-observation.md) verifies
+29 natural helper returns. There is no automatic survivor selection on the
+inspected death/mouse path: explicit button input over a matching controlled view
+in game mode changes mouse selection. Selection is not an alive/dead validator;
+device assignment, leader and selected actor remain distinct state. The separate
+CPU control-5 observation does not widen the pure TYPE1 contract.
+
+Both exact-final independent and automatic reviews pass without findings, and
+relevant CI passes 503 tests plus the public browser baseline; local Training43
+extraction is 4/4. These are evidence-only additions with unchanged runtime.
+The next independent pure candidates are bounded mouse-0 view selection and
+empty-equipment action-4 transfer/compaction under the observed prerequisites.
+Neither candidate is accepted yet; no live adapter, automatic living fallback,
+hardware cadence or generalized inventory behavior is established.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain

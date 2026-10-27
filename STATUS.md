@@ -1,6 +1,6 @@
 # Status — 27 October 2026
 
-Gameplay accepted through PR31 at `9e38962234ee0768507204be1e9763d320a278da`.
+Gameplay accepted through PR34 at `a079a4da6b850d98a744b0e781e821894928a689`.
 PR27's [pure TYPE1 support transition](docs/type1-support-contract.md) includes
 observed fatal outcomes under the same strict storage and geometry,
 lifecycle and audio prerequisites. It preserves literal fitness, dead-byte writes,
@@ -35,11 +35,30 @@ Coordinator verified sequential merged deltas and the combined tree, then ran
 the combined check: 503 tests, lint/types and build pass. Browser behavior is
 unchanged. Token usage is unavailable.
 
-Two independent evidence lanes are active: the first original control-selection
-boundary after a fatal current actor, and original action-4 transfer into empty
-equipment through carried compaction and natural return. Neither result is
-accepted yet. Automatic control transfer is an observation target, not a claim
-that this TYPE1 helper transfers control. Each owns isolated files and
+PR33's [empty-equipment observation](docs/backpack-empty-equipment-observation.md)
+verifies three original action-4 transfer/compaction cases. Ordered successor
+copies and ID-only clearing preserve opaque tails; count, temporary and padding
+storage remain unchanged. Both real weight passes execute, with 62 helper calls
+per case. The distinct post-weight selection-decrement branch remains unobserved.
+Independent execution and a separate procedural source model agree.
+
+PR34's [after-death mouse evidence](docs/after-death-control-observation.md)
+verifies 29 natural helper returns. The inspected death/mouse path has no automatic
+survivor selection. Death clears its matching leader but preserves mouse selection
+and device assignment. Explicit button input over a matching mouse-controlled view
+in game mode changes selection; this helper performs no alive/dead validation.
+The CPU control-5 fixture does not widen the TYPE1 API. Hardware cadence, the full
+game loop, leader election and following movement remain unestablished.
+
+Both evidence PRs have exact-final independent approval, completed automatic
+reviews without findings and passing 503-test/public-browser CI. Local Training43
+extraction remains 4/4. They add no runtime behavior; the 503-test runtime baseline
+above is unchanged. Private original evidence stays local and ignored.
+
+Two independent pure-transition lanes are active: bounded mouse-0 view selection,
+and action-4 transfer into empty equipment under the observed fixed prerequisites.
+Neither is accepted yet; neither may infer automatic living fallback or general
+inventory behavior. Each owns isolated files and
 worktrees; shared status/completion/handoff reconciliation is coordinator-owned.
 Independent final-commit review, automatic-review finding resolution and green
 relevant CI remain mandatory before coordinator integration.
