@@ -62,7 +62,7 @@ function snapshot(input: Type1SupportSlice): Type1SupportSlice {
   const source = index(a.x, a.y, a.floor), stride = g.width * g.depth;
   if (a.floor < 2 || a.mapPosition !== source || c.current !== source || c.below !== source - stride || c.secondBelow !== source - 2 * stride ||
       a.oldMapPosition !== o.mapPosition || o.mapPosition !== index(o.x, o.y, o.floor)) throw new Error('Incoherent logical type-one support cells.');
-  if (a.statsDeadWord !== 0 || a.runtimeDeadWord !== 0 || a.windowType !== 0 || a.controlMethod !== 1 || result.stats.gender !== 0 || f.gruntCount !== 99) throw new Error('Unsupported type-one support lifecycle/audio.');
+  if (a.statsDeadWord !== 0 || a.runtimeDeadWord !== 0 || a.windowType !== 0 || ![1, 2, 255].includes(a.controlMethod) || result.stats.gender !== 0 || f.gruntCount !== 99) throw new Error('Unsupported type-one support lifecycle/audio.');
   const head = 32 + a.partyIndex * 4;
   const variant = (c.currentFirst >>> 23) & 31;
   const expectedVariant = a.partyIndex + (f.fireWhite !== 0 ? 8 : f.spellShield !== 0 ? 4 : 0);

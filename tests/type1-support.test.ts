@@ -37,10 +37,10 @@ describe('initial inert type-one support', () => {
       expect(i).toEqual(before);
     }
   });
-  it('orders exact writes, actual damage return, clear and reread, retaining redundant writes', () => {
-    const i = fixture(); i.actor.fitness = 1310; i.actor.waterFallDelay = 0; i.feedback.fireWhite = 255;
+  it.each([1, 2, 255])('orders exact writes, actual damage return, clear and reread, retaining redundant writes (control %i)', control => {
+    const i = fixture(); i.actor.controlMethod = control; i.actor.fitness = 1310; i.actor.waterFallDelay = 0; i.feedback.fireWhite = 255;
     i.cells.currentFirst = (i.cells.currentFirst | 8 << 23) >>> 0; i.redrawFlag = 255;
-    const r = transitionType1Support(i);
+    const before = structuredClone(i), r = transitionType1Support(i);
     expect(r.records).toEqual([
       { kind: 'write', target: 'actor.waterFallDelay', width: 2, before: 0, after: 0 },
       { kind: 'write', target: 'feedback.fireWhite', width: 1, before: 255, after: 255 },
@@ -52,10 +52,16 @@ describe('initial inert type-one support', () => {
       { kind: 'cell-reread', cell: 'current', first: i.cells.currentFirst, mask: 0 },
       { kind: 'helper-return', actor: 'actor', stats: 'stats', cell: 'current' },
     ]);
+    expect(i).toEqual(before);
+    expect(r.status).toBe('survived');
+    expect(r.candidate).toEqual({ ...i, actor: { ...i.actor, waterFallDelay: 0, fallDamage: 0, fitness: 1210 }, feedback: { ...i.feedback, fitnessFlashDuration: 254 } });
+    expect(r.helperReturn).toEqual({ actor: 'actor', stats: 'stats', cell: 'current' });
+    r.candidate.actor.controlMethod = 0; r.candidate.cells.currentFirst = 0;
+    expect(i).toEqual(before);
   });
-  it('distinguishes no call with fitness zero from real zero damage', () => {
-    const i = fixture(); i.actor.fallDamage = 0; i.actor.fitness = 0;
-    const r = transitionType1Support(i);
+  it.each([1, 2, 255])('distinguishes no call with fitness zero from real zero damage (control %i)', control => {
+    const i = fixture(); i.actor.controlMethod = control; i.actor.fallDamage = 0; i.actor.fitness = 0;
+    const noCallBefore = structuredClone(i), r = transitionType1Support(i);
     expect(r.status).toBe('damage-skipped'); expect(r.arithmetic).toBeNull();
     expect(r.candidate).toEqual({ ...i, actor: { ...i.actor, waterFallDelay: 0 } });
     expect(r.records).toEqual([
@@ -63,6 +69,10 @@ describe('initial inert type-one support', () => {
       { kind: 'cell-reread', cell: 'current', first: i.cells.currentFirst, mask: 0 },
       { kind: 'helper-return', actor: 'actor', stats: 'stats', cell: 'current' },
     ]);
+    expect(i).toEqual(noCallBefore);
+    expect(r.helperReturn).toEqual({ actor: 'actor', stats: 'stats', cell: 'current' });
+    r.candidate.actor.controlMethod = 0; r.candidate.stats.agility = 1;
+    expect(i).toEqual(noCallBefore);
     i.actor.fallDamage = 1; i.actor.fitness = 655; i.feedback.fitnessFlashDuration = 255;
     const z = transitionType1Support(i);
     expect(z.arithmetic?.damage).toBe(0); expect(z.candidate.feedback.fitnessFlashDuration).toBe(0);
@@ -94,8 +104,8 @@ describe('initial inert type-one support', () => {
     expect(r.candidate.actor.weight).toBe(0xffffffff); expect(r.candidate.stats.agility).toBe(0);
     expect(r.candidate.feedback.fitnessFlashDuration).toBe(12);
   });
-  it('orders every fatal write and distinct return, including redundant owner zero', () => {
-    const i = fixture(); i.actor.fitness = 100; i.leaders = [1, 1];
+  it.each([1, 2, 255])('orders every fatal write and distinct return, including redundant owner zero (control %i)', control => {
+    const i = fixture(); i.actor.controlMethod = control; i.actor.fitness = 100; i.leaders = [1, 1];
     i.actor.waterFallDelay = 0; i.redrawFlag = 255;
     const before = structuredClone(i), r = transitionType1Support(i);
     const removed = (i.cells.currentFirst & 0xf07e07fd) >>> 0;
@@ -132,6 +142,8 @@ describe('initial inert type-one support', () => {
       cells: { ...before.cells, currentFirst: corpse, currentSecond: second },
       feedback: { ...before.feedback, fireWhite: 255, fitnessFlashDuration: 254 }, leaders: [0, 0], redrawFlag: 255 });
     expect(i).toEqual(before);
+    r.candidate.actor.controlMethod = 0; r.candidate.leaders[0] = 4; r.candidate.oldCell.x = 0;
+    expect(i).toEqual(before);
   });
   it('covers fatal owners, directions, feedback priority and independent leader matches', () => {
     for (let owner = 0; owner < 4; owner++) for (let direction = 0; direction < 4; direction++) for (let variant = 0; variant < 3; variant++) {
@@ -155,7 +167,7 @@ describe('initial inert type-one support', () => {
     const r = transitionType1Support(i); expect(r.candidate.actor.fitness).toBe(99);
     expect(r.records.some(x => x.kind === 'write' && x.target === 'actor.fitness')).toBe(false);
     for (const change of [
-      (x: Type1SupportSlice) => { x.actor.controlMethod = 2; },
+      (x: Type1SupportSlice) => { x.actor.controlMethod = 3; },
       (x: Type1SupportSlice) => { x.cells.currentFirst |= 0x20; },
       (x: Type1SupportSlice) => { x.cells.belowFirst = 0x2002; },
       (x: Type1SupportSlice) => { x.cells.secondBelowFirst |= 0x201; },
@@ -179,15 +191,23 @@ describe('initial inert type-one support', () => {
     i => { i.actor.fallDamage = -1; }, i => { i.actor.fallDamage = 0x100000000; }, i => { i.actor.weight = NaN; },
     i => { i.redrawFlag = Infinity; }, i => { i.stats.agility = 1.5; }, i => { i.leaders[0] = 5; },
   ];
-  it.each(invalid.map((mutate, n) => ({ mutate, n })))('rejects malformed/unsupported storage $n without mutation', ({ mutate }) => {
-    const i = fixture(); mutate(i); const before = structuredClone(i);
+  it.each([1, 2, 255].flatMap(control => invalid.map((mutate, n) => ({ control, mutate, n }))))('rejects malformed/unsupported storage $n at control $control without mutation', ({ control, mutate }) => {
+    const i = fixture(); i.actor.controlMethod = control; mutate(i); const before = structuredClone(i);
     expect(() => transitionType1Support(i)).toThrow(); expect(i).toEqual(before);
   });
+  it('rejects every unobserved byte control without input mutation', () => {
+    for (let control = 0; control <= 255; control++) {
+      if ([1, 2, 255].includes(control)) continue;
+      const i = fixture(); i.actor.controlMethod = control; const before = structuredClone(i);
+      expect(() => transitionType1Support(i)).toThrow(/lifecycle/); expect(i).toEqual(before);
+    }
+  });
   const boundaries = ['root', 'grid', 'actor', 'oldCell', 'stats', 'feedback', 'cells', 'cheats', 'leaders'] as const;
-  it.each(boundaries)('enforces exact own data at %s boundary without getters', boundary => {
+  it.each([1, 2, 255].flatMap(control => boundaries.map(boundary => ({ control, boundary }))))('enforces exact own data at $boundary boundary at control $control without getters', ({ control, boundary }) => {
     const select = (i: Type1SupportSlice) => boundary === 'root' ? i : i[boundary];
     for (const mode of ['extra', 'hidden', 'symbol', 'accessor', 'inherited']) {
-      const i = fixture(), obj = select(i), key = Object.keys(obj)[0]!;
+      const i = fixture(); i.actor.controlMethod = control;
+      const obj = select(i), key = Object.keys(obj)[0]!;
       let calls = 0;
       if (mode === 'extra') Object.defineProperty(obj, 'extra', { value: 1, enumerable: true });
       if (mode === 'hidden') Object.defineProperty(obj, 'extra', { value: 1 });
@@ -197,12 +217,12 @@ describe('initial inert type-one support', () => {
       expect(() => transitionType1Support(i)).toThrow(); expect(calls).toBe(0);
     }
   });
-  it('rejects nonnumeric, fractional, signed and oversized storage at every numeric leaf', () => {
+  it.each([1, 2, 255])('rejects nonnumeric, fractional, signed and oversized storage at every numeric leaf at control %i', control => {
     const seed = fixture();
     for (const [group, obj] of Object.entries(seed)) {
       const keys = typeof obj === 'number' ? [''] : Object.keys(obj);
       for (const key of keys) for (const bad of [NaN, Infinity, -1, 0.5, 0x100000000, '1', null, undefined]) {
-        const i = fixture();
+        const i = fixture(); i.actor.controlMethod = control;
         if (key === '') Reflect.set(i, group, bad);
         else Reflect.set(Reflect.get(i, group), key, bad);
         expect(() => transitionType1Support(i)).toThrow();

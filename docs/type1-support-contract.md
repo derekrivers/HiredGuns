@@ -1,8 +1,9 @@
 # Pure initial inert TYPE1 support
 
 27 October 2026. `transitionType1Support` in `src/character/type1-support.ts`
-extends the disconnected initial dry support transition on accepted base
-`4f68d1ea67302d7ca94adea49c7c053610215e0a` to computed fatal outcomes.
+extends the disconnected initial dry support transition with computed fatal
+outcomes on accepted base `2e5adfb81556c4c6669eb75fe1ca2fcd2ecb788c`
+to the observed controls 2 and 255, alongside control 1.
 The [initial observation](type1-support-observation.md) and
 [fatal observation](type1-fatal-support-observation.md) bound the source/CPU
 evidence. No world, scheduler, inventory, save, UI or artwork changes.
@@ -27,15 +28,16 @@ correspondence grants no whole-map, actor, roster or source authority.
 
 Actor storage follows the dry-descent actor slice: byte pose/control, word
 fitness/dead/window/environment counters/delay/head fields, long pending/weight/
-labels, party/direction 0..3. Both dead words initially zero, window=0, control=1,
-gender=0, grunt=99 and cheats=0. Physique is 1..65535; agility is any unsigned
+labels, party/direction 0..3. Both dead words initially zero, window=0, control
+in {1, 2, 255}, gender=0, grunt=99 and cheats=0. Physique is 1..65535; agility is any unsigned
 word, including zero, and weight any unsigned long. Neither weight nor agility
 is a division input. Head family is 32/36/40/44 by owner; blockNumber is family
 plus direction and must match packed current occupancy. Owner variant must
 match party plus eight for nonzero fireWhite, otherwise four for nonzero shield,
 otherwise zero. White has priority. Requiring coherent incoming head and feedback
 is intentionally stricter than merely invoking the original helper. Observed
-controls 2 and 255 remain excluded by this strict control-1 API.
+controls 1, 2 and 255 are the complete eligibility set; zero and every other
+control reject. Accepting these bytes adds no control transfer or team behavior.
 
 Current floor mask `0x601` is zero, immediate below block mask `0x1f802` is
 exactly `0x802`, and second-below block mask is zero. All three first-layer cells
@@ -92,20 +94,24 @@ the reread on every path. No-call records contain only delay write, reread and
 outer return. `helperReturn` retains its existing actor/stats/current shape.
 These records are inert audit data, not a complete instruction/read/stack trace.
 
-Validation: 77 public synthetic tests cover all 48 owner/direction/variant
+Validation: 196 public synthetic tests cover all 48 owner/direction/variant
 combinations on survival and death, feedback priority, leader none/either/both/
 unrelated, literal equality/overdamage/zero-damage fitness, exact ordered fatal
 writes and returns, redundant owner zero, preserved storage/output independence,
 DIVU overflow fallback, unsigned widths, exact descriptors and excluded geometry/
-lifecycle/audio/control. Relevant unit tests and typecheck pass. Coordinator owns
+lifecycle/audio/control. Controls 1, 2 and 255 each have exact ordered no-call,
+survival and fatal regressions, complete candidate/input/control preservation and
+independent output storage checks. Every other byte control rejects. Geometry,
+lifecycle, head/feedback, widths and descriptor rejection tests run at all three
+accepted controls. Relevant unit tests and typecheck pass. Coordinator owns
 full check/browser, independent current-commit review and CI gates.
 
 Private comparisons account for every frozen fatal-observer input without
-rewriting it. Worker 200: 192 accepted (103 fatal), complete modeled candidates,
-2,018 ordered writes and 2,799 records match; eight controls 2/255 reject.
-Independent 154: 114 accepted (107 fatal), complete modeled candidates, 1,711
-writes and 2,266 records match; forty controls 2/255 reject. The worker comparison
-also decodes every modeled final actor/stats/feedback field and all supplied cell
+rewriting it. Worker 200: all 200 accepted (111 fatal), complete modeled
+candidates, 2,138 ordered writes and 2,959 records match. Independent 154: all
+154 accepted (147 fatal), complete modeled candidates, 2,303 writes and 3,058
+records match. The 48 previously control-excluded inputs are now accepted.
+The worker comparison also decodes every modeled final actor/stats/feedback field and all supplied cell
 words, leaders and redraw directly from final CPU memory. Independent candidates
 are reconstructed from its exact writes and full-memory replay assertions.
 Return ordering comes from executed instructions; address-to-label translation
@@ -126,12 +132,13 @@ candidate or return is attributed to them. Originals are untouched and private
 source bytes, addresses, coordinates, scripts and results remain ignored.
 
 Model: gpt-6.1-sol medium; one implementation attempt, no failed implementation
-repair cycle or recursive delegation. One private comparison path setup was
-corrected. Token usage unavailable. No worker commit.
+repair cycle or recursive delegation. The prior private comparator was reused
+with its strict-control rejection path removed; no frozen input was changed. Token usage unavailable. No worker commit.
 
-The smallest next nomination is a separately reviewed disconnected eligibility
-extension for observed controls 2 and 255 under the same exact storage/geometry,
-using the existing evidence; it remains unstarted.
+The smallest next nomination is source/CPU evidence for the first automatic
+team-control selection after a fatal current actor, with explicit surviving
+roster and leader/control preconditions. It remains unstarted; this API still
+preserves incoming control and performs no party control transfer.
 Integrated falling, full team/control/occupancy/pads/corpses, wet traversal and
 source-bound atomic paused checkpoint recovery still gate live activation.
 Shooting, live backpack and full original recovery remain undemonstrated.
