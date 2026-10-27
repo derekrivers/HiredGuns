@@ -124,9 +124,14 @@ and roster one remain unchanged. Physical-controller/TV and complete-level
 acceptance are separate unresolved gates. Art waits for all designs.
 
 One bounded evidence worker, requested gpt-6.1-sol medium; exact runtime model
-and effort telemetry are unavailable. No delegation. Two successful CPU harness
-invocations, the original pair and fresh repeat; no CPU behavior repair.
-Pre-CPU diagnostics preserved an existing-directory refusal, a Python module
-name collision corrected by renaming, and a generator substring failure
-corrected in a new harness version. Token usage is unavailable. Coordinator
-owns checks, independent exact-final review, commit, PR and integration gates.
+and effort telemetry are unavailable. No delegation. Four successful CPU harness
+invocations cover the same two cases: an original run and fresh repeat for each
+of two instrumentation versions. Independent review identified an implicitly
+zero-initialized register; the second version explicitly seeds it to zero and
+sets the entry PC before execution. Effective inputs, source model, complete
+images, path, reads and writes are unchanged. This evidence-driven precision
+fix required no CPU behavior repair or additional case. Pre-CPU diagnostics
+preserved an existing-directory refusal, a Python module name collision
+corrected by renaming, and a generator substring failure corrected in a new
+harness version. Token usage is unavailable. Coordinator owns checks,
+independent exact-final review, commit, PR and integration gates.
