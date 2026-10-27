@@ -1,51 +1,42 @@
 # Training43 completion boundary
 
-Current playable integration, accepted through PR88 at
-`13f657051dda6a0f2d8293823379a9168a676af4`:
-[standalone selected-team session](training-session.md). Explicit four-character
-selection from exact local OCS roster/items applies to verified imported
-Training43, paused. View identities and initial stats/inventory/weight belong to
-that active session; static navigation/extraction/retry remain available.
-Source-bound wrapper recovery reconstructs immutable initial actors and validates
-the complete unchanged checkpoint-v3 world before atomic paused installation.
-Malformed or wrong-source session-save recovery cannot replace the working
-team/world. Beginning source replacement intentionally clears the active team,
-even if that replacement is rejected; operation generations reject stale
-reads/hashes. Plain checkpoints
-cannot silently retain stale selected-team data.
+Current playable integration, accepted through PR92 at
+`933428ae1a4ba4465dd5b7f0166f975023216d0b`:
+[standalone selected-team session](training-session.md) and
+[paused equip/return](training-inventory.md). Four explicit verified OCS choices
+apply to imported Training43 while paused. View identities and immutable initial
+data remain separate from the current inventory overlay; static navigation,
+extraction and retry remain available.
 
-Both independently found cancellation defects were repaired. Exact-final HIGH
-approval, completed no-finding automatic review and both CI runs precede the
-normal expected-head merge; coordinator verified the reviewed tree. Validation:
-626 public unit tests plus lint/types/build; public browser 20 passed/12 optional
-private skips; exact local unit 7, session/extraction browser 13 and independent
-cancellation reproductions 5 passed. Token usage unavailable.
+Each actor can equip once then return once, at most eight typed commands. Full
+entry bytes, reverse insertion including empty tails, ID-only equipment clear,
+actions and freshly verified weights are preserved. Retry/rules reset the cycle;
+source/map replacement clears it. Session wrapper v3 reconstructs the overlay
+from strict typed commands and reverified initial sources, then restores complete
+world/team/overlay atomically paused. Exact v1 initial and v2 equip saves remain
+compatible. Malformed/wrong-source save recovery preserves working state apart
+from pause. Beginning source replacement intentionally clears the active team,
+even if the file is rejected; stale reads/hashes cannot resurrect it.
 
-PR88 adds [paused empty-equipment transfer](training-inventory.md): one carried
-entry can be equipped per actor, preserving full entries, compaction, final
-ID-only clearing, opaque tails/actions and source-verified weights. Immutable
-initial actors remain separate from the overlay. Strict session wrapper v2
-reconstructs at most four unique-actor commands and restores overlay/world
-atomically paused; v1 saves remain compatible. Retry/rules reset the overlay.
-This generic source transcription does not claim additional original CPU cases,
-pointers/control/count/caller authority or general inventory use.
+Exact-final HIGH approval, completed no-finding automatic review and both green
+CI runs preceded the normal expected-head PR92 merge. Coordinator serialized
+support integration, verified the combined tree and checked 638 units/seven
+optional skips plus lint/types/build (633 units in the gameplay-only candidate).
+Public browser: 21 passed/32 optional skips; private units 17, combined browser
+34 and four independent held-return races passed. Independent byte checks cover
+115 genuine initial equips, 990 return placements, 436 authored tail cases and
+2,520 valid lifecycle interleavings. These source/structural deductions do not
+claim additional original CPU execution or pointer/control/count/caller authority.
+Token usage unavailable.
 
-Exact-final independent HIGH approval, completed no-finding automatic review and
-both successful CI runs precede the normal merge and verified combined tree.
-Validation: 630 units, lint/types/build; public browser 21 passed/23 optional skips;
-private units 13, combined browser 25 and four independent hash-race tests passed.
-Independent byte oracles cover 115 real-source occupied slots and 435 authored
-transfer cases, separate from original CPU execution. Token usage unavailable.
-
-This standalone importer/initializer adaptation does not require original
-campaign-loader provenance. Locations/runtime selection remains an unresolved
-campaign gate. No falling, wet mechanics, combat or actual death/control/occupancy/pad/corpse
-behavior is activated. Inventory mutation is limited to this paused equip command;
-unequip/exchange/use/drop and movement effects remain absent. Current recovery
-does not establish future inventory operations or environment recovery. Physical controllers/TV
-and complete-level acceptance remain separate. The original evidence assessment
-below is historical; its unchanged-browser and recovery-gate statements predate
-PR88.
+This explicit-import adaptation does not require original campaign-loader
+provenance; campaign Locations/runtime identity remains unresolved. General
+inventory cycles, exchange/use/drop/consumption, weight effects on movement,
+combat, falling, wet mechanics and actual death/control/occupancy/pad/corpse
+behavior remain absent. Current recovery does not establish future inventory or
+environment recovery. Physical controllers/TV and complete-level acceptance remain
+separate. The original evidence assessment below is historical; its unchanged-
+browser/recovery-gate statements predate the accepted session/inventory work.
 
 Evidence-only result, 26 October 2026, accepted base
 `68e689b525b4c949c8f1ac587f1d47d02064c262`. This does not deliver a
