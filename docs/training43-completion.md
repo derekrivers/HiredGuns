@@ -262,10 +262,25 @@ each lane's local Training43 extraction passes 4/4. Coordinator verifies the
 combined merged deltas and runs 562 tests, lint/types and build successfully.
 Neither transition is installed live. Source/layout/storage-codec authority,
 hardware/input binding and live actor/occupancy adapters remain prerequisites.
-The next bounded tasks are a private source-bound producer for the existing
-initialized mouse fixtures and reachability of the excluded post-weight inventory
-selection decrement. Static source binding cannot grant an authored synthetic
-roster canonical live authority; both tasks remain unaccepted.
+Those two prerequisites are now accepted in PR39 and PR40, through main
+`e85cc8059df963a9cf9bc978224cf6b496cc930d`. The
+[selection boundary](backpack-post-weight-selection-observation.md) proves the
+decrement unreachable for non-full contiguous prefixes. One original CPU run
+reaches it with all thirty slots occupied, selection 29 and nonzero first padding
+ID. Gameplay padding provenance remains unproved, and API rejection is unchanged.
+Structural deductions are not additional CPU cases. The
+[private source-bound fixture producer](mouse0-source-binding.md) reproduces five
+complete projections, ordered writes and full-memory reconstructions with exact
+codec ownership. Original static identity does not make its authored roster or
+opaque storage canonical live state.
+
+Coordinator independently reads/hash-verifies both exact-final HIGH approvals,
+completed no-finding automatic reviews, relevant successful CI and sequential
+normal merged deltas/combined tree. Both changes are documentation-only: the
+562-test baseline, browser behavior, schemas and live gates remain unchanged.
+The next separate lanes are a canonical initialized team storage diagnostic
+producer and bounded two-entry downward inventory navigation CPU evidence.
+These successors are active, not accepted; neither installs live actors or input.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
