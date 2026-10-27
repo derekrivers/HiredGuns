@@ -8,8 +8,10 @@ Training43, paused. View identities and initial stats/inventory/weight belong to
 that active session; static navigation/extraction/retry remain available.
 Source-bound wrapper recovery reconstructs immutable initial actors and validates
 the complete unchanged checkpoint-v3 world before atomic paused installation.
-Wrong/malformed sources or saves cannot replace the working team/world, and
-source/cancellation generations reject stale reads/hashes. Plain checkpoints
+Malformed or wrong-source session-save recovery cannot replace the working
+team/world. Beginning source replacement intentionally clears the active team,
+even if that replacement is rejected; operation generations reject stale
+reads/hashes. Plain checkpoints
 cannot silently retain stale selected-team data.
 
 Both independently found cancellation defects were repaired. Exact-final HIGH
