@@ -279,8 +279,24 @@ Coordinator independently reads/hash-verifies both exact-final HIGH approvals,
 completed no-finding automatic reviews, relevant successful CI and sequential
 normal merged deltas/combined tree. Both changes are documentation-only: the
 562-test baseline, browser behavior, schemas and live gates remain unchanged.
-The next separate lanes are a canonical initialized team storage diagnostic
-producer and bounded two-entry downward inventory navigation CPU evidence.
+PR42 and PR43 now accept those two bounded diagnostics, through main
+`4669edd91f3e5f09ab4727ba1e36d0179615bd50`. The
+[downward selection evidence](backpack-down-navigation-observation.md) establishes
+selection zero to one and the adjacent empty-successor stop, preserving inventory
+and opaque weight/feedback. The per-player original call returns naturally;
+the outer routine remains an observed prefix. The
+[canonical initialization diagnostic](initialized-team-source-storage.md) calls
+the verified initializer and produces complete stats plus source-owned partial
+runtime/global storage. Of 6,938 covered bytes, 1,196 are known and 5,742 remain
+explicitly unknown. Complete initialized memory still needs the bounded prestate;
+source deduction is not CPU initialization parity or post-death fixture fit.
+
+Both exact-final independent HIGH approvals, completed no-finding automatic
+reviews and relevant green CI pass. Each lane records 562 tests/lint/types/build,
+public browser 19 passed/four optional skips and local Training43 extraction 4/4.
+Coordinator verifies sequential normal merged deltas and combined tree; these
+documentation-only changes retain the runtime baseline. Next separate lanes are
+pure downward selection and a source-bound quick-initialization prestate producer.
 These successors are active, not accepted; neither installs live actors or input.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
