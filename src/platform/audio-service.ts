@@ -38,7 +38,9 @@ export class AudioService {
     const revision = ++this.revision;
     this.active = false;
     await context.resume();
-    if (this.disposed || revision !== this.revision || context.state !== 'running') return false;
+    if (this.disposed || revision !== this.revision) return false;
+    // Suspension can precede statechange delivery while this activation is pending.
+    if (context.state !== 'running') { this.holdPlayback(); return false; }
     this.active = true;
     if (this.music && !this.music.source) this.startMusic(this.music);
     return true;
@@ -128,7 +130,8 @@ export class AudioService {
   }
 
   private onStateChange = (): void => {
-    if (this.context?.state !== 'running' && this.active) this.holdPlayback();
+    // Pending activation clears active, but previously started sources still need interruption cleanup.
+    if (this.context?.state !== 'running' && (this.active || this.effects.size > 0 || this.music?.source)) this.holdPlayback();
   };
   private canPlay(): boolean { return !this.disposed && this.active && this.context?.state === 'running'; }
   private validGain(value: number): number {

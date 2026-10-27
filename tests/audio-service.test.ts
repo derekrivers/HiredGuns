@@ -86,6 +86,23 @@ test('activation catches suspension before its statechange event is delivered', 
   expect(f.sources[2]!.start).toHaveBeenCalledWith(0, 2);
 });
 
+test.each([false, true])('suspension during running activation holds sources (statechange first: %s)', async eventFirst => {
+  const f = fixture(); await f.service.activate();
+  f.service.playEffect(f.buffer); f.service.playMusic(f.buffer); f.context.currentTime = 2;
+  const activation = f.service.activate();
+  f.context.state = 'suspended';
+  if (eventFirst) for (const listener of f.listeners) listener();
+  expect(await activation).toBe(false);
+  expect(f.service.status).toMatchObject({ active: false, effectVoices: 0, music: 'paused' });
+  expect(f.sources.every(source => source.stop.mock.calls.length === 1 && source.disconnect.mock.calls.length === 1)).toBe(true);
+  await f.context.resume(); for (const listener of f.listeners) listener();
+  expect(f.service.status).toMatchObject({ active: false, effectVoices: 0, music: 'paused' });
+  expect(f.sources).toHaveLength(2);
+  await f.service.activate();
+  expect(f.sources).toHaveLength(3);
+  expect(f.sources[2]!.start).toHaveBeenCalledWith(0, 2);
+});
+
 test.each(['stop', 'pause', 'dispose'] as const)('%s cancels a pending activation without delayed music', async action => {
   const f = fixture(); await f.service.activate(); f.service.playMusic(f.buffer); await f.service.pause();
   let finish!: () => void;

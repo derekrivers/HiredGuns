@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import type { AudioService } from '../../src/platform/audio-service';
 
 // Public synthetic PCM only: complete mono WAV, no recovered assets or downloads.
 function tone(seconds = 8): Buffer {
@@ -11,6 +12,7 @@ function tone(seconds = 8): Buffer {
 }
 
 interface Probe { context: AudioContext; analyser: AnalyserNode; starts: number[]; stops: number; disconnects: number }
+interface InterruptionProbe { service: AudioService; context: AudioContext; ready: Promise<boolean> | null }
 async function peak(page: Page): Promise<number> {
   return page.evaluate(() => {
     const probe = (window as unknown as { audioProbe: Probe }).audioProbe;
@@ -122,4 +124,49 @@ test('native context suspension drops effects and page hide closes the owned con
   await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide')));
   await expect.poll(() => page.evaluate(() => (window as unknown as { audioProbe: Probe }).audioProbe.context.state)).toBe('closed');
   expect(await page.evaluate(() => (window as unknown as { audioProbe: Probe }).audioProbe.stops)).toBe(2);
+});
+
+test('native suspension during a running activation holds sources before native resume', async ({ page }) => {
+  await page.evaluate(async () => {
+    const modulePath = '/src/platform/audio-service.ts';
+    const { AudioService } = await import(modulePath) as typeof import('../../src/platform/audio-service');
+    const context = new AudioContext();
+    const service = new AudioService({ contextFactory: () => context });
+    const probe: InterruptionProbe = { service, context, ready: null };
+    Object.assign(window, { interruptionProbe: probe });
+    const button = document.createElement('button'); button.textContent = 'Activate interruption probe';
+    button.onclick = () => { probe.ready = service.activate(); }; document.body.append(button);
+  });
+  await page.getByRole('button', { name: 'Activate interruption probe' }).click();
+  await page.evaluate(async () => {
+    const { service, context, ready } = (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe;
+    await ready;
+    const buffer = context.createBuffer(1, context.sampleRate * 10, context.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = 0.2 * Math.sin(2 * Math.PI * 440 * i / context.sampleRate);
+    service.playEffect(buffer); service.playMusic(buffer);
+  });
+  await expect.poll(() => peak(page)).toBeGreaterThan(0.1);
+  const interleaving = await page.evaluate(async () => {
+    const { service, context } = (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe;
+    // Native methods, same task, no replacements, delayed promises or fabricated state changes.
+    const activation = service.activate();
+    const suspension = context.suspend();
+    const immediately = { ...service.status };
+    const activationResult = await activation; await suspension;
+    return { immediately, activationResult };
+  });
+  expect(interleaving.immediately).toMatchObject({ active: false, effectVoices: 1, music: 'playing' });
+  expect(interleaving.activationResult).toBe(false);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe.service.status)).toMatchObject({ active: false, context: 'suspended', effectVoices: 0, music: 'paused' });
+  expect(await page.evaluate(() => (window as unknown as { audioProbe: Probe }).audioProbe.stops)).toBe(2);
+  await page.evaluate(() => (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe.context.resume());
+  await expect.poll(() => peak(page)).toBeLessThan(0.00001);
+  expect(await page.evaluate(() => (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe.service.status)).toMatchObject({ active: false, context: 'running', effectVoices: 0, music: 'paused' });
+  expect(await page.evaluate(() => (window as unknown as { audioProbe: Probe }).audioProbe.starts.length)).toBe(2);
+  await page.getByRole('button', { name: 'Activate interruption probe' }).click();
+  await expect.poll(() => peak(page)).toBeGreaterThan(0.05);
+  expect(await page.evaluate(() => (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe.service.status)).toMatchObject({ active: true, effectVoices: 0, music: 'playing' });
+  expect(await page.evaluate(() => (window as unknown as { audioProbe: Probe }).audioProbe.starts.length)).toBe(3);
+  await page.evaluate(() => (window as unknown as { interruptionProbe: InterruptionProbe }).interruptionProbe.service.dispose());
 });
