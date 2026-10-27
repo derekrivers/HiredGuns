@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR66; current main is
-`6179dcae6136c85feeb9a09ae4a086e614b5d587`.
+Gameplay prerequisites accepted through PR69; current main is
+`759d2c7ef04fb8419a2e6a0061b22da0fab24629`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -197,9 +197,31 @@ reports and verifies normal sequential merged deltas/trees. Combined PR66 main
 passes 616 tests, lint/types and build; each lane records public browser 19/four
 optional skips and separate local Training43 extraction 4/4. Live behavior is unchanged.
 
-Two unaccepted evidence lanes now own the original one-human control-assignment
-branch and the immediate inventory post-count test/division prefix. Neither
-installs actors/input or activates inventory damage.
+PR68 establishes the [original post-count boundary](docs/backpack-postcount-division-observation.md): the same diagnostic
+dividend overflows unsigned division by count three, preserves the operand and
+adds no memory writes or exception. Defined overflow flags are checked separately
+from undefined N/Z. The observation stops before equipment setup/distribution;
+it establishes no ordinary damage amount or earlier caller eligibility.
+
+PR69 establishes [original one-human initialization](docs/team-initialization-one-human-observation.md). Original instructions
+assign mouse one to all four actors. Independent source/CPU proof and full 16 MiB
+comparison/replay agree; only five final bytes differ from the four-human case.
+Three control mismatches disappear, leaving seventeen differing scalar fields
+and 699 unknown codec bytes in the authored post-death comparison. Death, cell
+references, invocation and actual-caller prerequisites remain. External diagnostic
+return-frame and unproved architectural CCR parity limits are unchanged.
+
+Both accepted exact heads have independent HIGH approval, completed no-finding
+automatic review and relevant successful CI. Coordinator reads/hash-verifies
+reports and verifies normal merged deltas/trees. Both are documentation-only;
+the accepted runtime baseline remains 616 tests/lint/types/build. Each lane
+records public browser 19/four optional skips and verified local Training43
+extraction 4/4. Live behavior is unchanged.
+
+Two unaccepted lanes now own original initialized current/old cell-reference
+placement with full-team occupancy prerequisites, and shooting-item argument
+preparation ending before the fitness call. Neither installs actors/input,
+executes excluded fitness calls or activates inventory damage.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
