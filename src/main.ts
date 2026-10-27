@@ -12,7 +12,7 @@ import { importEditorMap } from './import/editor-map';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
 import { installRosterPanel } from './roster-panel';
 import { installTrainingInventoryPanel } from './training-inventory-panel';
-import { equipTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
+import { equipTrainingSession, returnTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -46,17 +46,18 @@ const sessionInfo = document.createElement('section'); sessionInfo.id = 'trainin
 rosterHost.before(sessionInfo);
 const inventoryHost = document.createElement('section'); inventoryHost.id = 'training-inventory';
 sessionInfo.after(inventoryHost);
-const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot) => {
-  if (!paused || loading || !session) throw new Error('Pause an available selected-team session before equipping.');
+const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot, kind) => {
+  if (!paused || loading || !session) throw new Error('Pause an available selected-team session before changing inventory.');
   const sources = rosterPanel.sources();
   if (!sources) throw new Error('Open the matching roster and items first.');
   const generation = ++loadGeneration; loading = true; inventoryPanel.refresh();
   try {
-    const candidate = await equipTrainingSession(level, sources, session, actor, slot, paused);
+    const transfer = kind === 'equip' ? equipTrainingSession : returnTrainingSession;
+    const candidate = await transfer(level, sources, session, actor, slot, paused);
     if (generation !== loadGeneration) return;
-    // Equip reconstructs only the overlay; retain this session's current navigation world.
+    // Inventory commands reconstruct only the overlay; retain the current navigation world.
     session = candidate.session; showSession();
-    get('recovery-status').textContent = `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
+    get('recovery-status').textContent = kind === 'equip' ? `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : `Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
   } finally {
     if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); rosterPanel.refresh(); }
   }

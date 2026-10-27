@@ -1,6 +1,6 @@
 import type { LevelData, WorldState } from '../contracts';
 import { importItems, type ItemCatalog } from '../import/items';
-import { equipCommands, replayTrainingInventory, type TrainingInventory } from './training-inventory';
+import { equipCommands, inventoryCommands, replayTrainingInventory, type TrainingInventory } from './training-inventory';
 import { importCharacters } from '../import/characters';
 import { initializeOriginalTeam, type OriginalTeam } from '../import/original-team';
 import { exportCheckpoint, importCheckpoint } from './checkpoint';
@@ -35,7 +35,7 @@ function trainingLevel(level: LevelData): LevelData {
 }
 /** Snapshot sources before any hashing. OriginalTeam rehashes/reparses both exact OCS inputs. */
 export async function createTrainingSession(level: LevelData, sources: TrainingSources, indices: readonly number[], commands: unknown = []): Promise<TrainingCandidate> {
-  const replay = equipCommands(commands);
+  const replay = inventoryCommands(commands);
   const map = trainingLevel(level);
   const roster = new Uint8Array(sources.roster), items = new Uint8Array(sources.items);
   const world = createWorld(map);
@@ -52,7 +52,12 @@ export async function createTrainingSession(level: LevelData, sources: TrainingS
 /** New candidates always reverify raw inputs and replay a bounded command log. */
 export async function equipTrainingSession(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean): Promise<TrainingCandidate> {
   if (!paused) throw new Error('Pause before equipping an item.');
-  return createTrainingSession(level, sources, session.indices, [...session.inventory.commands, { actor, slot }]);
+  return createTrainingSession(level, sources, session.indices, [...session.inventory.commands, { kind: 'equip', actor, slot }]);
+}
+
+export async function returnTrainingSession(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean): Promise<TrainingCandidate> {
+  if (!paused) throw new Error('Pause before returning equipment.');
+  return createTrainingSession(level, sources, session.indices, [...session.inventory.commands, { kind: 'return', actor, slot }]);
 }
 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
@@ -65,7 +70,7 @@ export async function exportTrainingSession(level: LevelData, world: WorldState,
   const map = trainingLevel(level);
   if (world.physics.mode !== 'static') throw new Error('Training43 sessions require static navigation.');
   const [candidate, checkpoint] = await Promise.all([createTrainingSession(map, sources, session.indices, session.inventory.commands), exportCheckpoint(map, world)]);
-  const json = JSON.stringify({ format: 'hired-guns-training-session', version: 2,
+  const json = JSON.stringify({ format: 'hired-guns-training-session', version: 3,
     sources: { map: TRAINING_43_SHA256, ...candidate.session.team.sources },
     indices: candidate.session.indices, commands: candidate.session.inventory.commands, checkpoint });
   if (new TextEncoder().encode(json).length >= MAX_SESSION_BYTES) throw new Error('Training43 session is too large.');
@@ -85,11 +90,12 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const version = (parsed as { version?: unknown }).version;
   exact(parsed, version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
-  if (parsed.format !== 'hired-guns-training-session' || (version !== 1 && version !== 2) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
+  if (parsed.format !== 'hired-guns-training-session' || (version !== 1 && version !== 2 && version !== 3) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
   exact(parsed.sources, ['map', 'roster', 'items']);
   const expected = structuredClone(parsed.sources);
   const map = trainingLevel(level);
-  const candidatePromise = createTrainingSession(map, sources, parsed.indices as number[], version === 1 ? [] : parsed.commands);
+  const commands = version === 1 ? [] : version === 2 ? equipCommands(parsed.commands).map(command => ({ kind: 'equip' as const, ...command })) : inventoryCommands(parsed.commands);
+  const candidatePromise = createTrainingSession(map, sources, parsed.indices as number[], commands);
   const checkpointPromise = importCheckpoint(map, parsed.checkpoint);
   const [candidate, world] = await Promise.all([candidatePromise, checkpointPromise]);
   const actual = { map: TRAINING_43_SHA256, ...candidate.session.team.sources };

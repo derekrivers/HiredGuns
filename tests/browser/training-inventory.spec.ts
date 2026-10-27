@@ -34,6 +34,11 @@ async function equip(page: Page, actor: number, slot: number) {
   await page.getByRole('button', { name: `Equip for team slot ${actor + 1}`, exact: true }).click();
   await expect(page.locator('#recovery-status')).toContainText(`Equipped carried slot ${slot + 1} for team slot ${actor + 1}`);
 }
+async function returnItem(page: Page, actor: number, slot: number) {
+  await page.getByLabel(`Return position for team slot ${actor + 1}`).selectOption(String(slot));
+  await page.getByRole('button', { name: `Return to backpack for team slot ${actor + 1}`, exact: true }).click();
+  await expect(page.locator('#recovery-status')).toContainText(`Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}`);
+}
 async function holdHash(page: Page) {
   await page.evaluate(() => {
     const state = window as unknown as { inventoryWaiting: boolean; releaseInventoryHash: () => void; inventoryHashDone: boolean };
@@ -56,6 +61,58 @@ async function release(page: Page) {
 
 test('inventory commands are absent without an applied verified Training43 session', async ({ page }) => {
   await page.goto('/'); await expect(page.locator('#training-inventory')).toBeEmpty();
+});
+
+test('opt-in paused return: all four complete byte insertions, bounded cycles, v2 migration and full recovery', async ({ page }) => {
+  test.skip(!privateInputs, 'Requires explicit private originals.');
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  const { level, sources } = await local(), initial = await createTrainingSession(level, sources, order);
+  await open(page);
+  await expect(page.getByRole('button', { name: 'Return to backpack for team slot 1', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Return to backpack for team slot 1', exact: true }).dispatchEvent('click');
+  await expect(page.locator('#training-inventory-0 [role=status]')).toContainText('Equipment not returned');
+  expect(await overlay(page)).toEqual(initial.session.inventory.actors);
+  for (let actor = 0; actor < 4; actor++) {
+    await equip(page, actor, actor === 1 ? 9 : 0);
+    const before = await overlay(page), current = before[actor]!, end = current.inventory.carried.findIndex((s: { itemId: number }) => !s.itemId), position = actor % 2 ? Math.max(0, end - 1) : 0;
+    if (actor === 0) {
+      const v2 = await save(page); v2.version = 2; v2.commands = v2.commands.map(({ actor, slot }: { actor: number; slot: number }) => ({ actor, slot }));
+      await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(v2));
+      await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored'); expect(await overlay(page)).toEqual(before);
+      await page.getByRole('button', { name: 'Start mission', exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Return to backpack for team slot 1', exact: true })).toBeDisabled();
+      await page.keyboard.press('Escape');
+    }
+    await returnItem(page, actor, position);
+    const after = await overlay(page), expected = structuredClone(current);
+    expected.inventory.carried = [...current.inventory.carried.slice(0, position), current.inventory.equipped, ...current.inventory.carried.slice(position, 29)];
+    expected.inventory.equipped = { ...current.inventory.equipped, itemId: 0, rawHex: `00${current.inventory.equipped.rawHex.slice(2)}` }; expected.selection = position; expected.weight.usingGrenade = 0;
+    expect(after[actor]).toEqual(expected);
+    for (let j = 0; j < 4; j++) if (j !== actor) expect(after[j]).toEqual(before[j]);
+    for (const name of [`Equip for team slot ${actor + 1}`, `Return to backpack for team slot ${actor + 1}`]) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
+    await page.getByRole('button', { name: `Return to backpack for team slot ${actor + 1}`, exact: true }).dispatchEvent('click');
+    await expect(page.locator(`#training-inventory-${actor} [role=status]`)).toContainText('Equipment not returned'); expect(await overlay(page)).toEqual(after);
+  }
+  const beforeTurn = await page.locator('#position-0').textContent();
+  await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.press('Digit1'); await page.keyboard.down('e');
+  await expect(page.locator('#position-0')).not.toHaveText(beforeTurn!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
+  const completed = await overlay(page), saved = await save(page), world = JSON.parse(saved.checkpoint).world;
+  expect(saved.commands).toHaveLength(8); expect(world.tick).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Retry mission', exact: true }).click(); expect(await overlay(page)).toEqual(initial.session.inventory.actors);
+  await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(saved));
+  await expect(page.locator('#recovery-status')).toContainText(`Checkpoint restored at tick ${world.tick}`); await expect(page.locator('#pause-overlay')).toBeVisible();
+  expect(await overlay(page)).toEqual(completed); expect(await save(page)).toEqual(saved);
+  const wrong = structuredClone(saved); wrong.sources.roster.sha256 = '0'.repeat(64);
+  const e = { kind: 'equip', actor: 0, slot: 0 }, r = { kind: 'return', actor: 0, slot: 0 };
+  for (const bad of [wrong, ...[[r], [e, e], [e, r, e], [e, r, r], [{ ...e, kind: 'drop' }], [e, { ...r, slot: 29 }], [{ ...e, actor: 4 }], [e, { ...r, slot: 9 }], [{ ...e, extra: true }]].map(commands => ({ ...saved, commands }))]) {
+    await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(bad)); await expect(page.locator('#error')).toContainText('Checkpoint not loaded');
+    expect(await overlay(page)).toEqual(completed); expect(await save(page)).toEqual(saved);
+  }
+  if (process.env.HIRED_GUNS_INVENTORY_SCREENSHOT) {
+    await page.locator('#training-inventory-0 summary').click(); await page.locator('#training-inventory').screenshot({ path: process.env.HIRED_GUNS_INVENTORY_SCREENSHOT });
+  }
+  await page.getByLabel('Mission rules').selectOption('navigation'); expect(await overlay(page)).toEqual(initial.session.inventory.actors);
+  expect(errors).toEqual([]);
 });
 
 test('opt-in actual paused equip: full entries, compaction, tails/actions, independent actors, navigation and atomic recovery', async ({ page }) => {
@@ -99,7 +156,7 @@ test('opt-in actual paused equip: full entries, compaction, tails/actions, indep
   await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.press('Digit1'); await page.keyboard.down('e');
   await expect(page.locator('#position-0')).not.toHaveText(beforeTurn!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
   const equipped = await overlay(page), saved = await save(page), world = JSON.parse(saved.checkpoint).world;
-  expect(saved.version).toBe(2); expect(saved.commands).toHaveLength(4); expect(world.tick).toBeGreaterThan(0);
+  expect(saved.version).toBe(3); expect(saved.commands).toHaveLength(4); expect(world.tick).toBeGreaterThan(0);
   expect((await importTrainingSession(level, sources, JSON.stringify(saved))).session.inventory.actors).toEqual(equipped);
   await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
   expect(await overlay(page)).toEqual(initial.session.inventory.actors);
@@ -119,25 +176,34 @@ test('opt-in actual paused equip: full entries, compaction, tails/actions, indep
   expect(errors).toEqual([]);
 });
 
-for (const operation of ['equip', 'restore'] as const) for (const cancel of ['selection', 'retry', 'rules', 'source', 'map'] as const) {
+for (const operation of ['equip', 'return', 'restore'] as const) for (const cancel of ['selection', 'retry', 'rules', 'source', 'map', 'apply'] as const) {
   test(`opt-in ${cancel} cancels delayed ${operation} without stale inventory installation`, async ({ page }) => {
     test.skip(!privateInputs, 'Requires explicit private originals.');
     await open(page);
     let saved;
-    if (operation === 'restore') { await equip(page, 0, 1); saved = await save(page); await page.getByRole('button', { name: 'Retry mission', exact: true }).click(); }
+    if (operation !== 'equip') await equip(page, 0, 1);
+    if (operation === 'restore') { await returnItem(page, 0, 0); saved = await save(page); await page.getByRole('button', { name: 'Retry mission', exact: true }).click(); }
     await holdHash(page);
     if (operation === 'equip') {
       await page.getByLabel('Carried slot for team slot 1').selectOption('1');
       await page.getByRole('button', { name: 'Equip for team slot 1', exact: true }).click();
-    } else await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(saved));
+    } else if (operation === 'return') await page.getByRole('button', { name: 'Return to backpack for team slot 1', exact: true }).click();
+    else await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(saved));
     await waiting(page);
     if (cancel === 'selection') await page.getByLabel('Character for team slot 1').selectOption('10');
     else if (cancel === 'retry') await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
     else if (cancel === 'rules') await page.getByLabel('Mission rules').selectOption('navigation');
+    else if (cancel === 'apply') {
+      await page.getByLabel('Character for team slot 1').selectOption('10');
+      await page.getByRole('button', { name: 'Apply team to Training43' }).click();
+      await expect.poll(async () => (await save(page)).indices[0]).toBe(10);
+    }
     else if (cancel === 'source') await page.getByRole('button', { name: 'Clear item inspection', exact: true }).click();
     else await page.getByRole('button', { name: 'Synthetic map', exact: true }).click();
+    const expected = await save(page); const expectedOverlay = cancel === 'source' || cancel === 'map' ? [] : await overlay(page);
     await release(page); await expect(page.locator('#pause-overlay')).toBeVisible();
+    expect(await save(page)).toEqual(expected); if (expectedOverlay.length) expect(await overlay(page)).toEqual(expectedOverlay);
     if (cancel === 'source' || cancel === 'map') { await expect(page.locator('#training-inventory')).toBeEmpty(); expect((await save(page)).version).toBe(3); }
-    else { expect((await save(page)).commands).toEqual([]); expect((await overlay(page)).every(a => a.inventory.equipped.itemId === 0)).toBe(true); }
+    else if (cancel !== 'selection' || operation !== 'return') { expect((await save(page)).commands).toEqual([]); expect((await overlay(page)).every(a => a.inventory.equipped.itemId === 0)).toBe(true); }
   });
 }
