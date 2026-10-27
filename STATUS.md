@@ -245,7 +245,7 @@ Three actual consecutive original calls execute initialization, all monster rese
 and four-actor placement, returning naturally to the next caller instruction.
 Independent source/CPU prediction, every read origin, actual call frames and full
 16 MiB replay agree. This removes the direct-entry and intervening-reset gaps for
-these diagnostic inputs. Earlier startup, editor-map origin, hardware/CCR parity,
+these diagnostic inputs. Earlier startup, runtime-map identity, hardware/CCR parity,
 death, collisions and general occupancy remain unproved; no live adapter follows.
 
 PR75 adds the [disconnected bounded shooting argument producer](docs/shooting-argument-contract.md).
