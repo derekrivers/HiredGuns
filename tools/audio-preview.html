@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hired Guns — local audio preview</title>
+  <style>
+    :root { color-scheme: dark; font: 17px/1.6 system-ui, sans-serif; background: #101923; color: #e7edf3; }
+    body { max-width: 850px; margin: 3rem auto; padding: 0 1.5rem; }
+    h1 { line-height: 1.2; } fieldset { margin: 1.5rem 0; border: 1px solid #536778; border-radius: 10px; padding: 1rem; }
+    button, input { font: inherit; } button { padding: .4rem .8rem; margin: .25rem; cursor: pointer; }
+    label { display: block; margin: .5rem 0; } output { display: block; } #error { color: #ffb8a5; min-height: 1.6em; }
+    #state { white-space: pre-wrap; padding: 1rem; background: #1b2b39; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Local audio preview</h1>
+  <p>Choose an effect and a music file from your computer. Files stay in this tab; nothing is uploaded or stored. Music plays once. No game events or loop points are assigned.</p>
+  <button id="activate">Enable / resume audio</button><button id="pause">Pause</button><button id="stop">Stop all</button>
+  <fieldset><legend>Effect</legend>
+    <label>Local effect file <input id="effect-file" type="file" accept="audio/*,.wav"></label>
+    <output id="effect-info">No file loaded</output>
+    <button id="effect-play" disabled>Play effect</button><button id="effect-overlap" disabled>Play 3 overlapping effects</button>
+    <label>Effects volume <input id="effects-gain" type="range" min="0" max="1" step="0.05" value="0.7"></label>
+  </fieldset>
+  <fieldset><legend>Music cue</legend>
+    <label>Local music file <input id="music-file" type="file" accept="audio/*,.wav"></label>
+    <output id="music-info">No file loaded</output><button id="music-play" disabled>Play / replace music</button>
+    <label>Music volume <input id="music-gain" type="range" min="0" max="1" step="0.05" value="0.5"></label>
+  </fieldset>
+  <label><input id="mute" type="checkbox"> Master mute</label>
+  <p id="error" role="alert"></p><output id="state" aria-label="Audio state"></output>
+  <p>Pause discards effects and holds the music position. Resume requires the button above. Stop discards both. If audio is interrupted, enable it again before playing.</p>
+  <script type="module" src="./audio-preview.ts"></script>
+</body>
+</html>
