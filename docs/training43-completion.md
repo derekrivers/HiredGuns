@@ -486,11 +486,32 @@ PR75 main passes 623 tests, lint/types and build; PR74 then changes documentatio
 only. Each lane passes public browser 19/four optional skips and separate verified
 local Training43 extraction 4/4. Live browser behavior remains unchanged.
 
-One environment lane now owns the bounded actor-one death-call entry prerequisite
-against the accepted initialized/reset/placed image, stopping at its first
-unsupported caller input. It grants no death transition or live activation.
+PR77 establishes [actor-one damage/death entry prerequisites](initialized-death-entry-prerequisites.md).
+The retained placement snapshot supplies neither an actual environmental caller
+nor an actor-one hit argument/register pairing. Source-known zero pending damage
+would bypass fitness if the landing guard were reached; no reachability or new
+CPU execution follows from that conditional source deduction.
 
-Current accepted main is `285f6289d5fe98e5374402152b187138eddb6876`.
+PR78 establishes the [initialized fall-entry prefix](initialized-fall-entry-observation.md).
+An explicit diagnostic entry on unchanged accepted memory executes nineteen
+original instructions, six reads, two stores and one real inner call. It stops
+before the first source-unknown lower-cell operand; no unknown byte is consumed.
+Independent source/CPU/full-image replay and preservation checks agree. The frame
+remains open: no natural return, descent, landing, damage, death or occupancy
+transition is established. Diagnostic entry supplies no startup reachability.
+
+Both exact heads have independent HIGH approval, completed no-finding automatic
+review and successful relevant CI. PR77's single documented stalled-review retry
+completed; no further retry applies. Coordinator verifies normal expected-head
+merges and trees. Both changes are documentation only, retaining the 623-test
+runtime baseline and unchanged live browser behavior. Both lanes pass public
+browser nineteen/four optional skips and verified separate Training43 four/four.
+
+One environment lane now owns provenance for that first blocked lower-cell read.
+It preserves unknown origins unless actual source/input/producer evidence
+justifies them, and grants no fall continuation or live activation.
+
+Current accepted main is `40f2b2072140cc676f132d34de03cb03aab9f302`.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
