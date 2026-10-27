@@ -244,10 +244,28 @@ CPU control-5 observation does not widen the pure TYPE1 contract.
 Both exact-final independent and automatic reviews pass without findings, and
 relevant CI passes 503 tests plus the public browser baseline; local Training43
 extraction is 4/4. These are evidence-only additions with unchanged runtime.
-The next independent pure candidates are bounded mouse-0 view selection and
-empty-equipment action-4 transfer/compaction under the observed prerequisites.
-Neither candidate is accepted yet; no live adapter, automatic living fallback,
-hardware cadence or generalized inventory behavior is established.
+Those next pure candidates are now accepted in PR36 and PR37. The
+[empty-equipment transition](backpack-empty-equipment-contract.md) retains the
+three observed prefix/selection arrangements, full-entry transfer, forward
+compaction, ID-only clears, unchanged count/temp/padding and both weight passes.
+All three complete candidates, interleaved records and full-memory reconstructions
+match original execution. Its post-weight selection decrement remains excluded.
+The [mouse-0 candidate](mouse0-selection-contract.md) covers exactly five observed
+decisions with complete initialized storage/layout validation and inert pointer
+records. All five full candidates, ordered writes and raw-memory reconstructions
+match; this creates no automatic living fallback or alive/dead validator.
+
+Both exact-final independent reviews approve without findings, automatic reviews
+complete at those heads without findings and relevant CI passes (513 and 552
+tests respectively). Public browser checks pass 19/four optional-private skips;
+each lane's local Training43 extraction passes 4/4. Coordinator verifies the
+combined merged deltas and runs 562 tests, lint/types and build successfully.
+Neither transition is installed live. Source/layout/storage-codec authority,
+hardware/input binding and live actor/occupancy adapters remain prerequisites.
+The next bounded tasks are a private source-bound producer for the existing
+initialized mouse fixtures and reachability of the excluded post-weight inventory
+selection decrement. Static source binding cannot grant an authored synthetic
+roster canonical live authority; both tasks remain unaccepted.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
