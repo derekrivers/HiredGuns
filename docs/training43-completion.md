@@ -187,11 +187,35 @@ stats/current references, actual damage return, pending clear and changed-cell
 reread pass. The prior stop followed the lower read/mask, before its first excluded
 stair comparison; prior frozen prefixes remain unchanged. Bounded leader and
 nonzero-control cases do not establish team installation or gameplay reachability.
-No implementation or live behavior changes. Exactly one next nomination remains
-unstarted: extend the disconnected pure TYPE1 support transition to fatal outcomes
+This observation added no implementation or live behavior. Its nominated fatal
+extension is now implemented in the disconnected pure TYPE1 support transition
 under the existing strict storage/geometry/control-1 prerequisites. Training43,
 world/checkpoint 3, roster-plan 1 and all activation/campaign/physical gates remain
 unchanged.
+
+Accepted PR27 implements that fatal extension. All 354 private original fixture
+inputs are accounted for: 306 full candidates, including 210 fatal outcomes,
+match exact writes and return records; 48 control-2/255 inputs reject unchanged.
+Historical stopped reports remain prefixes, without invented completions.
+The accepted runtime check passes 376 tests, lint/types and build. The next
+environment lane is the separately reviewed eligibility extension for observed
+controls 2 and 255 under the same bounds; it is active but not accepted.
+
+Accepted PR28 adds the [occupied backpack action-4 observation](backpack-action4-observation.md).
+Three bounded original caller executions perform full-entry equipment/selected/
+temporary copies, actual weight and feedback calculations, redundant redraws
+and natural returns. Independent raw CPU execution reproduces the complete
+traces and final-memory hashes. No inventory API, live installation or arbitrary
+carried reorder is established. Its fixed prerequisites and unobserved categories,
+overflow, rejected callers, full inventories and holes remain explicit. The
+next backpack lane is the disconnected pure occupied exchange under those
+prerequisites; it is active but not accepted.
+
+Both accepted PRs have exact-final independent approval, completed automatic
+reviews without findings and passing relevant CI. Public browser checks pass
+19 with four optional-private skips; each lane's local Training43 extraction
+checks pass 4/4. These results do not change live browser behavior or establish
+physical-controller, TV or complete-level acceptance.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
