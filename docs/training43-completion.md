@@ -329,10 +329,17 @@ review after one documented retry, and relevant green CI. Coordinator verifies
 normal expected-head merge and combined tree. This documentation-only change
 retains the 578-test runtime baseline; its lane records 570 tests, public browser
 19/four optional skips and local Training43 extraction 4/4 on the earlier base.
-The initialization lane now owns four narrow original helper invocations. PR50's
-empty-equipment ACTION3 stop evidence remains unaccepted while its single review
-retry runs; independent approval and green CI cannot replace completed review.
-No dependent inventory successor or live actor/input installation has started.
+PR50's [empty-equipment ACTION3 stop evidence](backpack-action3-observation.md)
+is now accepted at main `19399aa94edbeffbdf807e6abf4511688b168489`. Both initialized
+selections return naturally after bookkeeping and action consumption, preserving
+all inventory, selection and redraw. Exact-final independent HIGH approval binds
+explicit registers and guarded comparison outputs; automatic review completed
+without findings after its one documented retry, with relevant green CI (578
+tests, public browser 19/four optional skips) and separate local Training43 4/4.
+Coordinator verifies normal expected-head merge and combined tree; no live
+behavior changes. The next active lanes own four narrow original team helpers
+and a disconnected pure empty-equipment ACTION3 stop. Neither is accepted or
+installed in live actors/input.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain

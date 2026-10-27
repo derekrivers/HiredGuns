@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR49; current main is
-`f49ffbc4b30b0a098d028468931eb7df0144e037`.
+Gameplay prerequisites accepted through PR50; current main is
+`19399aa94edbeffbdf807e6abf4511688b168489`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -106,10 +106,18 @@ addition retains the 578-test runtime baseline and unchanged browser behavior;
 its lane records 570 tests, public browser 19/four optional skips and local
 Training43 extraction 4/4 on its earlier accepted base.
 
-The initialization lane now owns the four narrow original team-helper invocations.
-PR50's empty-equipment ACTION3 stop evidence still awaits automatic review after
-its one documented retry. Reported independent approval and green CI do not
-replace completion; no dependent inventory successor has started.
+PR50 accepts the [empty-equipment ACTION3 stop evidence](docs/backpack-action3-observation.md).
+Both initialized selections return naturally after old-reference bookkeeping and
+action consumption; all inventory, selection and redraw storage is preserved.
+Exact-final independent HIGH approval binds explicit initial registers and the
+guarded comparison receipts. Automatic review completed without findings after
+its single documented retry; relevant CI passes 578 tests and public browser
+19/four optional skips, with separate local Training43 extraction 4/4. Coordinator
+verified its normal expected-head merge and combined tree. Browser behavior is unchanged.
+
+Two new bounded lanes are active: four narrow original team-helper invocations,
+and a disconnected pure model of the exact empty-equipment ACTION3 stop.
+Neither successor is accepted, and neither installs live actors or input.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
