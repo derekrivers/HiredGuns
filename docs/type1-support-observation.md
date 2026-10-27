@@ -11,7 +11,8 @@ save, renderer, inventory, artwork or scheduler changes are made.
 The result is **57 completed eligible no-call/survival returns, three guard
 returns and one deliberately stopped death continuation**. The fatal fixture
 reaches the previously excluded death support-search prerequisite. Execution
-stops before its first instruction; no fatal return, corpse placement, subsequent
+stops before its first excluded stair comparison (after the immediate lower-cell
+read and block mask); no fatal return, corpse placement, subsequent
 pending clear or final reread is claimed. Dependent fatal work stopped there.
 Training43 remains incomplete and no live activation is authorized.
 
@@ -73,7 +74,7 @@ There are actual zero-damage calls: pending one divided by physique 100 gives
 zero damage but still writes feedback, writes unchanged fitness and clears
 pending after helper return. This is distinct from no call. Gender zero and
 grunt count 99 bypass audio naturally; no code patch or helper interception is
-used. The only execution stop is the explicitly labelled unsupported prerequisite.
+used. The only execution stop is the explicitly labelled unsupported comparison prerequisite.
 
 | Authored input | Observed completed outcome |
 | --- | --- |
@@ -136,7 +137,8 @@ acceptance. Fitness/current/cell fields can be represented by that API's shape,
 but its supported geometry cannot represent this transition. No whole-candidate
 API parity comparison is claimed.
 
-Exactly one smallest **next implementation** is nominated: a disconnected pure
+Historical nomination (now implemented by the
+[pure support contract](type1-support-contract.md)): a disconnected pure
 initial inert-type-one support transition restricted to eligible dry no-call or
 **computed surviving** damage. Inputs must explicitly include initialized actor,
 stats, matching owned current cell plus its second word, immediate type-one lower
@@ -160,7 +162,9 @@ Actual type-one-supported death placement and return is an explicit prerequisite
 before widening that slice to fatal outcomes. Its separate bounded observation
 would need to settle the already reached support-search branch, corpse writes,
 restored references and subsequent caller clear/reread without other support
-geometry. It is **not started** here. Pads, other block types, mines, wet paths,
+geometry. It was **not started** in that observation. The subsequent
+[fatal support observation](type1-fatal-support-observation.md) now completes it
+without changing this frozen report. Pads, other block types, mines, wet paths,
 stairs, multi-cell traversal and scheduling remain excluded.
 
 Baseline and final-worktree `npm run check` pass lint/types, 299 tests and build;

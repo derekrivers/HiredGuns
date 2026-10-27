@@ -154,7 +154,8 @@ continuation. Dry support clears delay without descent and retains current/old
 references, pose and occupancy. Actual surviving damage returns before pending
 clear and current-cell reread. Full-memory and exact ordered-write assertions
 pass. The fatal case reaches the excluded death support-search prerequisite;
-execution stops before its first instruction, with pending uncleared. No fatal
+execution stops before its first excluded stair comparison, after the lower-cell
+read/mask, with pending uncleared. No fatal
 return or corpse placement is claimed. Existing request decisions match 57/57;
 ordinary-floor composition rejects 57/57 unchanged inputs atomically because
 this support geometry is outside its contract.
@@ -175,8 +176,23 @@ with this API's stricter coherent feedback priority. No fixture is rewritten or
 silently excluded. Five stopped fatal prefixes reject atomically; no fatal return
 is claimed. Public synthetic tests cover coherent fatal boundaries separately.
 The full check passes 373 tests, lint/types and build; review/CI are coordinator gates.
-No live installation or schema change occurs. Exactly one next nomination,
-unstarted: bounded actual fatal TYPE1 support search/placement/return observation.
+No live installation or schema change occurs. The historical next nomination was
+bounded actual fatal TYPE1 support search/placement/return observation.
+
+The [fatal TYPE1 support observation](type1-fatal-support-observation.md) now
+completes 200 natural original-helper returns (111 fatal, 89 survival/no-call).
+Death accepts immediate TYPE1 support and installs the corpse in current without
+another cell or search advance. Exact writes, full-memory replay, restored actor/
+stats/current references, actual damage return, pending clear and changed-cell
+reread pass. The prior stop followed the lower read/mask, before its first excluded
+stair comparison; prior frozen prefixes remain unchanged. Bounded leader and
+nonzero-control cases do not establish team installation or gameplay reachability.
+No implementation or live behavior changes. Exactly one next nomination remains
+unstarted: extend the disconnected pure TYPE1 support transition to fatal outcomes
+under the existing strict storage/geometry/control-1 prerequisites. Training43,
+world/checkpoint 3, roster-plan 1 and all activation/campaign/physical gates remain
+unchanged.
+
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
 unresolved gates. Completing the pure caller does not authorize wet activation.

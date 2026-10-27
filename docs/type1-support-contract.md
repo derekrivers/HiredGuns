@@ -106,10 +106,11 @@ Model: gpt-6.1-sol medium; one implementation attempt, one authored redraw-band
 expectation correction (755 and 655 share band 1), no failed implementation repair
 cycle and no recursive delegation. Token usage unavailable. No worker commit.
 
-Exactly one next nomination, unstarted: bounded original fatal TYPE1 support
-search/placement/return observation at the already reached prerequisite. It must
-settle actual support search, corpse writes, restored references and subsequent
-caller clear/reread before any fatal extension. Integrated falling, full team/
+The historical next nomination, bounded original fatal TYPE1 support
+search/placement/return observation, is now complete in the
+[fatal support evidence](type1-fatal-support-observation.md). That evidence
+nominates one unstarted fatal extension; this API still rejects fatal outcomes.
+Integrated falling, full team/
 control/occupancy/pads/corpses, wet traversal and source-bound atomic paused
 checkpoint recovery still gate live activation. Shooting, live backpack and full
 original recovery remain undemonstrated. Physical controller/TV/full-level evidence
