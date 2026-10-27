@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR62; current main is
-`d11ea466053105c33309996969a5bda0f0b5ea38`.
+Gameplay prerequisites accepted through PR66; current main is
+`6179dcae6136c85feeb9a09ae4a086e614b5d587`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -176,9 +176,30 @@ passes 609 tests, lint/types and build; each lane's public browser checks pass
 19/four optional skips and separate local Training43 extraction passes 4/4.
 Live browser behavior is unchanged.
 
-Two unaccepted evidence lanes now own one bounded initialized-storage/post-death
-fixture compatibility comparison and original inventory counting on existing
-diagnostic storage. Neither installs actors/input or repairs population counts.
+PR64 establishes [original inventory counting](docs/backpack-count-items-observation.md);
+PR66 adds its [disconnected bounded transition](docs/backpack-count-contract.md).
+Thirty-one ordered ID reads, count two becoming three and one natural return
+record agree with independent source/CPU proof, complete candidates and full
+8 MiB encoding/replay. The explicit middle-caller entry establishes neither
+normal damage eligibility nor whole-caller execution. It does not repair the
+separate insertion diagnostic or grant a general live counting policy.
+
+PR65 establishes the [initialized/post-death fixture incompatibility](docs/initialized-postdeath-fixture-fit.md).
+A source-known control-byte difference independently exits the original selection
+path; it is one sufficient rejection witness, not a complete repair. Twenty scalar
+differences, death/reference/invocation prerequisites and 699 unknown codec bytes
+remain distinct. Independent mapping, frozen full-memory replays, reproduction
+and refusals pass; this comparison executes no new original CPU case or adapter.
+
+All three accepted exact heads have independent HIGH approval, completed no-finding
+automatic review and relevant successful CI. Coordinator reads/hash-verifies
+reports and verifies normal sequential merged deltas/trees. Combined PR66 main
+passes 616 tests, lint/types and build; each lane records public browser 19/four
+optional skips and separate local Training43 extraction 4/4. Live behavior is unchanged.
+
+Two unaccepted evidence lanes now own the original one-human control-assignment
+branch and the immediate inventory post-count test/division prefix. Neither
+installs actors/input or activates inventory damage.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
