@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR48; current main is
-`6e2e3c43cb144f442afefb4e220f687454b5369d` after shared-status PR44.
+Gameplay prerequisites accepted through PR49; current main is
+`f49ffbc4b30b0a098d028468931eb7df0144e037`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -91,10 +91,25 @@ extraction passes 4/4. Coordinator verifies normal merged deltas and trees;
 accepted main after PR48 passes all 578 tests, lint/types and build. The subsequent
 PR44 shared-status merge changes documentation only. Browser behavior is unchanged.
 
-Two lanes now wait on automatic review: PR49's initialization return-footprint
-diagnostic with explicitly authored memory/I/O origins, and PR50's bounded
-empty-equipment ACTION3 stop evidence. Neither is accepted. Their reported
-independent approvals and green CI do not replace completed automatic review.
+PR49 accepts the [quick-initialization return footprint](docs/team-initialization-footprint.md).
+Unchanged original instructions execute the caller clears and quick-initialization
+through natural return under explicit authored memory-frame and hardware inputs.
+Independent source/CPU proof, ordered effects and complete 16 MiB replay agree.
+Source-owned values/origins remain distinct from initialized emulator backing;
+these diagnostic inputs establish no canonical live or physical-hardware authority.
+The four original team-helper invocations remain a separate, unaccepted task.
+
+Exact-final independent HIGH approval, completed no-finding automatic review and
+green CI pass. The single documented stalled-review retry completed; coordinator
+verified the normal expected-head merge and combined tree. This document-only
+addition retains the 578-test runtime baseline and unchanged browser behavior;
+its lane records 570 tests, public browser 19/four optional skips and local
+Training43 extraction 4/4 on its earlier accepted base.
+
+The initialization lane now owns the four narrow original team-helper invocations.
+PR50's empty-equipment ACTION3 stop evidence still awaits automatic review after
+its one documented retry. Reported independent approval and green CI do not
+replace completion; no dependent inventory successor has started.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 

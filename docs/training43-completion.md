@@ -316,10 +316,23 @@ relevant green CI. PR45 records 570 tests and PR48 578; each records public brow
 verifies normal merged deltas/trees and runs 578 tests/lint/types/build on accepted
 PR48 main. The later shared-status merge is documentation-only.
 
-PR49's return-footprint diagnostic and PR50's empty-equipment ACTION3 stop evidence
-remain unaccepted while automatic reviews run, despite reported independent
-approval and green CI. Explicit authored memory/I/O inputs cannot grant canonical
-live or physical-hardware authority. Neither pending batch installs actors/input.
+PR49's [return-footprint diagnostic](team-initialization-footprint.md) is now accepted
+at main `f49ffbc4b30b0a098d028468931eb7df0144e037`. Unchanged original instructions
+execute the caller clears and quick-initialization to natural return with explicit
+authored memory frames and hardware reads. Independent original CPU/source proof,
+ordered effects and full 16 MiB replay agree. Source-owned values/origins remain
+distinct from emulator backing; these inputs grant no canonical live or physical
+hardware authority. Four actual team-helper invocations remain a separate task.
+
+The exact final head has independent HIGH approval, completed no-finding automatic
+review after one documented retry, and relevant green CI. Coordinator verifies
+normal expected-head merge and combined tree. This documentation-only change
+retains the 578-test runtime baseline; its lane records 570 tests, public browser
+19/four optional skips and local Training43 extraction 4/4 on the earlier base.
+The initialization lane now owns four narrow original helper invocations. PR50's
+empty-equipment ACTION3 stop evidence remains unaccepted while its single review
+retry runs; independent approval and green CI cannot replace completed review.
+No dependent inventory successor or live actor/input installation has started.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
