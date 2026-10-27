@@ -23,7 +23,10 @@ quality. Commands are observations; the large four views are calibration panels,
 Counters are cumulative per slot during this page session. Last action is historical and remains visible after
 release; a stable counter confirms no further command. Pause clears the displayed last action, not counters.
 
-Assigned-device disconnect or index reuse with a different ID pauses all observations. Reconnection does
+Assigned-device disconnect or index reuse with a different ID pauses all observations. A matching
+`gamepaddisconnected` event pauses immediately and records the pause even when the same index/ID reconnects
+before the next animation-frame poll. Events for unrelated indices/IDs do not pause assigned input; polling
+still catches missing or identity-changed snapshots when no event is received. Reconnection does
 not resume automatically. Reassign if the browser changed device index/ID, release controls, then resume
 explicitly. Focus loss / hidden page also pauses and clears router repeat state. **Pause observations** is
 always available. A device read failure reports its error and pauses; fix access and resume explicitly.
@@ -71,7 +74,8 @@ observations before accepting the physical setup. No default, automatic or synth
 
 Run `npm run check`. Browser checks are `tests/browser/controller-preview.spec.ts`, using four explicitly
 injected synthetic pads. They cover distinct actions, release, assignment uniqueness, disconnect/reconnect,
-identity replacement, an explicitly injected blur event, nonstandard raw-only input, form typing, receipt provenance
+identity replacement, synthetic disconnect/reconnect events within one task between polls (including receipt
+retention and unrelated-device filtering), an explicitly injected blur event, nonstandard raw-only input, form typing, receipt provenance
 and calibration panel bounds at 1920 × 1080. Public screenshots contain only synthetic data.
 Headless tab activation did not reliably change document focus; actual app/tab switching remains a human check.
 

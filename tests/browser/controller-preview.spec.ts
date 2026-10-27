@@ -92,6 +92,48 @@ test('disconnect and reused index pause without reassignment; reconnect needs ex
   await expect(page.getByLabel('Assign player 1', { exact: true })).toHaveValue('pad:0:Different synthetic pad');
 });
 
+test('synthetic same-identity disconnect and reconnect between polls latches pause into the receipt', async ({ page }) => {
+  await page.evaluate(() => { (window as unknown as TestWindow).syntheticPads[0]!.axes = [0, -1]; });
+  await page.getByRole('button', { name: 'Start / resume observations' }).click();
+  await expect(page.locator('#command-0')).toContainText('forward');
+  const before = await page.evaluate(() => {
+    const count = Number(document.getElementById('command-0')!.textContent!.split('count ')[1]);
+    const pad = (window as unknown as TestWindow).syntheticPads[0]!;
+    // Both synthetic API notifications occur in one task, with no animation-frame poll between them.
+    pad.connected = false;
+    window.dispatchEvent(Object.assign(new Event('gamepaddisconnected'), { gamepad: { ...pad } }));
+    pad.connected = true;
+    window.dispatchEvent(Object.assign(new Event('gamepadconnected'), { gamepad: { ...pad } }));
+    return count;
+  });
+  await frames(page);
+  await expect(page.getByLabel('Observation state')).toContainText('PAUSED — assigned device disconnected');
+  expect((await commandCounts(page))[0]).toBe(before);
+  const exported = await receipt(page);
+  expect(exported.evidenceSource).toBe('synthetic');
+  expect(exported.physicalAcceptance).toBe('not-established-by-this-tool');
+  expect(exported.browserTelemetry.events.some(item => item.event.includes('assigned device disconnected (event)'))).toBe(true);
+  await page.getByRole('button', { name: 'Start / resume observations' }).click();
+  await expect.poll(async () => (await commandCounts(page))[0]).toBeGreaterThan(before);
+});
+
+test('synthetic disconnect events for unassigned or different-identity pads do not pause assigned input', async ({ page }) => {
+  await page.evaluate(() => { (window as unknown as TestWindow).syntheticPads[0]!.axes = [0, -1]; });
+  await page.getByRole('button', { name: 'Start / resume observations' }).click();
+  await expect(page.locator('#command-0')).toContainText('forward');
+  const before = await page.evaluate(() => {
+    const pad = (window as unknown as TestWindow).syntheticPads[0]!;
+    window.dispatchEvent(Object.assign(new Event('gamepaddisconnected'), { gamepad: { ...pad, index: 4, connected: false } }));
+    window.dispatchEvent(Object.assign(new Event('gamepaddisconnected'), { gamepad: { ...pad, id: 'Unassigned old identity', connected: false } }));
+    return Number(document.getElementById('command-0')!.textContent!.split('count ')[1]);
+  });
+  await frames(page);
+  await expect(page.getByLabel('Observation state')).toContainText('RUNNING');
+  expect((await commandCounts(page))[0]).toBeGreaterThan(before);
+  const exported = await receipt(page);
+  expect(exported.browserTelemetry.events.some(item => item.event.includes('assigned device disconnected (event)'))).toBe(false);
+});
+
 test('injected blur pauses until resume, form typing emits nothing, and nonstandard mappings stay raw only', async ({ page }) => {
   await page.evaluate(() => { (window as unknown as TestWindow).syntheticPads[0]!.axes = [0, -1]; });
   await page.getByRole('button', { name: 'Start / resume observations' }).click();

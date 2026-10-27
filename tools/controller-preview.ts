@@ -119,6 +119,16 @@ element('start').onclick = () => {
   router.reset(); running = true; reason = 'explicitly resumed'; log('Observations resumed explicitly'); render();
 };
 element('pause').onclick = () => { pause('user'); render(); };
+window.addEventListener('gamepaddisconnected', event => {
+  const pad = event.gamepad;
+  const slots = router.assignments.flatMap((source, slot) =>
+    source?.kind === 'gamepad' && source.index === pad.index && source.id === pad.id ? [slot] : []);
+  if (!slots.length) return;
+  // Preserve a disconnect even if the same device reconnects before the next animation-frame poll.
+  for (const slot of slots) previousPresence[slot] = false;
+  pause(`assigned device disconnected (event): ${slots.map(slot => `P${slot + 1}`).join(', ')}`);
+  render();
+});
 window.addEventListener('blur', () => { pause('focus lost'); render(); });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') { pause('page hidden'); render(); } });
 element('calibration').onclick = () => {
