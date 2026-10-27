@@ -92,11 +92,12 @@ initialization and import contracts remain as documented in
 [item-format.md](item-format.md) and
 [live-character-contract.md](live-character-contract.md).
 
-Exactly one next narrow backpack nomination, unstarted: observe the identified
+Historical next narrow backpack nomination (now completed by the bounded
+[action-4 observation](backpack-action4-observation.md)): observe the identified
 OCS manual inventory action-4 caller through selected-carried/equipment exchange
 and return, with occupied selected/equipment entries and fixed initialized caller
 state, recording all storage and ordered writes including weight/feedback. This
-would establish the actual supported manual exchange as a separate bounded scope;
+establishes the actual supported manual exchange as a separate bounded scope;
 it would not by itself authorize carried-to-carried reordering.
 
 Validation for this documentation-only result: inspected both mouse producers,
@@ -107,3 +108,9 @@ were read for current contracts. Coordinator owns baseline checks, independent
 review and CI. One gpt-6.1-sol medium implementation worker produced this
 prerequisite finding; no implementation or repair attempts and no recursive
 delegation. Token usage is unavailable.
+
+27 October status: the occupied action-4 caller/exchange/weight/return observation
+is complete for the three fixed cases documented in the linked evidence. No
+carried-to-carried contract or application implementation follows from it. The
+smallest next implementation is the explicitly bounded occupied manual exchange
+with its recorded caller and feedback prerequisites; it remains unstarted.
