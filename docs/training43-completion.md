@@ -1,7 +1,7 @@
 # Training43 completion boundary
 
-Current playable integration, accepted PR84 at
-`9e2ad98e75fe9dc5074c7168fa8fb59e874c7c7b`:
+Current playable integration, accepted through PR88 at
+`13f657051dda6a0f2d8293823379a9168a676af4`:
 [standalone selected-team session](training-session.md). Explicit four-character
 selection from exact local OCS roster/items applies to verified imported
 Training43, paused. View identities and initial stats/inventory/weight belong to
@@ -21,14 +21,31 @@ normal expected-head merge; coordinator verified the reviewed tree. Validation:
 private skips; exact local unit 7, session/extraction browser 13 and independent
 cancellation reproductions 5 passed. Token usage unavailable.
 
+PR88 adds [paused empty-equipment transfer](training-inventory.md): one carried
+entry can be equipped per actor, preserving full entries, compaction, final
+ID-only clearing, opaque tails/actions and source-verified weights. Immutable
+initial actors remain separate from the overlay. Strict session wrapper v2
+reconstructs at most four unique-actor commands and restores overlay/world
+atomically paused; v1 saves remain compatible. Retry/rules reset the overlay.
+This generic source transcription does not claim additional original CPU cases,
+pointers/control/count/caller authority or general inventory use.
+
+Exact-final independent HIGH approval, completed no-finding automatic review and
+both successful CI runs precede the normal merge and verified combined tree.
+Validation: 630 units, lint/types/build; public browser 21 passed/23 optional skips;
+private units 13, combined browser 25 and four independent hash-race tests passed.
+Independent byte oracles cover 115 real-source occupied slots and 435 authored
+transfer cases, separate from original CPU execution. Token usage unavailable.
+
 This standalone importer/initializer adaptation does not require original
 campaign-loader provenance. Locations/runtime selection remains an unresolved
-campaign gate. No falling, wet mechanics, combat, mutable inventory or actual
-death/control/occupancy/pad/corpse behavior is activated. Static-session recovery
-does not establish future mutable/environment recovery. Physical controllers/TV
+campaign gate. No falling, wet mechanics, combat or actual death/control/occupancy/pad/corpse
+behavior is activated. Inventory mutation is limited to this paused equip command;
+unequip/exchange/use/drop and movement effects remain absent. Current recovery
+does not establish future inventory operations or environment recovery. Physical controllers/TV
 and complete-level acceptance remain separate. The original evidence assessment
 below is historical; its unchanged-browser and recovery-gate statements predate
-PR84.
+PR88.
 
 Evidence-only result, 26 October 2026, accepted base
 `68e689b525b4c949c8f1ac587f1d47d02064c262`. This does not deliver a
