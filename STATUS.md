@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR56; current main is
-`1a9349aa8f530b9e0e99137ae4445174feb348b4`.
+Gameplay prerequisites accepted through PR58, including PR54; current main is
+`10db81029864b5270120f889f7b511e4007bf647`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -131,10 +131,32 @@ Coordinator verifies normal merged deltas/trees; accepted PR56 main passes 594
 tests, lint/types and build. These helpers remain disconnected; browser behavior
 is unchanged. Physical-controller/TV/full-level acceptance is separate.
 
-PR54's four original team-helper evidence remains unaccepted while automatic
-review runs, despite reported independent approval and green CI. Its ownership
-is preserved. The inventory lane now owns full-capacity ACTION3 no-room CPU
-evidence, also unaccepted. Neither task installs live actors or input.
+PR57 establishes the [full-backpack ACTION3 refusal](docs/backpack-action3-no-room-observation.md);
+PR58 adds its [disconnected bounded transition](docs/backpack-action3-no-room-contract.md).
+The final carried ID selects refusal, retaining complete inventory and feedback.
+Ordered caller bookkeeping, action consumption, previous-position and no-room
+writes precede two natural return records. Independent original CPU/candidate
+encoding and chronological replay agree over all 8 MiB. Diagnostic count thirty
+remains despite thirty-one occupied IDs; no population or live authority follows.
+
+PR54 accepts the [four original initialization helpers](docs/team-initialization-helpers.md).
+Original CPU execution reaches the boundary before time-limit bookkeeping after
+all four helpers and actual weight calls. Independent source effects, full 16 MiB
+replay and all four bounded actor-data results agree. Authored memory/hardware
+inputs and source-known/unknown origins remain distinct; the outer caller has
+not returned and no whole startup or live actor installation is established.
+Its single documented stalled-review retry completed without findings.
+
+All three exact final heads have independent HIGH approval, completed no-finding
+automatic reviews and relevant successful CI. Coordinator read/hash-verified the
+reports and verified sequential normal merged deltas/trees. Accepted PR58 main
+passes 602 tests, lint/types and build; PR54 then changes documentation only.
+Public browser checks pass 19/four optional skips and separate local Training43
+extraction passes 4/4 in each lane. Live browser behavior is unchanged.
+
+Current main is `10db81029864b5270120f889f7b511e4007bf647`. Two unaccepted evidence
+lanes now own the remaining initialization bookkeeping/natural outer return and
+non-full ACTION3 insertion at selection one. Neither installs actors or input.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 

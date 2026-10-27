@@ -354,9 +354,32 @@ optional skips and each separate local Training43 extraction passes 4/4.
 Coordinator verifies normal merged deltas/trees and runs 594 tests/lint/types/build
 on accepted PR56 main. Browser behavior remains unchanged; these helpers are
 disconnected and do not replace physical-controller/TV/full-level acceptance.
-PR54's four-helper evidence remains unaccepted pending automatic review; reported
-independent approval and green CI do not replace completion. The other lane owns
-full-capacity ACTION3 no-room evidence, also unaccepted. Neither installs actors/input.
+Subsequently accepted PR57 supplies original full-capacity ACTION3 refusal
+CPU evidence; PR58 adds the disconnected bounded refusal transition. The final
+carried ID alone selects failure. Complete storage and feedback remain intact;
+four ordered non-stack writes and two natural return records match the original
+case, complete candidate encoding and chronological 8 MiB replay. Diagnostic
+count thirty despite thirty-one occupied IDs grants no population or live authority.
+
+Accepted PR54 executes all four original initialization helpers and actual weight
+calls through the boundary before time-limit bookkeeping. Independent source
+chronology, complete 16 MiB replay and all four bounded actor-data results agree.
+Source-known/unknown origins remain distinct from authored memory/hardware inputs.
+The outer caller has not returned; whole startup and live installation remain
+outside this evidence. Its single documented stalled-review retry completed
+without findings.
+
+Each exact final head has independent HIGH approval, completed no-finding
+automatic review and relevant green CI. Coordinator read/hash-verifies reports
+and verifies sequential normal merged deltas/trees. Root PR58 main passes 602
+tests, lint/types and build; the following PR54 merge is documentation-only.
+Each lane records public browser 19/four optional skips and separate local
+Training43 extraction 4/4. Live behavior remains unchanged. Current accepted main
+is `10db81029864b5270120f889f7b511e4007bf647`.
+
+Two new unaccepted evidence lanes own remaining initialization bookkeeping/natural
+outer return and non-full ACTION3 insertion at selection one. Neither installs
+actors/input or grants canonical/live/physical-hardware authority.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
