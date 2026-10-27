@@ -369,8 +369,8 @@ retry/checkpoints, authored dry stairs/falls and the explicit-import selected-te
 session are the browser boundary. Integrated falling, actual death/control/occupancy,
 pads/corpses and wet traversal still gate live hazards. Paused recovery covers
 static world, immutable initial team and bounded equip-command replay; future
-inventory operations or environment state require their own recovery coverage. Shooting, live backpack and full original recovery remain
-undemonstrated. World/checkpoint 3 and roster-plan 1 are unchanged. Locations
+inventory operations or environment state require their own recovery coverage. Shooting, backpack actions beyond the accepted paused empty-equipment equip,
+and full original recovery remain undemonstrated. World/checkpoint 3 and roster-plan 1 are unchanged. Locations
 revision mismatch blocks campaign. Browser checks do not replace physical
 controllers, TV or full-level acceptance.
 
