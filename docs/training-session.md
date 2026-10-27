@@ -12,8 +12,11 @@ below the views shows the ordered character identities, initial fitness, physiqu
 agility and weight. Expand a character to inspect all initial stats, cleared
 equipment, thirty carried entries and the separate action entries. These are
 immutable session data from `initializeOriginalTeam`: fitness starts at 65535,
-ten carried entries copy from the source and twenty clear. Inventory use and
-weight effects on movement remain unavailable. Changing preparation choices
+ten carried entries copy from the source and twenty clear. A separate
+[paused inventory overlay](training-inventory.md) now supports one
+carried-to-empty-equipment transfer per actor. Weight effects on movement remain
+unavailable. The initial data in these summaries stays immutable. Changing
+preparation choices
 leaves an already applied team intact; Apply explicitly replaces it and restarts
 the mission. Restoring a session uses the saved order independently of any current
 preparation choices.
@@ -23,7 +26,7 @@ verified initializer provide its authority. It establishes neither original CPU
 startup parity, complete original level behavior nor campaign loading. It does
 not depend on resolving the original campaign selector or Locations revision.
 Navigation remains the existing static world: water, falls, environmental damage,
-combat, inventory mutation, death/control transfer, dynamic occupancy, pads and
+combat, general inventory use, death/control transfer, dynamic occupancy, pads and
 corpses are not enabled by this session.
 
 ## Sources and authority
@@ -58,16 +61,19 @@ local and ignored.
 ## Recovery and cancellation
 
 **Save checkpoint** pauses and exports a separate
-`hired-guns-training-session` version 1 wrapper when a selected team is active.
-The wrapper contains only the three source identities, four indices and the
-existing validated checkpoint string. It contains no roster, map words, mutable
-inventory or new environmental counters. World/checkpoint schema 3 is unchanged.
+`hired-guns-training-session` version 2 wrapper when a selected team is active.
+The wrapper contains the three source identities, four indices, a bounded
+`commands` array (at most one equip per actor), and the existing validated
+checkpoint string. It contains no roster, map words, arbitrary inventory storage
+or new environmental counters. Version 1 wrappers remain accepted and reconstruct
+the initial empty equipment with no commands. World/checkpoint schema 3 is unchanged.
 The wrapper must be smaller than 24 KiB; the nested checkpoint retains its own
 16 KiB bound.
 
 To recover after reloading, reopen the same map and exact OCS roster/items, then
 load the session save. No prior Apply is required. Recovery reconstructs the
-immutable initial team deterministically, validates exact wrapper fields and
+immutable initial team deterministically, replays the strict equip log to rebuild
+the detached inventory overlay, validates exact wrapper fields and
 identities, and validates the complete nested world before exposing a candidate.
 The browser installs team and world together only if the operation generation
 is still current. Recovery remains paused and preserves actor poses, mission,
@@ -77,9 +83,14 @@ map leave the working world and team intact, apart from pausing navigation.
 Starting a map or roster/item replacement, even a subsequently rejected file,
 pauses and clears the active session before reading. Clearing items also clears
 the team. The previous world can remain as ordinary static navigation while
-paused. Retry, rule changes, new operations and changed preparation choices
+paused. Retry and rule changes reset the overlay to initialization as they restart
+the
+world. New operations and changed preparation choices
 invalidate pending browser operations. Stale completion cannot install a team,
-world or download. Source import generations also reject replaced reads; manual
+world, inventory overlay or download. Equip uses this same generation guard;
+a cancelled reconstruction cannot replace inventory after retry, rule/selection
+changes, source clearing/replacement or map changes. Source import generations
+also reject replaced reads; manual
 selection cancels an outstanding team-plan read. Source byte snapshots and
 checkpoint snapshots prevent caller mutation during hashing.
 
