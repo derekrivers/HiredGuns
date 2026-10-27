@@ -295,9 +295,31 @@ Both exact-final independent HIGH approvals, completed no-finding automatic
 reviews and relevant green CI pass. Each lane records 562 tests/lint/types/build,
 public browser 19 passed/four optional skips and local Training43 extraction 4/4.
 Coordinator verifies sequential normal merged deltas and combined tree; these
-documentation-only changes retain the runtime baseline. Next separate lanes are
-pure downward selection and a source-bound quick-initialization prestate producer.
-These successors are active, not accepted; neither installs live actors or input.
+documentation-only changes retain the runtime baseline.
+
+The next accepted sequence is PR45's pure DOWN transition, PR46's source-derived
+initialization prestate diagnostic, PR47's UP CPU evidence and PR48's pure UP
+transition. Current main after shared-status PR44 is
+`6e2e3c43cb144f442afefb4e220f687454b5369d`. The two pure navigation helpers
+handle only their observed two-entry movement/stop cases, preserving complete
+inventory and opaque weight/feedback with immutable detached results and ordered
+writes. Complete candidates and full-memory replays match the original cases.
+No live input installation, general inventory coverage or weight authority follows.
+
+The initialization prestate diagnostic keeps earlier clear effects distinct from
+unknown return bytes and records the indirect frame/timing dependencies. Its
+private read-manifest omission was corrected and independently re-reviewed.
+It claims no original CPU run or complete initialized memory. All accepted exact
+heads have independent approval, completed no-finding automatic reviews and
+relevant green CI. PR45 records 570 tests and PR48 578; each records public browser
+19 passed/four optional skips and local Training43 extraction 4/4. Coordinator
+verifies normal merged deltas/trees and runs 578 tests/lint/types/build on accepted
+PR48 main. The later shared-status merge is documentation-only.
+
+PR49's return-footprint diagnostic and PR50's empty-equipment ACTION3 stop evidence
+remain unaccepted while automatic reviews run, despite reported independent
+approval and green CI. Explicit authored memory/I/O inputs cannot grant canonical
+live or physical-hardware authority. Neither pending batch installs actors/input.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
