@@ -11,6 +11,7 @@ import { FourViews } from './render/four-views';
 import { importEditorMap } from './import/editor-map';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
 import { installRosterPanel } from './roster-panel';
+import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
 import { installTrainingInventoryPanel } from './training-inventory-panel';
 import { equipTrainingSession, returnTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
 
@@ -48,12 +49,13 @@ const inventoryHost = document.createElement('section'); inventoryHost.id = 'tra
 sessionInfo.after(inventoryHost);
 const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot, kind) => {
   if (!paused || loading || !session) throw new Error('Pause an available selected-team session before changing inventory.');
+  if (session.inventory.commands.length >= MAX_INVENTORY_COMMANDS) throw new Error('Inventory operation budget exhausted. Retry or Apply a new team to reset.');
   const sources = rosterPanel.sources();
   if (!sources) throw new Error('Open the matching roster and items first.');
   const generation = ++loadGeneration; loading = true; inventoryPanel.refresh();
   try {
     const transfer = kind === 'equip' ? equipTrainingSession : returnTrainingSession;
-    const candidate = await transfer(level, sources, session, actor, slot, paused);
+    const candidate = await transfer(level, sources, session, actor, slot, paused, world);
     if (generation !== loadGeneration) return;
     // Inventory commands reconstruct only the overlay; retain the current navigation world.
     session = candidate.session; showSession();

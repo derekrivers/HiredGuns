@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
 import { importEditorMap } from '../../src/import/editor-map';
-import { createTrainingSession, importTrainingSession } from '../../src/sim/training-session';
+import { createTrainingSession, exportTrainingSession, importTrainingSession } from '../../src/sim/training-session';
 
 const privateInputs = !!(process.env.HIRED_GUNS_TRAINING_MAP && process.env.HIRED_GUNS_CHARACTERS && process.env.HIRED_GUNS_ITEMS);
 const order = [11, 3, 0, 5];
@@ -89,7 +89,8 @@ test('opt-in paused return: all four complete byte insertions, bounded cycles, v
     expected.inventory.equipped = { ...current.inventory.equipped, itemId: 0, rawHex: `00${current.inventory.equipped.rawHex.slice(2)}` }; expected.selection = position; expected.weight.usingGrenade = 0;
     expect(after[actor]).toEqual(expected);
     for (let j = 0; j < 4; j++) if (j !== actor) expect(after[j]).toEqual(before[j]);
-    for (const name of [`Equip for team slot ${actor + 1}`, `Return to backpack for team slot ${actor + 1}`]) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
+    await page.getByLabel(`Carried slot for team slot ${actor + 1}`).selectOption('0');
+    await expect(page.getByRole('button', { name: `Equip for team slot ${actor + 1}`, exact: true })).toBeEnabled();
     await page.getByRole('button', { name: `Return to backpack for team slot ${actor + 1}`, exact: true }).dispatchEvent('click');
     await expect(page.locator(`#training-inventory-${actor} [role=status]`)).toContainText('Equipment not returned'); expect(await overlay(page)).toEqual(after);
   }
@@ -104,7 +105,7 @@ test('opt-in paused return: all four complete byte insertions, bounded cycles, v
   expect(await overlay(page)).toEqual(completed); expect(await save(page)).toEqual(saved);
   const wrong = structuredClone(saved); wrong.sources.roster.sha256 = '0'.repeat(64);
   const e = { kind: 'equip', actor: 0, slot: 0 }, r = { kind: 'return', actor: 0, slot: 0 };
-  for (const bad of [wrong, ...[[r], [e, e], [e, r, e], [e, r, r], [{ ...e, kind: 'drop' }], [e, { ...r, slot: 29 }], [{ ...e, actor: 4 }], [e, { ...r, slot: 9 }], [{ ...e, extra: true }]].map(commands => ({ ...saved, commands }))]) {
+  for (const bad of [wrong, ...[[r], [e, e], [e, r, r], [{ ...e, kind: 'drop' }], [e, { ...r, slot: 29 }], [{ ...e, actor: 4 }], [e, { ...r, slot: 9 }], [{ ...e, extra: true }]].map(commands => ({ ...saved, commands }))]) {
     await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(bad)); await expect(page.locator('#error')).toContainText('Checkpoint not loaded');
     expect(await overlay(page)).toEqual(completed); expect(await save(page)).toEqual(saved);
   }
@@ -156,7 +157,7 @@ test('opt-in actual paused equip: full entries, compaction, tails/actions, indep
   await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.press('Digit1'); await page.keyboard.down('e');
   await expect(page.locator('#position-0')).not.toHaveText(beforeTurn!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
   const equipped = await overlay(page), saved = await save(page), world = JSON.parse(saved.checkpoint).world;
-  expect(saved.version).toBe(3); expect(saved.commands).toHaveLength(4); expect(world.tick).toBeGreaterThan(0);
+  expect(saved.version).toBe(4); expect(saved.commands).toHaveLength(4); expect(world.tick).toBeGreaterThan(0);
   expect((await importTrainingSession(level, sources, JSON.stringify(saved))).session.inventory.actors).toEqual(equipped);
   await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
   expect(await overlay(page)).toEqual(initial.session.inventory.actors);
@@ -176,10 +177,51 @@ test('opt-in actual paused equip: full entries, compaction, tails/actions, indep
   expect(errors).toEqual([]);
 });
 
+test('opt-in repeated changes, different items, all-four interleaving and actual budget exhaustion', async ({ page }) => {
+  test.skip(!privateInputs, 'Requires explicit private originals.');
+  const { level, sources } = await local(); await open(page);
+  const initial = await overlay(page);
+  for (let cycle = 0; cycle < 2; cycle++) {
+    for (let actor = 0; actor < 4; actor++) await equip(page, actor, cycle === 0 ? 0 : 1);
+    if (cycle === 1) for (let actor = 0; actor < 4; actor++) expect((await overlay(page))[actor].inventory.equipped).toEqual(initial[actor].inventory.carried[1]);
+    for (let actor = 3; actor >= 0; actor--) await returnItem(page, actor, cycle === 0 ? 0 : 1);
+    await expect(page.locator('#inventory-budget')).toContainText(`${128 - (cycle + 1) * 8} / 128`);
+  }
+  const pose = await page.locator('#position-0').textContent();
+  await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.press('Digit1'); await page.keyboard.down('e');
+  await expect(page.locator('#position-0')).not.toHaveText(pose!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
+  const saved = await save(page), repeated = await overlay(page);
+  expect(JSON.parse(saved.checkpoint).world.tick).toBeGreaterThan(0);
+  const savedPose = await page.locator('#position-0').textContent();
+  await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.down('e');
+  await expect(page.locator('#position-0')).not.toHaveText(savedPose!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
+  await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(saved));
+  await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored'); expect(await overlay(page)).toEqual(repeated); expect(await save(page)).toEqual(saved);
+  const near = await createTrainingSession(level, sources, order, Array.from({ length: 127 }, (_, i) => ({ kind: i % 2 ? 'return' : 'equip', actor: 0, slot: 0 })));
+  const nearSave = JSON.parse(await exportTrainingSession(level, near.world, near.session, sources));
+  await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(nearSave));
+  await expect(page.locator('#inventory-budget')).toContainText('1 / 128');
+  await returnItem(page, 0, 0); await expect(page.locator('#inventory-budget')).toContainText('0 / 128. Budget exhausted');
+  const full = await save(page), fullOverlay = await overlay(page); expect(full.commands).toHaveLength(128);
+  for (let actor = 0; actor < 4; actor++) for (const name of [`Equip for team slot ${actor + 1}`, `Return to backpack for team slot ${actor + 1}`]) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Equip for team slot 1', exact: true }).dispatchEvent('click');
+  await expect(page.locator('#training-inventory-0 [role=status]')).toContainText('budget exhausted'); expect(await overlay(page)).toEqual(fullOverlay); expect(await save(page)).toEqual(full);
+  for (const bad of [{ ...full, commands: [...full.commands, { kind: 'equip', actor: 0, slot: 0 }] }, { ...saved, version: 3 }, { ...full, checkpoint: ' '.repeat(24000) }]) {
+    await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(bad)); await expect(page.locator('#error')).toContainText('Checkpoint not loaded'); expect(await save(page)).toEqual(full);
+  }
+  await page.getByRole('button', { name: 'Retry mission', exact: true }).click(); await expect(page.locator('#inventory-budget')).toContainText('128 / 128');
+  await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(full)); await expect(page.locator('#inventory-budget')).toContainText('0 / 128'); expect(await save(page)).toEqual(full);
+});
+
 for (const operation of ['equip', 'return', 'restore'] as const) for (const cancel of ['selection', 'retry', 'rules', 'source', 'map', 'apply'] as const) {
   test(`opt-in ${cancel} cancels delayed ${operation} without stale inventory installation`, async ({ page }) => {
     test.skip(!privateInputs, 'Requires explicit private originals.');
     await open(page);
+    const { level, sources } = await local();
+    const near = await createTrainingSession(level, sources, order, Array.from({ length: 126 }, (_, i) => ({ kind: i % 2 ? 'return' : 'equip', actor: 0, slot: 0 })));
+    await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(JSON.parse(await exportTrainingSession(level, near.world, near.session, sources))));
+    await expect(page.locator('#inventory-budget')).toContainText('2 / 128');
     let saved;
     if (operation !== 'equip') await equip(page, 0, 1);
     if (operation === 'restore') { await returnItem(page, 0, 0); saved = await save(page); await page.getByRole('button', { name: 'Retry mission', exact: true }).click(); }
@@ -204,6 +246,6 @@ for (const operation of ['equip', 'return', 'restore'] as const) for (const canc
     await release(page); await expect(page.locator('#pause-overlay')).toBeVisible();
     expect(await save(page)).toEqual(expected); if (expectedOverlay.length) expect(await overlay(page)).toEqual(expectedOverlay);
     if (cancel === 'source' || cancel === 'map') { await expect(page.locator('#training-inventory')).toBeEmpty(); expect((await save(page)).version).toBe(3); }
-    else if (cancel !== 'selection' || operation !== 'return') { expect((await save(page)).commands).toEqual([]); expect((await overlay(page)).every(a => a.inventory.equipped.itemId === 0)).toBe(true); }
+    else await expect(page.locator('#inventory-budget')).toContainText(`${128 - expected.commands.length} / 128`);
   });
 }

@@ -1,3 +1,4 @@
+import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
 import type { InventorySlot } from './import/characters';
 import type { TrainingSession } from './sim/training-session';
 
@@ -9,9 +10,10 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
   function refresh() {
     for (const { actor, select, button, position, returnButton } of controls) {
       const state = current?.inventory.actors[actor];
-      select.disabled = !available();
-      button.disabled = !available() || !state || current!.inventory.commands.some(c => c.actor === actor) || state.inventory.equipped.itemId !== 0 || select.value === '';
-      position.disabled = !available() || !state || state.inventory.equipped.itemId === 0;
+      const exhausted = !current || current.inventory.commands.length >= MAX_INVENTORY_COMMANDS;
+      select.disabled = !available() || exhausted;
+      button.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId !== 0 || select.value === '';
+      position.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId === 0;
       returnButton.disabled = position.disabled || position.value === '';
     }
   }
@@ -19,8 +21,11 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
     current = session; controls.length = 0; host.replaceChildren();
     if (!session) return;
     const title = document.createElement('p');
-    title.textContent = 'Carried inventory — pause, choose a slot, then Equip. Choose an insertion position and Return to backpack. One equip then one return per mercenary; Retry and rule changes reset the cycle.';
-    host.append(title);
+    title.textContent = 'Carried inventory — pause, choose a slot, then Equip. Choose an insertion position and Return to backpack. Repeat Equip and Return while paused. Retry, rule changes or Apply a new team reset the operation budget.';
+    const budget = document.createElement('p'); budget.id = 'inventory-budget';
+    const remaining = MAX_INVENTORY_COMMANDS - session.inventory.commands.length;
+    budget.textContent = `Inventory operations remaining: ${remaining} / ${MAX_INVENTORY_COMMANDS}.${remaining === 0 ? ' Budget exhausted. Retry or Apply a new team to reset.' : ''}`;
+    host.append(title, budget);
     session.inventory.actors.forEach((actor, i) => {
       const section = document.createElement('section'); section.id = `training-inventory-${i}`;
       const heading = document.createElement('h3'); heading.textContent = `Team slot ${i + 1}: ${session.names[i]}`;

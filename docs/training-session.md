@@ -13,8 +13,9 @@ agility and weight. Expand a character to inspect all initial stats, cleared
 equipment, thirty carried entries and the separate action entries. These are
 immutable session data from `initializeOriginalTeam`: fitness starts at 65535,
 ten carried entries copy from the source and twenty clear. A separate
-[paused inventory overlay](training-inventory.md) now supports one
-carried-to-empty-equipment transfer followed by one return to backpack per actor. Weight effects on movement remain
+[paused inventory overlay](training-inventory.md) now supports repeated
+carried-to-empty-equipment transfers alternating with returns to backpack per actor,
+within a shared visible 128-operation session budget. Weight effects on movement remain
 unavailable. The initial data in these summaries stays immutable. Changing
 preparation choices
 leaves an already applied team intact; Apply explicitly replaces it and restarts
@@ -61,15 +62,21 @@ local and ignored.
 ## Recovery and cancellation
 
 **Save checkpoint** pauses and exports a separate
-`hired-guns-training-session` version 3 wrapper when a selected team is active.
+`hired-guns-training-session` version 4 wrapper when a selected team is active.
 The wrapper contains the three source identities, four indices, a bounded
-`commands` array (at most one equip then one return per actor; eight total), and the existing validated
+`commands` array (at most 128 strictly alternating equip/return operations total), and the existing validated
 checkpoint string. It contains no roster, map words, arbitrary inventory storage
 or new environmental counters. Version 1 wrappers remain accepted and reconstruct
 the initial empty equipment with no commands. Version 2 accepts only its exact prior
 `{ actor, slot }` equip commands and migrates them to typed equip commands. Version 3
 requires exact `{ kind, actor, slot }` commands with kind `equip` or `return`;
 return-before-equip, duplicate actions, third actions and unknown kinds reject.
+Version 4 permits repeated per-actor alternation within the total operation budget.
+Version 3 retains its original max-eight one-cycle rules, including third-action
+refusal. Retry, rule restart and new Apply reset the budget; exhaustion disables
+both commands with visible remaining/exhausted status. Each browser command validates
+a prospective save against the current paused world before committing. No accumulated
+tails or history are normalized, truncated or reset between cycles.
 Old saves are never modified. World/checkpoint schema 3 is unchanged.
 The wrapper must be smaller than 24 KiB; the nested checkpoint retains its own
 16 KiB bound.

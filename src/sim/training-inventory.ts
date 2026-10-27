@@ -12,9 +12,11 @@ export interface TrainingInventoryActor {
 }
 export interface TrainingInventory { commands: InventoryCommand[]; actors: TrainingInventoryActor[] }
 
-/** One equip followed by at most one return per actor; v2 migration stays separate. */
-export function inventoryCommands(value: unknown): InventoryCommand[] {
-  if (!Array.isArray(value) || value.length > 8 || Reflect.ownKeys(value).length !== value.length + 1) throw new Error('Expected at most eight dense inventory commands.');
+export const MAX_INVENTORY_COMMANDS = 128;
+
+/** v4 alternates independently for each actor within the shared session budget. */
+export function inventoryCommands(value: unknown, legacyOneCycle = false): InventoryCommand[] {
+  if (!Array.isArray(value) || value.length > (legacyOneCycle ? 8 : MAX_INVENTORY_COMMANDS) || Reflect.ownKeys(value).length !== value.length + 1) throw new Error('Inventory operation budget exceeded or command storage is not dense.');
   const phases = [0, 0, 0, 0];
   return Array.from(value, entry => {
     if (!entry || typeof entry !== 'object' || Array.isArray(entry) || Reflect.ownKeys(entry).length !== 3 ||
@@ -23,7 +25,7 @@ export function inventoryCommands(value: unknown): InventoryCommand[] {
     if ((kind !== 'equip' && kind !== 'return') || !Number.isInteger(actor) || actor < 0 || actor > 3 ||
         !Number.isInteger(slot) || slot < 0 || slot > (kind === 'return' ? 28 : 29) ||
         phases[actor] !== (kind === 'equip' ? 0 : 1)) throw new Error('Invalid inventory command or equip/return order.');
-    phases[actor] = kind === 'equip' ? 1 : 2;
+    phases[actor] = kind === 'equip' ? 1 : legacyOneCycle ? 2 : 0;
     return { kind, actor, slot };
   });
 }

@@ -3,9 +3,10 @@
 In an explicitly applied selected-team Training43 session, pause and choose an
 occupied carried slot for **Equip**. Inspect its item name and full four-byte
 entry. Then choose an insertion position and **Return to backpack**. Each of the
-four mercenaries independently permits one equip followed by one return, at most
-eight commands total. Completed cycles disable both buttons until Retry, rule
-restart or a new Apply. Empty equipment cannot return. Running navigation and
+four mercenaries independently alternates Equip and Return repeatedly, sharing a
+visible session budget of 128 successful operations. Empty equipment permits Equip;
+occupied equipment permits Return. At exhaustion both commands disable until Retry,
+rule restart or a new Apply. Empty equipment cannot return. Running navigation and
 pending reconstruction disable commands. Equipment names, raw bytes, freshly
 verified current weight and all thirty carried entries remain inspectable; the
 initial-team summaries remain immutable.
@@ -19,8 +20,8 @@ invalid positions and unavailable arithmetic refuse without mutation.
 
 ## Binding and source deduction
 
-This standalone explicit-import adaptation starts on accepted PR88 merge
-`13f657051dda6a0f2d8293823379a9168a676af4`. Every command snapshots and rehashes
+This standalone explicit-import adaptation starts on accepted PR94 merge
+`6b9b620b4d11bc0d051244f5b6638bae8ea06cd0`. Every command snapshots and rehashes
 raw roster/items, reparses names/arithmetic and rebuilds the complete overlay from
 `initializeOriginalTeam`. The exact verified OCS pair authenticates initialization;
 editable item metadata and synthetic ID patterns supply no authority. Initial
@@ -65,17 +66,19 @@ clearing equipment. No use, firing, consumption or movement-weight effect follow
 
 ## Recovery and cancellation
 
-The separate `hired-guns-training-session` wrapper exports version 3, with exact
+The separate `hired-guns-training-session` wrapper exports version 4, with exact
 fields `format`, `version`, `sources`, `indices`, `commands`, `checkpoint`. The
-dense command array has at most eight entries, each exactly
+dense command array has at most 128 entries, each exactly
 `{ kind: 'equip' | 'return', actor, slot }`. Actor is integer 0..3; equip slot is
 integer 0..29 and return slot 0..28, further restricted by replay's current prefix.
-Each actor must equip once before returning once. Unknown kind, duplicates,
-conflicts, return before equip, third action and extra/missing fields reject.
+Each actor strictly alternates equip then return, independently of the other actors.
+Unknown kind, equip while occupied, return before equip, consecutive returns and
+extra/missing fields reject.
 Empty logs are valid. Version 1 keeps its prior exact fields and reconstructs
 initial inventory. Version 2 retains only its exact bounded `{ actor, slot }`
 equip log, at most four unique actors, migrated to typed equips. Old saves are
-never mutated. Other versions reject. Wrapper size remains below 24 KiB and
+never mutated. Version 3 keeps its exact max-eight, one-cycle-per-actor validator;
+a repeated cycle in a v3 wrapper still rejects. Other versions reject. Wrapper size remains below 24 KiB and
 nested checkpoint below 16 KiB. World/checkpoint 3 and roster-plan 1 stay unchanged.
 
 No arbitrary serialized inventory is trusted. Sources, choices and commands are
@@ -86,7 +89,18 @@ the browser installs team, overlay and world synchronously only at the current
 generation, paused. Equip/return share this generation guard and retain the
 current navigation world: their freshly constructed world is validation only.
 
-Retry and rule restart reset both world and inventory cycle to initial state.
+The 128-operation limit is an explicit standalone adaptation, not an original-game
+maximum. It bounds replay work and leaves ample room for repeated changes across
+four actors. Remaining budget is 128 minus the actual typed command count; failures
+and cancelled operations consume none. No log is truncated, rebased or replaced by
+serialized inventories, and accumulated empty tails replay from the actual history.
+Creation validates a serialized wrapper with its starting world. Browser commands
+snapshot the CURRENT paused navigation world and validate the complete prospective
+wrapper/checkpoint before installing the overlay. A size or validation failure leaves
+the active world, overlay and budget intact. Save limits remain 24 KiB/16 KiB; they
+are not enlarged. The 128th accepted candidate and refusal of the 129th are tested.
+
+Retry and rule restart reset world, overlay and budget to initial state.
 Source/map clear or replacement clears the session. Preparation changes cancel
 pending work and retain the applied session. New Apply, save/restore, malformed
 team-plan attempts and existing map cancellation paths retain PR84/PR88 guards.
@@ -99,11 +113,11 @@ covers static navigation only, with no environmental recovery claim.
 Public tests use synthetic data/refusal only. Exhaustive authored prefix/position
 cases check complete backward copies, nonzero empty tails, full storage, ID-only
 clearing, untouched actions, invalid range, unavailable weight and atomic failure.
-Strict typed command tests cover bounds, density, order and eight-command limit.
+Strict typed command tests cover bounds, density, order, the legacy eight-command limit and the new 128-command limit.
 Opt-in exact-source tests exercise actual selected actors, full byte/weight
 oracles, immutable initialization, all-four independence, paused equip/return,
-completed-cycle refusal, navigation, full overlay/world/mission/tick/RNG recovery,
-v1/v2 compatibility, malformed kinds/orders/bounds and source mismatch. Delayed
+repeated cycles, exhaustion refusal, navigation, full overlay/world/mission/tick/RNG recovery,
+v1/v2/v3 compatibility, malformed kinds/orders/bounds and source mismatch. Delayed
 real hashing exercises equip/return/restore cancellation across selection, retry,
 rules, source/map changes and new Apply; retained PR84/PR88 races and Training43
 all-four extraction also run.
@@ -118,7 +132,7 @@ npx tsx .local/byte-oracle.ts
 ```
 
 Private originals, source-derived scripts/results and screenshots remain ignored;
-strict local browser port is 5197. No occupied exchange, use/firing/consumption,
+strict local browser port is 5199. No occupied exchange, use/firing/consumption,
 drop, damage, hazards, actual death/occupancy/pads/corpses, art/engine/renderer or
 campaign change is included. No hardware, TV or full-level acceptance is claimed.
 Coordinator assigns independent current-head HIGH simulation/save review, CI and
@@ -127,6 +141,6 @@ self-approve, merge, retrigger automatic review or delegate. Requested Sol6.1
 medium; actual runtime model/effort and token metadata unavailable. One bounded
 implementation batch; attempt and evidence receipts live in the ignored handoff.
 
-One next nomination, **unstarted**: physical controller/TV acceptance of the
-selected-team equip/return, navigation and recovery on the event PC. No successor
+One next nomination, **unstarted**: a separately bounded paused occupied-equipment
+exchange adaptation, subject to its own source semantics and recovery design. No successor
 implementation has started.
