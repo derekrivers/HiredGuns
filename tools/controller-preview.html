@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hired Guns — controller and TV diagnostic</title>
+  <style>
+    :root { color-scheme: dark; font: 18px/1.5 system-ui, sans-serif; color: #eff4f8; background: #101821; }
+    body { margin: 1rem; } h1 { line-height: 1.2; } button, select, input, textarea { font: inherit; }
+    button { padding: .4rem .7rem; margin: .25rem; cursor: pointer; } label { display: block; margin: .5rem 0; }
+    input, textarea { max-width: 95%; } textarea { display: block; width: 50rem; } fieldset { margin: 1rem 0; border: 1px solid #728497; }
+    #views { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .view { border: 3px solid #869bb2; border-radius: 8px; padding: 1rem; overflow-wrap: anywhere; min-height: 21rem; }
+    .identity { display: flex; align-items: center; gap: 1rem; } .number { font-size: 3.5rem; font-weight: 800; }
+    .position { font-size: 1.5rem; font-weight: 700; } pre { white-space: pre-wrap; font-size: .85rem; }
+    .command { font-size: 1.4rem; font-weight: 700; } .shade { height: 1.5rem; background: linear-gradient(to right, #000 0% 20%, #444 20% 40%, #888 40% 60%, #ccc 60% 80%, #fff 80%); }
+    .colors { height: .7rem; background: linear-gradient(to right, #ef5555 0% 33%, #66dd88 33% 66%, #66aaff 66%); }
+    #error { color: #ffbca9; } #session { font-weight: 700; } #events { max-height: 10rem; overflow: auto; }
+    .tv #views { position: fixed; inset: 5vh 5vw; z-index: 3; background: #101821; gap: 2vh; }
+    .tv .view { min-height: 0; overflow: auto; border-radius: 0; }
+    .tv .raw, .tv .assignment-label { display: none; } .tv #calibration { position: fixed; z-index: 5; top: 0; right: 0; }
+    .tv .non-tv { visibility: hidden; } .tv .number { font-size: clamp(3rem, 8vh, 7rem); }
+    .tv .command { font-size: clamp(1rem, 3vh, 2rem); }
+    #edge { display: none; } .tv #edge { display: flex; position: fixed; inset: 0; z-index: 2; border: 2px solid white; justify-content: space-between; align-items: end; pointer-events: none; }
+    @media(max-width: 650px) { :root { font-size: 15px; } .view { padding: .5rem; } .position { font-size: 1rem; } }
+  </style>
+</head>
+<body>
+  <header class="non-tv"><h1>Controller and TV diagnostic</h1>
+    <p>Separate browser diagnostic; no gameplay runs here. Press a button on each controller to expose it to the browser, then assign it below. Nonstandard mappings are displayed but the existing router emits no commands for them.</p>
+    <p>Target physical evidence: <strong>3 November 2026</strong>. Synthetic pads and browser telemetry do not establish physical acceptance.</p>
+    <button id="start">Start / resume observations</button><button id="pause">Pause observations</button><button id="fullscreen">Toggle fullscreen</button>
+    <output id="session" aria-label="Observation state"></output><output id="environment"></output><p id="error" role="alert"></p>
+  </header>
+  <button id="calibration">Enter TV calibration</button>
+  <div id="edge"><span>LEFT / BOTTOM EDGE · 0%</span><span id="tv-source">Source unverified · physical checks pending</span><span>RIGHT / BOTTOM EDGE · 100%</span></div>
+  <main id="views" aria-label="Four controller views"></main>
+  <section class="non-tv">
+    <h2>Browser-reported devices</h2><pre id="devices">No devices reported</pre>
+    <h2>Session events (last 100)</h2><pre id="events"></pre>
+    <fieldset><legend>Local receipt provenance</legend>
+      <label>Evidence source <select id="source"><option value="unverified">Browser telemetry — source unverified</option><option value="synthetic">Synthetic injected pads / automated test</option><option value="human-physical">Human-reported physical hardware session</option></select></label>
+      <label>Observer name <input id="observer" maxlength="120" autocomplete="off"></label>
+      <label>PC / TV / connection / seating distance <input id="setup" maxlength="500" size="60" autocomplete="off"></label>
+      <label>Human observations <textarea id="notes" rows="3" maxlength="4000"></textarea></label>
+      <div id="checks"></div>
+      <p>Checklist results are human statements. They are never inferred from commands, device names or synthetic tests. Audio needs a separate event-hardware listening check. This page records no keyboard input beyond its own form controls.</p>
+      <button id="export">Export local JSON receipt</button><output id="export-status"></output>
+    </fieldset>
+  </section>
+  <script type="module" src="./controller-preview.ts"></script>
+</body>
+</html>
