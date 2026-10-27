@@ -1,21 +1,35 @@
 import { CHARACTER_FILE_BYTES, importCharacters, type CharacterCatalog } from './import/characters';
 import { exportRosterSelection, importRosterSelection, MAX_SELECTION_BYTES } from './import/roster-selection';
 import { importItems, ITEM_FILE_BYTES, type ItemCatalog } from './import/items';
+import type { TrainingSources } from './sim/training-session';
+import { OCS_ITEMS_SHA256 } from './import/items';
 import { inspectSelectionInventory } from './import/inventory';
 
-/** Preparation only: this panel never receives or modifies a world. */
-export function installRosterPanel(host: HTMLElement, pause: () => void): void {
+export interface RosterPanel {
+  sources(): TrainingSources | null;
+  refresh(): void;
+}
+/** World installation remains atomic and owned by main. */
+export function installRosterPanel(host: HTMLElement, pause: () => void, session: {
+  available(): boolean;
+  invalidate(): void;
+  cancel(): void;
+  apply(sources: TrainingSources, indices: number[]): Promise<void>;
+}): RosterPanel {
   host.innerHTML = `<details id="roster-panel"><summary>Local character roster / team preparation</summary>
-    <p>Inspect a raw five-bank Characters file and choose four characters. This preparation does not apply stats or inventory to navigation or drills. Game checkpoints do not contain this plan.</p>
+    <p>Inspect a raw five-bank Characters file and choose four characters. Apply your four choices to a standalone imported Training43 session after opening the matching map and verified OCS roster and items. Other maps support preparation only.</p>
     <div class="actions"><label class="file-button">Open local Characters data<input type="file" id="roster-file" aria-label="Open local Characters data"></label><button id="roster-save" disabled>Save team plan</button><label class="file-button">Load team plan<input type="file" id="roster-plan" aria-label="Load team plan" accept=".json"></label></div>
     <p id="roster-source">No roster loaded. No default original team is assigned.</p>
     <div class="actions"><label class="file-button">Open local Items data<input type="file" id="items-file" aria-label="Open local Items data"></label><button id="items-clear" disabled>Clear item inspection</button></div>
     <p id="items-source">No item table loaded. Weight is unavailable. Item inspection stays in this session and is not saved in team plans or checkpoints.</p>
     <p id="items-status" role="status"></p><button id="items-toggle" aria-expanded="false">Show item definitions / raw records</button><pre id="items-records" hidden></pre>
-    <div id="roster-choices"></div><p id="roster-status" role="status"></p></details>`;
+    <button id="roster-apply" disabled>Apply team to Training43</button><div id="roster-choices"></div><p id="roster-status" role="status"></p></details>`;
   const get = <T extends HTMLElement>(id: string) => host.querySelector<T>(`#${id}`)!;
   let catalog: CharacterCatalog | null = null;
   let items: ItemCatalog | null = null;
+  let rosterBytes: Uint8Array | null = null, itemBytes: Uint8Array | null = null;
+  let applying = false;
+  const sources = () => rosterBytes && itemBytes ? { roster: rosterBytes.slice(), items: itemBytes.slice() } : null;
   let itemGeneration = 0;
   let generation = 0;
   let inspectionGeneration = 0;
@@ -31,6 +45,8 @@ export function installRosterPanel(host: HTMLElement, pause: () => void): void {
     const indices = selected();
     const valid = indices.length === 4 && indices.every(i => i >= 0) && new Set(indices).size === 4;
     get<HTMLButtonElement>('roster-save').disabled = !valid;
+    get<HTMLButtonElement>('roster-apply').disabled = applying || !valid || !session.available() ||
+      catalog?.source.revision !== 'ocs-source-data' || items?.source.sha256 !== OCS_ITEMS_SHA256 || !sources();
     get('roster-status').textContent = valid ? 'Four characters selected for preparation only. Save the plan to restore it with this exact source file.' : 'Choose four different characters. No team is chosen automatically.';
     for (let i = 0; i < 4; i++) {
       const record = catalog?.records[indices[i]!];
@@ -53,12 +69,13 @@ export function installRosterPanel(host: HTMLElement, pause: () => void): void {
   get<HTMLInputElement>('items-file').addEventListener('change', async event => {
     const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
     if (!file) return;
-    const current = ++itemGeneration; pause();
+    const current = ++itemGeneration; pause(); session.invalidate(); itemBytes = null; update();
     try {
       if (file.size !== ITEM_FILE_BYTES) throw new Error('Use a recovered raw 32,604-byte item table; packed GameFast data and item graphics are separate formats.');
-      const next = await importItems(new Uint8Array(await file.arrayBuffer()));
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const next = await importItems(bytes);
       if (current !== itemGeneration) return;
-      items = next;
+      items = next; itemBytes = bytes;
       get('items-source').textContent = `Item source ${next.source.revision} · SHA-256 ${next.source.sha256}. Weight requires a verified roster/item pairing. This table is session-only.`;
       get('items-records').textContent = next.records.map(record => JSON.stringify(record)).join('\n');
       get<HTMLButtonElement>('items-clear').disabled = false;
@@ -66,7 +83,7 @@ export function installRosterPanel(host: HTMLElement, pause: () => void): void {
     } catch (error) { if (current === itemGeneration) get('items-status').textContent = `Items not loaded: ${errorText(error)}`; }
   });
   get<HTMLButtonElement>('items-clear').addEventListener('click', () => {
-    ++itemGeneration; items = null; pause();
+    ++itemGeneration; items = null; itemBytes = null; pause(); session.invalidate();
     get('items-source').textContent = 'No item table loaded. Weight is unavailable. Item inspection stays in this session and is not saved in team plans or checkpoints.';
     get('items-records').textContent = ''; get('items-status').textContent = 'Item inspection cleared.';
     get<HTMLButtonElement>('items-clear').disabled = true; update();
@@ -81,7 +98,7 @@ export function installRosterPanel(host: HTMLElement, pause: () => void): void {
       select.add(new Option('Choose a character', ''));
       next.records.slice(0, 12).forEach(record => select.add(new Option(`${record.index + 1}: ${record.text.selectionName || record.text.gameName || 'Unnamed'}`, String(record.index))));
       const info = document.createElement('pre'); info.id = `roster-info-${i}`;
-      select.addEventListener('change', () => { pause(); update(); select.blur(); });
+      select.addEventListener('change', () => { ++generation; pause(); session.cancel(); update(); select.blur(); });
       label.append(select); choices.append(label, info);
     }
     update();
@@ -89,11 +106,12 @@ export function installRosterPanel(host: HTMLElement, pause: () => void): void {
   get<HTMLInputElement>('roster-file').addEventListener('change', async event => {
     const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
     if (!file) return;
-    const current = ++generation; pause();
+    const current = ++generation; pause(); session.invalidate(); rosterBytes = null; update();
     try {
       if (file.size !== CHARACTER_FILE_BYTES) throw new Error('Use the 16,320-byte raw source/CD32 file. Packed 2,267-byte OCS and legacy 3,072-byte editor files need separate recovery.');
-      const next = await importCharacters(new Uint8Array(await file.arrayBuffer()));
-      if (current === generation) showCatalog(next);
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const next = await importCharacters(bytes);
+      if (current === generation) { rosterBytes = bytes; showCatalog(next); }
     } catch (error) { if (current === generation) get('roster-status').textContent = `Roster not loaded: ${errorText(error)}`; }
   });
   get<HTMLButtonElement>('roster-save').addEventListener('click', () => {
@@ -107,17 +125,28 @@ export function installRosterPanel(host: HTMLElement, pause: () => void): void {
       get('roster-status').textContent = 'Team plan exported. It contains source identity and four indices; gameplay checkpoints remain separate.';
     } catch (error) { get('roster-status').textContent = errorText(error); }
   });
+  get<HTMLButtonElement>('roster-apply').addEventListener('click', async () => {
+    const loaded = sources();
+    if (!loaded || applying) return;
+    applying = true; pause(); update();
+    let failure = '';
+    try { await session.apply(loaded, selected()); }
+    catch (error) { failure = `Team not applied: ${errorText(error)}`; }
+    finally { applying = false; update(); if (failure) get('roster-status').textContent = failure; }
+  });
   get<HTMLInputElement>('roster-plan').addEventListener('change', async event => {
     const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
     if (!file) return;
-    const current = ++generation; pause();
+    const current = ++generation; pause(); session.cancel(); update();
     try {
       if (!catalog) throw new Error('Open Characters data first.');
       if (file.size >= MAX_SELECTION_BYTES) throw new Error('Roster selection must be smaller than 2 KiB.');
       const next = importRosterSelection(catalog, await file.text());
       if (current !== generation) return;
+      session.cancel();
       [...host.querySelectorAll<HTMLSelectElement>('.roster-select')].forEach((select, i) => { select.value = String(next.characters[i]); });
       update(); get('roster-status').textContent = 'Team plan restored for this exact source. Preparation only; gameplay is unchanged.';
     } catch (error) { if (current === generation) get('roster-status').textContent = `Plan not loaded: ${errorText(error)}`; }
   });
+  return { sources, refresh: update };
 }
