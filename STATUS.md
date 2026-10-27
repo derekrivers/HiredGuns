@@ -1,6 +1,6 @@
 # Status — 27 October 2026
 
-Gameplay accepted through PR37 at `99810932af49edfa24d57de308d98c121b3e41ee`.
+Gameplay prerequisites accepted through PR40 at `e85cc8059df963a9cf9bc978224cf6b496cc930d`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -35,10 +35,24 @@ all 562 combined tests, lint/types and build successfully. Token usage unavailab
 Original inputs, coordinates, addresses, table bytes, scripts, traces and results
 stay local and ignored; public tests are synthetic. Browser behavior is unchanged.
 
-Two bounded prerequisite lanes are active: a source-bound private producer for
-the existing initialized mouse fixture projection, and reachability of the excluded
-post-weight inventory selection decrement. Neither is accepted yet. Static source
-binding must not turn an authored fixture roster into canonical live actor authority.
+PR39 establishes the [post-weight selection boundary](docs/backpack-post-weight-selection-observation.md):
+the decrement is unreachable for non-full contiguous prefixes. One original CPU
+case reaches it with thirty occupied slots, selection 29 and a nonzero first
+padding ID; gameplay provenance of that padding remains unproved and the API
+still rejects that case. Structural enumeration is distinct from CPU execution.
+
+PR40 documents the [source-bound mouse fixture producer](docs/mouse0-source-binding.md).
+Five complete projections, ordered writes and full-memory reconstructions match;
+all 8,986 codec bytes have one owner. Static source/table/layout binding does not
+turn the authored initialized fixture into canonical live actor authority.
+Coordinator read and hash-verified both exact-final independent HIGH approvals,
+completed no-finding automatic reviews and successful CI, then verified sequential
+normal merges and the combined tree. These documentation-only changes retain
+the 562-test runtime baseline and unchanged browser behavior.
+
+Two next bounded lanes are active: a canonical initialized team storage diagnostic
+producer, and original CPU evidence for downward backpack selection on the
+supported two-entry prefix. Neither successor is accepted yet.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
