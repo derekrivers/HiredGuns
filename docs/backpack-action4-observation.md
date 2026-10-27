@@ -32,10 +32,9 @@ loop are not executed. Source inspection establishes action production/transport
 at `ColdStartup.s:2241-2450,2467-2646,2728-2740` and
 `Controls&Movement.s:874-887`; this observation starts with the produced action
 already in the actor. It does not claim a physical input or rendered interaction.
-The executable tests control method before window type; the inspected source
-lists those two guards in the opposite order. All guards are satisfied here.
-This observation preserves that revision distinction and does not establish
-source/executable equivalence for rejected inputs.
+The observed caller and inspected source test the secondary dead word, window
+type and control method in that order. All guards are satisfied here; rejected
+inputs are not observed.
 
 ## Fixed prerequisites and observed result
 
