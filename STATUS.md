@@ -1,6 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR43 at `4669edd91f3e5f09ab4727ba1e36d0179615bd50`.
+Gameplay prerequisites accepted through PR48; current main is
+`6e2e3c43cb144f442afefb4e220f687454b5369d` after shared-status PR44.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -69,8 +70,31 @@ lint/types/build and public browser 19 passed/four optional skips. Each local
 Training43 extraction passes 4/4. Coordinator verifies sequential normal merges
 and combined tree; these documentation-only changes retain runtime behavior.
 
-Two next bounded lanes are active: pure downward backpack selection and a
-source-bound quick-initialization prestate producer. Neither successor is accepted.
+PR45 and PR48 add disconnected pure [DOWN](docs/backpack-down-navigation-contract.md)
+and [UP](docs/backpack-up-navigation-contract.md) transitions for the exact observed
+two-entry inventory slice. Each handles movement and its adjacent stop, preserves
+complete storage and opaque weight/feedback, and returns detached immutable data
+with ordered caller/action/conditional selection/redraw writes. Both complete
+original cases match candidate encodings and full-memory replays. Neither helper
+is wired to live input, and no general inventory or weight authority is added.
+
+PR46 records the [bounded initialization prestate](docs/team-initialization-prestate.md).
+It distinguishes earlier clear effects from unresolved return bytes and names
+the indirect memory-frame and timing dependencies. Its private read-manifest
+omission was corrected and independently re-reviewed. It adds no CPU run or
+complete initialized memory. PR47 supplies the UP CPU evidence used by PR48.
+
+These exact-final independent reviews approve; automatic reviews completed
+without findings and relevant CI passed. PR45 records 570 tests, PR48 records
+578; each public browser run passes 19/four optional skips and local Training43
+extraction passes 4/4. Coordinator verifies normal merged deltas and trees;
+accepted main after PR48 passes all 578 tests, lint/types and build. The subsequent
+PR44 shared-status merge changes documentation only. Browser behavior is unchanged.
+
+Two lanes now wait on automatic review: PR49's initialization return-footprint
+diagnostic with explicitly authored memory/I/O origins, and PR50's bounded
+empty-equipment ACTION3 stop evidence. Neither is accepted. Their reported
+independent approvals and green CI do not replace completed automatic review.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
