@@ -1,6 +1,6 @@
 # Status — 27 October 2026
 
-Gameplay accepted through PR92; current main is
+Gameplay accepted through PR92; verified integration snapshot is
 `933428ae1a4ba4465dd5b7f0166f975023216d0b`.
 
 The [standalone Training43 session](docs/training-session.md) applies four explicit
