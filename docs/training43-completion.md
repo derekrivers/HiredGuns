@@ -399,10 +399,31 @@ reports and verifies sequential normal merged deltas/trees. Current main is
 lint/types and build. Each lane records public browser 19/four optional skips and
 separate local Training43 extraction 4/4. Live behavior is unchanged.
 
-New unaccepted evidence lanes own one bounded initialized-storage/post-death
-fixture compatibility comparison and original inventory counting on existing
-diagnostic storage. Neither installs actors/input, repairs population counts or
-grants canonical/live/physical-hardware authority.
+PR64 supplies original count-items evidence and PR66 implements only its bounded
+disconnected transition: equipment plus thirty carried ID reads, count two to
+three, then a natural helper-return record. Independent source/CPU candidates,
+33-record chronology and complete 8 MiB encoding/replay agree. Explicit middle-
+caller entry supplies no earlier damage eligibility, gameplay reachability or
+whole-caller execution. Separate insertion counts remain diagnostic; no general
+live counting policy or population repair follows.
+
+PR65 proves one sufficient initialized/post-death incompatibility witness: a
+source-known control byte selects the original rejection branch. Independent
+source mapping retains twenty scalar differences and 699 unknown codec bytes;
+death/reference/invocation and actual-caller prerequisites remain. Frozen full-
+memory death/selection replays, reproduction and refusals pass. This comparison
+executes no new original CPU case and supplies no adapter or complete repair.
+
+Each accepted exact final has independent HIGH approval, completed no-finding
+automatic review and relevant green CI. Coordinator reads/hash-verifies reports
+and verifies normal sequential merged deltas/trees. Current accepted main is
+`6179dcae6136c85feeb9a09ae4a086e614b5d587`; its combined check passes 616 tests,
+lint/types and build. Each lane records public browser 19/four optional skips and
+separate local Training43 extraction 4/4. Live behavior remains unchanged.
+
+Two unaccepted evidence lanes now own the original one-human control-assignment
+branch and immediate inventory post-count test/division prefix. Neither installs
+actors/input, activates inventory damage or grants canonical/live/hardware authority.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
