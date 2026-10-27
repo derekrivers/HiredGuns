@@ -114,6 +114,9 @@ checkpoints. Browser checks exercise visible selection/apply, actual static
 movement and turning, save/change/paused restore, retry, clear/new map, legacy
 refusal and recovery without an existing team. Delayed real file reads and real
 digest results test cancellation during both phases without replacing hashes.
+A delayed real map read also verifies that Retry and rule changes immediately
+restore Apply availability on the retained verified map, and that the stale map
+result cannot clear a subsequently applied team.
 Optional screenshots are written only when `HIRED_GUNS_SESSION_SCREENSHOT` names
 a private local path. Physical-controller/TV and complete-level acceptance remain
 separate.

@@ -186,6 +186,7 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
   loadGeneration++; loading = false; world = createWorld(level, undefined, world.mission.rules); events.fill('READY'); get('error').textContent = ''; setPaused(true);
+  rosterPanel.refresh();
   get('recovery-status').textContent = 'Positions reset. Saved checkpoints remain available.';
 });
 get<HTMLButtonElement>('demo').addEventListener('click', () => {
@@ -209,6 +210,7 @@ get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
   try {
     const next = createWorld(level, undefined, missionRulesForLevel(level, mode));
     loadGeneration++; loading = false; world = next; events.fill('READY'); get('error').textContent = ''; setPaused(true);
+    rosterPanel.refresh();
     get('recovery-status').textContent = 'Rules changed. Mission restarted; saved checkpoints retain their own rules.';
   } catch (error) { get('error').textContent = errorText(error); }
   (event.currentTarget as HTMLSelectElement).blur();
