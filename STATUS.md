@@ -1,8 +1,35 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR82; current main is
-`9c1ac1efe65f26c550c344fa9c3d90b48381da90`.
-All candidates below remain disconnected from live world and browser behavior.
+Gameplay accepted through PR84; current main is
+`9e2ad98e75fe9dc5074c7168fa8fb59e874c7c7b`.
+
+PR84 adds the [standalone selected-team Training43 session](docs/training-session.md).
+Four explicit choices from the verified local OCS roster/items now apply to the
+verified imported Training43 map, starting paused. View names and expandable
+initial stats, inventory and weight belong to that active team. Static movement,
+extraction, retry and mission rules retain their existing behavior.
+
+The new source-bound session wrapper reconstructs immutable initial actors and
+validates the unchanged schema-3 checkpoint before atomic paused recovery.
+Malformed/wrong-source saves preserve the working team/world; source replacement
+and operation generations reject stale reads/hashes. Legacy checkpoints remain
+usable without an active selected team and cannot retain stale team data.
+
+Independent HIGH review and fresh automatic review approve exact final
+`d24577a1c2b5ab0e180c57a7cb47bfee4ba90ea9`; both current CI runs pass.
+Both cancellation findings were repaired and independently reproduced: Retry,
+rules and rejected team plans leave Apply usable after cancelling a map read.
+Validation: 626 public unit tests, lint/types/build; public browser 20 passed,
+12 optional private skips; exact local unit 7, session/extraction browser 13 and
+five independently authored cancellation reproductions passed. Coordinator
+verified normal expected-head merge and exact reviewed tree. Token usage unavailable.
+
+This explicit-import adaptation does not claim original startup/campaign parity.
+No hazards, combat or mutable inventory are enabled. Campaign selection/Locations
+remains unresolved and does not gate this standalone session. Physical controller,
+TV and complete-level acceptance remain separate. Earlier prerequisite candidates
+below remain disconnected; their unchanged-browser statements describe their
+historical batches, before PR84.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
 no-call, survival and fatal outcomes for observed controls 1/2/255. All 354
@@ -314,10 +341,11 @@ Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
 Training43 remains incomplete. Four views, assignments, bounded dry extraction,
-retry/checkpoints, authored dry stairs/falls and separate original team preparation
-remain the browser boundary. Integrated falling, full team/control/occupancy,
-pads/corpses, wet traversal and source-bound atomic paused checkpoint recovery
-still gate live hazards. Shooting, live backpack and full original recovery remain
+retry/checkpoints, authored dry stairs/falls and the explicit-import selected-team
+session are the browser boundary. Integrated falling, actual death/control/occupancy,
+pads/corpses and wet traversal still gate live hazards. PR84 paused recovery covers
+static world plus immutable initial team only; future mutable/environment state
+requires its own atomic recovery coverage. Shooting, live backpack and full original recovery remain
 undemonstrated. World/checkpoint 3 and roster-plan 1 are unchanged. Locations
 revision mismatch blocks campaign. Browser checks do not replace physical
 controllers, TV or full-level acceptance.
