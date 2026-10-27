@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR48; current main is
-`6e2e3c43cb144f442afefb4e220f687454b5369d` after shared-status PR44.
+Gameplay prerequisites accepted through PR56; current main is
+`1a9349aa8f530b9e0e99137ae4445174feb348b4`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -91,10 +91,50 @@ extraction passes 4/4. Coordinator verifies normal merged deltas and trees;
 accepted main after PR48 passes all 578 tests, lint/types and build. The subsequent
 PR44 shared-status merge changes documentation only. Browser behavior is unchanged.
 
-Two lanes now wait on automatic review: PR49's initialization return-footprint
-diagnostic with explicitly authored memory/I/O origins, and PR50's bounded
-empty-equipment ACTION3 stop evidence. Neither is accepted. Their reported
-independent approvals and green CI do not replace completed automatic review.
+PR49 accepts the [quick-initialization return footprint](docs/team-initialization-footprint.md).
+Unchanged original instructions execute the caller clears and quick-initialization
+through natural return under explicit authored memory-frame and hardware inputs.
+Independent source/CPU proof, ordered effects and complete 16 MiB replay agree.
+Source-owned values/origins remain distinct from initialized emulator backing;
+these diagnostic inputs establish no canonical live or physical-hardware authority.
+The four original team-helper invocations remain a separate, unaccepted task.
+
+Exact-final independent HIGH approval, completed no-finding automatic review and
+green CI pass. The single documented stalled-review retry completed; coordinator
+verified the normal expected-head merge and combined tree. This document-only
+addition retains the 578-test runtime baseline and unchanged browser behavior;
+its lane records 570 tests, public browser 19/four optional skips and local
+Training43 extraction 4/4 on its earlier accepted base.
+
+PR50 accepts the [empty-equipment ACTION3 stop evidence](docs/backpack-action3-observation.md).
+Both initialized selections return naturally after old-reference bookkeeping and
+action consumption; all inventory, selection and redraw storage is preserved.
+Exact-final independent HIGH approval binds explicit initial registers and the
+guarded comparison receipts. Automatic review completed without findings after
+its single documented retry; relevant CI passes 578 tests and public browser
+19/four optional skips, with separate local Training43 extraction 4/4. Coordinator
+verified its normal expected-head merge and combined tree. Browser behavior is unchanged.
+
+PR53 adds the [pure empty-equipment ACTION3 stop](docs/backpack-action3-stop-contract.md).
+PR55 establishes the separate occupied-equipment insertion case; PR56 adds its
+[bounded pure transition](docs/backpack-action3-insertion-contract.md). All 29
+reverse full-entry copies, equipment transfer and ID-only clear precede one real
+weight/feedback pass and redundant action redraw. The complete candidate, 74
+ordered records and full 8 MiB reconstruction match the original case. Stored
+count two remains despite three occupied IDs: this diagnostic slice grants no
+population consistency or live inventory authority. Other branches still reject.
+
+Exact-final independent HIGH approvals, completed no-finding automatic reviews
+and relevant green CI pass for PR53/55/56. Public browser checks pass 19/four
+optional skips and separate local Training43 extraction passes 4/4 in each lane.
+Coordinator verifies normal merged deltas/trees; accepted PR56 main passes 594
+tests, lint/types and build. These helpers remain disconnected; browser behavior
+is unchanged. Physical-controller/TV/full-level acceptance is separate.
+
+PR54's four original team-helper evidence remains unaccepted while automatic
+review runs, despite reported independent approval and green CI. Its ownership
+is preserved. The inventory lane now owns full-capacity ACTION3 no-room CPU
+evidence, also unaccepted. Neither task installs live actors or input.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
