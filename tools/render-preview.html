@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Four-view renderer measurement</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101b24; color: #e8f1f4; }
+    body { margin: 0 auto; max-width: 1280px; padding: 20px; }
+    h1 { font-size: 1.5rem; margin: 0 0 10px; } p { line-height: 1.45; max-width: 1000px; }
+    button, input { font: inherit; padding: 8px; } button { cursor: pointer; } label { display: inline-block; margin: 8px; }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    #stage { position: relative; height: 520px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; background: #111e25; }
+    #scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .pane { position: relative; min-width: 0; border: 1px solid #92a7b8; }
+    .pane span { position: absolute; z-index: 1; background: #101b24c9; padding: 5px; }
+    .sprite { position: absolute; width: 100%; height: 100%; pointer-events: none; }
+    #alpha-examples { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 15px; }
+    figure { margin: 0; } figure canvas { width: 192px; height: 128px; image-rendering: pixelated; border: 1px solid #82909b; }
+    pre { background: #182833; padding: 12px; overflow: auto; max-height: 320px; white-space: pre-wrap; }
+    #error { color: #ffb5aa; } #status { min-height: 24px; }
+    @media (max-width: 700px) { body { padding: 10px; } #stage { height: 380px; } }
+  </style>
+</head>
+<body>
+  <h1>Four-view renderer measurement</h1>
+  <p>Current renderer on the synthetic navigation map, plus an isolated synthetic sprite overlay. No original artwork or gameplay changes. Browser timings measure this session, not event PC or TV acceptance.</p>
+  <div class="controls">
+    <button id="load">Load synthetic atlas</button><button id="dispose">Dispose atlas</button>
+    <button id="cycle">Run 3 load/dispose cycles</button>
+    <label>Warm-up ms <input id="warmup" type="number" min="100" max="5000" step="100" value="500" size="5"></label>
+    <label>Sample ms per mode <input id="duration" type="number" min="500" max="10000" step="100" value="2000" size="5"></label>
+    <button id="benchmark">Compare both modes</button><button id="export">Export JSON</button>
+  </div>
+  <p id="status" role="status">Starting renderer…</p><p id="error" role="alert"></p>
+  <div id="stage">
+    <canvas id="scene" aria-label="Existing renderer four-view scene"></canvas>
+    <div class="pane"><span>View 1 · synthetic</span><canvas class="sprite" aria-label="Synthetic sprite view 1"></canvas></div>
+    <div class="pane"><span>View 2 · synthetic</span><canvas class="sprite" aria-label="Synthetic sprite view 2"></canvas></div>
+    <div class="pane"><span>View 3 · synthetic</span><canvas class="sprite" aria-label="Synthetic sprite view 3"></canvas></div>
+    <div class="pane"><span>View 4 · synthetic</span><canvas class="sprite" aria-label="Synthetic sprite view 4"></canvas></div>
+  </div>
+  <div id="alpha-examples">
+    <figure><canvas id="dark" aria-label="Dark alpha and registration example"></canvas><figcaption>Dark · shared foot anchor</figcaption></figure>
+    <figure><canvas id="light" aria-label="Light alpha and registration example"></canvas><figcaption>Light · shared foot anchor</figcaption></figure>
+    <figure><canvas id="checker" aria-label="Checker alpha and registration example"></canvas><figcaption>Checker · shared foot anchor</figcaption></figure>
+  </div>
+  <p>Two authored frames alternate every 250 ms. Their dimensions and common foot pivot are diagnostic choices, with no historical animation claim. The translucent interior checks object alpha as well as transparent margins.</p>
+  <pre id="asset-report" aria-label="Asset validation report"></pre>
+  <pre id="report" aria-label="Measurement report">Run a comparison to collect measurements.</pre>
+  <script type="module" src="./render-preview.ts"></script>
+</body>
+</html>
