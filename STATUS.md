@@ -1,7 +1,30 @@
 # Status — 27 October 2026
 
-Gameplay accepted through PR84; current main is
-`9e2ad98e75fe9dc5074c7168fa8fb59e874c7c7b`.
+Gameplay accepted through PR88; current main is
+`13f657051dda6a0f2d8293823379a9168a676af4`.
+
+PR88 adds [paused equip into empty equipment](docs/training-inventory.md) to the
+selected-team Training43 session. Each actor can select an occupied carried slot
+and equip once while paused. Full entry bytes, source-derived compaction,
+ID-only final clearing, opaque tails/actions and freshly verified weights are
+preserved. The immutable initial team remains separate from the current overlay.
+This generic standalone source transcription does not widen the earlier narrow
+CPU-observed helper or claim original pointer/control/count/caller authority.
+
+Session wrapper v2 replays at most four strict, unique-actor equip commands from
+reverified initialization and restores overlay plus checkpoint-v3 world together,
+paused. Version 1 still reconstructs initial equipment. Retry/rules reset the
+overlay; source replacement clears it. Combat, firing, consumption, unequip,
+occupied exchange, drops, weight effects on movement and hazards remain disabled.
+
+Exact final `1d401e851aba3e93ac57034fe6167b0ec06a1aa0` has independent HIGH
+approval, completed no-finding automatic review and both CI runs passing.
+Coordinator verified normal expected-head merge and combined tree. Validation:
+630 unit tests plus lint/types/build; public browser 21 passed/23 optional skips;
+private units 13 and combined inventory/session/extraction browser 25 passed.
+Independent checks additionally passed 115 real-source occupied slots, 435
+authored transfer cases and four real-hash browser races. Source deductions and
+authored cases are not new original CPU observations. Token usage unavailable.
 
 PR84 adds the [standalone selected-team Training43 session](docs/training-session.md).
 Four explicit choices from the verified local OCS roster/items now apply to the
@@ -25,7 +48,8 @@ five independently authored cancellation reproductions passed. Coordinator
 verified normal expected-head merge and exact reviewed tree. Token usage unavailable.
 
 This explicit-import adaptation does not claim original startup/campaign parity.
-No hazards, combat or mutable inventory are enabled. Campaign selection/Locations
+No hazards or combat are enabled. Inventory mutation is limited to the paused
+empty-equipment command above. Campaign selection/Locations
 remains unresolved and does not gate this standalone session. Physical controller,
 TV and complete-level acceptance remain separate. Earlier prerequisite candidates
 below remain disconnected; their unchanged-browser statements describe their
@@ -343,9 +367,9 @@ shared status/completion reconciliation and gated integration are coordinator-ow
 Training43 remains incomplete. Four views, assignments, bounded dry extraction,
 retry/checkpoints, authored dry stairs/falls and the explicit-import selected-team
 session are the browser boundary. Integrated falling, actual death/control/occupancy,
-pads/corpses and wet traversal still gate live hazards. PR84 paused recovery covers
-static world plus immutable initial team only; future mutable/environment state
-requires its own atomic recovery coverage. Shooting, live backpack and full original recovery remain
+pads/corpses and wet traversal still gate live hazards. Paused recovery covers
+static world, immutable initial team and bounded equip-command replay; future
+inventory operations or environment state require their own recovery coverage. Shooting, live backpack and full original recovery remain
 undemonstrated. World/checkpoint 3 and roster-plan 1 are unchanged. Locations
 revision mismatch blocks campaign. Browser checks do not replace physical
 controllers, TV or full-level acceptance.
