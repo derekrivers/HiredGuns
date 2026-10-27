@@ -11,7 +11,8 @@ import { FourViews } from './render/four-views';
 import { importEditorMap } from './import/editor-map';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
 import { installRosterPanel } from './roster-panel';
-import { createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
+import { installTrainingInventoryPanel } from './training-inventory-panel';
+import { equipTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -43,12 +44,30 @@ const rosterHost = document.createElement('div');
 app.querySelector('footer')!.append(rosterHost);
 const sessionInfo = document.createElement('section'); sessionInfo.id = 'training-session';
 rosterHost.before(sessionInfo);
+const inventoryHost = document.createElement('section'); inventoryHost.id = 'training-inventory';
+sessionInfo.after(inventoryHost);
+const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot) => {
+  if (!paused || loading || !session) throw new Error('Pause an available selected-team session before equipping.');
+  const sources = rosterPanel.sources();
+  if (!sources) throw new Error('Open the matching roster and items first.');
+  const generation = ++loadGeneration; loading = true; inventoryPanel.refresh();
+  try {
+    const candidate = await equipTrainingSession(level, sources, session, actor, slot, paused);
+    if (generation !== loadGeneration) return;
+    // Equip reconstructs only the overlay; retain this session's current navigation world.
+    session = candidate.session; showSession();
+    get('recovery-status').textContent = `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
+  } finally {
+    if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); rosterPanel.refresh(); }
+  }
+});
 function cancelSessionOperation(): void { ++loadGeneration; loading = false; setPaused(true); }
 function showSession(): void {
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Initial stats and inventory only; inventory use, combat and hazards remain unavailable.' : 'No active selected-team session.';
+  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Paused equip into empty equipment is available below; combat and hazards remain unavailable.' : 'No active selected-team session.';
   sessionInfo.append(label);
+  inventoryPanel.render(session);
   for (let i = 0; i < 4; i++) {
     const name = panes[i]!.querySelector<HTMLElement>('.player-name')!;
     name.textContent = `${String(i + 1).padStart(2, '0')} / ${session?.names[i] ?? 'MERCENARY'}`;
@@ -76,7 +95,7 @@ const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
       setPaused(true); showSession(); updateHud(readPads());
       get('recovery-status').textContent = 'Selected team applied. Review controls, then Start mission. Session saves require these same local sources.';
     } catch (error) { if (generation === loadGeneration) throw error; }
-    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
+    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
   },
 });
 
@@ -84,6 +103,7 @@ function errorText(error: unknown): string { return error instanceof Error ? err
 function setPaused(value: boolean): void {
   paused = value; keys.clear(); router.reset(); clock.reset();
   updateMissionHud();
+  inventoryPanel.refresh();
 }
 function updateMissionHud(): void {
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
@@ -185,7 +205,9 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
 }
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
-  loadGeneration++; loading = false; world = createWorld(level, undefined, world.mission.rules); events.fill('READY'); get('error').textContent = ''; setPaused(true);
+  loadGeneration++; loading = false; world = createWorld(level, undefined, world.mission.rules);
+  if (session) { session = resetTrainingInventory(session); showSession(); }
+  events.fill('READY'); get('error').textContent = ''; setPaused(true);
   rosterPanel.refresh();
   get('recovery-status').textContent = 'Positions reset. Saved checkpoints remain available.';
 });
@@ -209,7 +231,9 @@ get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
   const mode = (event.currentTarget as HTMLSelectElement).value as MissionMode;
   try {
     const next = createWorld(level, undefined, missionRulesForLevel(level, mode));
-    loadGeneration++; loading = false; world = next; events.fill('READY'); get('error').textContent = ''; setPaused(true);
+    loadGeneration++; loading = false; world = next;
+    if (session) { session = resetTrainingInventory(session); showSession(); }
+    events.fill('READY'); get('error').textContent = ''; setPaused(true);
     rosterPanel.refresh();
     get('recovery-status').textContent = 'Rules changed. Mission restarted; saved checkpoints retain their own rules.';
   } catch (error) { get('error').textContent = errorText(error); }
@@ -225,9 +249,9 @@ get<HTMLInputElement>('map-file').addEventListener('change', async event => {
     const { level: imported, report } = await importEditorMap(new Uint8Array(await file.arrayBuffer()));
     if (generation !== loadGeneration) return;
     installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
-    loading = false; rosterPanel.refresh();
+    loading = false; rosterPanel.refresh(); inventoryPanel.refresh();
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
 });
 
 get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => {
@@ -243,7 +267,7 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
     link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. ${session ? 'Keep the same local map, roster and items for session recovery.' : 'Keep the same source map for recovery.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
 });
 get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
@@ -269,7 +293,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     session = restoredSession; world = restored; showSession(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
 });
 
 const allKeys = new Set(KEY_GROUPS.flatMap(group => group.map(([key]) => key)));
@@ -297,6 +321,7 @@ function frame(now: number): void {
     }); } catch (error) { setPaused(true); get('error').textContent = errorText(error); }
     if (world.mission.outcome !== 'active' || teamDead(world)) setPaused(true);
   }
+  inventoryPanel.refresh();
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }

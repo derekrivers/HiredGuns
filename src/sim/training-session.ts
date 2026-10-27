@@ -1,4 +1,6 @@
 import type { LevelData, WorldState } from '../contracts';
+import { importItems, type ItemCatalog } from '../import/items';
+import { equipCommands, replayTrainingInventory, type TrainingInventory } from './training-inventory';
 import { importCharacters } from '../import/characters';
 import { initializeOriginalTeam, type OriginalTeam } from '../import/original-team';
 import { exportCheckpoint, importCheckpoint } from './checkpoint';
@@ -11,6 +13,8 @@ export interface TrainingSession {
   readonly indices: readonly number[];
   readonly names: readonly string[];
   readonly team: OriginalTeam;
+  readonly items: ItemCatalog;
+  readonly inventory: TrainingInventory;
 }
 export interface TrainingCandidate { session: TrainingSession; world: WorldState }
 
@@ -30,28 +34,40 @@ function trainingLevel(level: LevelData): LevelData {
   return snapshot;
 }
 /** Snapshot sources before any hashing. OriginalTeam rehashes/reparses both exact OCS inputs. */
-export async function createTrainingSession(level: LevelData, sources: TrainingSources, indices: readonly number[]): Promise<TrainingCandidate> {
+export async function createTrainingSession(level: LevelData, sources: TrainingSources, indices: readonly number[], commands: unknown = []): Promise<TrainingCandidate> {
+  const replay = equipCommands(commands);
   const map = trainingLevel(level);
   const roster = new Uint8Array(sources.roster), items = new Uint8Array(sources.items);
   const world = createWorld(map);
   const teamPromise = initializeOriginalTeam(roster, items, indices);
-  const [team, catalog] = await Promise.all([teamPromise, importCharacters(roster)]);
+  const [team, catalog, table] = await Promise.all([teamPromise, importCharacters(roster), importItems(items)]);
   if (world.physics.mode !== 'static') throw new Error('Training43 sessions require static navigation.');
   // Existing checkpoint validation also validates the complete map and starting world.
   await exportCheckpoint(map, world);
   const session = freeze({ indices: team.actors.map(a => a.canonicalIndex),
-    names: team.actors.map(a => catalog.records[a.canonicalIndex]!.text.gameName || catalog.records[a.canonicalIndex]!.text.selectionName || `Character ${a.canonicalIndex + 1}`), team });
+    names: team.actors.map(a => catalog.records[a.canonicalIndex]!.text.gameName || catalog.records[a.canonicalIndex]!.text.selectionName || `Character ${a.canonicalIndex + 1}`), team, items: table, inventory: replayTrainingInventory(team, table, replay) });
   return { session, world };
 }
 
-/** Save only initial-team reconstruction inputs; mutable inventories never enter this format. */
+/** New candidates always reverify raw inputs and replay a bounded command log. */
+export async function equipTrainingSession(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean): Promise<TrainingCandidate> {
+  if (!paused) throw new Error('Pause before equipping an item.');
+  return createTrainingSession(level, sources, session.indices, [...session.inventory.commands, { actor, slot }]);
+}
+
+/** Retry and rule restart reset the overlay to the same immutable initialization. */
+export function resetTrainingInventory(session: TrainingSession): TrainingSession {
+  return freeze({ ...session, inventory: replayTrainingInventory(session.team, session.items, []) });
+}
+
+/** Save bounded replay commands, never unchecked arbitrary inventory storage. */
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
   const map = trainingLevel(level);
   if (world.physics.mode !== 'static') throw new Error('Training43 sessions require static navigation.');
-  const [candidate, checkpoint] = await Promise.all([createTrainingSession(map, sources, session.indices), exportCheckpoint(map, world)]);
-  const json = JSON.stringify({ format: 'hired-guns-training-session', version: 1,
+  const [candidate, checkpoint] = await Promise.all([createTrainingSession(map, sources, session.indices, session.inventory.commands), exportCheckpoint(map, world)]);
+  const json = JSON.stringify({ format: 'hired-guns-training-session', version: 2,
     sources: { map: TRAINING_43_SHA256, ...candidate.session.team.sources },
-    indices: candidate.session.indices, checkpoint });
+    indices: candidate.session.indices, commands: candidate.session.inventory.commands, checkpoint });
   if (new TextEncoder().encode(json).length >= MAX_SESSION_BYTES) throw new Error('Training43 session is too large.');
   return json;
 }
@@ -66,12 +82,14 @@ export function isTrainingSessionSave(json: string): boolean {
 export async function importTrainingSession(level: LevelData, sources: TrainingSources, json: string): Promise<TrainingCandidate> {
   if (typeof json !== 'string' || new TextEncoder().encode(json).length >= MAX_SESSION_BYTES) throw new Error('Training43 session must be smaller than 24 KiB.');
   const parsed: unknown = JSON.parse(json);
-  exact(parsed, ['format', 'version', 'sources', 'indices', 'checkpoint']);
-  if (parsed.format !== 'hired-guns-training-session' || parsed.version !== 1 || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
+  if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
+  const version = (parsed as { version?: unknown }).version;
+  exact(parsed, version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
+  if (parsed.format !== 'hired-guns-training-session' || (version !== 1 && version !== 2) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
   exact(parsed.sources, ['map', 'roster', 'items']);
   const expected = structuredClone(parsed.sources);
   const map = trainingLevel(level);
-  const candidatePromise = createTrainingSession(map, sources, parsed.indices as number[]);
+  const candidatePromise = createTrainingSession(map, sources, parsed.indices as number[], version === 1 ? [] : parsed.commands);
   const checkpointPromise = importCheckpoint(map, parsed.checkpoint);
   const [candidate, world] = await Promise.all([candidatePromise, checkpointPromise]);
   const actual = { map: TRAINING_43_SHA256, ...candidate.session.team.sources };

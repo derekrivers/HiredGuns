@@ -63,7 +63,7 @@ describe.skipIf(!privateInputs)('opt-in exact local Training43 / OCS session (ne
     const world = stepWorld(level, initial.world, [{ mercenaryId: 0, action: 'turn-right' }]).world;
     const json = await exportTrainingSession(level, world, initial.session, sources);
     const envelope = JSON.parse(json);
-    expect(Object.keys(envelope).sort()).toEqual(['checkpoint', 'format', 'indices', 'sources', 'version']);
+    expect(Object.keys(envelope).sort()).toEqual(['checkpoint', 'commands', 'format', 'indices', 'sources', 'version']);
     expect(JSON.parse(envelope.checkpoint).version).toBe(3);
     expect(envelope).not.toHaveProperty('team');
     const restored = await importTrainingSession(level, sources, json);
