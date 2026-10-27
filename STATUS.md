@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR78; current main is
-`40f2b2072140cc676f132d34de03cb03aab9f302`.
+Gameplay prerequisites accepted through PR82; current main is
+`9c1ac1efe65f26c550c344fa9c3d90b48381da90`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -283,9 +283,33 @@ merges and trees. Both changes are documentation only, retaining the 623-test
 runtime baseline and unchanged live browser behavior. Both lanes pass public
 browser nineteen/four optional skips and verified separate Training43 four/four.
 
-One environment lane now owns provenance for that first blocked lower-cell read.
-It preserves unknown origins unless actual source/input/producer evidence
-justifies them, and grants no fall continuation or live activation.
+PR80 establishes [four diagnostic editor-input origins](docs/initialized-fall-lower-cell-origin.md)
+for the blocked operand. Complete payload placement and retained replay bind the
+input bytes, but the extension stays separate and uninstalled. Accepted null
+origins and the source-known mask remain unchanged; runtime origins remain zero.
+
+PR81 records the [runtime load provenance boundary](docs/runtime-lower-cell-load-origin.md):
+the runtime selector lacks a source-known value and origin. Packed and raw archive
+candidates remain unselected. Static loader/decompression semantics establish no
+actual selected file, returned bytes or output relationship.
+
+PR82 binds the [original selector-copy producers](docs/runtime-map-selector-producer.md).
+Both action and validated campaign paths copy a complete location record; a
+symbolic byte-origin projection identifies the selector's place in those copies.
+No numeric selection, copy execution or runtime table authority follows. Actual
+dispatcher mode/caller and matching runtime Locations input/load identity remain
+missing. The preceding table-loader dependency is not waived by the local
+unknown dispatcher-data read. Locations revision mismatch still blocks graph
+substitution. This source/input gate is recorded; no repetitive primary audit
+or selection/copy/fall continuation is started.
+
+All three exact final heads have independent HIGH approval, completed no-finding
+automatic review and successful relevant CI. Coordinator reads/hash-verifies
+reports and verifies normal expected-head merges and trees. These documentation
+changes retain the 623-test runtime baseline and unchanged live browser behavior.
+Each lane passes public browser nineteen/four optional skips and separate verified
+Training43 extraction four/four. No new original CPU or decompression executes;
+the open fall frame, four accepted null origins and unknown mask remain intact.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
