@@ -39,7 +39,7 @@ image are persisted before the new CPU is constructed.
 
 The reset loop processes all source-sized monster records. It clears their type,
 position, fitness, direction, coordinates, counters and movement fields, and sets
-their drawing field. These instructions require no unknown previous monster value
+their reset byte to the source constant. These instructions require no unknown previous monster value
 as a data read. Prior bytes are nevertheless retained in every store record and
 the raw replay. This removes the intervening reset dependency without assuming
 that monster storage was already clear or granting it canonical map authority.
