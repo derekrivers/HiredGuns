@@ -1,7 +1,8 @@
 # Bounded occupied ACTION3 insertion
 
 `transitionBackpackAction3Insertion` is a disconnected pure transition for the
-single slice established by the [original observation](backpack-action3-insertion-observation.md).
+two selections established by the [selection-zero observation](backpack-action3-insertion-observation.md)
+and [selection-one observation](backpack-action3-selection1-observation.md).
 It accepts explicit logical storage and returns a detached, deeply immutable
 candidate, ordered records and arithmetic diagnostics. It installs nothing into
 the world, renderer, input system or save state. Return records are inert logical
@@ -10,7 +11,7 @@ The existing stop, navigation, exchange, transfer and weight APIs remain unchang
 
 The caller must supply player zero, secondary dead word zero, window one, control
 method one, pending action three, wings zero, distinct current/old references,
-selection zero and stored count two. Carried IDs must be one and two followed by
+selection zero or one and stored count two. Carried IDs must be one and two followed by
 28 empty IDs; equipment ID must be three. All thirty complete packed big-endian
 entries, equipment, temporary and three separate padding entries are required.
 Previous-position and no-room-count words, grenade-use, weight, heavy-count,
@@ -24,7 +25,7 @@ weights. Physique must be the observed word immediately below the positive,
 representable quotient; incoming too-heavy must be clear. This deliberately
 admits only the observed becomes-heavy branch. Ordinary item contributions do
 not multiply by their opaque count bytes. Different items, categories, physique,
-feedback, prefixes, selections, full capacity, wings, overflow and grenade paths
+feedback, prefixes, other selections, full capacity, wings, overflow and grenade paths
 reject. A matching caller-provided hash string does **not** authenticate the
 projected values or original bytes: external source verification remains required.
 The unused rows are shape/width checked and retained, never treated as byte proof.
@@ -41,10 +42,12 @@ detached and frozen, with recursively readonly result types.
 The ordered effects are:
 
 1. Copy current reference to old and consume the pending action.
-2. Copy selection to previous position, then write all 29 full carried entries
-   backward, slot 28 to 29 through slot zero to one. Empty tails move too; the
-   former final empty entry is overwritten. The insertion return names slot zero.
-3. Copy the complete equipment long to slot zero, then clear only equipment's ID
+2. Copy selection to previous position, then copy complete entries backward from
+   slot 28 to 29 through the selected slot to its successor. Selection zero makes
+   29 copies; selection one makes 28 and preserves slot zero byte for byte. Empty
+   tails move too; the former final empty entry is overwritten. The insertion
+   return names the selected slot.
+3. Copy the complete equipment long to the selected slot, then clear only equipment's ID
    byte. Equipment's other three bytes survive. These moves are direct writes;
    there are no invented `copy_item` calls or returns.
 4. Clear grenade-use, perform one fixed equipment-plus-thirty-slot weight scan,
@@ -53,7 +56,8 @@ The ordered effects are:
 5. Record weight return, retain the redundant action redraw write, then record
    natural action completion.
 
-There are 40 ordered prior/new writes. Each record names its storage width; the
+Selection zero retains 40 ordered prior/new writes and 74 total records; selection
+one has 39 writes and 73 total records. Both retain 34 return records. Each record names its storage width; the
 equipment clear records its ID byte rather than a fictitious full-long clear.
 Add-weight records retain the visited slot, ID, count byte and accumulator values.
 No callback or injected calculator supplies weight behavior. The bounded ordinary
@@ -70,8 +74,8 @@ initialization, a live actor or a valid save.
 Public tests use synthetic storage and a synthetic complete arithmetic projection.
 They verify full tails, reverse overwrite order, ID-only clear, retained count and
 opaque storage, all weight visits, redundant feedback order, immutable detachment,
-widths and malformed descriptor rejection. Private comparison against the one
-unchanged original case checks the complete candidate, all ordered records and
+widths and malformed descriptor rejection. Private comparison against both
+accepted original cases checks the complete candidate, all ordered records and
 full 8 MiB re-encoding and chronological prior-value replay, retaining unknown
 bytes. Original stack writes are audited separately: 34 actual calls and natural
 returns balance, maximum depth is 44 bytes and the four-byte outer save remains.
@@ -85,4 +89,4 @@ separate prerequisites. World/checkpoint three and roster one are unchanged;
 fall/death/control/occupancy, pads/corpses and wet traversal still gate activation.
 The Locations revision mismatch blocks campaign. Physical controllers, TV and
 complete-level acceptance remain separate; art integration waits for all designs.
-This task adds only the bounded candidate, synthetic tests and this contract.
+This widening changes only the bounded helper, synthetic tests and this contract.

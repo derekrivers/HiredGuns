@@ -21,7 +21,7 @@ type Target = 'actor.oldCell' | 'actor.pendingAction' | 'actor.previousPosition'
   'actor.equipment' | 'actor.usingGrenade' | 'actor.weight' | 'actor.heavyCount' | 'actor.tooHeavy' | 'redrawFlag';
 export type BackpackAction3InsertionRecord =
   | { readonly kind: 'write'; readonly target: Target; readonly width: 1 | 2 | 4; readonly before: number; readonly after: number }
-  | { readonly kind: 'insert-return'; readonly slot: 0 }
+  | { readonly kind: 'insert-return'; readonly slot: 0 | 1 }
   | { readonly kind: 'add-weight-return'; readonly pass: 1; readonly slot: 'equipment' | number;
       readonly itemId: number; readonly count: number; readonly before: number; readonly after: number }
   | { readonly kind: 'weight-return' | 'action-return'; readonly actor: 'actor'; readonly currentCell: number };
@@ -76,7 +76,7 @@ function snapshot(input: BackpackAction3InsertionInput): Snapshot {
   });
   const actor = { ...a, carried, padding } as unknown as Snapshot['actor'];
   if (actor.playerIndex !== 0 || actor.secondaryDeadWord !== 0 || actor.windowType !== 1 || actor.controlMethod !== 1 ||
-      actor.pendingAction !== 3 || actor.currentCell === actor.oldCell || actor.selection !== 0 || actor.itemCount !== 2 ||
+      actor.pendingAction !== 3 || actor.currentCell === actor.oldCell || (actor.selection !== 0 && actor.selection !== 1) || actor.itemCount !== 2 ||
       actor.spellWings !== 0 || actor.tooHeavy !== 0 || (actor.equipment >>> 24) !== 3 ||
       actor.carried.some((entry, i) => (entry >>> 24) !== (i < 2 ? i + 1 : 0)) || s.physique !== 105) fail();
   if (records.slice(0, 3).some((row, i) => row.category !== [16, 16, 0][i] || row.weight !== [7500, 4200, 3200][i])) fail();
@@ -84,7 +84,7 @@ function snapshot(input: BackpackAction3InsertionInput): Snapshot {
     items: { revision: 'ocs-runtime', tableSha256: OCS_ITEMS_SHA256, records } };
 }
 
-/** One disconnected observed insertion. Returns inert logical completion, never a live continuation. */
+/** Two disconnected observed insertion selections. Returns inert logical completion, never a live continuation. */
 export function transitionBackpackAction3Insertion(input: BackpackAction3InsertionInput): BackpackAction3InsertionResult {
   // All shape, width, identity and bounded-branch validation finishes before transition records exist.
   const candidate = snapshot(input), a = candidate.actor;
@@ -95,11 +95,11 @@ export function transitionBackpackAction3Insertion(input: BackpackAction3Inserti
   a.oldCell = write('actor.oldCell', 4, a.oldCell, a.currentCell);
   a.pendingAction = write('actor.pendingAction', 1, a.pendingAction, 0);
   a.previousPosition = write('actor.previousPosition', 2, a.previousPosition, a.selection);
-  for (let source = 28; source >= 0; source--) {
+  for (let source = 28; source >= a.selection; source--) {
     a.carried[source + 1] = write(`actor.carried.${source + 1}`, 4, a.carried[source + 1]!, a.carried[source]!);
   }
-  records.push({ kind: 'insert-return', slot: 0 });
-  a.carried[0] = write('actor.carried.0', 4, a.carried[0]!, a.equipment);
+  records.push({ kind: 'insert-return', slot: a.selection as 0 | 1 });
+  a.carried[a.selection] = write(`actor.carried.${a.selection}`, 4, a.carried[a.selection]!, a.equipment);
   write('actor.equipment', 1, a.equipment >>> 24, 0);
   a.equipment &= 0xffffff;
   a.usingGrenade = write('actor.usingGrenade', 2, a.usingGrenade, 0);
