@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR58, including PR54; current main is
-`10db81029864b5270120f889f7b511e4007bf647`.
+Gameplay prerequisites accepted through PR62; current main is
+`d11ea466053105c33309996969a5bda0f0b5ea38`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -154,9 +154,31 @@ passes 602 tests, lint/types and build; PR54 then changes documentation only.
 Public browser checks pass 19/four optional skips and separate local Training43
 extraction passes 4/4 in each lane. Live browser behavior is unchanged.
 
-Current main is `10db81029864b5270120f889f7b511e4007bf647`. Two unaccepted evidence
-lanes now own the remaining initialization bookkeeping/natural outer return and
-non-full ACTION3 insertion at selection one. Neither installs actors or input.
+PR60 establishes original [selection-one insertion evidence](docs/backpack-action3-selection1-observation.md).
+PR62 widens only the disconnected insertion helper to that exact observed slice,
+retaining the complete selection-zero result. Selection one preserves slot zero,
+performs 28 reverse complete-entry copies, transfers equipment with ID-only clear,
+and retains one real weight/feedback pass and ordered natural return records.
+Independent CPU/API candidates, records and full 8 MiB encoding/replay agree for
+both selections. Diagnostic count and all source/live authority limits remain.
+
+PR61 accepts the [initialization outer-return observation](docs/team-initialization-return-observation.md).
+The remaining timer tail and natural return agree with independent source/CPU
+and full 16 MiB replay. The unchanged return frame has external diagnostic origin,
+without actual preceding startup-call provenance. Raw status register and predicted
+architectural flags differ; CCR parity remains unproved. No correction or forced
+return hides that limitation. This establishes no whole startup or live authority.
+
+All three exact final heads have independent HIGH approval, completed no-finding
+automatic reviews and successful relevant CI. Coordinator read/hash-verifies the
+reports and verifies normal sequential merged deltas/trees. Combined PR62 main
+passes 609 tests, lint/types and build; each lane's public browser checks pass
+19/four optional skips and separate local Training43 extraction passes 4/4.
+Live browser behavior is unchanged.
+
+Two unaccepted evidence lanes now own one bounded initialized-storage/post-death
+fixture compatibility comparison and original inventory counting on existing
+diagnostic storage. Neither installs actors/input or repairs population counts.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 

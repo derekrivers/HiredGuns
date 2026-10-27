@@ -377,9 +377,32 @@ Each lane records public browser 19/four optional skips and separate local
 Training43 extraction 4/4. Live behavior remains unchanged. Current accepted main
 is `10db81029864b5270120f889f7b511e4007bf647`.
 
-Two new unaccepted evidence lanes own remaining initialization bookkeeping/natural
-outer return and non-full ACTION3 insertion at selection one. Neither installs
-actors/input or grants canonical/live/physical-hardware authority.
+PR60 subsequently establishes the exact original selection-one insertion case;
+PR62 admits it in the disconnected pure helper while preserving complete prior
+selection-zero results. Slot zero stays intact, 28 reverse full-entry copies
+precede equipment transfer/ID-only clear and one weight/feedback pass. Complete
+candidates, ordered write/return records and full 8 MiB encoding/replay agree with
+independent original CPU executions for both selections. Count remains diagnostic;
+no general inventory, population consistency or live authority follows.
+
+PR61 accepts the remaining initialization timer tail and natural outer return.
+Independent source/CPU and full 16 MiB replay agree. The return consumes unchanged
+externally authored diagnostic stack bytes, with no actual preceding startup-call
+provenance. Raw SR differs from architectural flags predicted for the final store;
+CCR parity remains unproved. No state correction, forced return or whole startup
+claim conceals those limits. Known/unknown source origins remain separate.
+
+All three exact finals have independent HIGH approval, completed no-finding
+automatic review and relevant successful CI. Coordinator reads/hash-verifies
+reports and verifies sequential normal merged deltas/trees. Current main is
+`d11ea466053105c33309996969a5bda0f0b5ea38`; its combined check passes 609 tests,
+lint/types and build. Each lane records public browser 19/four optional skips and
+separate local Training43 extraction 4/4. Live behavior is unchanged.
+
+New unaccepted evidence lanes own one bounded initialized-storage/post-death
+fixture compatibility comparison and original inventory counting on existing
+diagnostic storage. Neither installs actors/input, repairs population counts or
+grants canonical/live/physical-hardware authority.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
