@@ -262,7 +262,8 @@ each lane's local Training43 extraction passes 4/4. Coordinator verifies the
 combined merged deltas and runs 562 tests, lint/types and build successfully.
 Neither transition is installed live. Source/layout/storage-codec authority,
 hardware/input binding and live actor/occupancy adapters remain prerequisites.
-Those two prerequisites are now accepted in PR39 and PR40, through main
+PR39 and PR40 now accept the post-weight reachability evidence and private
+source-bound mouse fixture diagnostic, through main
 `e85cc8059df963a9cf9bc978224cf6b496cc930d`. The
 [selection boundary](backpack-post-weight-selection-observation.md) proves the
 decrement unreachable for non-full contiguous prefixes. One original CPU run
