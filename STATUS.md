@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR69; current main is
-`759d2c7ef04fb8419a2e6a0061b22da0fab24629`.
+Gameplay prerequisites accepted through PR72; current main is
+`9e3b2caacc8b4654066de97357824e601dfc5e94`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -218,10 +218,31 @@ the accepted runtime baseline remains 616 tests/lint/types/build. Each lane
 records public browser 19/four optional skips and verified local Training43
 extraction 4/4. Live behavior is unchanged.
 
-Two unaccepted lanes now own original initialized current/old cell-reference
-placement with full-team occupancy prerequisites, and shooting-item argument
-preparation ending before the fitness call. Neither installs actors/input,
-executes excluded fitness calls or activates inventory damage.
+PR71 establishes the [source-bound shooting argument prefix](docs/shooting-inventory-argument-observation.md).
+Original item-parameter reads and arithmetic produce the bounded full-width
+argument and four-long saved frame. Independent source/CPU/8 MiB replay agrees.
+Execution stops before the fitness call; restoring that frame and entering
+inventory damage remain conditional source deductions, not executed behavior.
+No live equipped-gun, ordinary hit or general parameter authority follows.
+
+PR72 establishes [four-actor reference placement](docs/initialized-player-reference-placement-observation.md) as a new direct diagnostic
+invocation on the accepted initialized image. Original calls assign CURRENT/OLD,
+write heads and advance complete paths for all four actors. Independent source/CPU
+prediction and full 16 MiB replay agree; all 185 reads have source origins without
+a stack exemption. The external entry frame, editor payload and unexecuted startup/
+monster-reset sequence remain explicit. Distinct destinations do not establish
+collision handling, general occupancy resolution, death or post-death compatibility.
+
+Both accepted exact heads have independent HIGH approval, completed no-finding
+automatic review and relevant successful CI. Coordinator reads/hash-verifies reports
+and verifies normal merged deltas/trees. These are documentation-only changes;
+the accepted runtime baseline remains 616 tests/lint/types/build. Each lane records
+public browser 19/four optional skips and verified local Training43 extraction 4/4.
+Live behavior remains unchanged.
+
+Two unaccepted lanes now own the actual initialization/reset/placement caller prefix
+and a standalone bounded shooting-argument helper. Neither executes fitness damage,
+installs actors/input or activates live inventory behavior.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
