@@ -11,6 +11,7 @@ import { FourViews } from './render/four-views';
 import { importEditorMap } from './import/editor-map';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
 import { installRosterPanel } from './roster-panel';
+import { createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -29,6 +30,7 @@ let level = createDemoLevel(), world = createWorld(level);
 let renderer: FourViews | null = null;
 let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
+let session: TrainingSession | null = null;
 let extraDiagnostics = '';
 let padInventory = '';
 let lastTime = performance.now(), frameMs = 0;
@@ -39,7 +41,44 @@ const panes = [...app.querySelectorAll<HTMLElement>('.view')];
 const selects = [0, 1, 2, 3].map(i => get<HTMLSelectElement>(`assign-${i}`));
 const rosterHost = document.createElement('div');
 app.querySelector('footer')!.append(rosterHost);
-installRosterPanel(rosterHost, () => setPaused(true));
+const sessionInfo = document.createElement('section'); sessionInfo.id = 'training-session';
+rosterHost.before(sessionInfo);
+function cancelSessionOperation(): void { ++loadGeneration; loading = false; setPaused(true); }
+function showSession(): void {
+  sessionInfo.replaceChildren();
+  const label = document.createElement('p'); label.id = 'session-status';
+  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Initial stats and inventory only; inventory use, combat and hazards remain unavailable.' : 'No active selected-team session.';
+  sessionInfo.append(label);
+  for (let i = 0; i < 4; i++) {
+    const name = panes[i]!.querySelector<HTMLElement>('.player-name')!;
+    name.textContent = `${String(i + 1).padStart(2, '0')} / ${session?.names[i] ?? 'MERCENARY'}`;
+    if (!session) continue;
+    const actor = session.team.actors[i]!;
+    const detail = document.createElement('details'), summary = document.createElement('summary'), data = document.createElement('pre');
+    detail.id = `session-actor-${i}`;
+    summary.textContent = `Team slot ${i + 1}: ${session.names[i]} | Character ${actor.canonicalIndex + 1} | Fitness ${actor.stats.fitness} | Physique ${actor.stats.physique} | Agility ${actor.stats.agility} | Weight ${actor.weight.totalWeight}`;
+    Object.assign(data.style, { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', maxHeight: '260px', overflow: 'auto' });
+    data.textContent = `Initial source stats: ${JSON.stringify(actor.stats)}\nWeight: ${JSON.stringify(actor.weight)}\nInitial equipment: ${JSON.stringify(actor.inventory.equipped)}\nCarried slots (10 copied, 20 cleared):\n${actor.inventory.carried.map((slot, j) => `${j + 1}: ${slot.itemId} / ${slot.damage} / ${slot.ammo} / ${slot.fourthByte}`).join('\n')}\nSeparate actions: ${JSON.stringify(actor.inventory.actions)}`;
+    detail.append(summary, data); sessionInfo.append(detail);
+  }
+}
+function clearSession(): void { cancelSessionOperation(); session = null; showSession(); }
+const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
+  available: () => !loading && level.source.kind === 'editor-map' && extractionProfile(level) !== null,
+  invalidate: clearSession,
+  cancel: cancelSessionOperation,
+  apply: async (sources, indices) => {
+    cancelSessionOperation(); const generation = loadGeneration; loading = true;
+    try {
+      const candidate = await createTrainingSession(level, sources, indices);
+      if (generation !== loadGeneration) return;
+      session = candidate.session; world = candidate.world; events.fill('READY');
+      setPaused(true); showSession(); updateHud(readPads());
+      get('recovery-status').textContent = 'Selected team applied. Review controls, then Start mission. Session saves require these same local sources.';
+    } catch (error) { if (generation === loadGeneration) throw error; }
+    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
+  },
+});
 
 function errorText(error: unknown): string { return error instanceof Error ? error.message : String(error); }
 function setPaused(value: boolean): void {
@@ -57,7 +96,7 @@ function updateMissionHud(): void {
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
   get('mission-objective').textContent = !active ? fallDrill ? 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : '';
-  get('prototype-label').textContent = active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  get('prototype-label').textContent = session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
   if (mission.clock) {
     const units = mission.clock.tens * 10 + mission.clock.units;
@@ -134,6 +173,7 @@ function updateLevelInfo(): void {
 }
 function installLevel(nextLevel: LevelData, diagnostics = ''): void {
   const nextWorld = createWorld(nextLevel); // Validate before replacing the current working level.
+  setPaused(true); session = null; showSession();
   renderer?.dispose(); renderer = null;
   try { renderer = new FourViews(canvas, panes, nextLevel); graphicsLost = false; }
   catch (error) { get<HTMLButtonElement>('play').disabled = true; throw new Error(`WebGL2 unavailable: ${errorText(error)}`); }
@@ -141,6 +181,7 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
   events.fill('READY'); setPaused(true); updateLevelInfo(); updateHud(readPads());
   get<HTMLButtonElement>('play').disabled = false;
   get('recovery-status').textContent = 'Checkpoints restore team state. Reopen the same map or drill first.';
+  rosterPanel.refresh();
 }
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
@@ -175,41 +216,58 @@ get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
 get<HTMLInputElement>('map-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
   if (!file) return;
-  const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
+  clearSession();
+  const generation = ++loadGeneration; loading = true; setPaused(true); rosterPanel.refresh(); get('error').textContent = '';
   try {
     if (file.size !== 157738) throw new Error('Expected a 157,738-byte raw editor .map file. Packed/runtime maps are not supported.');
     const { level: imported, report } = await importEditorMap(new Uint8Array(await file.arrayBuffer()));
     if (generation !== loadGeneration) return;
     installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
+    loading = false; rosterPanel.refresh();
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) loading = false; }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
 });
 
 get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => {
   if (loading) return;
   const generation = ++loadGeneration; setPaused(true); loading = true; get('error').textContent = '';
   try {
-    const json = await exportCheckpoint(level, world);
+    const sources = rosterPanel.sources();
+    if (session && !sources) throw new Error('Reopen the matching roster and items before saving this session.');
+    const json = session ? await exportTrainingSession(level, world, session, sources!) : await exportCheckpoint(level, world);
     if (generation !== loadGeneration) return;
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `hired-guns-checkpoint-${world.tick}.json`;
     link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. Keep the same source map for recovery.`;
+    get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. ${session ? 'Keep the same local map, roster and items for session recovery.' : 'Keep the same source map for recovery.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) loading = false; }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
 });
 get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
   if (!file) return;
   const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
   try {
-    if (file.size >= MAX_CHECKPOINT_BYTES) throw new Error('Checkpoint must be smaller than 16 KiB.');
-    const restored = await importCheckpoint(level, await file.text());
+    if (file.size >= MAX_SESSION_BYTES) throw new Error('Session save must be smaller than 24 KiB.');
+    const json = await file.text();
     if (generation !== loadGeneration) return;
-    world = restored; events.fill('RESTORED'); updateHud(readPads());
+    let restoredSession: TrainingSession | null = null;
+    let restored;
+    if (isTrainingSessionSave(json)) {
+      const sources = rosterPanel.sources();
+      if (!sources) throw new Error('Open the matching verified OCS roster and item table before restoring a session.');
+      const candidate = await importTrainingSession(level, sources, json);
+      restoredSession = candidate.session; restored = candidate.world;
+    } else {
+      if (session) throw new Error('An active selected team requires a Training43 session save. Clear the session by opening a map before loading a legacy checkpoint.');
+      if (file.size >= MAX_CHECKPOINT_BYTES) throw new Error('Checkpoint must be smaller than 16 KiB.');
+      restored = await importCheckpoint(level, json);
+    }
+    if (generation !== loadGeneration) return;
+    session = restoredSession; world = restored; showSession(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) loading = false; }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); } }
 });
 
 const allKeys = new Set(KEY_GROUPS.flatMap(group => group.map(([key]) => key)));
