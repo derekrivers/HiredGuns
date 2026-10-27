@@ -1,5 +1,35 @@
 # Training43 completion boundary
 
+Current playable integration, accepted PR84 at
+`9e2ad98e75fe9dc5074c7168fa8fb59e874c7c7b`:
+[standalone selected-team session](training-session.md). Explicit four-character
+selection from exact local OCS roster/items applies to verified imported
+Training43, paused. View identities and initial stats/inventory/weight belong to
+that active session; static navigation/extraction/retry remain available.
+Source-bound wrapper recovery reconstructs immutable initial actors and validates
+the complete unchanged checkpoint-v3 world before atomic paused installation.
+Malformed or wrong-source session-save recovery cannot replace the working
+team/world. Beginning source replacement intentionally clears the active team,
+even if that replacement is rejected; operation generations reject stale
+reads/hashes. Plain checkpoints
+cannot silently retain stale selected-team data.
+
+Both independently found cancellation defects were repaired. Exact-final HIGH
+approval, completed no-finding automatic review and both CI runs precede the
+normal expected-head merge; coordinator verified the reviewed tree. Validation:
+626 public unit tests plus lint/types/build; public browser 20 passed/12 optional
+private skips; exact local unit 7, session/extraction browser 13 and independent
+cancellation reproductions 5 passed. Token usage unavailable.
+
+This standalone importer/initializer adaptation does not require original
+campaign-loader provenance. Locations/runtime selection remains an unresolved
+campaign gate. No falling, wet mechanics, combat, mutable inventory or actual
+death/control/occupancy/pad/corpse behavior is activated. Static-session recovery
+does not establish future mutable/environment recovery. Physical controllers/TV
+and complete-level acceptance remain separate. The original evidence assessment
+below is historical; its unchanged-browser and recovery-gate statements predate
+PR84.
+
 Evidence-only result, 26 October 2026, accepted base
 `68e689b525b4c949c8f1ac587f1d47d02064c262`. This does not deliver a
 complete level or enable environmental mechanics. The selected editor source is
@@ -535,7 +565,8 @@ Each lane passes public browser nineteen/four optional skips and separate verifi
 Training43 extraction four/four. No new original CPU or decompression executes;
 the open fall frame, four accepted null origins and unknown mask remain intact.
 
-Current accepted main is `9c1ac1efe65f26c550c344fa9c3d90b48381da90`.
+Historical prerequisite snapshot through PR82 is
+`9c1ac1efe65f26c550c344fa9c3d90b48381da90`; current integration is above.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
