@@ -16,7 +16,7 @@ scripts, traces and outputs remain local.
 PR28's [occupied backpack action-4 observation](docs/backpack-action4-observation.md)
 executes three bounded original caller/exchange/weight/feedback paths through
 natural return. Full-entry copies, temporary storage, caller bookkeeping,
-31 weight contributions per case, ordered writes and full-memory replay are
+31 weight-helper calls per case, ordered writes and full-memory replay are
 verified. An independent CPU setup reproduces the traces. This is evidence:
 no backpack API or live inventory behavior was added. Unobserved categories,
 overflow, rejected callers, full inventories and holes remain outside its boundary;
