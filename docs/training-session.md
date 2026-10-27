@@ -14,7 +14,7 @@ equipment, thirty carried entries and the separate action entries. These are
 immutable session data from `initializeOriginalTeam`: fitness starts at 65535,
 ten carried entries copy from the source and twenty clear. A separate
 [paused inventory overlay](training-inventory.md) now supports one
-carried-to-empty-equipment transfer per actor. Weight effects on movement remain
+carried-to-empty-equipment transfer followed by one return to backpack per actor. Weight effects on movement remain
 unavailable. The initial data in these summaries stays immutable. Changing
 preparation choices
 leaves an already applied team intact; Apply explicitly replaces it and restarts
@@ -61,18 +61,22 @@ local and ignored.
 ## Recovery and cancellation
 
 **Save checkpoint** pauses and exports a separate
-`hired-guns-training-session` version 2 wrapper when a selected team is active.
+`hired-guns-training-session` version 3 wrapper when a selected team is active.
 The wrapper contains the three source identities, four indices, a bounded
-`commands` array (at most one equip per actor), and the existing validated
+`commands` array (at most one equip then one return per actor; eight total), and the existing validated
 checkpoint string. It contains no roster, map words, arbitrary inventory storage
 or new environmental counters. Version 1 wrappers remain accepted and reconstruct
-the initial empty equipment with no commands. World/checkpoint schema 3 is unchanged.
+the initial empty equipment with no commands. Version 2 accepts only its exact prior
+`{ actor, slot }` equip commands and migrates them to typed equip commands. Version 3
+requires exact `{ kind, actor, slot }` commands with kind `equip` or `return`;
+return-before-equip, duplicate actions, third actions and unknown kinds reject.
+Old saves are never modified. World/checkpoint schema 3 is unchanged.
 The wrapper must be smaller than 24 KiB; the nested checkpoint retains its own
 16 KiB bound.
 
 To recover after reloading, reopen the same map and exact OCS roster/items, then
 load the session save. No prior Apply is required. Recovery reconstructs the
-immutable initial team deterministically, replays the strict equip log to rebuild
+immutable initial team deterministically, replays the strict typed inventory log to rebuild
 the detached inventory overlay, validates exact wrapper fields and
 identities, and validates the complete nested world before exposing a candidate.
 The browser installs team and world together only if the operation generation
@@ -87,7 +91,7 @@ paused. Retry and rule changes reset the overlay to initialization as they resta
 the
 world. New operations and changed preparation choices
 invalidate pending browser operations. Stale completion cannot install a team,
-world, inventory overlay or download. Equip uses this same generation guard;
+world, inventory overlay or download. Equip and return use this same generation guard;
 a cancelled reconstruction cannot replace inventory after retry, rule/selection
 changes, source clearing/replacement or map changes. Source import generations
 also reject replaced reads; manual
