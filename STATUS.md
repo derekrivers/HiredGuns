@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR72; current main is
-`9e3b2caacc8b4654066de97357824e601dfc5e94`.
+Gameplay prerequisites accepted through PR74 and PR75; current main is
+`285f6289d5fe98e5374402152b187138eddb6876`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -240,9 +240,31 @@ the accepted runtime baseline remains 616 tests/lint/types/build. Each lane reco
 public browser 19/four optional skips and verified local Training43 extraction 4/4.
 Live behavior remains unchanged.
 
-Two unaccepted lanes now own the actual initialization/reset/placement caller prefix
-and a standalone bounded shooting-argument helper. Neither executes fitness damage,
-installs actors/input or activates live inventory behavior.
+PR74 establishes the [original startup initialization/reset/placement prefix](docs/startup-reset-placement-observation.md).
+Three actual consecutive original calls execute initialization, all monster resets
+and four-actor placement, returning naturally to the next caller instruction.
+Independent source/CPU prediction, every read origin, actual call frames and full
+16 MiB replay agree. This removes the direct-entry and intervening-reset gaps for
+these diagnostic inputs. Earlier startup, editor-map origin, hardware/CCR parity,
+death, collisions and general occupancy remain unproved; no live adapter follows.
+
+PR75 adds the [disconnected bounded shooting argument producer](docs/shooting-argument-contract.md).
+The exact accepted pre-fitness profile produces complete logical registers,
+nineteen boundaries and the four-long saved frame with ordered reads/stores.
+Independent source/CPU/codec and full-image replay agree. Metadata and opaque
+references remain external witnesses. Fitness execution, natural saved-frame
+preservation, restore and inventory-call entry remain separate dependencies.
+
+Both exact final heads have independent HIGH approval, completed no-finding
+automatic review and successful relevant CI. Coordinator reads/hash-verifies
+reports and verifies sequential normal merges and the combined tree. Accepted
+PR75 main passes 623 tests, lint/types and build; PR74 then changes documentation
+only. Each lane passes public browser 19/four optional skips and separate verified
+local Training43 extraction 4/4. Live browser behavior remains unchanged.
+
+One environment lane now owns the bounded actor-one death-call entry prerequisite
+against the accepted initialized/reset/placed image, stopping at its first
+unsupported caller input. It grants no death transition or live activation.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
