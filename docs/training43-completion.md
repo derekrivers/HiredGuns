@@ -337,9 +337,26 @@ explicit registers and guarded comparison outputs; automatic review completed
 without findings after its one documented retry, with relevant green CI (578
 tests, public browser 19/four optional skips) and separate local Training43 4/4.
 Coordinator verifies normal expected-head merge and combined tree; no live
-behavior changes. The next active lanes own four narrow original team helpers
-and a disconnected pure empty-equipment ACTION3 stop. Neither is accepted or
-installed in live actors/input.
+behavior changes.
+
+PR53 adds the disconnected pure empty-equipment ACTION3 stop. PR55 supplies
+separate occupied-equipment insertion CPU evidence and PR56 implements only that
+bounded insertion slice. Current main is
+`1a9349aa8f530b9e0e99137ae4445174feb348b4`. Reverse full-entry copies, full equipment
+transfer, ID-only clear, one weight/feedback pass and redundant redraw retain
+source order; complete candidates, 74 ordered records and full 8 MiB replay agree.
+Stored count two remains despite three occupied IDs, an explicit diagnostic
+limitation without population consistency, general inventory or live authority.
+
+Each accepted final head has independent HIGH approval, completed no-finding
+automatic review and relevant green CI. Public browser checks pass 19/four
+optional skips and each separate local Training43 extraction passes 4/4.
+Coordinator verifies normal merged deltas/trees and runs 594 tests/lint/types/build
+on accepted PR56 main. Browser behavior remains unchanged; these helpers are
+disconnected and do not replace physical-controller/TV/full-level acceptance.
+PR54's four-helper evidence remains unaccepted pending automatic review; reported
+independent approval and green CI do not replace completion. The other lane owns
+full-capacity ACTION3 no-room evidence, also unaccepted. Neither installs actors/input.
 
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
