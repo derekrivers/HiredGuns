@@ -1,44 +1,53 @@
-# Status — 26 October 2026
+# Status — 27 October 2026
 
-Accepted main is `c13909a5cd367e0c72bd43069a2a64027e1c0ba7` (PR24).
-The [fatal TYPE1 support observation](docs/type1-fatal-support-observation.md)
-now completes 200 natural original-helper returns: 111 fatal and 89 survival/no-call.
-Immediate TYPE1 support accepts current for corpse placement without another cell
-or search advance. Exact full-memory replay, 2,138 writes, 2,537 ordered records,
-restored references, death return, redraw, actual damage return, pending clear and
-changed-cell reread pass. Historical stopped prefixes remain prefixes; their stop
-was after the lower read/mask and before the first excluded stair comparison.
-Controls 1/2/255 and matching/unmatched leaders are bounded initialized evidence.
-No implementation, live adapter or activation occurs in this task.
+Gameplay accepted through PR28 at `2e5adfb81556c4c6669eb75fe1ca2fcd2ecb788c`.
+PR27's [pure TYPE1 support transition](docs/type1-support-contract.md) includes
+observed fatal outcomes under the same strict control-1 storage, geometry,
+lifecycle and audio prerequisites. It preserves literal fitness, dead-byte writes,
+independent leader clears, corpse/owner words, old=current, distinct returns,
+pending clear and changed-cell reread. It remains disconnected from the world.
+Ordinary-floor validation is unchanged.
 
-The [pure initial TYPE1 support transition](docs/type1-support-contract.md) remains
-disconnected and accepts only dry no-call/computed-survival outcomes, rejecting
-fatal outcomes atomically. It preserves exact owned storage, coherent head/feedback,
-bounded logical geometry and ordered writes/returns. Shared damage arithmetic leaves
-the ordinary-floor death validator intact. Frozen 61/62 support, 18/71 descent and
-96 coherent reports reproduce unchanged; fresh fatal reports stay private.
+All 354 private original fixture inputs are accounted for: 306 full candidates
+match, including 210 fatal outcomes; 48 control-2/255 inputs reject unchanged.
+Historical stopped reports stay prefixes. Original bytes, addresses, coordinates,
+scripts, traces and outputs remain local.
 
-Baseline `npm run check` passes lint/types, 373 tests and build. Public browser
-passes 19 with four optional-private skips; explicit local Training43 extraction
-passes all four checks, including the all-four route. Docs-only changes require no
-local executable rerun; independent exact-commit review and final CI remain gates.
-Original material, scripts, addresses, traces and handoffs stay ignored. One Sol
-medium worker and independent Sol high reviewer; token usage unavailable.
+PR28's [occupied backpack action-4 observation](docs/backpack-action4-observation.md)
+executes three bounded original caller/exchange/weight/feedback paths through
+natural return. Full-entry copies, temporary storage, caller bookkeeping,
+31 weight-helper calls per case, ordered writes and full-memory replay are
+verified. An independent CPU setup reproduces the traces. This is evidence:
+no backpack API or live inventory behavior was added. Unobserved categories,
+overflow, rejected callers, full inventories and holes remain outside its boundary;
+arbitrary carried-to-carried reordering remains unsupported.
 
-Exactly one next nomination, unstarted: extend the disconnected pure TYPE1 support
-transition to observed fatal outcomes under its existing strict control-1 geometry
-and storage contract. No second task is started.
+Both PRs have independently verified exact-final Sol high approvals, completed
+automatic reviews without findings and successful relevant CI. PR27 CI passes
+lint/types, 376 tests, build and public browser 19 passed/four optional-private
+skips. PR28's documentation-only CI passes the prior 373-test runtime baseline
+and the same browser checks. Each lane's local Training43 extraction checks pass
+4/4. Coordinator verified sequential merged deltas and the combined tree;
+browser behavior is unchanged. Token usage is unavailable.
 
-The accepted [pure dry descent](docs/dry-descent-contract.md) remains disconnected.
-Four views, assignments, bounded dry extraction, retry/checkpoints, authored dry
-stairs/falls and separate original team preparation remain the browser boundary.
-Training43 is incomplete; shooting/live backpack/full original recovery remain
-undemonstrated. Full team/control/occupancy, pads/corpses, wet traversal and
-source-bound atomic paused checkpoint recovery still gate live activation.
-World/checkpoint 3 and roster-plan 1 remain unchanged. Prior worktrees and held
-presentation's four dirty paths are preserved. Art preparation/integration waits
-until ALL designs finish. Locations mismatch blocks campaign travel.
-Keep 3 November controller evidence, 9 November complete-level evidence,
-16 November campaign/fallback decision, 20 November freeze, 21–26 November
-rehearsal and 27 November target. Physical controllers/TV/full-level acceptance
-remains separate.
+Two independent successor lanes are active from the accepted PR28 base:
+observed TYPE1 control-2/255 eligibility under the same bounds, and a pure
+occupied selected-carried/equipment action-4 exchange under its observed fixed
+prerequisites. Neither successor is accepted yet. Each owns isolated files and
+worktrees; shared status/completion/handoff reconciliation is coordinator-owned.
+Independent final-commit review, automatic-review finding resolution and green
+relevant CI remain mandatory before coordinator integration.
+
+Training43 remains incomplete. Four views, assignments, bounded dry extraction,
+retry/checkpoints, authored dry stairs/falls and separate original team preparation
+remain the browser boundary. Integrated falling, full team/control/occupancy,
+pads/corpses, wet traversal and source-bound atomic paused checkpoint recovery
+still gate live hazards. Shooting, live backpack and full original recovery remain
+undemonstrated. World/checkpoint 3 and roster-plan 1 are unchanged. Locations
+revision mismatch blocks campaign travel. Browser checks do not replace physical
+controllers, TV or full-level acceptance.
+
+All retained worktrees and held presentation dirty work are preserved. Art
+preparation/integration waits until ALL designs finish. Keep 3 November controller
+evidence, 9 November complete-level evidence, 16 November campaign/fallback
+decision, 20 November freeze, 21–26 November rehearsal and 27 November target.
