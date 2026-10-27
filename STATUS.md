@@ -1,6 +1,6 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR40 at `e85cc8059df963a9cf9bc978224cf6b496cc930d`.
+Gameplay prerequisites accepted through PR43 at `4669edd91f3e5f09ab4727ba1e36d0179615bd50`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
@@ -50,9 +50,27 @@ completed no-finding automatic reviews and successful CI, then verified sequenti
 normal merges and the combined tree. These documentation-only changes retain
 the 562-test runtime baseline and unchanged browser behavior.
 
-Two next bounded lanes are active: a canonical initialized team storage diagnostic
-producer, and original CPU evidence for downward backpack selection on the
-supported two-entry prefix. Neither successor is accepted yet.
+PR42 adds [downward backpack selection evidence](docs/backpack-down-navigation-observation.md):
+two original CPU cases show selection zero becoming one and the empty-successor
+stop at one. Caller bookkeeping/action consumption and conditional redraw retain
+their order; all inventory and opaque weight/feedback bytes remain unchanged.
+The per-player call returns naturally; the outer four-player routine is a prefix.
+
+PR43 adds the [canonical team storage diagnostic](docs/initialized-team-source-storage.md).
+The existing verified initializer produces four actor-data results. Complete
+input payloads and all 584 stats bytes round-trip; source-owned storage covers
+1,196 known and 5,742 explicitly unknown bytes. No complete initialized memory,
+CPU initialization parity or compatibility with the authored post-death fixture
+is claimed. The bounded initialization prestate remains a dependency.
+
+Both exact-final independent HIGH reviews approve without findings, automatic
+reviews complete without findings, and relevant CI passes 562 tests plus
+lint/types/build and public browser 19 passed/four optional skips. Each local
+Training43 extraction passes 4/4. Coordinator verifies sequential normal merges
+and combined tree; these documentation-only changes retain runtime behavior.
+
+Two next bounded lanes are active: pure downward backpack selection and a
+source-bound quick-initialization prestate producer. Neither successor is accepted.
 Each lane owns isolated files/worktrees and supplies private status fragments;
 shared status/completion reconciliation and gated integration are coordinator-owned.
 
