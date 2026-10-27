@@ -1,7 +1,7 @@
 # Status — 27 October 2026
 
-Gameplay prerequisites accepted through PR56; current main is
-`1a9349aa8f530b9e0e99137ae4445174feb348b4`.
+Gameplay prerequisites accepted through PR58, including PR54; current main is
+`10db81029864b5270120f889f7b511e4007bf647`.
 All candidates below remain disconnected from live world and browser behavior.
 
 The [TYPE1 support transition](docs/type1-support-contract.md) handles the bounded
