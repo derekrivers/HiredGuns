@@ -217,6 +217,22 @@ reviews without findings and passing relevant CI. Public browser checks pass
 checks pass 4/4. These results do not change live browser behavior or establish
 physical-controller, TV or complete-level acceptance.
 
+The previously active successor nominations are now accepted in PR30 and PR31.
+PR30 retains the same TYPE1 snapshot and geometry but admits observed controls
+1, 2 and 255 only. All 354 unchanged original inputs match full candidates,
+including 258 fatal outcomes, 4,441 writes and 6,017 ordered records. No party
+control transfer occurs in this helper. PR31 adds the disconnected
+[pure occupied action-4 exchange](backpack-action4-contract.md) under the fixed
+observed prerequisites, with all three original-case candidate/write/raw-memory
+comparisons passing. It grants no item-import authority or live inventory use.
+Both exact-final independent and automatic reviews pass without unresolved
+findings, and relevant CI passes. Coordinator's combined accepted-tree check
+passes 503 tests, lint/types and build. Browser behavior remains unchanged.
+
+Next independent evidence lanes are the actual first control-selection boundary
+after a fatal current actor and action-4 transfer into empty equipment through
+compaction. Neither is accepted yet; no automatic transfer is presumed.
+
 Integrated descent/fall, actual death/control/occupancy and pad/corpse behavior,
 full wet-region outcome and source-bound atomic checkpoint recovery remain
 unresolved gates. Completing the pure caller does not authorize wet activation.

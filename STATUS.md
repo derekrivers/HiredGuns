@@ -1,15 +1,17 @@
 # Status — 27 October 2026
 
-Gameplay accepted through PR28 at `2e5adfb81556c4c6669eb75fe1ca2fcd2ecb788c`.
+Gameplay accepted through PR31 at `9e38962234ee0768507204be1e9763d320a278da`.
 PR27's [pure TYPE1 support transition](docs/type1-support-contract.md) includes
-observed fatal outcomes under the same strict control-1 storage, geometry,
+observed fatal outcomes under the same strict storage and geometry,
 lifecycle and audio prerequisites. It preserves literal fitness, dead-byte writes,
 independent leader clears, corpse/owner words, old=current, distinct returns,
 pending clear and changed-cell reread. It remains disconnected from the world.
 Ordinary-floor validation is unchanged.
 
-All 354 private original fixture inputs are accounted for: 306 full candidates
-match, including 210 fatal outcomes; 48 control-2/255 inputs reject unchanged.
+PR30 accepts only the observed controls 1, 2 and 255; all other byte controls
+still reject. All 354 private original fixture inputs now match full candidates,
+including 258 fatal outcomes, 4,441 writes and 6,017 ordered records. The 48
+previously excluded control-2/255 inputs are included without rewriting fixtures.
 Historical stopped reports stay prefixes. Original bytes, addresses, coordinates,
 scripts, traces and outputs remain local.
 
@@ -17,23 +19,27 @@ PR28's [occupied backpack action-4 observation](docs/backpack-action4-observatio
 executes three bounded original caller/exchange/weight/feedback paths through
 natural return. Full-entry copies, temporary storage, caller bookkeeping,
 31 weight-helper calls per case, ordered writes and full-memory replay are
-verified. An independent CPU setup reproduces the traces. This is evidence:
-no backpack API or live inventory behavior was added. Unobserved categories,
+verified. An independent CPU setup reproduces the traces. PR31 now adds the
+disconnected [pure occupied exchange](docs/backpack-action4-contract.md), retaining
+its fixed initialized caller, selection, ordinary-item and feedback prerequisites.
+All three original cases match full candidates, ordered writes and raw-memory
+reconstruction. This adds no live inventory behavior. Unobserved categories,
 overflow, rejected callers, full inventories and holes remain outside its boundary;
 arbitrary carried-to-carried reordering remains unsupported.
 
-Both PRs have independently verified exact-final Sol high approvals, completed
-automatic reviews without findings and successful relevant CI. PR27 CI passes
-lint/types, 376 tests, build and public browser 19 passed/four optional-private
-skips. PR28's documentation-only CI passes the prior 373-test runtime baseline
-and the same browser checks. Each lane's local Training43 extraction checks pass
-4/4. Coordinator verified sequential merged deltas and the combined tree;
-browser behavior is unchanged. Token usage is unavailable.
+PR30 and PR31 have independently verified exact-final Sol high approvals,
+completed automatic reviews without findings and successful relevant CI. PR30 CI
+passes 495 tests; PR31's independent baseline passes 384. Each passes lint/types,
+build, public browser 19/four optional-private skips and local Training43 4/4.
+Coordinator verified sequential merged deltas and the combined tree, then ran
+the combined check: 503 tests, lint/types and build pass. Browser behavior is
+unchanged. Token usage is unavailable.
 
-Two independent successor lanes are active from the accepted PR28 base:
-observed TYPE1 control-2/255 eligibility under the same bounds, and a pure
-occupied selected-carried/equipment action-4 exchange under its observed fixed
-prerequisites. Neither successor is accepted yet. Each owns isolated files and
+Two independent evidence lanes are active: the first original control-selection
+boundary after a fatal current actor, and original action-4 transfer into empty
+equipment through carried compaction and natural return. Neither result is
+accepted yet. Automatic control transfer is an observation target, not a claim
+that this TYPE1 helper transfers control. Each owns isolated files and
 worktrees; shared status/completion/handoff reconciliation is coordinator-owned.
 Independent final-commit review, automatic-review finding resolution and green
 relevant CI remain mandatory before coordinator integration.
