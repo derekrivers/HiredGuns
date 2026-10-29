@@ -1,4 +1,5 @@
 import './styles.css';
+import './style.css';
 import { createTrainingEncounter, fireTrainingEncounter, resetTrainingEncounter, targetTrainingEncounter, tickTrainingEncounter } from './combat/training-encounter';
 import { installTrainingEncounterPanel, type EncounterCommand } from './training-encounter-panel';
 import type { LevelData, MissionMode, SimulationEvent } from './contracts';
@@ -31,6 +32,32 @@ app.innerHTML = `
   <footer><div class="controls"><span><kbd>WASD + Q/E</kbd> · <kbd>IJKL + U/O</kbd> · <kbd>Arrows + ,/.</kbd> · <kbd>Numpad 8456 + 7/9</kbd></span><span><kbd>1–4</kbd> assign WASD to a mercenary · <kbd>Esc</kbd> pause</span></div><div class="recovery"><span id="recovery-status" role="status">Checkpoints restore team state. Reopen the same map or drill first.</span><div class="actions"><button id="save-checkpoint">Save checkpoint</button><label class="file-button">Load checkpoint<input id="checkpoint-file" aria-label="Load navigation checkpoint" type="file" accept=".json"></label></div></div><details><summary>Controls, source and prototype limitations <span id="tick"></span></summary><div id="diagnostics"></div></details></footer>`;
 
 const get = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+// Presentation hierarchy only: existing controls retain their handlers and identities.
+const headerActions = app.querySelector<HTMLElement>('header .actions')!;
+const setup = document.createElement('section'); setup.className = 'test-card'; setup.id = 'test-setup';
+setup.innerHTML = '<h2>1. Setup</h2><p>Load the verified local test to try firing with a ready team. It opens paused.</p>';
+app.querySelector('header')!.after(setup);
+setup.append(get('local-test-preset'), get('local-test-status'));
+const testControls = document.createElement('section'); testControls.className = 'test-card'; testControls.id = 'test-controls';
+testControls.innerHTML = '<h2>2. Choose and start a test</h2><p>Training43 includes an isolated authored gun encounter. Other scenarios test navigation, extraction, stairs or falling.</p><div id="scenario-actions" class="actions"></div><div class="actions" id="run-actions"><span id="run-state" role="status"></span></div>';
+setup.after(testControls);
+get('scenario-actions').append(get('demo'), get('drill'), get('stairs'), get('fall'));
+get('run-actions').append(get('play'), get('reset'));
+const manual = document.createElement('details'); manual.id = 'manual-setup';
+manual.innerHTML = '<summary>Advanced test tools: manual map setup</summary>';
+manual.append(get('map-file').closest('label')!); setup.append(manual); headerActions.remove();
+const live = document.createElement('section'); live.className = 'test-card'; live.id = 'live-test';
+live.innerHTML = '<h2>3. Live test display</h2><p>Movement: W/S forward/back, A/D sidestep, Q/E turn. 1–4 selects the mercenary for WASD. Esc pauses.</p>';
+testControls.after(live);
+live.append(app.querySelector('.brief')!, app.querySelector('.mission-bar')!, get('error'), app.querySelector('.stage')!);
+get('level-name').before(document.createTextNode('Active scenario: '));
+const tools = document.createElement('details'); tools.id = 'inventory-tools';
+tools.innerHTML = '<summary>Inventory &amp; equipment</summary><h2>Current team inventory</h2><p>Pause to equip, exchange or return equipment. These actions affect current team weight.</p>';
+app.querySelector('footer')!.prepend(tools);
+const sourceDetails = document.createElement('details'); sourceDetails.id = 'session-diagnostics';
+sourceDetails.innerHTML = '<summary>Advanced diagnostics: team source state</summary>';
+tools.after(sourceDetails);
+app.querySelector('footer > details:last-child > summary')!.firstChild!.textContent = 'Advanced diagnostics: controls, source and limitations ';
 let level = createDemoLevel(), world = createWorld(level);
 let renderer: FourViews | null = null;
 let graphicsLost = false;
@@ -48,12 +75,12 @@ const selects = [0, 1, 2, 3].map(i => get<HTMLSelectElement>(`assign-${i}`));
 const rosterHost = document.createElement('div');
 app.querySelector('footer')!.append(rosterHost);
 const sessionInfo = document.createElement('section'); sessionInfo.id = 'training-session';
-rosterHost.before(sessionInfo);
+sourceDetails.append(sessionInfo);
 const selectedFallButton = document.createElement('button'); selectedFallButton.id = 'selected-fall';
 selectedFallButton.textContent = 'Selected-team dry-fall practice (authored)';
 get('fall').after(selectedFallButton);
 const inventoryHost = document.createElement('section'); inventoryHost.id = 'training-inventory';
-sessionInfo.after(inventoryHost);
+tools.append(inventoryHost);
 const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot, kind) => {
   if (!paused || loading || !session) throw new Error('Pause an available selected-team session before changing inventory.');
   if (session.inventory.commands.length >= MAX_INVENTORY_COMMANDS) throw new Error('Inventory operation budget exhausted. Retry or Apply a new team to reset.');
@@ -72,7 +99,10 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
   }
 });
 const encounterHost = document.createElement('section'); encounterHost.id = 'training-encounter';
-inventoryHost.before(encounterHost);
+live.querySelector('h2')!.after(encounterHost);
+const display = document.createElement('div'); display.className = 'test-display';
+for (const child of [...live.children]) if (child !== encounterHost && child.tagName !== 'H2') display.append(child);
+live.append(display);
 const encounterPanel = installTrainingEncounterPanel(encounterHost, () => session, () => paused,
   () => !loading && !!session && world.mission.outcome === 'active' && !!renderer && !graphicsLost, encounterCommand);
 function encounterCommand(action: EncounterCommand): void {
@@ -85,14 +115,15 @@ function encounterCommand(action: EncounterCommand): void {
       action.kind === 'fire' ? fireTrainingEncounter(state!, session.encounterGun) :
       action.kind === 'reset' ? resetTrainingEncounter(state!, session.encounterGun, session.indices) : targetTrainingEncounter(state!);
     // One immutable commit includes ammo, counter, damage and target; source inventory is untouched.
-    session = Object.freeze({ ...session, encounter }); encounterPanel.refresh();
+    session = Object.freeze({ ...session, encounter }); encounterPanel.feedback(action.kind, state, encounter); encounterPanel.refresh();
   } catch (error) { get('error').textContent = errorText(error); }
 }
 function cancelSessionOperation(): void { ++loadGeneration; loading = false; setPaused(true); }
 function showSession(): void {
+  encounterPanel.clearFeedback();
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters below; authored isolated combat is available below; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
+  label.textContent = session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   encounterPanel.refresh();
@@ -126,6 +157,7 @@ const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
       session = candidate.session; world = candidate.world; events.fill('READY');
       setPaused(true); showSession(); updateHud(readPads());
       get('recovery-status').textContent = 'Selected team applied. Review controls, then Start mission. Session saves require these same local sources.';
+      get('play').focus();
     } catch (error) { if (generation === loadGeneration) throw error; }
     finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); } }
   },
@@ -156,7 +188,7 @@ get('local-test-preset').addEventListener('click', async () => {
     session = Object.freeze({ ...candidate.session, encounter });
     extraDiagnostics = `Import report: ${JSON.stringify(report, null, 2)}`;
     events.fill('READY'); loading = false; showSession(); setPaused(true); updateLevelInfo(); updateHud(readPads());
-    get('local-test-status').textContent = 'Ready: verified local Training43 map and OCS team (canonical indices 11, 3, 0, 5). Authored full-ammo encounter armed for team slot 1. PAUSED — Start mission, then F to fire; T target, Esc pause, R reset while paused.';
+    get('local-test-status').textContent = 'Ready: verified local Training43 map and OCS team loaded. Use the test controls to start or pause. Combat controls and current results are beside the live display.';
     get('recovery-status').textContent = 'Local test ready. Session saves use this same verified map, roster and items.';
     encounterPanel.select(0, 'full'); get('play').focus();
   } catch (error) {
@@ -180,6 +212,9 @@ function updateMissionHud(): void {
   const play = get<HTMLButtonElement>('play');
   play.disabled = !renderer || graphicsLost || terminal;
   play.textContent = terminal ? allDead ? 'Drill finished' : 'Mission finished' : paused ? active ? 'Start mission' : fallDrill ? 'Start drill' : 'Start navigation' : 'Pause';
+  const runState = terminal ? 'FINISHED' : paused ? 'PAUSED' : 'RUNNING';
+  if (get('run-state').textContent !== runState) get('run-state').textContent = runState;
+  get('run-state').dataset.state = terminal ? 'finished' : paused ? 'paused' : 'running';
   get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : fallDrill ? 'Retry drill' : 'Reset positions';
   get('mission-mode-label').hidden = extractionProfile(level) === null;
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
@@ -252,7 +287,7 @@ function updateLevelInfo(): void {
     'Keyboard: forward/back, strafe left/right; Q/E, U/O, comma/period or numpad 7/9 turn. Numbers 1–4 move keyboard A assignment. Keyboard rollover depends on hardware.',
     'Standard gamepads: left stick or D-pad moves/turns; shoulder buttons strafe. Assign each pad above. Press a pad button if the browser has not exposed it yet. Non-standard mappings require future remapping support.',
     'Disconnect stops that controller. Matching index and device ID can reconnect; otherwise reassign. Four physical controllers on the event PC/TV have NOT been tested.',
-    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. Dry gravity and fitness damage are restricted to the synthetic fall drill. Other maps block drops. Selected-team sessions additionally expose paused source inventory and an isolated authored gun encounter below. No dynamic world objects, enemy combat, sound or campaign travel. Water, pressure pads and lifts remain blocked. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
+    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. Dry gravity and fitness damage are restricted to the synthetic fall drill. Other maps block drops. Selected-team sessions additionally expose paused source inventory and an isolated authored gun encounter beside the live display. No dynamic world objects, enemy combat, sound or campaign travel. Water, pressure pads and lifts remain blocked. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
     'Mission support is restricted to the exact verified Training43 editor revision and the newly authored extraction drill. Moving into a type-3 exit block retires that mercenary. Cooperative extraction requires all four; Original first-exit race preserves the alive-player source success rule. Source countdown counters borrow after 601 logical ticks. The UI converts this prototype 50 Hz clock to time; original wall-clock parity has not been verified. Unsupported original areas remain blocked, so this proves an extraction route rather than the complete original level.',
     'Dry fall drill: authored empty-inventory profiles, physique/agility 100 and fitness 65535. Source-derived integer damage, first gravity pulse at tick 7 then every 6 ticks, landing damage on the next pulse. No water, actor squash, inventory damage or corpse mutation. This is not an original roster or runtime-parity claim.',
     `Source: ${level.source.revision}; SHA-256: ${level.source.sha256 ?? 'synthetic'}`,
@@ -298,6 +333,7 @@ get<HTMLButtonElement>('fall').addEventListener('click', () => {
   loadGeneration++; loading = false; get('error').textContent = '';
   try { installLevel(createFallDemo()); } catch (error) { get('error').textContent = errorText(error); }
 });
+for (const id of ['demo', 'drill', 'stairs', 'fall']) get(id).addEventListener('click', () => get('play').focus());
 selectedFallButton.addEventListener('click', async () => {
   if (loading || !session) return;
   const sources = rosterPanel.sources(); if (!sources) return;

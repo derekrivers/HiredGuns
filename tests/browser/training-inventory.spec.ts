@@ -11,7 +11,7 @@ async function local() {
   return { level: (await importEditorMap(map!)).level, sources: { roster: roster!, items: items! } };
 }
 async function open(page: Page) {
-  await page.goto('/');
+  await page.goto('/'); await page.locator('#inventory-tools > summary').click();
   await page.getByLabel('Open local editor map').setInputFiles(process.env.HIRED_GUNS_TRAINING_MAP!);
   await expect(page.locator('#level-name')).toHaveText('Training 43');
   await page.locator('#roster-panel summary').click();

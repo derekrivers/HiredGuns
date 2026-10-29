@@ -19,7 +19,7 @@ async function save(page: Page) {
   return JSON.parse(await readFile((await (await pending).path())!, 'utf8'));
 }
 async function openLocal(page: Page) {
-  await page.goto('/');
+  await page.goto('/'); await page.locator('#session-diagnostics > summary').click();
   await page.getByLabel('Open local editor map').setInputFiles(process.env.HIRED_GUNS_TRAINING_MAP!);
   await expect(page.locator('#level-name')).toHaveText('Training 43');
   await page.locator('#roster-panel summary').click();
