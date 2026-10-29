@@ -2,7 +2,7 @@ import { type Facing, type LevelData, type MissionRules, type PlayerCommand, typ
 import { initialMission, isExitBlock, resolveMission } from './mission';
 import { missionRulesForLevel } from './mission-profile';
 import { obstruction, resolveTraversal } from './traversal';
-import { advanceGravity, dryFallEnabled, fallObstruction, initialPhysics, isDead, teamDead } from './fall';
+import { advanceGravity, dryFallEnabled, fallObstruction, initialPhysics, isDead, teamDead, type FallProfile } from './fall';
 export { obstruction } from './traversal';
 
 export const TICK_MS = 20;
@@ -12,7 +12,7 @@ export const DIRECTIONS = [{ x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x:
 const ACTIONS = new Set(['forward', 'backward', 'strafe-left', 'strafe-right', 'turn-left', 'turn-right']);
 const sameCell = (a: Position, b: Position) => a.x === b.x && a.y === b.y && a.z === b.z;
 
-export function createWorld(level: LevelData, seed = 0x48475231, rules: MissionRules = missionRulesForLevel(level)): WorldState {
+export function createWorld(level: LevelData, seed = 0x48475231, rules: MissionRules = missionRulesForLevel(level), profile?: FallProfile): WorldState {
   for (const start of level.starts) {
     const reason = obstruction(level, start);
     if (reason) throw new Error(`Start cannot navigate: ${reason} at ${start.x},${start.y},${start.z}`);
@@ -24,7 +24,7 @@ export function createWorld(level: LevelData, seed = 0x48475231, rules: MissionR
     schemaVersion: 3, levelId: level.id, tick: 0, rng: seed >>> 0,
     mercenaries: level.starts.map((start, id) => ({ ...start, id })) as WorldState['mercenaries'],
     mission: initialMission(level,rules),
-    physics: initialPhysics(level),
+    physics: initialPhysics(level, profile),
   };
 }
 

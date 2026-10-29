@@ -1,34 +1,33 @@
 # Status — 29 October 2026
 
-Gameplay accepted through PR97; verified accepted base is
-`2600b35521b9d923ec2e21484e8dcc26d08eb1ba` (tree
-`43e07bd89f7fa8288bcd267f2ea388e781b44efb`). PR95 accepts repeated paused
-equip/return within 128 commands; PR97 adds occupied equipment exchange and exact
-wrapper-v5 recovery. Complete entries, opaque tails/actions and verified weight
-remain preserved. PR96 accepts the pure source-derived gun transition and binder.
-All three passed the coordinator's exact-head independent HIGH, automatic review
-and CI gates before normal expected-head merges. Combined accepted check after
-PR97: 676 units/nine optional skips, lint/types/build PASS.
+Gameplay accepted through PR99; this packet starts from verified accepted base
+`546e298f03a69d73411f7c32ec9a90d56a081be3`. PR95/97 provide bounded paused
+inventory replay and occupied exchange, PR96 the pure gun transition, PR98 the
+same-app isolated authored keyboard encounter and atomic v6 recovery, and PR99
+the one-click local Training43 preset and known-source dropdowns. Their accepted
+integration receipts are coordinator-owned.
 
 The [selected-team Training43 session](docs/training-session.md) remains a
 standalone explicit-import adaptation with four actor-labelled views, static
 navigation/extraction, pause, Retry and bounded source-inventory replay. Source
 replacement clears the session; generation guards prevent stale asynchronous
-installation. Exact legacy wrappers v1–v5 retain their own validation.
+installation. Exact legacy wrappers v1–v6 retain their own validation.
 
 **Candidate in this packet, pending independent review/integration:**
-[authored keyboard gun encounter](docs/training-encounter.md) in the same app.
-Select actor and full/partial/empty authored ammo, arm while paused, Start mission,
-F fire, T dummy/miss, Esc pause, R reset. The gun is rebound from rehashed local
-Items. Ammo/damage/counter commit together; accepted ticks decrement cooldown.
-The isolated authored loadout never spends or refills source-team ammo. V6 saves
-validate its complete snapshot with inventory replay and navigation atomically;
-legacy saves start inactive. Retry resets the authored baseline; new Apply starts
-inactive. This candidate does not make the authored dummy an original enemy.
+[selected-team dry-fall practice](docs/selected-fall.md), available from the same
+menu after the one-click preset or manual team application. Newly authored dry
+geometry uses verified selected physique/agility and current source-inventory
+weight. Landing injury, incapacitated controls/occupancy, exhaustion, retry and
+complete paused v7 recovery extend the accepted synthetic framework. Original
+Training43 keeps static physics. The separate authored gun encounter and source
+inventory remain intact. This candidate awaits independent HIGH/current CI/actual
+automatic review and coordinator integration.
 
 Training43 and the functional test bed remain incomplete. Pickup/drop/transfer/
-general use, enemies, dynamic world mechanics, wet/falling/death/control/occupancy,
-movement weight effects and complete original-level acceptance remain open.
+general use, enemies, dynamic original-world mechanics, wet outcomes, original
+fall/death/control/pad/corpse integration, movement weight effects and complete
+original-level acceptance remain open. The authored dry practice closes only its
+bounded selected-team test-bed interaction.
 Campaign Locations/runtime provenance and original startup fidelity remain separate
 from explicit-import authority. Physical controllers/TV are deferred; graphics
 integration remains held. Token usage unavailable.

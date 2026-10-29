@@ -3,6 +3,29 @@ import { createDemoLevel, createExtractionDemo, createFallDemo } from '../src/de
 import { cellIndex, type PlayerCommand, type WorldState } from '../src/contracts';
 import { createWorld, stepWorld } from '../src/sim/world';
 import { exportCheckpoint, importCheckpoint } from '../src/sim/checkpoint';
+import { createSelectedFallLevel, selectedFallLevel, type FallProfile } from '../src/sim/fall';
+import { nextFallDamage } from '../src/sim/health';
+
+test('authored selected geometry requires an explicit profile and binds every saved stat', async () => {
+  const level = createSelectedFallLevel();
+  const profile = [80,100,120,140].map(physique=>({physique,agility:70,weight:1400,fitness:65535,dead:false,fallDamage:0})) as FallProfile;
+  expect(()=>createWorld(level)).toThrow('rebound team');
+  let world = stepWorld(level,createWorld(level,undefined,undefined,profile),forward).world;
+  while(world.tick<13) world=stepWorld(level,world,[]).world;
+  expect(actors(world)[0]!.fallDamage).toBe(nextFallDamage(nextFallDamage(0,profile[0]),profile[0]));
+  const saved = await exportCheckpoint(level,world,profile);
+  expect(await importCheckpoint(level,saved,profile)).toEqual(world);
+  await expect(importCheckpoint(level,saved)).rejects.toThrow('rebound team');
+  const changed = structuredClone(profile); changed[0].weight++;
+  await expect(importCheckpoint(level,saved,changed)).rejects.toThrow('bound profile');
+  const bad = JSON.parse(saved); bad.world.physics.actors[0].fallDamage++;
+  await expect(importCheckpoint(level,JSON.stringify(bad),profile)).rejects.toThrow('fall damage');
+  const changedMap = structuredClone(level); changedMap.layers[1][0]=1;
+  expect(selectedFallLevel(changedMap)).toBe(false);
+  await expect(importCheckpoint(changedMap,saved,profile)).rejects.toThrow();
+  const legacy = JSON.parse(saved); legacy.version=2;
+  await expect(importCheckpoint(level,JSON.stringify(legacy),profile)).rejects.toThrow('cannot supply dry-fall history');
+});
 
 type EditableFallEnvelope = { world: { physics: { mode: unknown; profileId: unknown; fallCounter: unknown; actors: Record<string,unknown>[]; [key:string]: unknown }; [key:string]: unknown } };
 const forward: PlayerCommand[] = [0,1,2,3].map(mercenaryId => ({mercenaryId,action:'forward'}));
