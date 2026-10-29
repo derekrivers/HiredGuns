@@ -43,5 +43,5 @@ export function installTrainingEncounterPanel(host: HTMLElement, current: () => 
     const kind = button.dataset.command as 'arm' | 'fire' | 'target' | 'reset';
     command(kind === 'arm' ? { kind, actor: Number(actor.value), fixture: fixture.value as AmmoFixture } : { kind }); refresh();
   });
-  return { refresh };
+  return { refresh, select: (index: number, ammo: AmmoFixture) => { actor.value = String(index); fixture.value = ammo; } };
 }
