@@ -1,0 +1,27 @@
+/* Guided testbed layout; rendering and scene assets stay in styles.css. */
+#app{max-width:1600px;margin:auto;font-size:15px;line-height:1.5}
+.test-card{margin:16px;padding:18px;border:1px solid #33454f;border-radius:6px;background:#101e27}
+h2{font-size:20px;margin:0 0 10px}h3{font-size:18px;margin:0 0 10px}h4{font-size:16px;margin:12px 0 6px}
+p{margin:8px 0 14px}summary{font-size:14px;font-weight:600;padding:8px 0;color:#c4dcdf}
+details{font-size:14px}summary:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #76d9ca;outline-offset:3px}
+#test-controls .actions{margin-top:14px}#run-state{font-weight:700;border:1px solid #bfa16d;padding:6px 12px;border-radius:4px;color:#f1bf70}
+#run-state[data-state=running]{color:#76d9ca;border-color:#76d9ca}
+#training-encounter{border:1px solid #557983;border-radius:5px;padding:16px;margin:12px 0 18px;background:#152831}
+.encounter-setup{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:12px}.encounter-setup label{display:flex;flex-direction:column;gap:5px}
+.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.result-grid>span{padding:9px 12px;border:1px solid #405560;border-radius:4px;font-variant-numeric:tabular-nums;background:#0b1921}
+@media(min-width:900px){#app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#app>header,#app>#live-test,#app>footer{grid-column:1/-1}#test-setup{margin-right:8px}#test-controls{margin-left:8px}}
+#encounter-feedback{font-size:16px;color:#e9f2f4;border-left:3px solid #76d9ca;padding:8px 12px;margin-bottom:0}
+#encounter-readiness{color:#f1bf70}#encounter-help{color:#bdd5d9}
+#live-test .stage{height:540px;min-height:430px;margin:12px 0}.brief,.mission-bar{padding:10px 0;flex-wrap:wrap}
+@media(min-width:1100px){#live-test{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:18px}#live-test>h2{grid-column:1/-1}#training-encounter{margin:0;align-self:start}.test-display{min-width:0}#live-test:not(:has(#training-encounter:not([hidden]))) .test-display{grid-column:1/-1}}
+footer{font-size:14px}footer>.controls{display:none}.recovery{flex-wrap:wrap;margin-bottom:18px}.recovery>span{font-size:14px;max-width:none}.recovery button,.recovery .file-button{font-size:14px}
+#inventory-tools,#session-diagnostics,#roster-panel{border:1px solid #33454f;border-radius:5px;padding:10px 14px;margin-bottom:14px}
+#training-inventory>section{border-top:1px solid #405560;padding:14px 0}#training-inventory select{max-width:100%}
+pre{white-space:pre-wrap;overflow-wrap:anywhere}button,select,label{max-width:100%}#local-test-status,#session-status{overflow-wrap:anywhere}
+@media(max-width:600px){
+ .test-card{margin:10px;padding:12px}header{padding:12px}.badge{white-space:normal}.mission-bar label{white-space:normal;margin-left:0}
+ #live-test .stage{height:520px;min-height:520px}.view-head{flex-direction:column;padding:4px;gap:2px}.view select{max-width:100%;width:100%;font-size:10px;padding:3px}.player-name{letter-spacing:0;font-size:10px}.player-sub{letter-spacing:0;font-size:9px}.view-foot{flex-wrap:wrap;gap:2px;padding:4px;font-size:11px}.view-foot span{white-space:normal!important}
+ .paused{padding:10px;max-width:85%;width:240px}.paused b{letter-spacing:1px}.result-grid{grid-template-columns:1fr 1fr}.result-grid>span{padding:6px;font-size:13px;overflow-wrap:anywhere}
+ .encounter-setup{display:grid;grid-template-columns:minmax(0,1fr)}.encounter-setup select{width:100%}.actions>*{min-width:0}.recovery{align-items:stretch}footer{padding:10px}.mission-bar>*{max-width:100%}
+}

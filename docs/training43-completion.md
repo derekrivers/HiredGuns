@@ -1,27 +1,25 @@
 # Training43 completion boundary
 
-Gameplay accepted through PR99; this packet starts from verified accepted base
-`546e298f03a69d73411f7c32ec9a90d56a081be3`. PR95/97 provide bounded paused
-inventory replay and occupied exchange, PR96 the pure gun transition, PR98 the
-same-app isolated authored keyboard encounter and atomic v6 recovery, and PR99
-the one-click local Training43 preset and known-source dropdowns. Their accepted
-integration receipts are coordinator-owned.
+Gameplay accepted through PR102 at base
+`a99d9f39cc32a455bbbde648be2b41f9fe6ac0ad` (tree
+`0781c0677517e219a39b3aef1bab89c231cb1d98`). PR95/97 provide bounded paused
+inventory replay and occupied exchange; PR96/98 provide the pure gun transition
+and same-app isolated authored encounter; PR99 adds verified one-click setup and
+known-source dropdowns. PR102 accepts selected-team authored dry-fall practice,
+selected stats/current weight, incapacitation/occupancy and atomic paused v7
+recovery. Training43 itself retains static physics. Legacy wrappers v1-v6 keep
+their existing validation. Coordinator-owned receipts record accepted gates.
 
-The [selected-team Training43 session](training-session.md) remains a
-standalone explicit-import adaptation with four actor-labelled views, static
-navigation/extraction, pause, Retry and bounded source-inventory replay. Source
-replacement clears the session; generation guards prevent stale asynchronous
-installation. Exact legacy wrappers v1–v6 retain their own validation.
+PR100 button/door and PR101 ground-item transfers are accepted pure transition
+cores. Their same-app consumers remain pending; this UX packet does not wire them.
 
 **Candidate in this packet, pending independent review/integration:**
-[selected-team dry-fall practice](selected-fall.md), available from the same menu
-after the one-click preset or manual team application. Newly authored dry geometry
-uses verified selected physique/agility and current source-inventory weight.
-Landing injury, incapacitated controls/occupancy, exhaustion, retry and complete
-paused v7 recovery extend the accepted synthetic framework. Original Training43
-keeps static physics. The separate authored gun encounter and source inventory
-remain intact. This candidate awaits independent HIGH/current CI/actual automatic
-review and coordinator integration.
+[guided testbed layout](testbed-ux.md), with labeled setup, scenario/start
+controls, live four views and readable combat results. Inventory, roster and raw
+source diagnostics remain accessible through expandable sections. Transient shot
+before/after feedback is cleared on restore and session reconstruction. No
+mechanics, source, renderer or persistence contract changes. Exact-head independent
+HIGH review, current CI and actual automatic review remain required for release.
 
 Training43 and the functional test bed remain incomplete. Pickup/drop/transfer/
 general use, enemies, dynamic original-world mechanics, wet outcomes, original

@@ -4,7 +4,7 @@ import type { TrainingEncounter } from '../../src/combat/training-encounter';
 const privateInputs = !!(process.env.HIRED_GUNS_TRAINING_MAP && process.env.HIRED_GUNS_CHARACTERS && process.env.HIRED_GUNS_ITEMS);
 const upload = (value: unknown) => ({ name: 'encounter-session.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(value)) });
 async function open(page: Page) {
-  await page.goto('/');
+  await page.goto('/'); await page.locator('#inventory-tools > summary').click();
   await page.getByLabel('Open local editor map').setInputFiles(process.env.HIRED_GUNS_TRAINING_MAP!);
   await expect(page.locator('#level-name')).toHaveText('Training 43');
   await page.locator('#roster-panel summary').click();
