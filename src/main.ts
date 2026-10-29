@@ -104,7 +104,8 @@ const display = document.createElement('div'); display.className = 'test-display
 for (const child of [...live.children]) if (child !== encounterHost && child.tagName !== 'H2') display.append(child);
 live.append(display);
 const encounterPanel = installTrainingEncounterPanel(encounterHost, () => session, () => paused,
-  () => !loading && !!session && world.mission.outcome === 'active' && !!renderer && !graphicsLost, encounterCommand);
+  () => !loading && !!session && world.mission.outcome === 'active' && !!renderer && !graphicsLost,
+  index => isDead(world, index), encounterCommand);
 function encounterCommand(action: EncounterCommand): void {
   if (loading || !session || world.mission.outcome !== 'active' || !renderer || graphicsLost) return;
   const state = session.encounter;
