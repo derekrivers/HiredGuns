@@ -29,7 +29,7 @@ function fields(value: unknown, names: string[]): asserts value is Record<string
         Object.hasOwn(Object.getOwnPropertyDescriptor(value, name)!, 'value'))) throw new Error('Malformed ground transfer fields.');
 }
 function dense(value: unknown, length: number): asserts value is unknown[] {
-  if (!Array.isArray(value) || value.length !== length || Reflect.ownKeys(value).length !== length + 1 ||
+  if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype || value.length !== length || Reflect.ownKeys(value).length !== length + 1 ||
       !Array.from({ length }, (_, i) => Object.getOwnPropertyDescriptor(value, String(i)))
         .every(d => d?.enumerable && Object.hasOwn(d, 'value'))) throw new Error('Expected complete dense slot storage.');
 }
@@ -45,7 +45,9 @@ function snapshot(value: GroundTransferState): GroundTransferState {
   fields(value, ['inventory', 'ground', 'selection']);
   fields(value.inventory, ['equipped', 'carried', 'actions']);
   dense(value.inventory.carried, 30); dense(value.inventory.actions, 10);
-  const inventory = { equipped: copySlot(value.inventory.equipped), carried: value.inventory.carried.map(copySlot), actions: value.inventory.actions.map(copySlot) };
+  const inventory = { equipped: copySlot(value.inventory.equipped),
+    carried: Array.from({ length: 30 }, (_, i) => copySlot(value.inventory.carried[i])),
+    actions: Array.from({ length: 10 }, (_, i) => copySlot(value.inventory.actions[i])) };
   const end = inventory.carried.findIndex(slot => slot.itemId === 0);
   const count = end < 0 ? 30 : end;
   if (inventory.carried.slice(count).some(slot => slot.itemId !== 0) ||

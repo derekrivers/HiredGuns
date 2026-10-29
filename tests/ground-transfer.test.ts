@@ -123,6 +123,20 @@ describe('explicit logical ground transfers with synthetic data', () => {
     const source = state(), before = structuredClone(source); items.records[6]!.weight = -1;
     expect(() => transferGroundItem(source, items, 1000, command('pickup-carried'))).toThrow(); expect(source).toEqual(before);
   });
+  it('rejects caller array prototypes without invoking inherited methods or sharing success/refusal storage', async () => {
+    const items = await table();
+    for (const storage of ['carried', 'actions'] as const) for (const equipped of [0, 3]) {
+      const source = state(3, equipped), before = structuredClone(source);
+      let calls = 0;
+      const prototype = Object.create(Array.prototype) as object;
+      Object.defineProperty(prototype, 'map', { value: function () { calls++; return this; } });
+      Object.setPrototypeOf(source.inventory[storage], prototype);
+      for (const kind of ['pickup-carried', 'pickup-equipment', 'drop-equipment'] as const) {
+        expect(() => transferGroundItem(source, items, 1000, command(kind))).toThrow('dense');
+        expect(structuredClone(source)).toEqual(before); expect(calls).toBe(0);
+      }
+    }
+  });
   it('replays serialized commands deterministically with conserved ownership through repeated pickup/drop', async () => {
     const items = await table(), original = state(3, 3);
     original.ground = slot(0, 8, 9, 10);

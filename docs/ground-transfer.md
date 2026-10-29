@@ -62,7 +62,9 @@ is the explicit overlay's single-slot policy, not a claim to implement all origi
 drop eligibility branches. No coordinates, ground list or world state are accepted.
 
 All input state/command fields are exact, own enumerable data properties; no
-accessors, inherited fields, sparse arrays, extra keys or malformed raw hex. Every
+accessors, inherited fields, custom array prototypes/subclasses, sparse arrays,
+extra keys or malformed raw hex. Slot copying reads validated indices into fresh
+ordinary arrays and never invokes caller-provided array methods. Every
 equipment, carried, action and ground entry is checked, including empty tails.
 Byte fields are integers in 0–255; nonzero item IDs must be in 1–114. Carried/action
 widths are exactly 30/10; selected position must fit the prefix. `rawHex` must agree
