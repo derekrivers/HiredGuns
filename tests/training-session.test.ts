@@ -115,3 +115,41 @@ describe.skipIf(!privateInputs)('opt-in exact local Training43 / OCS session (ne
     expect(restored.world).not.toEqual(initial.world);
   });
 });
+
+// Complete encounter snapshots are authored state, independent of source inventory replay.
+describe.skipIf(!privateInputs)('opt-in source-bound encounter session recovery', () => {
+  it('round trips encounter with interleaved inventory and resets legacy v1-v5 to inactive', async () => {
+    const { createTrainingEncounter, fireTrainingEncounter, targetTrainingEncounter, tickTrainingEncounter } = await import('../src/combat/training-encounter');
+    const { equipTrainingSession, resetTrainingInventory } = await import('../src/sim/training-session');
+    const { level, sources } = await local();
+    const initial = await createTrainingSession(level, sources, order);
+    const encounter = tickTrainingEncounter(fireTrainingEncounter(targetTrainingEncounter(createTrainingEncounter(initial.session.encounterGun, order, 2, 'partial')), initial.session.encounterGun));
+    const active = { ...initial.session, encounter };
+    const equipped = await equipTrainingSession(level, sources, active, 0, 0, true, initial.world);
+    expect(equipped.session.encounter).toEqual(encounter);
+    const json = await exportTrainingSession(level, initial.world, equipped.session, sources);
+    expect(JSON.parse(json).version).toBe(6);
+    const restored = await importTrainingSession(level, sources, json);
+    expect(restored.session).toEqual(equipped.session); expect(restored.world).toEqual(initial.world);
+    const reset = resetTrainingInventory(restored.session);
+    expect(reset.encounter).toEqual(createTrainingEncounter(initial.session.encounterGun, order, 2, 'partial', 'miss'));
+    expect(reset.inventory).toEqual(initial.session.inventory);
+    for (const version of [1, 2, 3, 4, 5]) {
+      const legacy = JSON.parse(await exportTrainingSession(level, initial.world, initial.session, sources));
+      legacy.version = version; if (version === 1) delete legacy.commands;
+      expect((await importTrainingSession(level, sources, JSON.stringify(legacy))).session.encounter).toBeNull();
+    }
+    const envelope = JSON.parse(json);
+    for (const change of [
+      (e: typeof envelope) => { delete e.encounter.baseline; },
+      (e: typeof envelope) => { e.encounter.canonicalIndex = 5; },
+      (e: typeof envelope) => { e.encounter.baseline.equipped.ammo++; },
+      (e: typeof envelope) => { e.encounter.equipped.rawHex = '1900ff00'; },
+      (e: typeof envelope) => { e.encounter.gun = initial.session.encounterGun; },
+    ]) {
+      const value = structuredClone(envelope); change(value);
+      await expect(importTrainingSession(level, sources, JSON.stringify(value))).rejects.toThrow();
+      expect(active.encounter).toEqual(encounter);
+    }
+  });
+});

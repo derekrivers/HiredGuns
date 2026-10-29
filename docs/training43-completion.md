@@ -1,42 +1,39 @@
 # Training43 completion boundary
 
-Current playable integration, accepted through PR92 at
-`933428ae1a4ba4465dd5b7f0166f975023216d0b`:
-[standalone selected-team session](training-session.md) and
-[paused equip/return](training-inventory.md). Four explicit verified OCS choices
-apply to imported Training43 while paused. View identities and immutable initial
-data remain separate from the current inventory overlay; static navigation,
-extraction and retry remain available.
+Gameplay accepted through PR97; verified accepted base is
+`2600b35521b9d923ec2e21484e8dcc26d08eb1ba` (tree
+`43e07bd89f7fa8288bcd267f2ea388e781b44efb`). PR95 accepts repeated paused
+equip/return within 128 commands; PR97 adds occupied equipment exchange and exact
+wrapper-v5 recovery. Complete entries, opaque tails/actions and verified weight
+remain preserved. PR96 accepts the pure source-derived gun transition and binder.
+All three passed the coordinator's exact-head independent HIGH, automatic review
+and CI gates before normal expected-head merges. Combined accepted check after
+PR97: 676 units/nine optional skips, lint/types/build PASS.
 
-Each actor can equip once then return once, at most eight typed commands. Full
-entry bytes, reverse insertion including empty tails, ID-only equipment clear,
-actions and freshly verified weights are preserved. Retry/rules reset the cycle;
-source/map replacement clears it. Session wrapper v3 reconstructs the overlay
-from strict typed commands and reverified initial sources, then restores complete
-world/team/overlay atomically paused. Exact v1 initial and v2 equip saves remain
-compatible. Malformed/wrong-source save recovery preserves working state apart
-from pause. Beginning source replacement intentionally clears the active team,
-even if the file is rejected; stale reads/hashes cannot resurrect it.
+The [selected-team Training43 session](training-session.md) remains a
+standalone explicit-import adaptation with four actor-labelled views, static
+navigation/extraction, pause, Retry and bounded source-inventory replay. Source
+replacement clears the session; generation guards prevent stale asynchronous
+installation. Exact legacy wrappers v1–v5 retain their own validation.
 
-Exact-final HIGH approval, completed no-finding automatic review and both green
-CI runs preceded the normal expected-head PR92 merge. Coordinator serialized
-support integration, verified the combined tree and checked 638 units/seven
-optional skips plus lint/types/build (633 units in the gameplay-only candidate).
-Public browser: 21 passed/32 optional skips; private units 17, combined browser
-34 and four independent held-return races passed. Independent byte checks cover
-115 genuine initial equips, 990 return placements, 436 authored tail cases and
-2,520 valid lifecycle interleavings. These source/structural deductions do not
-claim additional original CPU execution or pointer/control/count/caller authority.
-Token usage unavailable.
+**Candidate in this packet, pending independent review/integration:**
+[authored keyboard gun encounter](training-encounter.md) in the same app.
+Select actor and full/partial/empty authored ammo, arm while paused, Start mission,
+F fire, T dummy/miss, Esc pause, R reset. The gun is rebound from rehashed local
+Items. Ammo/damage/counter commit together; accepted ticks decrement cooldown.
+The isolated authored loadout never spends or refills source-team ammo. V6 saves
+validate its complete snapshot with inventory replay and navigation atomically;
+legacy saves start inactive. Retry resets the authored baseline; new Apply starts
+inactive. This candidate does not make the authored dummy an original enemy.
 
-This explicit-import adaptation does not require original campaign-loader
-provenance; campaign Locations/runtime identity remains unresolved. General
-inventory cycles, exchange/use/drop/consumption, weight effects on movement,
-combat, falling, wet mechanics and actual death/control/occupancy/pad/corpse
-behavior remain absent. Current recovery does not establish future inventory or
-environment recovery. Physical controllers/TV and complete-level acceptance remain
-separate. The original evidence assessment below is historical; its unchanged-
-browser/recovery-gate statements predate the accepted session/inventory work.
+Training43 and the functional test bed remain incomplete. Pickup/drop/transfer/
+general use, enemies, dynamic world mechanics, wet/falling/death/control/occupancy,
+movement weight effects and complete original-level acceptance remain open.
+Campaign Locations/runtime provenance and original startup fidelity remain separate
+from explicit-import authority. Physical controllers/TV are deferred; graphics
+integration remains held. Token usage unavailable.
+
+The original assessment below is historical; its unchanged-browser/recovery statements predate the accepted session/inventory work.
 
 Evidence-only result, 26 October 2026, accepted base
 `68e689b525b4c949c8f1ac587f1d47d02064c262`. This does not deliver a

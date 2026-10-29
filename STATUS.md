@@ -1,48 +1,39 @@
-# Status — 27 October 2026
+# Status — 29 October 2026
 
-Gameplay accepted through PR92; verified integration snapshot is
-`933428ae1a4ba4465dd5b7f0166f975023216d0b`.
+Gameplay accepted through PR97; verified accepted base is
+`2600b35521b9d923ec2e21484e8dcc26d08eb1ba` (tree
+`43e07bd89f7fa8288bcd267f2ea388e781b44efb`). PR95 accepts repeated paused
+equip/return within 128 commands; PR97 adds occupied equipment exchange and exact
+wrapper-v5 recovery. Complete entries, opaque tails/actions and verified weight
+remain preserved. PR96 accepts the pure source-derived gun transition and binder.
+All three passed the coordinator's exact-head independent HIGH, automatic review
+and CI gates before normal expected-head merges. Combined accepted check after
+PR97: 676 units/nine optional skips, lint/types/build PASS.
 
-The [standalone Training43 session](docs/training-session.md) applies four explicit
-choices from exact local OCS roster/items to the verified imported map, paused.
-Views identify those actors; immutable initial stats/inventory/weight remain
-inspectable alongside the separately reconstructed current inventory overlay.
-Static navigation, extraction, retry and mission rules retain their behavior.
+The [selected-team Training43 session](docs/training-session.md) remains a
+standalone explicit-import adaptation with four actor-labelled views, static
+navigation/extraction, pause, Retry and bounded source-inventory replay. Source
+replacement clears the session; generation guards prevent stale asynchronous
+installation. Exact legacy wrappers v1–v5 retain their own validation.
 
-[Paused inventory](docs/training-inventory.md) now supports one equip then one
-return-to-backpack per actor, at most eight typed commands. Source-derived
-transfer preserves complete entries, opaque tails/actions, backward insertion
-through empty slots and ID-only equipment clearing. Freshly verified weight is
-conserved. Completed cycles disable both commands; Retry/rules reset the cycle.
-This generic standalone adaptation does not widen the narrow CPU-observed helpers
-or claim original pointer/control/count/caller authority or new CPU execution.
+**Candidate in this packet, pending independent review/integration:**
+[authored keyboard gun encounter](docs/training-encounter.md) in the same app.
+Select actor and full/partial/empty authored ammo, arm while paused, Start mission,
+F fire, T dummy/miss, Esc pause, R reset. The gun is rebound from rehashed local
+Items. Ammo/damage/counter commit together; accepted ticks decrement cooldown.
+The isolated authored loadout never spends or refills source-team ammo. V6 saves
+validate its complete snapshot with inventory replay and navigation atomically;
+legacy saves start inactive. Retry resets the authored baseline; new Apply starts
+inactive. This candidate does not make the authored dummy an original enemy.
 
-Session wrapper v3 replays strict typed commands from reverified initialization
-and restores overlay plus the unchanged checkpoint-v3 world atomically, paused.
-Exact v1 initial saves and v2 equip logs remain compatible. Malformed/wrong-source
-session recovery preserves the working state apart from pausing. Beginning source
-replacement intentionally clears the active team even if replacement is rejected;
-operation generations prevent stale reads/hashes from restoring it. Plain legacy
-checkpoints cannot retain stale selected-team data.
+Training43 and the functional test bed remain incomplete. Pickup/drop/transfer/
+general use, enemies, dynamic world mechanics, wet/falling/death/control/occupancy,
+movement weight effects and complete original-level acceptance remain open.
+Campaign Locations/runtime provenance and original startup fidelity remain separate
+from explicit-import authority. Physical controllers/TV are deferred; graphics
+integration remains held. Token usage unavailable.
 
-PR92 final `65bb599b20bbddee0a7fd6d25289b6b5bafcd1a3` has independent HIGH
-approval, completed no-finding automatic review, both CI runs passing and no
-review threads. Coordinator serialized with support, verified the normal
-expected-head merge/tree and checked the combined timing/gameplay tree: 638 unit
-passes/seven optional skips, lint/types/build. The gameplay-only candidate has
-633 unit passes/seven skips. Public browser: 21 passed/32 optional skips; private
-units 17, combined session/inventory/extraction browser 34 and four independently
-authored return races passed. Independent byte checks cover 115 genuine initial
-equips, 990 return placements, 436 authored tail cases and 2,520 valid lifecycle
-interleavings. Authored/source deductions are distinct from original CPU evidence.
-Token usage unavailable.
-
-Training43 remains incomplete. Other inventory cycles/operations, occupied
-exchange, use/firing/consumption/drop, movement weight effects, combat and hazards
-remain disabled. Original startup/campaign parity is not claimed. Campaign
-Locations/runtime identity remains unresolved and does not gate this standalone
-explicit-import adaptation. Physical controllers/TV and complete-level acceptance
-remain separate. Earlier prerequisite candidates below remain disconnected;
+Earlier prerequisite records below are historical and remain disconnected;
 their unchanged-browser statements describe historical batches before the live
 session and paused inventory integrations.
 

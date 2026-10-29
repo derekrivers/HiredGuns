@@ -1,3 +1,5 @@
+import { bindVerifiedEncounterGun, type GunWeapon } from '../combat/weapon-transition';
+import { resetTrainingEncounter, validateTrainingEncounter, type TrainingEncounter } from '../combat/training-encounter';
 import type { LevelData, WorldState } from '../contracts';
 import { importItems, type ItemCatalog } from '../import/items';
 import { equipCommands, inventoryCommands, replayTrainingInventory, type TrainingInventory } from './training-inventory';
@@ -15,6 +17,8 @@ export interface TrainingSession {
   readonly team: OriginalTeam;
   readonly items: ItemCatalog;
   readonly inventory: TrainingInventory;
+  readonly encounterGun: GunWeapon;
+  readonly encounter: TrainingEncounter | null;
 }
 export interface TrainingCandidate { session: TrainingSession; world: WorldState }
 
@@ -40,11 +44,11 @@ export async function createTrainingSession(level: LevelData, sources: TrainingS
   const roster = new Uint8Array(sources.roster), items = new Uint8Array(sources.items);
   const world = createWorld(map);
   const teamPromise = initializeOriginalTeam(roster, items, indices);
-  const [team, catalog, table] = await Promise.all([teamPromise, importCharacters(roster), importItems(items)]);
+  const [team, catalog, table, encounterGun] = await Promise.all([teamPromise, importCharacters(roster), importItems(items), bindVerifiedEncounterGun(items)]);
   if (world.physics.mode !== 'static') throw new Error('Training43 sessions require static navigation.');
   // Existing checkpoint validation also validates the complete map and starting world.
   const checkpoint = await exportCheckpoint(map, world);
-  const session = freeze({ indices: team.actors.map(a => a.canonicalIndex),
+  const session = freeze({ encounterGun, encounter: null, indices: team.actors.map(a => a.canonicalIndex),
     names: team.actors.map(a => catalog.records[a.canonicalIndex]!.text.gameName || catalog.records[a.canonicalIndex]!.text.selectionName || `Character ${a.canonicalIndex + 1}`), team, items: table, inventory: replayTrainingInventory(team, table, replay) });
   sessionJSON(session, checkpoint);
   return { session, world };
@@ -55,12 +59,13 @@ async function changeInventory(level: LevelData, sources: TrainingSources, sessi
   if (!paused) throw new Error('Pause before changing equipment.');
   const map = trainingLevel(level), world = currentWorld ? structuredClone(currentWorld) : undefined;
   const candidate = await createTrainingSession(map, sources, session.indices, [...session.inventory.commands, { kind, actor, slot }]);
+  const nextSession = freeze({ ...candidate.session, encounter: session.encounter === null ? null : validateTrainingEncounter(session.encounter, candidate.session.encounterGun, candidate.session.indices) });
   if (world) {
     if (world.physics.mode !== 'static') throw new Error('Training43 sessions require static navigation.');
-    sessionJSON(candidate.session, await exportCheckpoint(map, world));
-    return { session: candidate.session, world };
+    sessionJSON(nextSession, await exportCheckpoint(map, world));
+    return { session: nextSession, world };
   }
-  return candidate;
+  return { ...candidate, session: nextSession };
 }
 export async function equipTrainingSession(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean, world?: WorldState): Promise<TrainingCandidate> {
   return changeInventory(level, sources, session, actor, slot, paused, 'equip', world);
@@ -74,7 +79,8 @@ export async function exchangeTrainingSession(level: LevelData, sources: Trainin
 }
 
 function sessionJSON(session: TrainingSession, checkpoint: string): string {
-  const json = JSON.stringify({ format: 'hired-guns-training-session', version: 5,
+  const json = JSON.stringify({ format: 'hired-guns-training-session', version: session.encounter === null ? 5 : 6,
+    ...(session.encounter === null ? {} : { encounter: validateTrainingEncounter(session.encounter, session.encounterGun, session.indices) }),
     sources: { map: TRAINING_43_SHA256, ...session.team.sources },
     indices: session.indices, commands: session.inventory.commands, checkpoint });
   if (new TextEncoder().encode(json).length >= MAX_SESSION_BYTES) throw new Error('Training43 session is too large.');
@@ -83,7 +89,8 @@ function sessionJSON(session: TrainingSession, checkpoint: string): string {
 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession): TrainingSession {
-  return freeze({ ...session, inventory: replayTrainingInventory(session.team, session.items, []) });
+  return freeze({ ...session, inventory: replayTrainingInventory(session.team, session.items, []),
+    encounter: session.encounter === null ? null : resetTrainingEncounter(session.encounter, session.encounterGun, session.indices) });
 }
 
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
@@ -91,7 +98,7 @@ export async function exportTrainingSession(level: LevelData, world: WorldState,
   const map = trainingLevel(level);
   if (world.physics.mode !== 'static') throw new Error('Training43 sessions require static navigation.');
   const [candidate, checkpoint] = await Promise.all([createTrainingSession(map, sources, session.indices, session.inventory.commands), exportCheckpoint(map, world)]);
-  return sessionJSON(candidate.session, checkpoint);
+  return sessionJSON(freeze({ ...candidate.session, encounter: session.encounter === null ? null : validateTrainingEncounter(session.encounter, candidate.session.encounterGun, candidate.session.indices) }), checkpoint);
 }
 
 export function isTrainingSessionSave(json: string): boolean {
@@ -106,12 +113,12 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   const parsed: unknown = JSON.parse(json);
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const version = (parsed as { version?: unknown }).version;
-  exact(parsed, version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
-  if (parsed.format !== 'hired-guns-training-session' || (version !== 1 && version !== 2 && version !== 3 && version !== 4 && version !== 5) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
+  exact(parsed, version === 6 ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'encounter'] : version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
+  if (parsed.format !== 'hired-guns-training-session' || (version !== 1 && version !== 2 && version !== 3 && version !== 4 && version !== 5 && version !== 6) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
   exact(parsed.sources, ['map', 'roster', 'items']);
   const expected = structuredClone(parsed.sources);
   const map = trainingLevel(level);
-  const commands = version === 1 ? [] : version === 2 ? equipCommands(parsed.commands).map(command => ({ kind: 'equip' as const, ...command })) : inventoryCommands(parsed.commands, version === 3, version === 5);
+  const commands = version === 1 ? [] : version === 2 ? equipCommands(parsed.commands).map(command => ({ kind: 'equip' as const, ...command })) : inventoryCommands(parsed.commands, version === 3, version === 5 || version === 6);
   const candidatePromise = createTrainingSession(map, sources, parsed.indices as number[], commands);
   const checkpointPromise = importCheckpoint(map, parsed.checkpoint);
   const [candidate, world] = await Promise.all([candidatePromise, checkpointPromise]);
@@ -123,5 +130,6 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
     }
   }
   if (expected.map !== actual.map || world.physics.mode !== 'static') throw new Error('Training43 session map mismatch.');
-  return { session: candidate.session, world };
+  const encounter = version === 6 ? validateTrainingEncounter(parsed.encounter, candidate.session.encounterGun, candidate.session.indices) : null;
+  return { session: freeze({ ...candidate.session, encounter }), world };
 }

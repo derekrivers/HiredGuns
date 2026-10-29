@@ -1,4 +1,6 @@
 import './styles.css';
+import { createTrainingEncounter, fireTrainingEncounter, resetTrainingEncounter, targetTrainingEncounter, tickTrainingEncounter } from './combat/training-encounter';
+import { installTrainingEncounterPanel, type EncounterCommand } from './training-encounter-panel';
 import type { LevelData, MissionMode, SimulationEvent } from './contracts';
 import { createDemoLevel, createExtractionDemo, createStairsDemo, createFallDemo } from './demo';
 import { extractionProfile, missionRulesForLevel } from './sim/mission-profile';
@@ -52,7 +54,7 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
   if (session.inventory.commands.length >= MAX_INVENTORY_COMMANDS) throw new Error('Inventory operation budget exhausted. Retry or Apply a new team to reset.');
   const sources = rosterPanel.sources();
   if (!sources) throw new Error('Open the matching roster and items first.');
-  const generation = ++loadGeneration; loading = true; inventoryPanel.refresh();
+  const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(); encounterPanel.refresh();
   try {
     const transfer = kind === 'equip' ? equipTrainingSession : kind === 'exchange' ? exchangeTrainingSession : returnTrainingSession;
     const candidate = await transfer(level, sources, session, actor, slot, paused, world);
@@ -61,16 +63,33 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
     session = candidate.session; showSession();
     get('recovery-status').textContent = kind === 'exchange' ? `Exchanged equipment with carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : kind === 'equip' ? `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : `Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
   } finally {
-    if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); rosterPanel.refresh(); }
+    if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); encounterPanel.refresh(); rosterPanel.refresh(); }
   }
 });
+const encounterHost = document.createElement('section'); encounterHost.id = 'training-encounter';
+inventoryHost.before(encounterHost);
+const encounterPanel = installTrainingEncounterPanel(encounterHost, () => session, () => paused,
+  () => !loading && !!session && world.mission.outcome === 'active' && !!renderer && !graphicsLost, encounterCommand);
+function encounterCommand(action: EncounterCommand): void {
+  if (loading || !session || world.mission.outcome !== 'active' || !renderer || graphicsLost) return;
+  const state = session.encounter;
+  if (action.kind === 'arm' ? !paused : !state || (action.kind === 'reset' ? !paused : action.kind === 'fire' && paused)) return;
+  try {
+    const encounter = action.kind === 'arm' ? createTrainingEncounter(session.encounterGun, session.indices, action.actor, action.fixture) :
+      action.kind === 'fire' ? fireTrainingEncounter(state!, session.encounterGun) :
+      action.kind === 'reset' ? resetTrainingEncounter(state!, session.encounterGun, session.indices) : targetTrainingEncounter(state!);
+    // One immutable commit includes ammo, counter, damage and target; source inventory is untouched.
+    session = Object.freeze({ ...session, encounter }); encounterPanel.refresh();
+  } catch (error) { get('error').textContent = errorText(error); }
+}
 function cancelSessionOperation(): void { ++loadGeneration; loading = false; setPaused(true); }
 function showSession(): void {
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Paused equip, occupied exchange and return are standalone source-deduced adapters below; combat and hazards remain unavailable.' : 'No active selected-team session.';
+  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Paused equip, occupied exchange and return are standalone source-deduced adapters below; authored isolated combat is available below; world combat and hazards remain unavailable.' : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
+  encounterPanel.refresh();
   for (let i = 0; i < 4; i++) {
     const name = panes[i]!.querySelector<HTMLElement>('.player-name')!;
     name.textContent = `${String(i + 1).padStart(2, '0')} / ${session?.names[i] ?? 'MERCENARY'}`;
@@ -98,7 +117,7 @@ const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
       setPaused(true); showSession(); updateHud(readPads());
       get('recovery-status').textContent = 'Selected team applied. Review controls, then Start mission. Session saves require these same local sources.';
     } catch (error) { if (generation === loadGeneration) throw error; }
-    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
+    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); } }
   },
 });
 
@@ -106,7 +125,7 @@ function errorText(error: unknown): string { return error instanceof Error ? err
 function setPaused(value: boolean): void {
   paused = value; keys.clear(); router.reset(); clock.reset();
   updateMissionHud();
-  inventoryPanel.refresh();
+  inventoryPanel.refresh(); encounterPanel.refresh();
 }
 function updateMissionHud(): void {
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
@@ -186,7 +205,7 @@ function updateLevelInfo(): void {
     'Keyboard: forward/back, strafe left/right; Q/E, U/O, comma/period or numpad 7/9 turn. Numbers 1–4 move keyboard A assignment. Keyboard rollover depends on hardware.',
     'Standard gamepads: left stick or D-pad moves/turns; shoulder buttons strafe. Assign each pad above. Press a pad button if the browser has not exposed it yet. Non-standard mappings require future remapping support.',
     'Disconnect stops that controller. Matching index and device ID can reconnect; otherwise reassign. Four physical controllers on the event PC/TV have NOT been tested.',
-    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. Dry gravity and fitness damage are restricted to the synthetic fall drill. Other maps block drops. No dynamic objects, combat, inventory, sound or campaign travel. Water, pressure pads and lifts remain blocked. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
+    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. Dry gravity and fitness damage are restricted to the synthetic fall drill. Other maps block drops. Selected-team sessions additionally expose paused source inventory and an isolated authored gun encounter below. No dynamic world objects, enemy combat, sound or campaign travel. Water, pressure pads and lifts remain blocked. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
     'Mission support is restricted to the exact verified Training43 editor revision and the newly authored extraction drill. Moving into a type-3 exit block retires that mercenary. Cooperative extraction requires all four; Original first-exit race preserves the alive-player source success rule. Source countdown counters borrow after 601 logical ticks. The UI converts this prototype 50 Hz clock to time; original wall-clock parity has not been verified. Unsupported original areas remain blocked, so this proves an extraction route rather than the complete original level.',
     'Dry fall drill: authored empty-inventory profiles, physique/agility 100 and fitness 65535. Source-derived integer damage, first gravity pulse at tick 7 then every 6 ticks, landing damage on the next pulse. No water, actor squash, inventory damage or corpse mutation. This is not an original roster or runtime-parity claim.',
     `Source: ${level.source.revision}; SHA-256: ${level.source.sha256 ?? 'synthetic'}`,
@@ -252,9 +271,9 @@ get<HTMLInputElement>('map-file').addEventListener('change', async event => {
     const { level: imported, report } = await importEditorMap(new Uint8Array(await file.arrayBuffer()));
     if (generation !== loadGeneration) return;
     installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
-    loading = false; rosterPanel.refresh(); inventoryPanel.refresh();
+    loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh();
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); } }
 });
 
 get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => {
@@ -270,7 +289,7 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
     link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. ${session ? 'Keep the same local map, roster and items for session recovery.' : 'Keep the same source map for recovery.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); } }
 });
 get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
@@ -296,7 +315,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     session = restoredSession; world = restored; showSession(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); } }
 });
 
 const allKeys = new Set(KEY_GROUPS.flatMap(group => group.map(([key]) => key)));
@@ -304,6 +323,11 @@ window.addEventListener('keydown', event => {
   const target = event.target as HTMLElement;
   if (target.matches('input,select,textarea') || event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.code === 'Escape') { setPaused(true); event.preventDefault(); return; }
+  if (['KeyF', 'KeyT', 'KeyR'].includes(event.code)) {
+    event.preventDefault();
+    if (!event.repeat) encounterCommand({ kind: event.code === 'KeyF' ? 'fire' : event.code === 'KeyT' ? 'target' : 'reset' });
+    return;
+  }
   if (/^Digit[1-4]$/.test(event.code)) {
     router.assign(Number(event.code.slice(-1)) - 1, { kind: 'keyboard', index: 0 }); keys.clear(); refreshAssignments(readPads(), true); event.preventDefault(); return;
   }
@@ -319,12 +343,14 @@ function frame(now: number): void {
   const pads = readPads(); refreshAssignments(pads);
   if (!paused && !loading) {
     try { clock.advance(elapsed, () => {
+      const previousTick = world.tick;
       const result = stepWorld(level, world, router.commands(world.tick, keys, pads)); world = result.world;
+      if (world.tick !== previousTick && session?.encounter) session = Object.freeze({ ...session, encounter: tickTrainingEncounter(session.encounter) });
       result.events.forEach((event: SimulationEvent) => { events[event.mercenaryId] = event.kind === 'blocked' ? `BLOCKED: ${event.reason}`.toUpperCase() : event.kind.toUpperCase(); });
     }); } catch (error) { setPaused(true); get('error').textContent = errorText(error); }
     if (world.mission.outcome !== 'active' || teamDead(world)) setPaused(true);
   }
-  inventoryPanel.refresh();
+  inventoryPanel.refresh(); encounterPanel.refresh();
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }
