@@ -70,6 +70,8 @@ test('synthetic four-view preview validates assets, measures both modes and disp
   await page.getByRole('button', { name: 'Compare both modes' }).click();
   await expect(page.getByRole('alert')).toContainText('Load the synthetic atlas');
   await page.getByRole('button', { name: 'Load synthetic atlas', exact: true }).click();
+  // guarded() clears the alert before async bitmap decoding; wait for loadAtlas() to finish.
+  await expect(page.getByRole('status')).toHaveText('Synthetic atlas loaded.');
   await expect(page.getByRole('alert')).toBeEmpty();
   expect(JSON.parse(await page.locator('#asset-report').innerText()).liveBitmaps).toBe(1);
   await page.evaluate(() => {
