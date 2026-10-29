@@ -4,8 +4,8 @@ import type { InventorySlot } from '../src/import/characters';
 import { importItems, ITEM_FILE_BYTES } from '../src/import/items';
 import type { SelectionInventory } from '../src/import/inventory';
 import { importEditorMap } from '../src/import/editor-map';
-import { MAX_INVENTORY_COMMANDS, equipCommands, inventoryCommands, returnEquipmentToBackpack, transferIntoEmptyEquipment } from '../src/sim/training-inventory';
-import { createTrainingSession, equipTrainingSession, returnTrainingSession, exportTrainingSession, importTrainingSession, resetTrainingInventory } from '../src/sim/training-session';
+import { MAX_INVENTORY_COMMANDS, exchangeOccupiedEquipment, equipCommands, inventoryCommands, returnEquipmentToBackpack, transferIntoEmptyEquipment } from '../src/sim/training-inventory';
+import { createTrainingSession, equipTrainingSession, returnTrainingSession, exchangeTrainingSession, exportTrainingSession, importTrainingSession, resetTrainingInventory } from '../src/sim/training-session';
 import { stepWorld } from '../src/sim/world';
 
 const slot = (id: number, damage = 17, ammo = 3, fourthByte = 93): InventorySlot => ({ itemId: id, damage, ammo, fourthByte,
@@ -92,6 +92,50 @@ describe('logical empty-equipment transfer with authored data (no original autho
     for (const index of [-1, 3, 29, 30, 0.5, NaN]) expect(() => returnEquipmentToBackpack(source, items, 100, index)).toThrow();
     expect(() => returnEquipmentToBackpack(source, items, -1, 0)).toThrow(); expect(source).toEqual(before);
   });
+  it('exchanges complete occupied entries at every carried slot, including full storage, without touching tails/actions', async () => {
+    const items = await table();
+    for (let index = 0; index < 30; index++) {
+      const source = inventory(); source.equipped = slot(7, 221, 19, 213);
+      source.carried[index] = slot(9, 135, 7, 192);
+      const before = structuredClone(source), expected = structuredClone(source);
+      [expected.equipped, expected.carried[index]] = [expected.carried[index]!, expected.equipped];
+      const result = exchangeOccupiedEquipment(source, items, 1, index);
+      expect(result.inventory).toEqual(expected); expect(result.selection).toBe(index);
+      expect(result.weight.usingGrenade).toBe(2);
+      const back = exchangeOccupiedEquipment(result.inventory, items, 1, index);
+      expect(back.inventory).toEqual(source); expect(back.weight.totalWeight).toBe(result.weight.totalWeight);
+      expect(back.weight.usingGrenade).toBe(0); expect(source).toEqual(before);
+      result.inventory.actions[0]!.ammo = 0; expect(source).toEqual(before);
+    }
+    const full = inventory(); full.equipped = slot(7); full.carried = Array.from({ length: 30 }, () => slot(3));
+    expect(exchangeOccupiedEquipment(full, items, 100, 29).inventory.equipped).toEqual(full.carried[29]);
+    for (const change of [
+      (a: SelectionInventory) => { a.equipped = slot(0); },
+      (a: SelectionInventory) => { a.carried[0] = slot(0); },
+      (a: SelectionInventory) => { a.equipped.rawHex = 'invalid'; },
+      (a: SelectionInventory) => { a.carried[0] = slot(255); },
+      (a: SelectionInventory) => { a.actions.pop(); },
+      (a: SelectionInventory) => { a.carried.pop(); },
+    ]) {
+      const source = inventory(); source.equipped = slot(7); change(source); const before = structuredClone(source);
+      expect(() => exchangeOccupiedEquipment(source, items, 100, 0)).toThrow(); expect(source).toEqual(before);
+    }
+    const source = inventory(); source.equipped = slot(7);
+    for (const index of [-1, 3, 30, 0.5, NaN]) expect(() => exchangeOccupiedEquipment(source, items, 100, index)).toThrow();
+    expect(() => exchangeOccupiedEquipment(source, items, -1, 0)).toThrow();
+  });
+  it('keeps actor phases independent with any number of occupied exchanges and exact v3/v4 restrictions', () => {
+    const e = { kind: 'equip', actor: 0, slot: 0 }, x = { kind: 'exchange', actor: 0, slot: 29 }, r = { kind: 'return', actor: 0, slot: 0 };
+    const commands = [e, x, { ...e, actor: 1 }, x, { ...x, actor: 1 }, r, { ...x, actor: 1 }, e, x];
+    expect(inventoryCommands(commands)).toEqual(commands);
+    for (const value of [[x], [e, r, x], [e, x, e], [e, { ...x, slot: 30 }], [e, { ...x, slot: -1 }], [e, { ...x, extra: true }]]) expect(() => inventoryCommands(value)).toThrow();
+    expect(() => inventoryCommands([e, x], false, false)).toThrow();
+    expect(() => inventoryCommands([e, x], true)).toThrow();
+    expect(inventoryCommands([e, r, e], false, false)).toEqual([e, r, e]);
+    const full = [e, ...Array.from({ length: 127 }, () => x)];
+    expect(inventoryCommands(full)).toHaveLength(128);
+    expect(() => inventoryCommands([...full, x])).toThrow('budget');
+  });
   it('bounds v4 total replay cost while allowing all four actors to alternate repeatedly', () => {
     const commands = Array.from({ length: MAX_INVENTORY_COMMANDS }, (_, i) => ({ kind: Math.floor(i / 4) % 2 ? 'return' : 'equip', actor: i % 4, slot: 0 }));
     expect(inventoryCommands(commands)).toEqual(commands);
@@ -134,6 +178,35 @@ describe.skipIf(!privateInputs)('exact private selected-team inventory and recov
     const [map, roster, items] = await Promise.all([process.env.HIRED_GUNS_TRAINING_MAP!, process.env.HIRED_GUNS_CHARACTERS!, process.env.HIRED_GUNS_ITEMS!].map(async p => new Uint8Array(await readFile(p))));
     return { level: (await importEditorMap(map!)).level, sources: { roster: roster!, items: items! } };
   }
+  it('replays interleaved exact-source occupied exchanges, preserves current world and rejects legacy exchange injection', async () => {
+    const { level, sources } = await local(), initial = await createTrainingSession(level, sources, [11, 3, 0, 5]);
+    const world = stepWorld(level, initial.world, [{ mercenaryId: 0, action: 'turn-right' }]).world;
+    let session = initial.session;
+    for (let actor = 0; actor < 4; actor++) {
+      session = (await equipTrainingSession(level, sources, session, actor, 0, true, world)).session;
+      for (const index of [1, 0, 1]) {
+        const before = structuredClone(session.inventory.actors), current = before[actor]!;
+        const result = await exchangeTrainingSession(level, sources, session, actor, index, true, world);
+        [current.inventory.equipped, current.inventory.carried[index]] = [current.inventory.carried[index]!, current.inventory.equipped];
+        current.selection = index;
+        // Genuine selected ordinary entries; equipped grenade metadata is checked separately with authored category fixtures.
+        expect(result.session.inventory.actors).toEqual(before); expect(result.world).toEqual(world); session = result.session;
+      }
+      session = (await returnTrainingSession(level, sources, session, actor, 0, true, world)).session;
+    }
+    const saved = await exportTrainingSession(level, world, session, sources), before = structuredClone(session);
+    expect(JSON.parse(saved).version).toBe(5); expect(await importTrainingSession(level, sources, saved)).toEqual({ session, world });
+    for (const version of [2, 3, 4]) {
+      const bad = JSON.parse(saved); bad.version = version;
+      await expect(importTrainingSession(level, sources, JSON.stringify(bad))).rejects.toThrow();
+    }
+    const old = JSON.parse(await exportTrainingSession(level, world, initial.session, sources)); old.version = 4;
+    old.commands = [{ kind: 'equip', actor: 0, slot: 0 }, { kind: 'return', actor: 0, slot: 0 }, { kind: 'equip', actor: 0, slot: 1 }];
+    expect((await importTrainingSession(level, sources, JSON.stringify(old))).session.inventory.commands).toEqual(old.commands);
+    await expect(exchangeTrainingSession(level, sources, session, 0, 0, true, world)).rejects.toThrow();
+    await expect(exchangeTrainingSession(level, sources, initial.session, 0, 0, false, world)).rejects.toThrow('Pause');
+    expect(session).toEqual(before); expect(resetTrainingInventory(session)).toEqual(initial.session);
+  });
   it('accepts the actual 128th command, rejects the 129th atomically and restores full history', async () => {
     const { level, sources } = await local(), initial = await createTrainingSession(level, sources, [11, 3, 0, 5]);
     const commands = Array.from({ length: 127 }, (_, i) => ({ kind: Math.floor(i / 4) % 2 ? 'return' : 'equip', actor: i % 4, slot: i < 4 ? 1 : 0 }));
@@ -187,7 +260,7 @@ describe.skipIf(!privateInputs)('exact private selected-team inventory and recov
     const world = stepWorld(level, initial.world, [{ mercenaryId: 0, action: 'turn-right' }]).world;
     const snapshot = structuredClone(session), pending = exportTrainingSession(level, world, snapshot, sources);
     snapshot.inventory.commands.length = 0;
-    const saved = await pending; expect(JSON.parse(saved).version).toBe(4); expect(JSON.parse(saved).commands).toHaveLength(8);
+    const saved = await pending; expect(JSON.parse(saved).version).toBe(5); expect(JSON.parse(saved).commands).toHaveLength(8);
     expect(await importTrainingSession(level, sources, saved)).toEqual({ session, world });
     await expect(returnTrainingSession(level, sources, initial.session, 0, 0, true)).rejects.toThrow();
     await expect(returnTrainingSession(level, sources, session, 0, 0, false)).rejects.toThrow('Pause');
@@ -230,7 +303,7 @@ describe.skipIf(!privateInputs)('exact private selected-team inventory and recov
     for (const commands of [[{ actor: 0, slot: 0 }, { actor: 0, slot: 1 }], [{ actor: 0, slot: 29 }], [{ actor: -1, slot: 0 }], [{ actor: 0, slot: 0, rawHex: '01020304' }], null]) {
       await expect(importTrainingSession(level, sources, JSON.stringify({ ...saved, commands }))).rejects.toThrow(); expect(initial).toEqual(before);
     }
-    for (const version of [0, 5, '3', null]) await expect(importTrainingSession(level, sources, JSON.stringify({ ...saved, version }))).rejects.toThrow();
+    for (const version of [0, 6, '3', null]) await expect(importTrainingSession(level, sources, JSON.stringify({ ...saved, version }))).rejects.toThrow();
     const e = { kind: 'equip', actor: 0, slot: 0 }, r = { kind: 'return', actor: 0, slot: 0 };
     for (const commands of [[r], [e, e], [e, r, r], [{ ...e, kind: 'unknown' }], [{ ...e, slot: 29 }], [e, { ...r, slot: 29 }]]) {
       await expect(importTrainingSession(level, sources, JSON.stringify({ ...saved, commands }))).rejects.toThrow(); expect(initial).toEqual(before);

@@ -157,7 +157,7 @@ test('opt-in actual paused equip: full entries, compaction, tails/actions, indep
   await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.press('Digit1'); await page.keyboard.down('e');
   await expect(page.locator('#position-0')).not.toHaveText(beforeTurn!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
   const equipped = await overlay(page), saved = await save(page), world = JSON.parse(saved.checkpoint).world;
-  expect(saved.version).toBe(4); expect(saved.commands).toHaveLength(4); expect(world.tick).toBeGreaterThan(0);
+  expect(saved.version).toBe(5); expect(saved.commands).toHaveLength(4); expect(world.tick).toBeGreaterThan(0);
   expect((await importTrainingSession(level, sources, JSON.stringify(saved))).session.inventory.actors).toEqual(equipped);
   await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
   expect(await overlay(page)).toEqual(initial.session.inventory.actors);
@@ -214,7 +214,7 @@ test('opt-in repeated changes, different items, all-four interleaving and actual
   await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(full)); await expect(page.locator('#inventory-budget')).toContainText('0 / 128'); expect(await save(page)).toEqual(full);
 });
 
-for (const operation of ['equip', 'return', 'restore'] as const) for (const cancel of ['selection', 'retry', 'rules', 'source', 'map', 'apply'] as const) {
+for (const operation of ['equip', 'return', 'exchange', 'restore'] as const) for (const cancel of ['selection', 'retry', 'rules', 'source', 'map', 'apply'] as const) {
   test(`opt-in ${cancel} cancels delayed ${operation} without stale inventory installation`, async ({ page }) => {
     test.skip(!privateInputs, 'Requires explicit private originals.');
     await open(page);
@@ -229,6 +229,9 @@ for (const operation of ['equip', 'return', 'restore'] as const) for (const canc
     if (operation === 'equip') {
       await page.getByLabel('Carried slot for team slot 1').selectOption('1');
       await page.getByRole('button', { name: 'Equip for team slot 1', exact: true }).click();
+    } else if (operation === 'exchange') {
+      await page.getByLabel('Carried slot for team slot 1').selectOption('0');
+      await page.getByRole('button', { name: 'Exchange equipment for team slot 1', exact: true }).click();
     } else if (operation === 'return') await page.getByRole('button', { name: 'Return to backpack for team slot 1', exact: true }).click();
     else await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(saved));
     await waiting(page);
@@ -249,3 +252,51 @@ for (const operation of ['equip', 'return', 'restore'] as const) for (const canc
     else await expect(page.locator('#inventory-budget')).toContainText(`${128 - expected.commands.length} / 128`);
   });
 }
+
+
+test('opt-in keyboard occupied exchange: full bytes, independent actors, navigation, retry and atomic paused recovery', async ({ page }) => {
+  test.skip(!privateInputs, 'Requires explicit private originals.');
+  const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+  await open(page);
+  for (let actor = 0; actor < 4; actor++) {
+    const button = page.getByRole('button', { name: `Exchange equipment for team slot ${actor + 1}`, exact: true });
+    await expect(button).toBeDisabled(); await equip(page, actor, 0);
+    const unchanged = await save(page);
+    await button.dispatchEvent('click');
+    await expect(page.locator(`#training-inventory-${actor} [role=status]`)).toContainText('Choose an occupied carried slot');
+    expect(await save(page)).toEqual(unchanged);
+    for (const slot of [1, 0, 1]) {
+      const before = await overlay(page), expected = structuredClone(before), current = expected[actor]!;
+      const select = page.getByLabel(`Carried slot for team slot ${actor + 1}`);
+      await select.focus(); await page.keyboard.press('Home');
+      for (let i = 0; i <= slot; i++) await page.keyboard.press('ArrowDown');
+      await expect(select).toHaveValue(String(slot));
+      await page.keyboard.press('Tab'); await expect(button).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(page.locator('#recovery-status')).toContainText(`Exchanged equipment with carried slot ${slot + 1} for team slot ${actor + 1}`);
+      [current.inventory.equipped, current.inventory.carried[slot]] = [current.inventory.carried[slot], current.inventory.equipped]; current.selection = slot;
+      expect(await overlay(page)).toEqual(expected);
+    }
+    if (actor % 2) await returnItem(page, actor, 0);
+  }
+  const pose = await page.locator('#position-0').textContent();
+  await page.getByRole('button', { name: 'Start mission', exact: true }).click(); await page.keyboard.press('Digit1'); await page.keyboard.down('e');
+  await expect(page.locator('#position-0')).not.toHaveText(pose!); await page.keyboard.up('e'); await page.keyboard.press('Escape');
+  const before = await save(page), state = await overlay(page), checkpoint = JSON.parse(before.checkpoint);
+  expect(before.version).toBe(5); expect(before.commands).toHaveLength(18); expect(checkpoint.world.tick).toBeGreaterThan(0);
+  await page.getByLabel('Carried slot for team slot 1').selectOption('0');
+  await page.getByRole('button', { name: 'Exchange equipment for team slot 1', exact: true }).click();
+  await expect(page.locator('#inventory-budget')).toContainText('109 / 128');
+  expect(JSON.parse((await save(page)).checkpoint)).toEqual(checkpoint);
+  await page.getByRole('button', { name: 'Retry mission', exact: true }).click();
+  await expect(page.locator('#inventory-budget')).toContainText('128 / 128');
+  await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(before));
+  await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored');
+  await expect(page.locator('#pause-overlay')).toBeVisible(); expect(await overlay(page)).toEqual(state); expect(await save(page)).toEqual(before);
+  for (const bad of [{ ...before, version: 4 }, { ...before, commands: [...before.commands, { kind: 'exchange', actor: 1, slot: 0 }] }, { ...before, checkpoint: '{}' }]) {
+    await page.getByLabel('Load navigation checkpoint').setInputFiles(upload(bad));
+    await expect(page.locator('#error')).toContainText('Checkpoint not loaded'); expect(await save(page)).toEqual(before); expect(await overlay(page)).toEqual(state);
+  }
+  if (process.env.HIRED_GUNS_INVENTORY_SCREENSHOT) await page.screenshot({ path: process.env.HIRED_GUNS_INVENTORY_SCREENSHOT, fullPage: true });
+  expect(errors).toEqual([]);
+});

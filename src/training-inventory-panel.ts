@@ -2,17 +2,18 @@ import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
 import type { InventorySlot } from './import/characters';
 import type { TrainingSession } from './sim/training-session';
 
-export function installTrainingInventoryPanel(host: HTMLElement, available: () => boolean, command: (actor: number, slot: number, kind: 'equip' | 'return') => Promise<void>) {
+export function installTrainingInventoryPanel(host: HTMLElement, available: () => boolean, command: (actor: number, slot: number, kind: 'equip' | 'return' | 'exchange') => Promise<void>) {
   let current: TrainingSession | null = null;
-  const controls: { actor: number; select: HTMLSelectElement; button: HTMLButtonElement; position: HTMLSelectElement; returnButton: HTMLButtonElement }[] = [];
+  const controls: { actor: number; select: HTMLSelectElement; button: HTMLButtonElement; position: HTMLSelectElement; returnButton: HTMLButtonElement; exchangeButton: HTMLButtonElement }[] = [];
   const text = (session: TrainingSession, slot: InventorySlot) => slot.itemId === 0 ? `Empty / ${slot.rawHex}` :
     `${slot.itemId}: ${session.items.records[slot.itemId - 1]!.text.header1.trim()} ${session.items.records[slot.itemId - 1]!.text.header2.trim()} / ${slot.rawHex}`;
   function refresh() {
-    for (const { actor, select, button, position, returnButton } of controls) {
+    for (const { actor, select, button, position, returnButton, exchangeButton } of controls) {
       const state = current?.inventory.actors[actor];
       const exhausted = !current || current.inventory.commands.length >= MAX_INVENTORY_COMMANDS;
       select.disabled = !available() || exhausted;
       button.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId !== 0 || select.value === '';
+      exchangeButton.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId === 0 || select.value === '';
       position.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId === 0;
       returnButton.disabled = position.disabled || position.value === '';
     }
@@ -21,7 +22,7 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
     current = session; controls.length = 0; host.replaceChildren();
     if (!session) return;
     const title = document.createElement('p');
-    title.textContent = 'Carried inventory — pause, choose a slot, then Equip. Choose an insertion position and Return to backpack. Repeat Equip and Return while paused. Retry, rule changes or Apply a new team reset the operation budget.';
+    title.textContent = 'Carried inventory — pause, choose a slot, then Equip. Choose an insertion position and Return to backpack. When equipped, select another occupied carried slot and Exchange equipment. These are standalone source-deduced adapters. Retry, rule changes or Apply a new team reset the operation budget.';
     const budget = document.createElement('p'); budget.id = 'inventory-budget';
     const remaining = MAX_INVENTORY_COMMANDS - session.inventory.commands.length;
     budget.textContent = `Inventory operations remaining: ${remaining} / ${MAX_INVENTORY_COMMANDS}.${remaining === 0 ? ' Budget exhausted. Retry or Apply a new team to reset.' : ''}`;
@@ -38,6 +39,7 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
       });
       const selected = document.createElement('p'); selected.id = `inventory-selection-${i}`;
       const button = document.createElement('button'); button.textContent = `Equip for team slot ${i + 1}`;
+      const exchangeButton = document.createElement('button'); exchangeButton.textContent = `Exchange equipment for team slot ${i + 1}`;
       const position = document.createElement('select'); position.setAttribute('aria-label', `Return position for team slot ${i + 1}`);
       const end = actor.inventory.carried.findIndex(slot => slot.itemId === 0);
       if (end >= 0 && actor.inventory.carried.slice(end).every(slot => slot.itemId === 0)) {
@@ -53,18 +55,26 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
         catch (error) { message.textContent = `Item not equipped: ${error instanceof Error ? error.message : String(error)}`; }
         finally { refresh(); }
       });
+      exchangeButton.addEventListener('click', async () => {
+        try {
+          if (select.value === '') throw new Error('Choose an occupied carried slot.');
+          await command(i, Number(select.value), 'exchange');
+        }
+        catch (error) { message.textContent = `Equipment not exchanged: ${error instanceof Error ? error.message : String(error)}`; }
+        finally { refresh(); }
+      });
       returnButton.addEventListener('click', async () => {
         try { await command(i, Number(position.value), 'return'); }
         catch (error) { message.textContent = `Equipment not returned: ${error instanceof Error ? error.message : String(error)}`; }
         finally { refresh(); }
       });
-      controls.push({ actor: i, select, button, position, returnButton });
+      controls.push({ actor: i, select, button, position, returnButton, exchangeButton });
       const detail = document.createElement('details'), summary = document.createElement('summary'), data = document.createElement('pre');
       summary.textContent = 'Current inventory bytes and weight';
       data.textContent = JSON.stringify(actor);
       Object.assign(data.style, { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', maxHeight: '260px', overflow: 'auto' });
       detail.append(summary, data);
-      section.append(heading, status, select, selected, button, position, returnButton, message, detail); host.append(section);
+      section.append(heading, status, select, selected, button, exchangeButton, position, returnButton, message, detail); host.append(section);
     });
     refresh();
   }
