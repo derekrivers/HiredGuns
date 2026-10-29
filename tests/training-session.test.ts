@@ -8,10 +8,57 @@ import { exportCheckpoint, importCheckpoint } from '../src/sim/checkpoint';
 import { createWorld, stepWorld } from '../src/sim/world';
 import { createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES } from '../src/sim/training-session';
 import { characterFixture } from './helpers/character-fixture';
+import { createSelectedFallLevel } from '../src/sim/fall';
+import { nextFallDamage, damageFitness } from '../src/sim/health';
 
 const sources = () => ({ roster: characterFixture(), items: new Uint8Array(ITEM_FILE_BYTES) });
 const order = [11, 3, 0, 5];
 const privateInputs = !!(process.env.HIRED_GUNS_TRAINING_MAP && process.env.HIRED_GUNS_CHARACTERS && process.env.HIRED_GUNS_ITEMS);
+
+it.skipIf(!privateInputs)('selected practice binds real stats/current weight, landing, incapacitation and atomic v7 recovery', async () => {
+  const {sources,level:original} = await local(), level = createSelectedFallLevel();
+  const initial = await createTrainingSession(level,sources,order);
+  let world = stepWorld(level,initial.world,[0,1,2,3].map(mercenaryId=>({mercenaryId,action:'forward'}))).world;
+  while(world.tick<13) world=stepWorld(level,world,[]).world;
+  if(world.physics.mode!=='dry-fall') throw new Error('expected fall');
+  for(const [i,actor] of initial.session.team.actors.entries()) {
+    expect(world.physics.actors[i]).toMatchObject({physique:actor.stats.physique,agility:actor.stats.agility,weight:initial.session.inventory.actors[i]!.weight.totalWeight});
+  }
+  const saved = await exportTrainingSession(level,world,initial.session,sources), envelope=JSON.parse(saved);
+  expect(envelope.version).toBe(7); expect(envelope.sources.map).toBe('authored:selected-dry-fall-v1');
+  expect((await importTrainingSession(level,sources,saved)).world).toEqual(world);
+  const { equipTrainingSession, exchangeTrainingSession, returnTrainingSession } = await import('../src/sim/training-session');
+  let changed=await equipTrainingSession(level,sources,initial.session,0,0,true,world);
+  changed=await exchangeTrainingSession(level,sources,changed.session,0,0,true,changed.world);
+  changed=await returnTrainingSession(level,sources,changed.session,0,0,true,changed.world);
+  expect(changed.world).toEqual(world);
+  expect(changed.session.inventory.actors[0]!.weight.totalWeight).toBe(initial.session.inventory.actors[0]!.weight.totalWeight);
+  expect((await importTrainingSession(level,sources,await exportTrainingSession(level,changed.world,changed.session,sources))).session).toEqual(changed.session);
+  await expect(importTrainingSession(level,{...sources,items:new Uint8Array(sources.items.length)},saved)).rejects.toThrow();
+  await expect(importTrainingSession(original,sources,saved)).rejects.toThrow('scenario mismatch');
+  const originalWorld=structuredClone(world);
+  const pending=exportTrainingSession(level,world,initial.session,sources); world.rng=123;
+  expect((await importTrainingSession(level,sources,await pending)).world).toEqual(originalWorld);
+  world=originalWorld;
+  while(world.tick<49) world=stepWorld(level,world,[]).world;
+  if(world.physics.mode!=='dry-fall') throw new Error('expected fall');
+  for(const [i,actor] of world.physics.actors.entries()) {
+    const source=initial.world.physics; if(source.mode!=='dry-fall') throw new Error('expected profile');
+    let hit=0; for(let n=0;n<level.starts[i]!.z-1;n++) hit=nextFallDamage(hit,source.actors[i]!);
+    expect(actor.fitness).toBe(damageFitness(65535,actor.physique,hit).fitness);
+  }
+  expect(world.physics.actors[3].dead).toBe(true);
+  const dead=stepWorld(level,world,[{mercenaryId:3,action:'turn-right'}]).world;
+  expect(dead.mercenaries[3]).toEqual(world.mercenaries[3]);
+  const snapshot=structuredClone({world,session:initial.session});
+  for(const mutate of [
+    (e: typeof envelope)=>{e.scenario='unknown';},
+    (e: typeof envelope)=>{e.sources.roster.sha256='0'.repeat(64);},
+    (e: typeof envelope)=>{const state=JSON.parse(e.checkpoint);state.world.physics.actors[0].weight++;e.checkpoint=JSON.stringify(state);},
+    (e: typeof envelope)=>{e.extra=true;},
+  ]) { const bad=structuredClone(envelope);mutate(bad);await expect(importTrainingSession(level,sources,JSON.stringify(bad))).rejects.toThrow(); }
+  expect({world,session:initial.session}).toEqual(snapshot);
+});
 async function local() {
   const [map, roster, items] = await Promise.all([process.env.HIRED_GUNS_TRAINING_MAP!, process.env.HIRED_GUNS_CHARACTERS!, process.env.HIRED_GUNS_ITEMS!].map(async p => new Uint8Array(await readFile(p))));
   return { level: (await importEditorMap(map!)).level, sources: { roster: roster!, items: items! } };
@@ -22,6 +69,7 @@ describe('standalone Training43 session refusals without forged source authority
     const level = createDemoLevel(), world = createWorld(level), inputs = sources();
     const before = structuredClone({ level, world, inputs, order });
     await expect(createTrainingSession(level, inputs, order)).rejects.toThrow('verified local Training43');
+    await expect(createTrainingSession(createSelectedFallLevel(), inputs, order)).rejects.toThrow();
     expect({ level, world, inputs, order }).toEqual(before);
   });
   it('rejects malformed, extended and oversized envelopes before any installation', async () => {

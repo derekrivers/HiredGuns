@@ -27,7 +27,7 @@ export interface MissionState {
   clock: MissionClock | null;
   winner: number | null;
 }
-/** Newly authored empty-inventory test characters; not an original roster. */
+/** Dry practice runtime; normalized incapacitation, not original lifecycle storage. */
 export interface FallActor {
   physique: number;
   agility: number;
@@ -38,7 +38,7 @@ export interface FallActor {
 }
 export type PhysicsState = { mode: 'static' } | {
   mode: 'dry-fall';
-  profileId: 'synthetic-empty-v1';
+  profileId: 'synthetic-empty-v1' | 'selected-team-v1';
   fallCounter: number;
   actors: [FallActor, FallActor, FallActor, FallActor];
 };

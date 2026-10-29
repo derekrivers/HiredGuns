@@ -1,12 +1,34 @@
-import type { LevelData, PhysicsState, Position, SimulationEvent, WorldState } from '../contracts';
+import type { FallActor, LevelData, PhysicsState, Position, SimulationEvent, WorldState } from '../contracts';
+import { createFallDemo } from '../demo';
 import { obstruction } from './traversal';
 import { damageFitness, nextFallDamage } from './health';
 
-export function dryFallEnabled(level: LevelData): boolean {
-  return level.source.kind === 'synthetic' && level.id === 'synthetic-fall-v1';
+/** Exact authored map, never an editor-map digest alias. */
+export function createSelectedFallLevel(): LevelData {
+  const level = createFallDemo();
+  level.id = 'selected-dry-fall-v1'; level.name = 'Selected-team dry-fall practice (authored)';
+  level.unsupportedMechanics = ['Authored geometry with source-bound selected team. Adapted dry incapacitation/occupancy; no original lifecycle, wet hazards, pads or corpses.'];
+  return level;
 }
-export function initialPhysics(level: LevelData): PhysicsState {
+export function selectedFallLevel(level: LevelData): boolean {
+  if (level.id !== 'selected-dry-fall-v1' || level.source.kind !== 'synthetic') return false;
+  const expected = createSelectedFallLevel();
+  return Object.keys(level).length === Object.keys(expected).length && Object.entries(expected).every(([key,value]) => JSON.stringify(level[key as keyof LevelData]) === JSON.stringify(value));
+}
+export function dryFallEnabled(level: LevelData): boolean {
+  return (level.source.kind === 'synthetic' && level.id === 'synthetic-fall-v1') || selectedFallLevel(level);
+}
+export type FallProfile = [FallActor, FallActor, FallActor, FallActor];
+export function initialPhysics(level: LevelData, profile?: FallProfile): PhysicsState {
   if (!dryFallEnabled(level)) return {mode:'static'};
+  if (selectedFallLevel(level)) {
+    if (!profile || profile.length !== 4) throw new Error('Selected dry fall requires a rebound team profile.');
+    for (const actor of profile) {
+      if (actor.fitness !== 65535 || actor.dead !== false || actor.fallDamage !== 0) throw new Error('Expected initial selected-team health.');
+      nextFallDamage(0, actor); // Reject unsupported divisors/overflow before installation.
+    }
+    return {mode:'dry-fall',profileId:'selected-team-v1',fallCounter:0,actors:structuredClone(profile)};
+  }
   return {mode:'dry-fall',profileId:'synthetic-empty-v1',fallCounter:0,actors:Array.from({length:4},()=>({physique:100,agility:100,weight:0,fitness:65535,dead:false,fallDamage:0})) as Extract<PhysicsState,{mode:'dry-fall'}>['actors']};
 }
 export function fallCounterAtTick(tick: number): number {

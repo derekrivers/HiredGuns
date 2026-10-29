@@ -7,7 +7,7 @@ import { extractionProfile, missionRulesForLevel } from './sim/mission-profile';
 import { InputRouter, KEY_GROUPS, type InputSource, type PadSnapshot } from './input/router';
 import { FixedClock } from './sim/clock';
 import { createWorld, stepWorld } from './sim/world';
-import { teamDead } from './sim/fall';
+import { teamDead, isDead, createSelectedFallLevel, selectedFallLevel } from './sim/fall';
 import { FourViews } from './render/four-views';
 // Both manual imports and the opt-in local test provider use the raw importer.
 import { importEditorMap } from './import/editor-map';
@@ -15,7 +15,7 @@ import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/
 import { installRosterPanel, fetchLocalTestResource } from './roster-panel';
 import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
 import { installTrainingInventoryPanel } from './training-inventory-panel';
-import { equipTrainingSession, returnTrainingSession, exchangeTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
+import { equipTrainingSession, returnTrainingSession, exchangeTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, selectedFallProfile, type TrainingSession } from './sim/training-session';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -49,6 +49,9 @@ const rosterHost = document.createElement('div');
 app.querySelector('footer')!.append(rosterHost);
 const sessionInfo = document.createElement('section'); sessionInfo.id = 'training-session';
 rosterHost.before(sessionInfo);
+const selectedFallButton = document.createElement('button'); selectedFallButton.id = 'selected-fall';
+selectedFallButton.textContent = 'Selected-team dry-fall practice (authored)';
+get('fall').after(selectedFallButton);
 const inventoryHost = document.createElement('section'); inventoryHost.id = 'training-inventory';
 sessionInfo.after(inventoryHost);
 const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot, kind) => {
@@ -77,6 +80,7 @@ function encounterCommand(action: EncounterCommand): void {
   const state = session.encounter;
   if (action.kind === 'arm' ? !paused : !state || (action.kind === 'reset' ? !paused : action.kind === 'fire' && paused)) return;
   try {
+    if ((action.kind === 'fire' && state && isDead(world, state.actor)) || (action.kind === 'arm' && isDead(world, action.actor))) throw new Error('Incapacitated actors cannot fire. Retry or restore an earlier checkpoint.');
     const encounter = action.kind === 'arm' ? createTrainingEncounter(session.encounterGun, session.indices, action.actor, action.fixture) :
       action.kind === 'fire' ? fireTrainingEncounter(state!, session.encounterGun) :
       action.kind === 'reset' ? resetTrainingEncounter(state!, session.encounterGun, session.indices) : targetTrainingEncounter(state!);
@@ -88,7 +92,7 @@ function cancelSessionOperation(): void { ++loadGeneration; loading = false; set
 function showSession(): void {
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Paused equip, occupied exchange and return are standalone source-deduced adapters below; authored isolated combat is available below; world combat and hazards remain unavailable.' : 'No active selected-team session.';
+  label.textContent = session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters below; authored isolated combat is available below; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   encounterPanel.refresh();
@@ -105,7 +109,11 @@ function showSession(): void {
     detail.append(summary, data); sessionInfo.append(detail);
   }
 }
-function clearSession(): void { cancelSessionOperation(); session = null; showSession(); }
+function clearSession(): void {
+  cancelSessionOperation(); session = null;
+  if (selectedFallLevel(level)) installLevel(createDemoLevel());
+  else showSession();
+}
 const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
   available: () => !loading && level.source.kind === 'editor-map' && extractionProfile(level) !== null,
   invalidate: clearSession,
@@ -166,6 +174,7 @@ function setPaused(value: boolean): void {
   inventoryPanel.refresh(); encounterPanel.refresh();
 }
 function updateMissionHud(): void {
+  selectedFallButton.disabled = loading || !session || selectedFallLevel(level);
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
   const play = get<HTMLButtonElement>('play');
@@ -174,9 +183,9 @@ function updateMissionHud(): void {
   get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : fallDrill ? 'Retry drill' : 'Reset positions';
   get('mission-mode-label').hidden = extractionProfile(level) === null;
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
-  get('mission-objective').textContent = !active ? fallDrill ? 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
-  get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : '';
-  get('prototype-label').textContent = session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  get('mission-objective').textContent = !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
+  get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : fallDrill ? allDead ? 'PRACTICE EXHAUSTED · Retry or restore' : `${world.physics.mode === 'dry-fall' ? world.physics.actors.filter(a=>a.dead).length : 0} / 4 incapacitated` : '';
+  get('prototype-label').textContent = selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
   if (mission.clock) {
     const units = mission.clock.tens * 10 + mission.clock.units;
@@ -229,7 +238,7 @@ function updateHud(pads: PadSnapshot[]): void {
     get(`position-${i}`).textContent = `X ${String(p.x).padStart(2, '0')}  Y ${String(p.y).padStart(2, '0')}  Z ${String(p.z).padStart(2, '0')} / ${['N', 'E', 'S', 'W'][p.facing]}`;
     get(`event-${i}`).textContent = events[i]!;
     const fitness = get(`fitness-${i}`); fitness.hidden = world.physics.mode !== 'dry-fall';
-    fitness.textContent = world.physics.mode === 'dry-fall' ? `FIT ${Math.floor(world.physics.actors[i]!.fitness / 655)}%` : '';
+    fitness.textContent = world.physics.mode === 'dry-fall' ? `FIT ${Math.floor(world.physics.actors[i]!.fitness / 655)}%${selectedFallLevel(level) ? ` · ${world.physics.actors[i]!.fitness} · FALL ${world.physics.actors[i]!.fallDamage} · WT ${world.physics.actors[i]!.weight}` : ''}` : '';
     const pad = source?.kind === 'gamepad' ? pads.find(pad => pad.index === source.index && pad.id === source.id && pad.connected) : null;
     get(`device-${i}`).textContent = !source ? 'UNASSIGNED' : source.kind === 'keyboard' ? `KEYBOARD ${String.fromCharCode(65 + source.index)}` : pad?.mapping === 'standard' ? `PAD ${source.index + 1} CONNECTED` : 'PAD DISCONNECTED / CHECK ASSIGNMENT';
   }
@@ -265,8 +274,10 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
 }
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
-  loadGeneration++; loading = false; world = createWorld(level, undefined, world.mission.rules);
-  if (session) { session = resetTrainingInventory(session); showSession(); }
+  loadGeneration++; loading = false;
+  if (session) session = resetTrainingInventory(session);
+  world = createWorld(level, undefined, world.mission.rules, session && selectedFallLevel(level) ? selectedFallProfile(session) : undefined);
+  if (session) showSession();
   events.fill('READY'); get('error').textContent = ''; setPaused(true);
   rosterPanel.refresh();
   get('recovery-status').textContent = 'Positions reset. Saved checkpoints remain available.';
@@ -286,6 +297,24 @@ get<HTMLButtonElement>('stairs').addEventListener('click', () => {
 get<HTMLButtonElement>('fall').addEventListener('click', () => {
   loadGeneration++; loading = false; get('error').textContent = '';
   try { installLevel(createFallDemo()); } catch (error) { get('error').textContent = errorText(error); }
+});
+selectedFallButton.addEventListener('click', async () => {
+  if (loading || !session) return;
+  const sources = rosterPanel.sources(); if (!sources) return;
+  const current = session, nextLevel = createSelectedFallLevel();
+  const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
+  try {
+    const candidate = await createTrainingSession(nextLevel, sources, current.indices, current.inventory.commands);
+    if (generation !== loadGeneration) return;
+    const nextRenderer = new FourViews(canvas, panes, nextLevel);
+    renderer?.dispose(); renderer = nextRenderer; graphicsLost = false;
+    level = nextLevel; world = candidate.world; session = Object.freeze({...candidate.session, encounter:current.encounter});
+    extraDiagnostics = 'Authored selected-dry-fall-v1 geometry; not the original Training43 map or original actor lifecycle. Sources rehashed before installation.';
+    events.fill('READY'); showSession(); updateLevelInfo(); updateHud(readPads());
+    get('recovery-status').textContent = 'Selected-team authored practice ready, PAUSED. Start drill, step forward; Esc pause. Retry drill resets positions, health, inventory and encounter.';
+    get('play').focus();
+  } catch (error) { if (generation === loadGeneration) get('error').textContent = errorText(error); }
+  finally { if (generation === loadGeneration) { loading = false; setPaused(true); rosterPanel.refresh(); } }
 });
 get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
   const mode = (event.currentTarget as HTMLSelectElement).value as MissionMode;
