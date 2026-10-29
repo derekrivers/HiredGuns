@@ -27,8 +27,10 @@ verified initializer provide its authority. It establishes neither original CPU
 startup parity, complete original level behavior nor campaign loading. It does
 not depend on resolving the original campaign selector or Locations revision.
 Navigation remains the existing static world: water, falls, environmental damage,
-combat, general inventory use, death/control transfer, dynamic occupancy, pads and
-corpses are not enabled by this session.
+world combat, general inventory use, death/control transfer, dynamic occupancy, pads and
+corpses are not enabled by this session. A separate
+[authored gun encounter](training-encounter.md) now exercises source-derived gun
+arithmetic in the same app with isolated authored ammo and a dummy/miss policy.
 
 ## Sources and authority
 
@@ -62,7 +64,11 @@ local and ignored.
 ## Recovery and cancellation
 
 **Save checkpoint** pauses and exports a separate
-`hired-guns-training-session` version 5 wrapper when a selected team is active.
+`hired-guns-training-session` version 5 wrapper when a selected team is active
+and its encounter is inactive. An active
+[authored encounter](training-encounter.md) uses exact version 6 with a complete
+validated authored snapshot, rebound gun and actor association; source inventory
+still uses the same bounded replay. Legacy v1-v5 restore with the encounter inactive.
 The wrapper contains the three source identities, four indices, a bounded
 `commands` array (at most 128 equip/exchange/return operations total), and the existing validated
 checkpoint string. It contains no roster, map words, arbitrary inventory storage
@@ -90,7 +96,7 @@ load the session save. No prior Apply is required. Recovery reconstructs the
 immutable initial team deterministically, replays the strict typed inventory log to rebuild
 the detached inventory overlay, validates exact wrapper fields and
 identities, and validates the complete nested world before exposing a candidate.
-The browser installs team and world together only if the operation generation
+The browser installs team, encounter and world together only if the operation generation
 is still current. Recovery remains paused and preserves actor poses, mission,
 tick and RNG. Malformed data, invalid indices, absent/changed sources or wrong
 map leave the working world and team intact, apart from pausing navigation.
