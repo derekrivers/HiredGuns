@@ -13,7 +13,7 @@ import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/
 import { installRosterPanel } from './roster-panel';
 import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
 import { installTrainingInventoryPanel } from './training-inventory-panel';
-import { equipTrainingSession, returnTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
+import { equipTrainingSession, returnTrainingSession, exchangeTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
@@ -54,12 +54,12 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
   if (!sources) throw new Error('Open the matching roster and items first.');
   const generation = ++loadGeneration; loading = true; inventoryPanel.refresh();
   try {
-    const transfer = kind === 'equip' ? equipTrainingSession : returnTrainingSession;
+    const transfer = kind === 'equip' ? equipTrainingSession : kind === 'exchange' ? exchangeTrainingSession : returnTrainingSession;
     const candidate = await transfer(level, sources, session, actor, slot, paused, world);
     if (generation !== loadGeneration) return;
     // Inventory commands reconstruct only the overlay; retain the current navigation world.
     session = candidate.session; showSession();
-    get('recovery-status').textContent = kind === 'equip' ? `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : `Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
+    get('recovery-status').textContent = kind === 'exchange' ? `Exchanged equipment with carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : kind === 'equip' ? `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : `Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
   } finally {
     if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); rosterPanel.refresh(); }
   }
@@ -68,7 +68,7 @@ function cancelSessionOperation(): void { ++loadGeneration; loading = false; set
 function showSession(): void {
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Paused equip into empty equipment is available below; combat and hazards remain unavailable.' : 'No active selected-team session.';
+  label.textContent = session ? 'Standalone imported Training43 session | PAUSED on apply, retry and restore. Paused equip, occupied exchange and return are standalone source-deduced adapters below; combat and hazards remain unavailable.' : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   for (let i = 0; i < 4; i++) {

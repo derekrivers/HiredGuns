@@ -4,7 +4,7 @@ import type { ItemCatalog } from '../import/items';
 import type { OriginalTeam } from '../import/original-team';
 
 export interface EquipCommand { actor: number; slot: number }
-export type InventoryCommand = EquipCommand & { kind: 'equip' | 'return' };
+export type InventoryCommand = EquipCommand & { kind: 'equip' | 'return' | 'exchange' };
 export interface TrainingInventoryActor {
   inventory: SelectionInventory;
   weight: WeightValues & { status: 'verified' };
@@ -14,18 +14,18 @@ export interface TrainingInventory { commands: InventoryCommand[]; actors: Train
 
 export const MAX_INVENTORY_COMMANDS = 128;
 
-/** v4 alternates independently for each actor within the shared session budget. */
-export function inventoryCommands(value: unknown, legacyOneCycle = false): InventoryCommand[] {
+/** v5 allows occupied exchanges independently per actor within the shared budget. */
+export function inventoryCommands(value: unknown, legacyOneCycle = false, allowExchange = true): InventoryCommand[] {
   if (!Array.isArray(value) || value.length > (legacyOneCycle ? 8 : MAX_INVENTORY_COMMANDS) || Reflect.ownKeys(value).length !== value.length + 1) throw new Error('Inventory operation budget exceeded or command storage is not dense.');
   const phases = [0, 0, 0, 0];
   return Array.from(value, entry => {
     if (!entry || typeof entry !== 'object' || Array.isArray(entry) || Reflect.ownKeys(entry).length !== 3 ||
         !['kind', 'actor', 'slot'].every(key => Object.hasOwn(entry, key))) throw new Error('Malformed inventory command fields.');
     const { kind, actor, slot } = entry as InventoryCommand;
-    if ((kind !== 'equip' && kind !== 'return') || !Number.isInteger(actor) || actor < 0 || actor > 3 ||
+    if ((kind !== 'equip' && kind !== 'return' && (kind !== 'exchange' || !allowExchange || legacyOneCycle)) || !Number.isInteger(actor) || actor < 0 || actor > 3 ||
         !Number.isInteger(slot) || slot < 0 || slot > (kind === 'return' ? 28 : 29) ||
-        phases[actor] !== (kind === 'equip' ? 0 : 1)) throw new Error('Invalid inventory command or equip/return order.');
-    phases[actor] = kind === 'equip' ? 1 : legacyOneCycle ? 2 : 0;
+        phases[actor] !== (kind === 'equip' ? 0 : 1)) throw new Error('Invalid inventory command or equip/exchange/return order.');
+    phases[actor] = kind === 'return' ? (legacyOneCycle ? 2 : 0) : 1;
     return { kind, actor, slot };
   });
 }
@@ -80,12 +80,30 @@ export function returnEquipmentToBackpack(inventory: SelectionInventory, items: 
   return { inventory: next, selection: slot, weight: { totalWeight: weight.totalWeight, quotient: weight.quotient, tooHeavy: weight.tooHeavy, usingGrenade: weight.usingGrenade } };
 }
 
+/** Standalone source deduction from Controls&Movement.s .window1/.swap.
+ * Complete selected -> temporary, equipment -> selected, temporary -> equipment.
+ * No original action caller/control authority or temporary actor state is implied.
+ */
+export function exchangeOccupiedEquipment(inventory: SelectionInventory, items: ItemCatalog, physique: number, slot: number): { inventory: SelectionInventory; selection: number; weight: WeightValues } {
+  const next = structuredClone(inventory);
+  if (next.carried.length !== 30 || next.actions.length !== 10 || next.equipped.itemId === 0 ||
+      !Number.isInteger(slot) || slot < 0 || slot >= 30 || !next.carried[slot]?.itemId) throw new Error('Exchange requires occupied equipment and an occupied carried selection with complete storage.');
+  const before = computeSourceWeight(items, next, physique);
+  if (before.status !== 'computed') throw new Error(`Unsupported inventory weight: ${before.reason}`);
+  const temporary = { ...next.carried[slot]! };
+  next.carried[slot] = { ...next.equipped };
+  next.equipped = temporary;
+  const weight = computeSourceWeight(items, next, physique);
+  if (weight.status !== 'computed' || weight.totalWeight !== before.totalWeight) throw new Error('Unsupported exchange weight profile.');
+  return { inventory: next, selection: slot, weight: { totalWeight: weight.totalWeight, quotient: weight.quotient, tooHeavy: weight.tooHeavy, usingGrenade: weight.usingGrenade } };
+}
+
 /** Only session construction supplies the freshly reverified immutable team and item table. */
 export function replayTrainingInventory(team: OriginalTeam, items: ItemCatalog, input: unknown): TrainingInventory {
   const commands = inventoryCommands(input);
   const actors: TrainingInventoryActor[] = team.actors.map(actor => ({ inventory: structuredClone(actor.inventory), weight: { ...actor.weight }, selection: 0 }));
   for (const command of commands) {
-    const transfer = command.kind === 'equip' ? transferIntoEmptyEquipment : returnEquipmentToBackpack;
+    const transfer = command.kind === 'equip' ? transferIntoEmptyEquipment : command.kind === 'exchange' ? exchangeOccupiedEquipment : returnEquipmentToBackpack;
     const result = transfer(actors[command.actor]!.inventory, items, team.actors[command.actor]!.stats.physique, command.slot);
     actors[command.actor] = { ...result, weight: { ...result.weight, status: 'verified' } };
   }
