@@ -9,10 +9,10 @@ import { FixedClock } from './sim/clock';
 import { createWorld, stepWorld } from './sim/world';
 import { teamDead } from './sim/fall';
 import { FourViews } from './render/four-views';
-// Importer stays browser-only here: original data enters explicitly through a local file.
+// Both manual imports and the opt-in local test provider use the raw importer.
 import { importEditorMap } from './import/editor-map';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
-import { installRosterPanel } from './roster-panel';
+import { installRosterPanel, fetchLocalTestResource } from './roster-panel';
 import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
 import { installTrainingInventoryPanel } from './training-inventory-panel';
 import { equipTrainingSession, returnTrainingSession, exchangeTrainingSession, resetTrainingInventory, createTrainingSession, exportTrainingSession, importTrainingSession, isTrainingSessionSave, MAX_SESSION_BYTES, type TrainingSession } from './sim/training-session';
@@ -20,7 +20,8 @@ import { equipTrainingSession, returnTrainingSession, exchangeTrainingSession, r
 const app = document.querySelector<HTMLElement>('#app')!;
 app.innerHTML = `
   <header><div class="brand"><div class="logo" aria-hidden="true">HG</div><div><div class="eyebrow">Operation revival / 001</div><h1>HIRED GUNS</h1></div></div>
-    <div class="actions"><label class="file-button">Open local .map<input id="map-file" aria-label="Open local editor map" type="file" accept=".map"></label><button id="demo">Synthetic map</button><button id="drill">Extraction drill</button><button id="stairs">Dry stair drill</button><button id="fall">Dry fall drill</button><button id="reset">Reset positions</button><button class="primary" id="play">Start navigation</button></div></header>
+    <div class="actions"><button id="local-test-preset">Load ready-to-play Training43 test</button><label class="file-button">Open local .map<input id="map-file" aria-label="Open local editor map" type="file" accept=".map"></label><button id="demo">Synthetic map</button><button id="drill">Extraction drill</button><button id="stairs">Dry stair drill</button><button id="fall">Dry fall drill</button><button id="reset">Reset positions</button><button class="primary" id="play">Start navigation</button></div></header>
+  <p id="local-test-status" role="status">Local test preset: original Training43 map and source-bound team; isolated authored full-ammo encounter. Loads paused. Requires the opt-in loopback provider.</p>
   <div class="brief"><div><strong id="level-name"></strong> <span id="source-label"></span></div><div class="badge" id="prototype-label">STATIC NAVIGATION PROTOTYPE</div></div>
   <div class="mission-bar"><span id="mission-objective"></span><span id="mission-progress" role="status"></span><label id="mission-mode-label">Rules <select id="mission-mode" aria-label="Mission rules"><option value="cooperative-extraction">Cooperative extraction</option><option value="first-exit">Original first-exit race</option><option value="navigation">Navigation only</option></select></label><span id="mission-time"></span></div>
   <div id="error" role="alert"></div>
@@ -34,6 +35,7 @@ let level = createDemoLevel(), world = createWorld(level);
 let renderer: FourViews | null = null;
 let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
+let latestPresetGeneration = 0;
 let session: TrainingSession | null = null;
 let extraDiagnostics = '';
 let padInventory = '';
@@ -119,6 +121,42 @@ const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
     } catch (error) { if (generation === loadGeneration) throw error; }
     finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); } }
   },
+});
+
+get('local-test-preset').addEventListener('click', async () => {
+  const generation = ++loadGeneration; latestPresetGeneration = generation; loading = true; setPaused(true); rosterPanel.refresh();
+  get('local-test-status').textContent = 'Loading and verifying the local Training43 test…';
+  get('error').textContent = '';
+  try {
+    const [map, roster, items] = await Promise.all([
+      fetchLocalTestResource('map', 157738), fetchLocalTestResource('roster', 16320), fetchLocalTestResource('items', 32604),
+    ]);
+    if (generation !== loadGeneration) return;
+    const { level: nextLevel, report } = await importEditorMap(map);
+    if (generation !== loadGeneration) return;
+    const sources = { roster, items }, indices = [11, 3, 0, 5];
+    const [candidate, commitRoster] = await Promise.all([
+      createTrainingSession(nextLevel, sources, indices), rosterPanel.prepare(sources, indices),
+    ]);
+    const encounter = createTrainingEncounter(candidate.session.encounterGun, candidate.session.indices, 0, 'full');
+    if (generation !== loadGeneration) return;
+    // All asynchronous verification finishes before this synchronous installation.
+    const nextRenderer = new FourViews(canvas, panes, nextLevel);
+    try { commitRoster(); } catch (error) { nextRenderer.dispose(); throw error; }
+    renderer?.dispose(); renderer = nextRenderer; graphicsLost = false;
+    level = nextLevel; world = candidate.world;
+    session = Object.freeze({ ...candidate.session, encounter });
+    extraDiagnostics = `Import report: ${JSON.stringify(report, null, 2)}`;
+    events.fill('READY'); loading = false; showSession(); setPaused(true); updateLevelInfo(); updateHud(readPads());
+    get('local-test-status').textContent = 'Ready: verified local Training43 map and OCS team (canonical indices 11, 3, 0, 5). Authored full-ammo encounter armed for team slot 1. PAUSED — Start mission, then F to fire; T target, Esc pause, R reset while paused.';
+    get('recovery-status').textContent = 'Local test ready. Session saves use this same verified map, roster and items.';
+    encounterPanel.select(0, 'full'); get('play').focus();
+  } catch (error) {
+    if (generation === loadGeneration) get('local-test-status').textContent = `Test not loaded: ${errorText(error)}`;
+  } finally {
+    if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); }
+    else if (generation === latestPresetGeneration) get('local-test-status').textContent = 'Local test load cancelled by a newer operation. Current map and team retained.';
+  }
 });
 
 function errorText(error: unknown): string { return error instanceof Error ? error.message : String(error); }
