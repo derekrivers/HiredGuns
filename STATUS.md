@@ -1,25 +1,26 @@
 # Status - 30 October 2026
 
-Accepted gameplay base: PR105, `a130fb75a4e676464205164bd10c39e0ca2925aa`
-(tree `d3afbdb1cf8c68b9184b78df61d43ac593c3fc2e`). This includes PR100's
-pure button transition, selected-team dry-fall/v7, guided same-app controls,
-PR104's terminal browser clock harness and PR105's ground-cache/v8 consumer.
+Accepted gameplay base: PR106, `da41c93cac5e7fa9f42fec698864622d96ce7fa3`
+(tree `97cbd3a845a4147baf660c7c9494a3f84ca1f727`). This includes the same-app
+keyboard static gate/v9, ground-cache/v8, selected-team dry-fall/v7, guided controls,
+source-bound inventory and isolated gun encounter.
 
-Candidate on `codex/training43-keyboard-gate`: [authored keyboard static gate](docs/training-gate.md).
-The same four-view app uses the verified current team/inventory; C activates a
-front-cell panel, collision and rendering follow the accepted candidate together,
-occupied/reserved closure refuses, and v9 recovery rebuilds canonical geometry,
-source-bound inventory and chronological movement/activation before installation.
-Ground-cache and selected-fall modes require a fresh Apply on Training43.
-Legacy v1-v8 validation and checkpoint schema 3 remain unchanged.
+Candidate on `codex/training43-patrol-encounter`:
+[authored gate patrol](docs/training-patrol.md). One deterministic target traverses
+the existing gate lane, reserves current/next cells, reverses for closed gates or
+players, and stops/releases occupancy at zero health. F retains the accepted
+nonspatial designated-target policy and source gun arithmetic; T misses. A visible
+overhead placeholder shares actual collision cells. V10 rebuilds full world/NPC/
+gate/inventory/encounter chronology from canonical starts and verified raw sources.
+Legacy v1-v9 and separate ground/fall workflows remain supported.
 
 Implementation checks and production browser evidence belong to the worker handoff.
 Independent HIGH review of the final head, current CI, completed automatic review
 and resolved findings remain coordinator-owned release gates. Candidate is unmerged.
 
 Training43 and the functional test bed remain incomplete. Original signs and
-zero-position doors stay inactive. Moving doors, pads, lifts, wet outcomes,
-enemy lifecycle, general item use, original fall/death/control/corpse behavior,
-movement weight effects and full original-level acceptance remain open.
+zero-position doors stay inactive. Original enemy AI/combat/lifecycle, moving doors,
+pads, lifts, wet outcomes, general item use, original fall/death/control/corpse
+behavior, movement weight effects and full-level acceptance remain open.
 Graphics/audio integration and physical-controller/TV testing remain deferred.
 Token usage unavailable (not measured).
