@@ -1,3 +1,5 @@
+import { advanceGateTrainingSession, createGateTrainingSession, equipTrainingSession, exchangeTrainingSession, returnTrainingSession, resetTrainingInventory, activateTrainingGround } from '../src/sim/training-session';
+import { createTrainingGateLevel, gateHistory } from '../src/world/training-gate';
 import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import { createDemoLevel } from '../src/demo';
@@ -231,4 +233,57 @@ it.skipIf(!privateInputs)('ground v8 interleaves commands, rejects tampering, re
   await expect(activateTrainingGround(createSelectedFallLevel(),sources,fall.session,fall.world,true)).rejects.toThrow('static');
   const snapshot=structuredClone(current), pending=importTrainingSession(level,sources,json);sources.items.fill(0);level.name+=' changed';
   expect(await pending).toEqual(snapshot);
+});
+
+it.skipIf(!privateInputs)('gate v9 authenticates canonical fixture, current words, chronological movement/items and complete checkpoint; legacy wrappers stay isolated',async()=>{
+  const {sources,level}=await local(), original=await createTrainingSession(level,sources,order), map=createTrainingGateLevel();
+  let candidate=await createGateTrainingSession(sources,original.session,level);
+  const closed=await exportTrainingSession(map,candidate.world,candidate.session,sources);
+  expect(JSON.parse(closed).version).toBe(9);
+  candidate=advanceGateTrainingSession(map,candidate.session,candidate.world,[],0);
+  candidate=advanceGateTrainingSession(map,candidate.session,candidate.world,[{mercenaryId:0,action:'strafe-right'}],null);
+  candidate=advanceGateTrainingSession(map,candidate.session,candidate.world,[{mercenaryId:0,action:'forward'}],null);
+  candidate=await equipTrainingSession(map,sources,candidate.session,0,0,true,candidate.world);
+  candidate=await exchangeTrainingSession(map,sources,candidate.session,0,0,true,candidate.world);
+  candidate=await returnTrainingSession(map,sources,candidate.session,0,0,true,candidate.world);
+  const saved=await exportTrainingSession(map,candidate.world,candidate.session,sources), e=JSON.parse(saved), before=structuredClone(candidate);
+  expect((await importTrainingSession(map,sources,saved))).toEqual(candidate);
+  expect((await importTrainingSession(map,sources,closed)).session.gate?.overlay.word).toBe(0x80000043);
+  expect(resetTrainingInventory(candidate.session,map).gate?.history).toEqual([]);
+  type SavedGateEnvelope = typeof e;
+  for(const mutate of [
+    (e:SavedGateEnvelope)=>{e.gate.fixture='forged';},
+    (e:SavedGateEnvelope)=>{e.gate.panelWord++;},
+    (e:SavedGateEnvelope)=>{e.gate.overlay.word++;},
+    (e:SavedGateEnvelope)=>{e.gate.overlay.nextPlaneDiscoveryWord=32;},
+    (e:SavedGateEnvelope)=>{e.gate.overlay.targetIndex++;},
+    (e:SavedGateEnvelope)=>{e.gate.history[0].actor=2;},
+    (e:SavedGateEnvelope)=>{e.gate.history=Array(129).fill({kind:'wait',ticks:1});},
+    (e:SavedGateEnvelope)=>{e.gate.history=[{kind:'wait',ticks:45000},{kind:'wait',ticks:1}];},
+    (e:SavedGateEnvelope)=>{e.commands=[];},
+    (e:SavedGateEnvelope)=>{e.sources.items.sha256='0'.repeat(64);},
+    (e:SavedGateEnvelope)=>{e.scenario='bad';},
+    (e:SavedGateEnvelope)=>{const c=JSON.parse(e.checkpoint);c.world.mercenaries[0].x=7;e.checkpoint=JSON.stringify(c);},
+    (e:SavedGateEnvelope)=>{e.checkpoint=' '.repeat(16384);},
+    (e:SavedGateEnvelope)=>{e.gate.extra=0;},
+  ]) {const bad=structuredClone(e);mutate(bad);await expect(importTrainingSession(map,sources,JSON.stringify(bad))).rejects.toThrow();}
+  expect(candidate).toEqual(before);
+  const altered=structuredClone(map);altered.layers[0][1]=0;
+  await expect(importTrainingSession(altered,sources,saved)).rejects.toThrow('geometry mismatch');
+  await expect(importTrainingSession(level,sources,saved)).rejects.toThrow('scenario mismatch');
+  await expect(importTrainingSession(map,sources,await exportTrainingSession(level,original.world,original.session,sources))).rejects.toThrow('scenario mismatch');
+  await expect(activateTrainingGround(map,sources,original.session,createWorld(map),true)).rejects.toThrow();
+  await expect(createGateTrainingSession(sources,{...original.session,ground:{} as never},level)).rejects.toThrow('fresh Apply');
+  await expect(createGateTrainingSession(sources,original.session,createSelectedFallLevel())).rejects.toThrow('fresh Apply');
+  expect(()=>gateHistory([{kind:'activate',actor:0,commands:[],bogus:0}])).toThrow();
+});
+it.skipIf(!privateInputs)('gate snapshots sources/world/envelope before asynchronous verification and rejects forged source bytes',async()=>{
+  const {sources,level}=await local(), initial=await createTrainingSession(level,sources,order), map=createTrainingGateLevel();
+  const gate=await createGateTrainingSession(sources,initial.session,level), original=structuredClone(gate.world);
+  const raw={roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)};
+  const pending=exportTrainingSession(map,gate.world,gate.session,raw);raw.roster.fill(0);gate.world.rng=123;
+  const saved=await pending;expect((await importTrainingSession(map,sources,saved)).world).toEqual(original);
+  await expect(importTrainingSession(map,raw,saved)).rejects.toThrow();
+  const saving=JSON.parse(saved);saving.gate.history=Array(129).fill({kind:'wait',ticks:1});
+  await expect(importTrainingSession(map,sources,JSON.stringify(saving))).rejects.toThrow();
 });

@@ -1,3 +1,6 @@
+import { installTrainingGatePanel } from './training-gate-panel';
+import { createTrainingGateLevel, effectiveGateLevel, gateLevel } from './world/training-gate';
+import { advanceGateTrainingSession, createGateTrainingSession } from './sim/training-session';
 import { installTrainingGroundPanel } from './training-ground-panel';
 import { activateTrainingGround, transferTrainingGround, recordTrainingGroundStep } from './sim/training-session';
 import './styles.css';
@@ -66,6 +69,8 @@ let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
 let latestPresetGeneration = 0;
 let session: TrainingSession | null = null;
+let pendingGateActor: number | null = null;
+const activationKeys = new Set<string>();
 let extraDiagnostics = '';
 let padInventory = '';
 let lastTime = performance.now(), frameMs = 0;
@@ -88,7 +93,7 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
   if (session.inventory.commands.length >= MAX_INVENTORY_COMMANDS) throw new Error('Inventory operation budget exhausted. Retry or Apply a new team to reset.');
   const sources = rosterPanel.sources();
   if (!sources) throw new Error('Open the matching roster and items first.');
-  const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh();
+  const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh();
   try {
     const transfer = kind === 'equip' ? equipTrainingSession : kind === 'exchange' ? exchangeTrainingSession : returnTrainingSession;
     const candidate = await transfer(level, sources, session, actor, slot, paused, world);
@@ -97,7 +102,7 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
     session = candidate.session; showSession();
     get('recovery-status').textContent = kind === 'exchange' ? `Exchanged equipment with carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : kind === 'equip' ? `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : `Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
   } finally {
-    if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); rosterPanel.refresh(); }
+    if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); rosterPanel.refresh(); }
   }
 });
 const encounterHost = document.createElement('section'); encounterHost.id = 'training-encounter';
@@ -125,24 +130,48 @@ const groundHost = document.createElement('section'); groundHost.id = 'training-
 groundHost.style.gridColumn = '1 / -1';
 live.append(groundHost);
 const groundPanel = installTrainingGroundPanel(groundHost, () => session, () => world,
-  () => !loading && !!session && !!renderer && !graphicsLost && world.mission.outcome === 'active', () => paused,
+  () => !session?.gate && !loading && !!session && !!renderer && !graphicsLost && world.mission.outcome === 'active', () => paused,
   async (actor, groundId, slot, transfer) => {
     if (!session || loading) return;
     const sources = rosterPanel.sources();
     if (!sources) throw new Error('Open matching raw roster and items first.');
-    const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh();
+    const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh();
     try {
       const candidate = transfer ? await transferTrainingGround(level, sources, session, world, actor, groundId, slot, transfer, paused) : await activateTrainingGround(level, sources, session, world, paused);
       if (generation !== loadGeneration) throw new Error('Cancelled by a newer operation; working state retained.');
       session = candidate.session; world = candidate.world; showSession();
     } finally {
-      if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); rosterPanel.refresh(); }
+      if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); rosterPanel.refresh(); }
     }
   });
+const gateHost = document.createElement('section'); gateHost.id = 'training-gate'; gateHost.style.gridColumn = '1 / -1'; live.insertBefore(gateHost,groundHost);
+const gatePanel = installTrainingGatePanel(gateHost, () => session, () => world, () => level,
+  () => !loading && !!session && !!renderer && !graphicsLost && world.mission.outcome === 'active', () => paused,
+  async () => {
+    if (loading || !paused || !session) throw new Error('Pause an available selected team first.');
+    const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw roster and items.');
+    const current = session, generation = ++loadGeneration; loading = true; setPaused(true);
+    try {
+      const candidate = await createGateTrainingSession(sources,current,level);
+      if (generation !== loadGeneration) throw new Error('Cancelled by a newer operation; working state retained.');
+      const nextLevel = createTrainingGateLevel();
+      replaceGateRenderer(candidate.session,nextLevel);
+      level = nextLevel; world = candidate.world; session = candidate.session;
+      events.fill('READY'); showSession(); updateLevelInfo(); updateHud(readPads()); get('play').focus();
+    } finally { if (generation === loadGeneration) {loading = false; setPaused(true); rosterPanel.refresh();} }
+  });
+/** Prepare rendering before installing collision/session; renderer and collision use the same candidate. */
+function replaceGateRenderer(next: TrainingSession | null, base = level): void {
+  if (base === level && session?.gate?.panelWord === next?.gate?.panelWord && session?.gate?.overlay.word === next?.gate?.overlay.word) return;
+  const nextRenderer = new FourViews(canvas,panes,effectiveGateLevel(base,next?.gate ?? null));
+  renderer?.dispose(); renderer = nextRenderer; graphicsLost = false;
+}
 function cancelSessionOperation(): void { ++loadGeneration; loading = false; setPaused(true); }
 function showSession(): void {
   encounterPanel.clearFeedback();
   groundPanel.clear();
+  gatePanel.clear();
+  groundHost.style.display = session?.gate ? 'none' : '';
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
   label.textContent = session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
@@ -164,7 +193,7 @@ function showSession(): void {
 }
 function clearSession(): void {
   cancelSessionOperation(); session = null;
-  if (selectedFallLevel(level)) installLevel(createDemoLevel());
+  if (selectedFallLevel(level) || gateLevel(level)) installLevel(createDemoLevel());
   else showSession();
 }
 const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
@@ -181,7 +210,7 @@ const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
       get('recovery-status').textContent = 'Selected team applied. Review controls, then Start mission. Session saves require these same local sources.';
       get('play').focus();
     } catch (error) { if (generation === loadGeneration) throw error; }
-    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); } }
+    finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); } }
   },
 });
 
@@ -216,19 +245,19 @@ get('local-test-preset').addEventListener('click', async () => {
   } catch (error) {
     if (generation === loadGeneration) get('local-test-status').textContent = `Test not loaded: ${errorText(error)}`;
   } finally {
-    if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); }
+    if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); }
     else if (generation === latestPresetGeneration) get('local-test-status').textContent = 'Local test load cancelled by a newer operation. Current map and team retained.';
   }
 });
 
 function errorText(error: unknown): string { return error instanceof Error ? error.message : String(error); }
 function setPaused(value: boolean): void {
-  paused = value; keys.clear(); router.reset(); clock.reset();
+  paused = value; pendingGateActor = null; keys.clear(); router.reset(); clock.reset();
   updateMissionHud();
-  inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh();
+  inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh();
 }
 function updateMissionHud(): void {
-  selectedFallButton.disabled = loading || !session || !!session.ground || selectedFallLevel(level);
+  selectedFallButton.disabled = loading || !session || !!session.ground || !!session.gate || selectedFallLevel(level);
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
   const play = get<HTMLButtonElement>('play');
@@ -240,9 +269,9 @@ function updateMissionHud(): void {
   get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : fallDrill ? 'Retry drill' : 'Reset positions';
   get('mission-mode-label').hidden = extractionProfile(level) === null;
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
-  get('mission-objective').textContent = !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
+  get('mission-objective').textContent = session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : fallDrill ? allDead ? 'PRACTICE EXHAUSTED · Retry or restore' : `${world.physics.mode === 'dry-fall' ? world.physics.actors.filter(a=>a.dead).length : 0} / 4 incapacitated` : '';
-  get('prototype-label').textContent = selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  get('prototype-label').textContent = session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
   if (mission.clock) {
     const units = mission.clock.tens * 10 + mission.clock.units;
@@ -286,14 +315,16 @@ selects.forEach((select, i) => select.addEventListener('change', () => {
     const pad = readPads().find(p => `pad:${p.index}:${p.id}` === value);
     if (pad) source = { kind: 'gamepad', index: pad.index, id: pad.id };
   }
-  router.assign(i, source); keys.clear(); refreshAssignments(readPads(), true); select.blur();
+  router.assign(i, source); pendingGateActor = null;
+  if (source?.kind === 'keyboard' && source.index === 0) gatePanel.select(i);
+  keys.clear(); refreshAssignments(readPads(), true); select.blur();
 }));
 
 function updateHud(pads: PadSnapshot[]): void {
   for (let i = 0; i < 4; i++) {
     const p = world.mercenaries[i]!, source = router.assignments[i];
     get(`position-${i}`).textContent = `X ${String(p.x).padStart(2, '0')}  Y ${String(p.y).padStart(2, '0')}  Z ${String(p.z).padStart(2, '0')} / ${['N', 'E', 'S', 'W'][p.facing]}`;
-    get(`event-${i}`).textContent = events[i]!;
+    get(`event-${i}`).textContent = session?.gate && i === gatePanel.selected() ? `${events[i]} · ${gatePanel.near(i) ? 'PANEL AHEAD · C' : 'C: FACE PANEL'} · ${session.gate.overlay.word & 2 ? 'GATE CLOSED' : 'GATE OPEN'}` : events[i]!;
     const fitness = get(`fitness-${i}`); fitness.hidden = world.physics.mode !== 'dry-fall';
     fitness.textContent = world.physics.mode === 'dry-fall' ? `FIT ${Math.floor(world.physics.actors[i]!.fitness / 655)}%${selectedFallLevel(level) ? ` · ${world.physics.actors[i]!.fitness} · FALL ${world.physics.actors[i]!.fallDamage} · WT ${world.physics.actors[i]!.weight}` : ''}` : '';
     const pad = source?.kind === 'gamepad' ? pads.find(pad => pad.index === source.index && pad.id === source.id && pad.connected) : null;
@@ -332,7 +363,8 @@ function installLevel(nextLevel: LevelData, diagnostics = ''): void {
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
   loadGeneration++; loading = false;
-  if (session) session = resetTrainingInventory(session, level, world.mission.rules);
+  const nextSession = session ? resetTrainingInventory(session, level, world.mission.rules) : null;
+  replaceGateRenderer(nextSession); session = nextSession;
   world = createWorld(level, undefined, world.mission.rules, session && selectedFallLevel(level) ? selectedFallProfile(session) : undefined);
   if (session) showSession();
   events.fill('READY'); get('error').textContent = ''; setPaused(true);
@@ -357,7 +389,7 @@ get<HTMLButtonElement>('fall').addEventListener('click', () => {
 });
 for (const id of ['demo', 'drill', 'stairs', 'fall']) get(id).addEventListener('click', () => get('play').focus());
 selectedFallButton.addEventListener('click', async () => {
-  if (loading || !session || session.ground) return;
+  if (loading || !session || session.ground || session.gate) return;
   const sources = rosterPanel.sources(); if (!sources) return;
   const current = session, nextLevel = createSelectedFallLevel();
   const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
@@ -379,7 +411,7 @@ get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
   try {
     const next = createWorld(level, undefined, missionRulesForLevel(level, mode));
     loadGeneration++; loading = false; world = next;
-    if (session) { session = resetTrainingInventory(session, level, world.mission.rules); showSession(); }
+    if (session) { const nextSession = resetTrainingInventory(session, level, world.mission.rules); replaceGateRenderer(nextSession); session = nextSession; showSession(); }
     events.fill('READY'); get('error').textContent = ''; setPaused(true);
     rosterPanel.refresh();
     get('recovery-status').textContent = 'Rules changed. Mission restarted; saved checkpoints retain their own rules.';
@@ -396,9 +428,9 @@ get<HTMLInputElement>('map-file').addEventListener('change', async event => {
     const { level: imported, report } = await importEditorMap(new Uint8Array(await file.arrayBuffer()));
     if (generation !== loadGeneration) return;
     installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
-    loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh();
+    loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh();
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); } }
 });
 
 get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => {
@@ -414,7 +446,7 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
     link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. ${session ? 'Keep the same local map, roster and items for session recovery.' : 'Keep the same source map for recovery.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); } }
 });
 get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
@@ -437,10 +469,10 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
       restored = await importCheckpoint(level, json);
     }
     if (generation !== loadGeneration) return;
-    session = restoredSession; world = restored; showSession(); events.fill('RESTORED'); updateHud(readPads());
+    replaceGateRenderer(restoredSession); session = restoredSession; world = restored; showSession(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
-  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); } }
+  finally { if (generation === loadGeneration) { loading = false; rosterPanel.refresh(); inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh(); } }
 });
 
 const allKeys = new Set(KEY_GROUPS.flatMap(group => group.map(([key]) => key)));
@@ -448,6 +480,20 @@ window.addEventListener('keydown', event => {
   const target = event.target as HTMLElement;
   if (target.matches('input,select,textarea') || event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.code === 'Escape') { setPaused(true); event.preventDefault(); return; }
+  if (event.code === 'KeyC') {
+    event.preventDefault();
+    if (!event.repeat && !activationKeys.has(event.code)) {
+      activationKeys.add(event.code);
+      if (!session?.gate || loading || !renderer || graphicsLost || world.mission.outcome !== 'active') gatePanel.feedback('Activation unavailable: set up gate practice first.');
+      else if (paused) gatePanel.feedback('Refused: PAUSED. Start navigation before C.');
+      else if (pendingGateActor === null) {
+        const controlled = router.assignments.findIndex(source => source?.kind === 'keyboard' && source.index === 0);
+        if (controlled < 0) gatePanel.feedback('Refused: assign WASD to a mercenary first.');
+        else { gatePanel.select(controlled); pendingGateActor = controlled; }
+      }
+    }
+    return;
+  }
   if (['KeyG','KeyB','KeyV'].includes(event.code)) { event.preventDefault(); if (!event.repeat) groundPanel.keyboard(event.code); return; }
   if (['KeyF', 'KeyT', 'KeyR'].includes(event.code)) {
     event.preventDefault();
@@ -456,12 +502,13 @@ window.addEventListener('keydown', event => {
   }
   if (/^Digit[1-4]$/.test(event.code)) {
     groundPanel.select(Number(event.code.slice(-1)) - 1);
+    gatePanel.select(Number(event.code.slice(-1)) - 1); pendingGateActor = null;
     router.assign(Number(event.code.slice(-1)) - 1, { kind: 'keyboard', index: 0 }); keys.clear(); refreshAssignments(readPads(), true); event.preventDefault(); return;
   }
   if (allKeys.has(event.code)) { event.preventDefault(); if (!paused) keys.add(event.code); }
 });
-window.addEventListener('keyup', event => { keys.delete(event.code); });
-window.addEventListener('blur', () => setPaused(true));
+window.addEventListener('keyup', event => { keys.delete(event.code); activationKeys.delete(event.code); });
+window.addEventListener('blur', () => { activationKeys.clear(); setPaused(true); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) setPaused(true); });
 canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); graphicsLost = true; setPaused(true); get('error').textContent = 'Graphics context lost. Reload the page to recover.'; });
 
@@ -472,15 +519,19 @@ function frame(now: number): void {
     try { clock.advance(elapsed, () => {
       const previousTick = world.tick;
       const commands = router.commands(world.tick, keys, pads);
-      const result = stepWorld(level, world, commands);
-      const nextSession = session ? recordTrainingGroundStep(session, world, result.world, commands) : null;
+      const activation = pendingGateActor; pendingGateActor = null;
+      const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation) : null;
+      const result = gateResult ?? stepWorld(level,world,commands);
+      const nextSession = gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
+      replaceGateRenderer(nextSession);
       world = result.world; session = nextSession;
+      if (gateResult?.feedback) gatePanel.feedback(gateResult.feedback);
       if (world.tick !== previousTick && session?.encounter) session = Object.freeze({ ...session, encounter: tickTrainingEncounter(session.encounter) });
       result.events.forEach((event: SimulationEvent) => { events[event.mercenaryId] = event.kind === 'blocked' ? `BLOCKED: ${event.reason}`.toUpperCase() : event.kind.toUpperCase(); });
     }); } catch (error) { setPaused(true); get('error').textContent = errorText(error); }
     if (world.mission.outcome !== 'active' || teamDead(world)) setPaused(true);
   }
-  inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh();
+  inventoryPanel.refresh(); encounterPanel.refresh(); groundPanel.refresh(); gatePanel.refresh();
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }

@@ -1,34 +1,33 @@
 # Training43 completion boundary
 
-Gameplay accepted through PR102 at base
-`a99d9f39cc32a455bbbde648be2b41f9fe6ac0ad` (tree
-`0781c0677517e219a39b3aef1bab89c231cb1d98`). PR95/97 provide bounded paused
-inventory replay and occupied exchange; PR96/98 provide the pure gun transition
-and same-app isolated authored encounter; PR99 adds verified one-click setup and
-known-source dropdowns. PR102 accepts selected-team authored dry-fall practice,
-selected stats/current weight, incapacitation/occupancy and atomic paused v7
-recovery. Training43 itself retains static physics. Legacy wrappers v1-v6 keep
-their existing validation. Coordinator-owned receipts record accepted gates.
+Accepted gameplay through PR105 at `a130fb75a4e676464205164bd10c39e0ca2925aa`
+(tree `d3afbdb1cf8c68b9184b78df61d43ac593c3fc2e`). Same-app verified team,
+paused inventory/exchange, isolated gun encounter, one-click setup, selected-team
+authored dry fall, guided controls and authored ground cache have accepted packets.
+PR100 supplies the accepted immutable button/block transition.
 
-PR100 button/door and PR101 ground-item transfers are accepted pure transition
-cores. Their same-app consumers remain pending; this UX packet does not wire them.
+Candidate: [keyboard button/static gate practice](training-gate.md), using a
+canonical authored arena and the current verified selected team. C reverses a
+front-cell panel via PR100; closed gates block movement, open gates admit actual
+walkthrough, and authored occupancy/reservation protection refuses closure.
+Source-bound v9 replay preserves interleaved inventory and independently validated
+encounter state. Ground-cache and dry-fall modes stay separate; reopen Training43
+and Apply a fresh team to switch. This packet awaits independent HIGH/current CI/
+completed automatic review and normal coordinator integration.
 
-**Candidate in this packet, pending independent review/integration:**
-[guided testbed layout](testbed-ux.md), with labeled setup, scenario/start
-controls, live four views and readable combat results. Inventory, roster and raw
-source diagnostics remain accessible through expandable sections. Transient shot
-before/after feedback is cleared on restore and session reconstruction. No
-mechanics, source, renderer or persistence contract changes. Exact-head independent
-HIGH review, current CI and actual automatic review remain required for release.
+| Capability | Current scope and remaining boundary |
+| --- | --- |
+| Startup / movement / selection / pause | Same guided app; four views, verified local OCS team and keyboard control. Original startup and hardware-controller parity remain separate. |
+| Inventory / ground | Accepted paused equip/exchange/return and authored relocated-cache pickup/drop with v8 recovery. Gate v9 supports interleaved inventory. No original world item placement or general use. |
+| Weapons / encounters | Accepted isolated authored dummy/miss and source-derived gun arithmetic. Separate authored ammo; no world enemies. |
+| Buttons / gates | Candidate same-app authored static panel/gate, shared collision/display candidate and closure interlock. Original Training43 signs and inactive door slots remain inactive; moving doors, pads and lifts unavailable. |
+| Falling / water / death | Accepted selected-team authored dry fall with v7 recovery. No gate/ground mixed fall replay; no changed-block recalculation of old injuries. Wet outcomes and original lifecycle remain unavailable. |
+| Mission / retry / recovery | Accepted bounded Training43 extraction/timeouts. Candidate gate retry resets words/history/inventory/encounter; complete paused v9 recovery verifies canonical fixture and chronological world. Schema 3 and size bounds unchanged. |
 
-Training43 and the functional test bed remain incomplete. Pickup/drop/transfer/
-general use, enemies, dynamic original-world mechanics, wet outcomes, original
-fall/death/control/pad/corpse integration, movement weight effects and complete
-original-level acceptance remain open. The authored dry practice closes only its
-bounded selected-team test-bed interaction.
-Campaign Locations/runtime provenance and original startup fidelity remain separate
-from explicit-import authority. Physical controllers/TV are deferred; graphics
-integration remains held. Token usage unavailable.
+Training43 and the complete functional test bed remain incomplete. No original-map
+runtime parity, full level, enemy, wet, moving-door, campaign, graphics or audio
+completion is claimed. Public tests use synthetic fixtures; private originals and
+browser evidence stay ignored. Physical controllers/TV remain deferred.
 
 The original assessment below is historical; its unchanged-browser/recovery statements predate the accepted session/inventory work.
 
