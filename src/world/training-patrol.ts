@@ -1,3 +1,4 @@
+import { PRESSURE_PAD_FIXTURE, pressurePadLevel } from './training-pressure-pad';
 import { MOVING_DOOR_FIXTURE, type DoorAction } from './training-moving-door';
 import { movingDoorLevel } from './training-gate';
 import type { LevelData, PlayerCommand, Position, WorldState } from '../contracts';
@@ -18,11 +19,11 @@ export const PATROL_CADENCE = 16;
 export const PATROL_ROUTE: readonly Readonly<Position>[] = Object.freeze([3,4,5,6,7].map(x => Object.freeze({x,y:5,z:1})));
 export type PatrolEvent = GateEvent | {kind:'fire'} | {kind:'target'};
 export interface TrainingPatrol {
-  version: 1; fixture: typeof PATROL_FIXTURE | typeof PATROL_MISSION_FIXTURE | typeof MOVING_DOOR_FIXTURE; history: PatrolEvent[];
+  version: 1; fixture: typeof PATROL_FIXTURE | typeof PATROL_MISSION_FIXTURE | typeof MOVING_DOOR_FIXTURE | typeof PRESSURE_PAD_FIXTURE; history: PatrolEvent[];
   routeIndex: number; direction: 1 | -1; counter: number;
   blocked: 'clear' | 'gate-or-wall' | 'player';
 }
-export const initialTrainingPatrol = (mission = false, moving = false): TrainingPatrol => ({version:1,fixture:moving ? MOVING_DOOR_FIXTURE : mission ? PATROL_MISSION_FIXTURE : PATROL_FIXTURE,history:[],routeIndex:0,direction:1,counter:0,blocked:'clear'});
+export const initialTrainingPatrol = (mission = false, moving = false, pad = false): TrainingPatrol => ({version:1,fixture:pad ? PRESSURE_PAD_FIXTURE : moving ? MOVING_DOOR_FIXTURE : mission ? PATROL_MISSION_FIXTURE : PATROL_FIXTURE,history:[],routeIndex:0,direction:1,counter:0,blocked:'clear'});
 export const patrolPosition = (patrol: TrainingPatrol) => PATROL_ROUTE[patrol.routeIndex]!;
 export function patrolHistory(value: unknown): PatrolEvent[] {
   if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype || value.length > MAX_GATE_HISTORY || Reflect.ownKeys(value).length !== value.length+1) throw new Error('Patrol history budget or storage invalid.');
@@ -66,14 +67,14 @@ export function stepTrainingPatrol(level: LevelData, world: WorldState, gate: Tr
     }
   }
   const reservations = active ? [patrolPosition(patrol),...(destination ? [destination] : [])] : [];
-  const result = stepTrainingGate(snapshot,world,gate,commands,actor,reservations,snapshot,action);
+  const result = stepTrainingGate(pressurePadLevel(level) ? level : snapshot,world,gate,commands,actor,reservations,snapshot,action);
   if (result.world.tick === world.tick) return {...result,patrol,encounter};
   // Closure interlock reserved this destination; opening takes effect next cadence.
   if (destination) next = {...next,routeIndex:PATROL_ROUTE.indexOf(destination)};
   return {...result,patrol:next,encounter:tickTrainingEncounter(encounter)};
 }
 export function replayTrainingPatrol(level: LevelData, team: OriginalTeam, items: ItemCatalog, gun: GunWeapon, history: unknown) {
-  let world = createWorld(level), gate = initialTrainingGate(movingDoorLevel(level)), patrol = initialTrainingPatrol(patrolMissionLevel(level),movingDoorLevel(level));
+  let world = createWorld(level), gate = initialTrainingGate(movingDoorLevel(level),pressurePadLevel(level)), patrol = initialTrainingPatrol(patrolMissionLevel(level),movingDoorLevel(level),pressurePadLevel(level));
   let encounter = createTrainingEncounter(gun,team.actors.map(a => a.canonicalIndex),0,'full');
   let inventory = replayTrainingInventory(team,items,[]);
   const inventoryCommands: InventoryCommand[] = [];

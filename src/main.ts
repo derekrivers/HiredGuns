@@ -1,6 +1,6 @@
 import { installTrainingDoorPanel } from './training-door-panel';
-import { createMovingDoorSession } from './sim/training-session';
-import { createMovingDoorLevel } from './world/training-gate';
+import { createMovingDoorSession, createPressurePadSession } from './sim/training-session';
+import { createMovingDoorLevel, createPressurePadLevel } from './world/training-gate';
 import type { DoorAction } from './world/training-moving-door';
 import { effectivePatrolLevel } from './world/training-patrol';
 import { createPatrolMissionLevel, patrolMissionLevel } from './world/training-gate';
@@ -242,6 +242,17 @@ const doorPanel = installTrainingDoorPanel(doorHost,() => session,() => world,
     if (actor < 0) {doorPanel.feedback('Assign WASD to a mercenary first.'); return;}
     if (pendingGateActor !== null) {doorPanel.feedback('An action is already queued for the next tick.'); return;}
     pendingGateActor = actor; pendingDoorAction = action;
+  }, async () => {
+    if (loading || !session) throw new Error('Apply a verified team first.');
+    const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw sources.');
+    const current = session, generation = ++loadGeneration; loading = true; setPaused(true);
+    try {
+      const candidate = await createPressurePadSession(sources,current);
+      if (generation !== loadGeneration) return;
+      const nextLevel = createPressurePadLevel(); replaceGateRenderer(candidate.session,nextLevel);
+      level = nextLevel; session = candidate.session; world = candidate.world; events.fill('READY');
+      showSession(); updateLevelInfo(); updateHud(readPads()); get('play').focus();
+    } finally {if (generation === loadGeneration) {loading = false; setPaused(true); rosterPanel.refresh();}}
   });
 /** Prepare rendering before installing collision/session; renderer and collision use the same candidate. */
 function replaceGateRenderer(next: TrainingSession | null, base = level): void {
@@ -359,7 +370,7 @@ function updateMissionHud(): void {
   get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : fallDrill ? 'Retry drill' : 'Reset positions';
   get('mission-mode-label').hidden = extractionProfile(level) === null || patrolMissionLevel(level);
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
-  get('mission-objective').textContent = session?.gate?.moving ? 'C opens/closes timed door at the panel; WAIT for WALK THROUGH. F defeats target; extract all four at E (8,5). Lock/unlock: Tab to door buttons, Enter. 1–4 select WASD; Esc pauses.' : patrolMissionLevel(level) ? '1. C opens gate · 2. F defeats designated target (T: miss) · 3. Extract all four at E (8,5). 1–4 select WASD; Q/E turn; Esc pause; Y Retry after outcome. Limit: 10 source counts × 601 ticks.' : session?.patrol ? 'Authored patrol: C opens gate; F designates patrol target or T chooses miss. Health zero stops and releases it. Esc pauses; Retry resets the scenario.' : session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
+  get('mission-objective').textContent = session?.gate?.pad ? 'D steps onto P (4,5); wait for WALK THROUGH, W crosses door, W vacates. Release requests close. F defeats target; extract all four at E. C remains a manual alternative. 1–4 select WASD; Esc pauses.' : session?.gate?.moving ? 'C opens/closes timed door at the panel; WAIT for WALK THROUGH. F defeats target; extract all four at E (8,5). Lock/unlock: Tab to door buttons, Enter. 1–4 select WASD; Esc pauses.' : patrolMissionLevel(level) ? '1. C opens gate · 2. F defeats designated target (T: miss) · 3. Extract all four at E (8,5). 1–4 select WASD; Q/E turn; Esc pause; Y Retry after outcome. Limit: 10 source counts × 601 ticks.' : session?.patrol ? 'Authored patrol: C opens gate; F designates patrol target or T chooses miss. Health zero stops and releases it. Esc pauses; Retry resets the scenario.' : session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : fallDrill ? allDead ? 'PRACTICE EXHAUSTED · Retry or restore' : `${world.physics.mode === 'dry-fall' ? world.physics.actors.filter(a=>a.dead).length : 0} / 4 incapacitated` : '';
   get('prototype-label').textContent = session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';

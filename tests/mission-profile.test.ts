@@ -3,6 +3,13 @@ import {extractionProfile,missionRulesForLevel} from '../src/sim/mission-profile
 import {createPatrolMissionLevel,createTrainingGateLevel,initialTrainingGate} from '../src/world/training-gate';
 import {effectivePatrolLevel} from '../src/world/training-patrol';
 import {createTrainingEncounter} from '../src/combat/training-encounter';
+import {createPressurePadLevel,effectiveGateLevel} from '../src/world/training-gate';
+
+it('v13 canonical raw and standing pad projections keep the fixed mission, arbitrary descriptor/floor edits do not',()=>{
+ const map=createPressurePadLevel(),gate=initialTrainingGate(true,true);
+ expect(extractionProfile(map)?.timeLimit).toBe(10);expect(extractionProfile(effectiveGateLevel(map,gate))?.timeLimit).toBe(10);
+ for(const [index,word] of [[648,0x80000401],[119,0x81000042],[119,0x81800002]]){const bad=structuredClone(map);bad.layers[0][index!]=word!;expect(extractionProfile(bad)).toBeNull();}
+});
 describe('canonical authored patrol mission profile',()=>{
  it('fixes ten source counts and cooperative rules without enabling practice or fake geometry',()=>{
   const map=createPatrolMissionLevel();expect(extractionProfile(map)).toEqual({title:'Authored patrol extraction',timeLimit:10});expect(missionRulesForLevel(map)).toEqual({mode:'cooperative-extraction',timeLimit:10});

@@ -1,3 +1,4 @@
+import { PRESSURE_PAD_FIXTURE, PAD_INDEX, pressurePadLevel, transitionPressurePad, type TrainingPressurePad } from './training-pressure-pad';
 import { advanceMovingDoor, initialMovingDoor, MOVING_DOOR_FIXTURE, type DoorAction, type TrainingMovingDoor } from './training-moving-door';
 import { cellIndex, inBounds, type LevelData, type PlayerCommand, type WorldState } from '../contracts';
 import { groundHistory, MAX_GROUND_TICKS } from '../items/training-ground';
@@ -9,7 +10,7 @@ import { transitionButtonBlock, type StaticBlockingOverlay } from './button-door
 
 export const PATROL_MISSION_FIXTURE = 'authored-patrol-extraction-v1';
 export const PATROL_EXIT = Object.freeze({x:8,y:5,z:1});
-export const movingDoorLevel = (level: LevelData) => level.id === MOVING_DOOR_FIXTURE;
+export const movingDoorLevel = (level: LevelData) => level.id === MOVING_DOOR_FIXTURE || pressurePadLevel(level);
 export const patrolMissionLevel = (level: LevelData) => level.id === PATROL_MISSION_FIXTURE || movingDoorLevel(level);
 export const GATE_FIXTURE = 'authored-static-gate-v1';
 export const MAX_GATE_HISTORY = 128;
@@ -20,7 +21,7 @@ const button = { index: 0, fields: { used: 0, actionIn: 4, actionOut: 5, dataIn:
 export type GateEvent = { kind: 'step'; commands: PlayerCommand[] } | { kind: 'wait'; ticks: number } |
   InventoryCommand | { kind: 'activate'; actor: number; commands: PlayerCommand[] } | {kind:'door'; actor:number; action:DoorAction; commands:PlayerCommand[]};
 export interface TrainingGate {
-  version: 1; fixture: typeof GATE_FIXTURE; history: GateEvent[]; moving?: TrainingMovingDoor;
+  version: 1; fixture: typeof GATE_FIXTURE; history: GateEvent[]; moving?: TrainingMovingDoor; pad?: TrainingPressurePad;
   panelWord: number; overlay: StaticBlockingOverlay;
 }
 const initialWords = () => ({ panelWord: 0x8008004b, overlay: { targetIndex: index(GATE_TARGET), word: 0x80000043, discoveryWord: 0x80000000, nextPlaneDiscoveryWord: 1 } });
@@ -49,8 +50,14 @@ export function createMovingDoorLevel(): LevelData {
   level.unsupportedMechanics = ['Authored tick timing and conservative occupancy interlock; no original runtime door selection, key eligibility, crush, audio or CPU timing parity.'];
   return level;
 }
+export function createPressurePadLevel(): LevelData {
+  const level = createMovingDoorLevel(); level.id = PRESSURE_PAD_FIXTURE; level.name = 'Authored pressure pad / timed door extraction';
+  level.layers[0][PAD_INDEX] = 0x80000201;
+  level.layers[0][PAD_INDEX-529] = 0x81800042;
+  return level;
+}
 export const gateLevel = (level: LevelData) => level.id === GATE_FIXTURE || patrolMissionLevel(level);
-export function initialTrainingGate(moving = false): TrainingGate { const gate: TrainingGate = { version: 1, fixture: GATE_FIXTURE, history: [], ...initialWords() }; if (moving) {gate.moving = initialMovingDoor(); gate.overlay = {...gate.overlay,word:gate.moving.word};} return gate; }
+export function initialTrainingGate(moving = false, pad = false): TrainingGate { const gate: TrainingGate = { version: 1, fixture: GATE_FIXTURE, history: [], ...initialWords() }; if (moving) {gate.moving = initialMovingDoor(); gate.overlay = {...gate.overlay,word:gate.moving.word};} if (pad) gate.pad = {occupants:[],lastActions:[]}; return gate; }
 export function effectiveGateLevel(base: LevelData, gate: TrainingGate | null): LevelData {
   if (!gate) return base;
   const level = structuredClone(base);
@@ -58,6 +65,9 @@ export function effectiveGateLevel(base: LevelData, gate: TrainingGate | null): 
   level.layers[0][gate.overlay.targetIndex] = gate.overlay.word;
   level.layers[1][gate.overlay.targetIndex] = gate.overlay.discoveryWord;
   level.layers[1][gate.overlay.targetIndex + 529] = gate.overlay.nextPlaneDiscoveryWord;
+  // Narrow authored standing projection: generic traversal keeps rejecting pads.
+  // Raw floor/descriptor remain in canonical base and drive pad action selection.
+  if (gate.pad) level.layers[0][PAD_INDEX] = (base.layers[0][PAD_INDEX]! & ~0x600) >>> 0;
   return level;
 }
 function fields(v: unknown, keys: string[]): asserts v is Record<string, unknown> {
@@ -166,9 +176,12 @@ function stepMovingGate(base: LevelData, world: WorldState, gate: TrainingGate, 
       else feedback = 'Refused: face the panel at 5,4,1.';
     }
   }
-  const moving = advanceMovingDoor(gate.moving!,requested,[...world.mercenaries,...probe.world.mercenaries,...reservations]);
-  const nextGate = {...gate,moving,overlay:{...gate.overlay,word:moving.word}};
-  const effective = moving.word === gate.moving!.word ? snapshot : effectiveGateLevel(base,nextGate);
+  const pad = gate.pad ? transitionPressurePad(base,world,probe.world,gate.pad) : undefined;
+  // Explicit manual input first; successful movement edges next; one scheduler step.
+  const actions: DoorAction[] = [...(requested ? [requested] : []),...(pad && pad.lastActions !== gate.pad?.lastActions ? pad.lastActions.map(p=>p.action) : [])];
+  const moving = advanceMovingDoor(gate.moving!,gate.pad ? actions : requested,[...world.mercenaries,...probe.world.mercenaries,...reservations]);
+  const nextGate = {...gate,...(pad ? {pad} : {}),moving,overlay:{...gate.overlay,word:moving.word}};
+  const effective = moving.word === gate.moving!.word ? snapshot : effectiveGateLevel(snapshot,nextGate);
   // Current-snapshot movement priority: opening becomes traversable next tick.
   // Closure cannot overlap any accepted destination, checked above.
   return {...probe,gate:nextGate,effective,feedback:feedback || (requested ? `Door action ${requested} accepted; wait for source scheduler.` : '')};
