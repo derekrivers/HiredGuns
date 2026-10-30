@@ -1,3 +1,25 @@
+# Current gameplay candidate — consumable dry-fall extension
+
+Accepted base: PR111 merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`.
+The same-app authored selected-team dry-fall extension now supports source-bound
+ordinary equipped food and repair use with H/button, integer fitness gain,
+equipment ID clearing and reduced source weight. Race restrictions, unsupported
+medical64 poison cure, other categories, empty/dead/pending/running refusals
+are explicit. Full chronological v14 recovery includes movement/falls/equipment/use,
+source rehashing, bounded history and atomic paused installation. Legacy v1–v13
+remain intact. [Scope and controls](docs/training-consumables.md).
+
+Implementation validation: npm check, public synthetic chronology/arithmetic,
+private verified-source session checks and actual application browser checks.
+Exact commands, all attempts and production-build evidence are retained in the
+ignored worker handoff. Independent exact-final HIGH/current CI/completed
+automatic review and coordinator merge remain outstanding. Not self-approved.
+Training43 / complete functional test bed are not accepted. General inventory
+transfer, poison/wet/death/corpse, original enemy/world machinery and lifts remain
+open. Graphics/audio/controller/TV work stays deferred. Token usage unavailable.
+
+## Historical candidate assessment (preserved)
+
 # Status - 30 October 2026
 
 Accepted base: PR110 merge `e4cfd07c675924a75d17a731569a72d9056a10af`

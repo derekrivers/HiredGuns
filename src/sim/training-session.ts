@@ -1,3 +1,4 @@
+import { CONSUMABLE_FIXTURE, serializeConsumables as consumableJSON, replayConsumables, consumableHistory, appendConsumableEvent, equalConsumableState, type TrainingConsumables, type ConsumableEvent } from './training-consumables';
 import { PRESSURE_PAD_FIXTURE, pressurePadLevel } from '../world/training-pressure-pad';
 import { MOVING_DOOR_FIXTURE, type DoorAction } from '../world/training-moving-door';
 import { movingDoorLevel, createMovingDoorLevel, createPressurePadLevel } from '../world/training-gate';
@@ -21,6 +22,7 @@ import { selectedFallLevel, type FallProfile } from './fall';
 export const MAX_SESSION_BYTES = 24 * 1024;
 export interface TrainingSources { roster: Uint8Array; items: Uint8Array }
 export interface TrainingSession {
+  readonly consumables?: TrainingConsumables;
   readonly indices: readonly number[];
   readonly names: readonly string[];
   readonly team: OriginalTeam;
@@ -83,6 +85,10 @@ export async function createTrainingSession(level: LevelData, sources: TrainingS
 /** Reverify and validate a complete prospective save before exposing a command candidate. */
 async function changeInventory(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean, kind: 'equip' | 'return' | 'exchange', currentWorld?: WorldState): Promise<TrainingCandidate> {
   if (!paused) throw new Error('Pause before changing equipment.');
+  if (session.consumables) {
+    if (!currentWorld) throw new Error('Consumable inventory requires current world.');
+    return changeConsumableSession(level,sources,session,currentWorld,{kind,actor,slot},paused);
+  }
   if (session.patrol) {
     if (patrolMissionLevel(level) && currentWorld?.mission.exited[actor]) throw new Error('Extracted inventory actor is retired.');
     if (!currentWorld) throw new Error('Patrol inventory requires current world.');
@@ -136,6 +142,7 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
+  if (session.consumables) return freeze(replayConsumables(level!,{...session,inventory:replayTrainingInventory(session.team,session.items,[])},session.consumables.races,[]).session);
   const baseline = session.ground ? replayTrainingGround(level ?? (() => { throw new Error('Ground retry requires its level.'); })(), session.team, session.items, { version: 1, fixture: GROUND_FIXTURE, rules: rules ?? session.ground.rules, history: [] }) : null;
   return freeze({ ...session, patrol: session.patrol ? initialTrainingPatrol(session.patrol.fixture === PATROL_MISSION_FIXTURE,session.patrol.fixture === MOVING_DOOR_FIXTURE || session.patrol.fixture === PRESSURE_PAD_FIXTURE,session.patrol.fixture === PRESSURE_PAD_FIXTURE) : null, gate: session.gate ? initialTrainingGate(!!session.gate.moving,!!session.gate.pad) : null, ground: baseline?.ground ?? null, inventory: baseline?.inventory ?? replayTrainingInventory(session.team, session.items, []),
     encounter: session.patrol ? createTrainingEncounter(session.encounterGun,session.indices,0,'full') : session.encounter === null ? null : resetTrainingEncounter(session.encounter, session.encounterGun, session.indices) });
@@ -143,6 +150,10 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
+  if (session.consumables) {
+    const {candidate} = await verifyConsumableSession(level,sources,session,world);
+    return consumableJSON(candidate);
+  }
   if (session.patrol) {
     const {candidate,map} = await verifyPatrolSession(level,sources,session,world);
     return sessionJSON(candidate.session,await exportCheckpoint(effectivePatrolLevel(map,candidate.session.gate,candidate.session.encounter),candidate.world));
@@ -167,6 +178,7 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   const parsed: unknown = JSON.parse(json);
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const version = (parsed as { version?: unknown }).version;
+  if (version === 14) return importConsumableSession(level,sources,parsed);
   const selected = version === 7, grounded = version === 8, patrolling = version === 10 || version === 11 || version === 12 || version === 13, gated = version === 9 || patrolling;
   const hasEncounter = (selected || grounded || gated) && Object.hasOwn(parsed, 'encounter');
   exact(parsed, gated ? ['format','version','sources','indices','commands','checkpoint','scenario','gate', ...(patrolling ? ['patrol'] : []), ...(hasEncounter ? ['encounter'] : [])] : grounded ? ['format','version','sources','indices','ground','checkpoint', ...(hasEncounter ? ['encounter'] : [])] : selected ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'scenario', ...(hasEncounter ? ['encounter'] : [])] : version === 6 ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'encounter'] : version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
@@ -341,4 +353,39 @@ export async function createMovingDoorSession(sources: TrainingSources, session:
 export async function createPressurePadSession(sources: TrainingSources, session: TrainingSession): Promise<TrainingCandidate> {
   const raw = {roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)}, indices = [...session.indices];
   return rebuildPatrolSession(createPressurePadLevel(),raw,indices,initialTrainingPatrol(true,true,true));
+}
+
+/** New wrapper; legacy v1-v13 command validators and checkpoint semantics stay intact. */
+async function rebuildConsumableSession(level:LevelData,sources:TrainingSources,indices:readonly number[],input:unknown):Promise<TrainingCandidate> {
+ const map=trainingLevel(level),raw={roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)},chosen=[...indices],history=consumableHistory(input);
+ if(!selectedFallLevel(map))throw Error('Consumable scenario mismatch. Open selected-team dry-fall practice.');
+ const [baseline,catalog]=await Promise.all([createTrainingSession(map,raw,chosen),importCharacters(raw.roster)]);
+ const candidate=replayConsumables(map,baseline.session,chosen.map(i=>catalog.records[i]!.race),history);
+ consumableJSON(candidate);return {world:candidate.world,session:freeze(candidate.session)};
+}
+async function verifyConsumableSession(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState){
+ const map=trainingLevel(level),raw={roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)},saved=structuredClone({session,world});
+ const candidate=await rebuildConsumableSession(map,raw,saved.session.indices,saved.session.consumables!.history);
+ if(!equalConsumableState(candidate,saved))throw Error('Consumable history/world/session mismatch.');
+ return {candidate,map,raw};
+}
+export async function createConsumableSession(level:LevelData,sources:TrainingSources,session:TrainingSession):Promise<TrainingCandidate>{
+ const map=trainingLevel(level),raw={roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)},saved=structuredClone(session);
+ if(!selectedFallLevel(map)||saved.ground||saved.gate||saved.consumables||saved.inventory.commands.length)throw Error('Apply a fresh team and open selected dry-fall practice before the consumable extension.');
+ return rebuildConsumableSession(map,raw,saved.indices,[]);
+}
+export async function changeConsumableSession(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState,event:ConsumableEvent,paused:boolean):Promise<TrainingCandidate>{
+ if(!paused)throw Error('Pause before using or changing consumables.');
+ const next=structuredClone(event);
+ const {candidate,map,raw}=await verifyConsumableSession(level,sources,session,world);
+ return rebuildConsumableSession(map,raw,candidate.session.indices,appendConsumableEvent(candidate.session.consumables!,next));
+}
+async function importConsumableSession(level:LevelData,sources:TrainingSources,input:unknown):Promise<TrainingCandidate>{
+ exact(input,['format','version','scenario','sources','indices','history','checkpoint']);
+ const parsed=structuredClone(input),map=trainingLevel(level),raw={roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)};
+ if(parsed.format!=='hired-guns-training-session'||parsed.scenario!==CONSUMABLE_FIXTURE||!selectedFallLevel(map)||typeof parsed.checkpoint!=='string'||new TextEncoder().encode(parsed.checkpoint).length>=16*1024)throw Error('Consumable scenario/checkpoint mismatch.');
+ const stored:unknown=JSON.parse(parsed.checkpoint);exact(stored,['world']);
+ const candidate=await rebuildConsumableSession(map,raw,parsed.indices as number[],parsed.history);
+ if(!equalConsumableState(parsed.sources,{map:`authored:${CONSUMABLE_FIXTURE}`,...candidate.session.team.sources})||!equalConsumableState(stored.world,candidate.world))throw Error('Consumable source/history/world mismatch.');
+ return candidate;
 }
