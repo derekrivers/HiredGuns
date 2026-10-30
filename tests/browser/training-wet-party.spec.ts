@@ -30,6 +30,38 @@ for(const throwing of [false,true])test('synthetic UI refresh ignores inherited 
  try{await page.locator('#reset').click();await page.locator('#demo').click();await page.locator('#play').click();await expect(page.locator('#run-state')).toHaveText('RUNNING');await key(page,'Escape');await expect(page.locator('#run-state')).toHaveText('PAUSED');await expect(page.locator('#wet-party-state')).toContainText('Inactive');expect(await page.evaluate(()=>(window as unknown as {partyReads:number}).partyReads)).toBe(0);expect(errors).toEqual([]);}
  finally{await page.evaluate(()=>(window as unknown as {restoreParty:()=>void}).restoreParty());}
 });
+for(const party of [false,true])for(const moved of [false,true])for(const throwing of [false,true])test(`selected session Retry and actual rules restart party=${party} moved=${moved} throwing=${throwing}`,async({page})=>{
+ test.skip(!manifestPath,'Private pinned originals required');const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await selected(page);
+ if(party){await page.locator('#wet-party-enable').focus();await page.keyboard.press('Enter');await expect(page.locator('#wet-party-feedback')).toContainText('enabled');}
+ const initial=await save(page),worldOf=(s:typeof initial)=>typeof s.checkpoint==='string'?JSON.parse(s.checkpoint).world:s.checkpoint.world;
+ expect(initial.indices).toEqual([1,3,0,5]);expect(initial.version).toBe(party?18:5);expect(worldOf(initial).tick).toBe(0);
+ if(moved){await page.locator('#play').click();await move(page,'e');await key(page,'Escape');}
+ const prior=await save(page);if(moved){expect(worldOf(prior).tick).toBeGreaterThan(0);expect(worldOf(prior).mercenaries[0].facing).not.toBe(worldOf(initial).mercenaries[0].facing);}
+ for(const action of ['retry','first-exit','cooperative-extraction']){
+  const act=async()=>{if(action==='retry'){await page.locator('#reset').focus();await page.keyboard.press('Enter');}else await page.getByLabel('Mission rules').selectOption(action);};
+  let actionPrior=prior;
+  if(action==='cooperative-extraction'){
+   await page.getByLabel('Mission rules').selectOption('first-exit');if(moved){await page.locator('#play').click();await move(page,'e');await key(page,'Escape');}actionPrior=await save(page);
+  }
+  if(action!=='retry')expect(worldOf(actionPrior).mission.rules.mode).not.toBe(action);
+  // Establish the complete normal source-bound pair through the same UI action.
+  await act();const expected=await save(page);expect(worldOf(expected).tick).toBe(0);if(action==='retry')expect(expected).toEqual(initial);else expect(worldOf(expected).mission.rules.mode).toBe(action);
+  await restore(page,actionPrior);
+  await page.evaluate(throwing=>{
+   const w=window as unknown as {retryReads:number;retryDigests:number;restoreRetry:()=>void},old=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty'),digest=SubtleCrypto.prototype.digest;w.retryReads=0;w.retryDigests=0;
+   Object.defineProperty(Object.prototype,'wetParty',{configurable:true,get(){w.retryReads++;if(throwing)throw Error('PRECALL_RESTART_CANARY');return undefined;}});
+   try{Reflect.get({},'wetParty');}catch{/* live throwing canary */}if(w.retryReads!==1)throw Error('inactive canary');w.retryReads=0;
+   SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){w.retryDigests++;return digest.apply(this,args);};
+   w.restoreRetry=()=>{SubtleCrypto.prototype.digest=digest;if(old)Object.defineProperty(Object.prototype,'wetParty',old);else Reflect.deleteProperty(Object.prototype,'wetParty');};
+  },throwing);
+  let observation;try{
+   expect(await page.evaluate(()=>typeof Object.getOwnPropertyDescriptor(Object.prototype,'wetParty')?.get)).toBe('function');await act();
+   await expect(page.locator('#recovery-status')).toContainText(action==='retry'?'Positions reset':'Rules changed');await expect(page.locator('#run-state')).toHaveText('PAUSED');await expect(page.locator('#play')).toBeEnabled();await expect(page.locator('#save-checkpoint')).toBeEnabled();if(party)await expect(page.locator('#wet-party-enable')).toBeDisabled();else await expect(page.locator('#wet-party-enable')).toBeEnabled();await expect(page.locator('#error')).toBeEmpty();
+  }finally{observation=await page.evaluate(()=>{const w=window as unknown as {retryReads:number;retryDigests:number;restoreRetry:()=>void};const r={reads:w.retryReads,digests:w.retryDigests};w.restoreRetry();return r;});}
+  const actual=await save(page);await writeFile(test.info().outputPath(`restart-${action}.json`),JSON.stringify({party,moved,throwing,observation,errors,expected,actual},null,2));
+  expect(observation.reads).toBe(0);expect(observation.digests).toBe(8);expect(errors).toEqual([]);expect(actual).toEqual(expected);await restore(page,prior);
+ }
+});
 test('production keyboard selected team: four distinct source deaths, actual all-dead failure, paused recovery, guards, tamper and fresh Retry',async({page})=>{
  test.skip(!manifestPath,'Private pinned originals required');test.setTimeout(1800000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await open(page);await page.getByLabel('Mission rules').selectOption('first-exit');const initial=await save(page);expect(initial.version).toBe(18);expect(initial.indices).toEqual([1,3,0,5]);expect(initial.checkpoint.state.actors.map((a:{body:{race:number}})=>a.body.race)).toEqual([0,0,3,4]);
  const m=JSON.parse(await readFile(manifestPath!,'utf8')),w=JSON.parse(await readFile(m.casePath,'utf8')),{level}=await importEditorMap(new Uint8Array(await readFile(m.inputs.map)));

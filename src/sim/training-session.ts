@@ -151,7 +151,10 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
-  if(session.wetParty)return initialWetParty(level!,session,session.wet!.actors.map(a=>a.body.race),rules??session.wet!.rules).session;
+  if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  const party = Object.getOwnPropertyDescriptor(session, 'wetParty');
+  if (party && (!party.enumerable || !('value' in party))) throw new Error('Training43 session data descriptors required.');
+  if (party?.value) return initialWetParty(level!,session,session.wet!.actors.map(a=>a.body.race),rules??session.wet!.rules).session;
   if(session.wetRegion)return initialWetRegion(level!,session,session.wet!.actors.map(a=>a.body.race),rules??session.wet!.rules).session;
   if(session.wetLifecycle)return initialWetLifecycle(level!,session,session.wet!.actors.map(a=>a.body.race),rules??session.wet!.rules).session;
   if (session.wet) return initialWet(level!,session,session.wet.actors.map(a=>a.body.race),rules??session.wet.rules).session;

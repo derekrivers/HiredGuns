@@ -534,9 +534,9 @@ get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading &&
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
   loadGeneration++; loading = false;
   const nextSession = session ? resetTrainingInventory(session, level, world.mission.rules) : null;
-  replaceGateRenderer(nextSession); session = nextSession;
-  world = createWorld(level, undefined, world.mission.rules, session && selectedFallLevel(level) ? selectedFallProfile(session) : undefined);
-  if(session?.wetLifecycle)world.physics={mode:'source-wet',deadWords:[0,0,0,0]};
+  const nextWorld = createWorld(level, undefined, world.mission.rules, nextSession && selectedFallLevel(level) ? selectedFallProfile(nextSession) : undefined);
+  if(nextSession?.wetLifecycle)nextWorld.physics={mode:'source-wet',deadWords:[0,0,0,0]};
+  replaceGateRenderer(nextSession); session = nextSession; world = nextWorld;
   if (session) showSession();
   events.fill('READY'); get('error').textContent = ''; setPaused(true);
   rosterPanel.refresh();
@@ -582,8 +582,10 @@ get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
   loadGeneration++; loading = false; setPaused(true);
   try {
     const next = createWorld(level, undefined, missionRulesForLevel(level, mode));
-    world = next;
-    if (session) { const nextSession = resetTrainingInventory(session, level, world.mission.rules); replaceGateRenderer(nextSession); session = nextSession; if(session.wetLifecycle)world.physics={mode:'source-wet',deadWords:[0,0,0,0]}; showSession(); }
+    const nextSession = session ? resetTrainingInventory(session, level, next.mission.rules) : null;
+    if(nextSession?.wetLifecycle)next.physics={mode:'source-wet',deadWords:[0,0,0,0]};
+    replaceGateRenderer(nextSession); session = nextSession; world = next;
+    if (session) showSession();
     events.fill('READY'); get('error').textContent = ''; setPaused(true);
     rosterPanel.refresh();
     get('recovery-status').textContent = 'Rules changed. Mission restarted; saved checkpoints retain their own rules.';

@@ -22,6 +22,23 @@ async function fixture(immune=false){
 }
 const enter=Array.from({length:4},(_,mercenaryId)=>({mercenaryId,action:'forward' as const}));
 function step(level:Parameters<typeof stepWetParty>[0],c:TrainingCandidate,n:number,commands:PlayerCommand[]=[]){for(let i=0;i<n;i++)c=stepWetParty(level,c.session,c.world,commands);return c;}
+it.each([false,true])('Retry resets ordinary and active v18 sessions without inherited reads, throwing=%s',async throwing=>{
+ const {level,baseline,c}=await fixture(),active=step(level,c,1,[{mercenaryId:0,action:'turn-right'}]);
+ const ordinary=resetTrainingInventory(baseline,level),original=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty');let reads=0,results:TrainingSession[]=[];
+ const get=()=>{reads++;if(throwing)throw Error('RESET_THROW_CANARY');return undefined;};
+ try{Object.defineProperty(Object.prototype,'wetParty',{configurable:true,get});try{Reflect.get({},'wetParty');}catch{/* live inherited canary */}expect(reads).toBe(1);reads=0;
+  results=[resetTrainingInventory(baseline,level),resetTrainingInventory(active.session,level,active.world.mission.rules)];
+ }finally{if(original)Object.defineProperty(Object.prototype,'wetParty',original);else Reflect.deleteProperty(Object.prototype,'wetParty');}
+ expect(reads).toBe(0);expect(results).toEqual([ordinary,c.session]);expect(active.world.tick).toBe(1);
+});
+it.each(['accessor','hidden','custom','null','malformed'] as const)('Retry refuses bad own party state %s before evaluating accessors',async kind=>{
+ const {level,c}=await fixture(),bad=structuredClone(c.session);let reads=0;
+ if(kind==='accessor')Object.defineProperty(bad,'wetParty',{enumerable:true,get(){reads++;throw Error('OWN_RESET_CANARY');}});
+ if(kind==='hidden')Object.defineProperty(bad,'wetParty',{value:c.session.wetParty,enumerable:false});
+ if(kind==='custom'||kind==='null')Object.setPrototypeOf(bad,kind==='null'?null:{});
+ if(kind==='malformed')Object.defineProperty(bad,'wetParty',{enumerable:true,value:{get profile(){reads++;throw Error('OWN_PROFILE_CANARY');}}});
+ expect(()=>resetTrainingInventory(bad,level)).toThrow();expect(reads).toBe(0);
+});
 it('four real immersion deaths commit distinct corpses and all-dead failure on the final damage tick, retaining fitness and opaque planes',async()=>{
  const {level,c:initial}=await fixture();let c=step(level,step(level,initial,1,enter),1798);expect(c.world.mission.outcome).toBe('active');expect(c.session.wet!.actors.every(a=>a.runtimeDeadWord===0)).toBe(true);
  c=step(level,c,1);expect(c.world.tick).toBe(1800);expect(c.world.mission).toMatchObject({outcome:'failed',reason:'all-dead',winner:null});
@@ -72,6 +89,20 @@ it.skipIf(!process.env.HIRED_GUNS_T43_CASE_INPUTS)('private source selected init
  const caller=structuredClone(c),map=structuredClone(level),bytes=structuredClone(raw),pending=exportTrainingSession(map,caller.world,caller.session,bytes);caller.world.tick++;caller.session.wet!.actors[0]!.body.fitness--;map.layers[0].fill(0);bytes.map.fill(0);bytes.roster.fill(0);bytes.items.fill(0);expect(await pending).toBe(json);
  for(const mutate of [(s:ReturnType<typeof JSON.parse>)=>s.indices[0]=2,(s:ReturnType<typeof JSON.parse>)=>s.checkpoint.state.actors[0].body.race=1,(s:ReturnType<typeof JSON.parse>)=>s.checkpoint.state.actors[0].body.fitness--,(s:ReturnType<typeof JSON.parse>)=>s.checkpoint.world.mission.reason='all-dead',(s:ReturnType<typeof JSON.parse>)=>s.history=[[1,0]],(s:ReturnType<typeof JSON.parse>)=>s.sources.map='0'.repeat(64)]){const bad=JSON.parse(json);mutate(bad);await expect(importTrainingSession(level,raw,JSON.stringify(bad))).rejects.toThrow();}
  for(const k of ['map','roster','items'] as const){const bad=structuredClone(raw);bad[k][0]=bad[k][0]!^1;await expect(importTrainingSession(level,bad,json)).rejects.toThrow();}
+});
+it.skipIf(!process.env.HIRED_GUNS_T43_CASE_INPUTS)('private exact selected baseline and active v18 Retry/rules retain the complete source-bound pair with pre-call hooks',async()=>{
+ const m=JSON.parse(await readFile(process.env.HIRED_GUNS_T43_CASE_INPUTS!,'utf8')),raw={map:new Uint8Array(await readFile(m.inputs.map)),roster:new Uint8Array(await readFile(m.inputs.roster)),items:new Uint8Array(await readFile(m.inputs.items))};
+ const {level}=await importEditorMap(raw.map),b=await createTrainingSession(level,raw,[1,3,0,5]),c=await activateWetParty(level,raw,b.session,b.world,true),active=step(level,c,1,[{mercenaryId:0,action:'turn-right'}]);
+ expect(Object.hasOwn(b.session,'wetParty')).toBe(false);expect(active.world.tick).toBe(1);
+ for(const mode of ['cooperative-extraction','first-exit'] as const)for(const candidate of [b,active]){
+  const rules={mode,timeLimit:99},normal=resetTrainingInventory(candidate.session,level,rules),world=createWorld(level,undefined,rules);if(candidate===active)world.physics={mode:'source-wet',deadWords:[0,0,0,0]};
+  const expected=await exportTrainingSession(level,world,normal,raw);
+  for(const throwing of [false,true]){const old=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty');let reads=0,result:TrainingSession|undefined;
+   try{Object.defineProperty(Object.prototype,'wetParty',{configurable:true,get(){reads++;if(throwing)throw Error('SOURCE_RETRY_CANARY');return undefined;}});try{Reflect.get({},'wetParty');}catch{/* live canary */}expect(reads).toBe(1);reads=0;result=resetTrainingInventory(candidate.session,level,rules);
+   }finally{if(old)Object.defineProperty(Object.prototype,'wetParty',old);else Reflect.deleteProperty(Object.prototype,'wetParty');}
+   expect(reads).toBe(0);expect(result).toEqual(normal);expect(await exportTrainingSession(level,world,result!,raw)).toBe(expected);
+  }
+ }
 });
 
 it('new tuple snapshots reject sparse/hidden/accessor/prototype and deep work before any hook',()=>{
