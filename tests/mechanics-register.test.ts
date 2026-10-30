@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test } from 'vitest';
 import { inventoryMechanics } from '../tools/audit-mechanics-levels';
-import { renderHtml, renderMarkdown, validateRegister } from '../tools/build-mechanics-register';
-import type { MechanicsRegister } from '../tools/mechanics-types';
+import { registerCompletion, renderHtml, renderMarkdown, validateRegister } from '../tools/build-mechanics-register';
+import { STAGES, type State, type MechanicsRegister } from '../tools/mechanics-types';
 
 const load = async () => JSON.parse(await readFile(new URL('../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
 function editorFixture() {
@@ -76,4 +76,38 @@ test('generated HTML escapes prose and cannot terminate its embedded JSON script
   expect(html).not.toContain('<img src=x');
   expect(html).toContain('&lt;/script&gt;');
   expect(html).toContain('\\u003c/script>');
+});
+
+function completionRow(state: State) {
+  return { stages: Object.fromEntries(STAGES.map(stage => [stage, state])) as MechanicsRegister['mechanics'][number]['stages'] };
+}
+
+test('register completion counts only covered checkpoints across the dynamic stage denominator', () => {
+  expect(registerCompletion([])).toEqual({ covered: 0, total: 0, percent: 0, display: '0.0%' });
+  expect(registerCompletion([completionRow('partial'), completionRow('open')])).toMatchObject({ covered: 0, total: 2 * STAGES.length, display: '0.0%' });
+  const mixed = completionRow('open'); mixed.stages.mapping = 'covered'; mixed.stages.reference = 'partial';
+  expect(registerCompletion([mixed])).toMatchObject({ covered: 1, total: STAGES.length, display: '12.5%' });
+  expect(registerCompletion([mixed, completionRow('open')])).toMatchObject({ covered: 1, total: 2 * STAGES.length, display: '6.3%' });
+  // Explicit stage lists exercise the helper's denominator independently of eight current stages.
+  expect(registerCompletion([mixed], ['mapping', 'reference'])).toMatchObject({ covered: 1, total: 2, display: '50.0%' });
+  expect(registerCompletion([completionRow('covered')])).toMatchObject({ covered: STAGES.length, total: STAGES.length, display: '100.0%' });
+  expect(registerCompletion([mixed], [])).toMatchObject({ covered: 0, total: 0, display: '0.0%' });
+});
+
+test('register completion never rounds incomplete evidence up to 100 percent', () => {
+  const rows = Array.from({ length: 1000 }, () => completionRow('covered'));
+  rows[0]!.stages.hardware = 'partial';
+  expect(registerCompletion(rows)).toMatchObject({ covered: 1000 * STAGES.length - 1, total: 1000 * STAGES.length, display: '99.9%' });
+  rows[0]!.stages.hardware = 'covered';
+  expect(registerCompletion(rows).display).toBe('100.0%');
+});
+
+test('HTML and text report exact canonical counts without changing acceptance claims', async () => {
+  const data = await load(), completion = registerCompletion(data.mechanics);
+  expect(renderHtml(data)).toContain(`value="${completion.percent}"`);
+  expect(renderHtml(data)).toContain(`${completion.covered} / ${completion.total} evidence checkpoints covered`);
+  expect(renderMarkdown(data)).toContain(`Register completion: ${completion.display}`);
+  expect(renderMarkdown(data)).toContain(`${completion.covered} / ${completion.total} covered checkpoints / all registered evidence checkpoints`);
+  const claim = structuredClone(data); claim.mechanics[0]!.stages.acceptance = 'covered';
+  await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });

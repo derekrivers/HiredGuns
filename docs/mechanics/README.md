@@ -10,6 +10,12 @@ The baseline is accepted main through PR111 (`46dec166f0604b6cdcbe75c58f3736dc5f
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
+## Register completion
+
+The indicator beside the page title measures **register evidence completion**: covered checkpoints / all registered evidence checkpoints. The builder counts every mechanic row × the current eight STAGES (mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play). Only a covered state earns one point; partial/open earn zero, with no effort weighting. Exact counts and the calculation are available beside the indicator by keyboard or pointer, and in the generated text checklist.
+
+The total is global: search, family, mapping and level filters only change visible lists. Empty registers display 0.0%; 100.0% requires every checkpoint covered. One-decimal rounding is capped at 99.9% until then. Adding rows or stages changes the denominator automatically. This measures neither game/parity completion, effort nor test-pass rates. The complete original-level acceptance count stays separate, and reviewed-receipt validation still gates original-level/physical claims.
+
 ## Open and maintain
 
 The HTML is self-contained and works as a local file, including search, filters, deep links and JSON export. For the existing Vite development server, use `http://127.0.0.1:5173/docs/mechanics/index.html`. Relative links open repository documents, tests and code. This engineering index is not part of the production game build and changes no gameplay.

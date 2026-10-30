@@ -1,4 +1,6 @@
-# Master Mechanics Register
+# Master Mechanics Register — Register completion: 9.9%
+
+68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Register evidence completion, not game completion, parity, effort or test-pass percentage. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
 
 Assessed 2026-10-30; accepted main through PR111: `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`.
 
