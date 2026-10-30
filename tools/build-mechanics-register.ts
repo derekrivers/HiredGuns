@@ -221,7 +221,8 @@ function assertDashboardShape(data: MechanicsRegister) {
     return value;
   };
   for (const proof of list(data, 'acceptedProofs')) {
-    exact(proof, ['id','pr','merge','head','reviewSha256','ci','automatic','receipt']);
+    const pr = own(proof, 'pr');
+    exact(proof, ['id','pr','merge','head','reviewSha256','ci','automatic','receipt','receiptKind', ...(pr === 118 ? ['tree','reviewedTree','sourceProofBase'] : [])]);
     list(proof, 'ci');
   }
   for (const dashboard of list(data, 'dashboards')) {
@@ -248,13 +249,19 @@ function validateDashboards(data: MechanicsRegister) {
   const proofIds = new Set(data.acceptedProofs.map(p => p.id));
   const allIds: string[] = [];
   for (const p of data.acceptedProofs) {
-    exact(p, ['id','pr','merge','head','reviewSha256','ci','automatic','receipt']); id(p.id); allIds.push(p.id);
+    exact(p, ['id','pr','merge','head','reviewSha256','ci','automatic','receipt','receiptKind', ...(p.pr === 118 ? ['tree','reviewedTree','sourceProofBase'] : [])]); id(p.id); allIds.push(p.id);
     if (!Number.isSafeInteger(p.pr) || p.pr < 1 || p.pr > data.acceptedThrough || p.id !== `proof-${p.pr}`) throw new Error('Invalid accepted proof PR');
     for (const hash of [p.merge,p.head]) if (typeof hash !== 'string' || !/^[a-f0-9]{40}$/.test(hash)) throw new Error('Invalid accepted proof commit');
     if (typeof p.reviewSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(p.reviewSha256)) throw new Error('Invalid accepted review hash');
     const numeric = [...list(p.ci), p.automatic, p.receipt];
     if (!p.ci.length || numeric.some(n => typeof n !== 'string' || !/^[1-9]\d*$/.test(n))) throw new Error('Invalid accepted proof receipt');
     uniq(p.ci, 'proof CI');
+    if (p.receiptKind === 'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed') {
+      if (p.pr !== 118 || p.receipt !== p.automatic) throw new Error('Invalid summary-state receipt identity');
+    } else if (p.receiptKind !== 'separate-receipt-comment' || p.receipt === p.automatic || p.pr === 118) throw new Error('Invalid accepted receipt kind');
+    if (p.pr === 118) {
+      for (const hash of [p.tree,p.reviewedTree,p.sourceProofBase]) if (typeof hash !== 'string' || !/^[a-f0-9]{40}$/.test(hash)) throw new Error('Invalid accepted proof tree/base');
+    }
   }
   for (const d of data.dashboards) {
     exact(d, ['id','title','scope','milestones']); id(d.id); text(d.title); text(d.scope); list(d.milestones);
@@ -285,11 +292,11 @@ function dashboardCounts(data: MechanicsRegister['dashboards'][number]) {
   return MILESTONE_STATUSES.map(status => `${data.milestones.filter(m => m.status === status).length} ${status}`).join(' · ');
 }
 function renderDashboards(data: MechanicsRegister) {
-  return data.dashboards.map(d => `<section class="dashboard panel" id="${esc(d.id)}"><h3>${esc(d.title)}</h3><p>${esc(d.scope)}</p><p class="milestone-counts"><strong>${esc(d.milestones.length)} listed milestones: ${esc(dashboardCounts(d))}</strong></p>${d.milestones.map(m => `<article class="milestone" id="${esc(m.id)}"><h4>${esc(m.title)} <span class="badge">${esc(m.status)}</span></h4><p>${esc(m.scope)}</p><p><strong>Missing dependency / boundary:</strong> ${esc(m.missing)}</p><div class="tags">${m.lineage.map(id => `<a href="#${esc(id)}">${esc(id)}</a>`).join('')}<a href="#scenario-${esc(m.scenario)}">Runnable entry / controls</a>${m.proofs.map(id => `<a href="#${esc(id)}">${esc(id)}</a>`).join('')}</div>${evidenceLinks(m.evidence)}</article>`).join('')}</section>`).join('') + `<section class="dashboard panel"><h3>Accepted proof receipts</h3><p>Registry receipts transcribed for the accepted proof records below. Earlier capability links describe inherited accepted slices. File links identify proof definitions, not a new test run. This dashboard candidate still needs its own review.</p>${data.acceptedProofs.map(p => `<article class="milestone" id="${esc(p.id)}"><h4>Accepted PR${esc(p.pr)}</h4><dl><dt>Merge / implementation head</dt><dd class="mono">${esc(p.merge)} / ${esc(p.head)}</dd><dt>Independent review SHA-256</dt><dd class="mono">${esc(p.reviewSha256)}</dd><dt>CI runs / automatic review / receipt</dt><dd>${esc(p.ci.join(', '))} / ${esc(p.automatic)} / ${esc(p.receipt)}</dd></dl></article>`).join('')}</section>`;
+  return data.dashboards.map(d => `<section class="dashboard panel" id="${esc(d.id)}"><h3>${esc(d.title)}</h3><p>${esc(d.scope)}</p><p class="milestone-counts"><strong>${esc(d.milestones.length)} listed milestones: ${esc(dashboardCounts(d))}</strong></p>${d.milestones.map(m => `<article class="milestone" id="${esc(m.id)}"><h4>${esc(m.title)} <span class="badge">${esc(m.status)}</span></h4><p>${esc(m.scope)}</p><p><strong>Missing dependency / boundary:</strong> ${esc(m.missing)}</p><div class="tags">${m.lineage.map(id => `<a href="#${esc(id)}">${esc(id)}</a>`).join('')}<a href="#scenario-${esc(m.scenario)}">Runnable entry / controls</a>${m.proofs.map(id => `<a href="#${esc(id)}">${esc(id)}</a>`).join('')}</div>${evidenceLinks(m.evidence)}</article>`).join('')}</section>`).join('') + `<section class="dashboard panel"><h3>Accepted proof receipts</h3><p>Registry receipts transcribed for the accepted proof records below. Earlier capability links describe inherited accepted slices. File links identify proof definitions, not a new test run. This dashboard candidate still needs its own review.</p>${data.acceptedProofs.map(p => `<article class="milestone" id="${esc(p.id)}"><h4>Accepted PR${esc(p.pr)}</h4><dl><dt>Merge / implementation head</dt><dd class="mono">${esc(p.merge)} / ${esc(p.head)}</dd><dt>Independent review SHA-256</dt><dd class="mono">${esc(p.reviewSha256)}</dd><dt>CI runs / automatic review / receipt</dt><dd>${esc(p.ci.join(', '))} / ${esc(p.automatic)} / ${esc(p.receipt)}</dd><dt>Receipt kind</dt><dd>${esc(p.receiptKind)}</dd>${p.pr === 118 ? `<dt>Accepted union tree / reviewed source tree / source-proof base (PR116)</dt><dd class="mono">${esc(p.tree!)} / ${esc(p.reviewedTree!)} / ${esc(p.sourceProofBase!)}</dd>` : ''}</dl></article>`).join('')}</section>`;
 }
 function dashboardMarkdown(input: MechanicsRegister) {
   const md = (value: string) => esc(value).replaceAll('\\', '&#92;').replaceAll('`', '&#96;').replaceAll('[', '&#91;').replaceAll(']', '&#93;').replaceAll('*', '&#42;').replaceAll('_', '&#95;').replaceAll('\n', ' ');
   const data = { ...input, dashboards: input.dashboards.map(d => ({ ...d, title: md(d.title), scope: md(d.scope), milestones: d.milestones.map(m => ({ ...m, title: md(m.title), scope: md(m.scope), missing: md(m.missing), evidence: m.evidence.map(e => ({ ...e, label: md(e.label), scope: md(e.scope) })) })) })) };
 
-  return (data.dashboards.map(d => `## ${d.title}\n\n${d.scope}\n\n${d.milestones.length} listed milestones: ${dashboardCounts(d)}.\n\n${d.milestones.map(m => `### ${m.id} — ${m.title}: ${m.status}\n\n${m.scope}\n\nMissing dependency / boundary: ${m.missing}\n\nLineage: ${m.lineage.map(id => `[${id}](index.html#${id})`).join(', ')}. [Entry and controls](index.html#scenario-${m.scenario}). ${m.proofs.map(id => `[${id}](index.html#${id})`).join(', ')}\n\n${m.evidence.map(e => `- [${e.label}](../../${e.path}): ${e.scope}`).join('\n')}`).join('\n\n')}`).join('\n\n') + `\n\n## Accepted proof receipts\n\n${data.acceptedProofs.map(p => `- PR${p.pr}: merge \`${p.merge}\`; implementation \`${p.head}\`; independent review SHA-256 \`${p.reviewSha256}\`; CI ${p.ci.join(', ')}; automatic ${p.automatic}; receipt ${p.receipt}.`).join('\n')}`).replace(/[ \t]+(?=\n)/g, '');
+  return (data.dashboards.map(d => `## ${d.title}\n\n${d.scope}\n\n${d.milestones.length} listed milestones: ${dashboardCounts(d)}.\n\n${d.milestones.map(m => `### ${m.id} — ${m.title}: ${m.status}\n\n${m.scope}\n\nMissing dependency / boundary: ${m.missing}\n\nLineage: ${m.lineage.map(id => `[${id}](index.html#${id})`).join(', ')}. [Entry and controls](index.html#scenario-${m.scenario}). ${m.proofs.map(id => `[${id}](index.html#${id})`).join(', ')}\n\n${m.evidence.map(e => `- [${e.label}](../../${e.path}): ${e.scope}`).join('\n')}`).join('\n\n')}`).join('\n\n') + `\n\n## Accepted proof receipts\n\n${data.acceptedProofs.map(p => `- PR${p.pr}: merge \`${p.merge}\`; implementation \`${p.head}\`; independent review SHA-256 \`${p.reviewSha256}\`; CI ${p.ci.join(', ')}; automatic ${p.automatic}; receipt ${p.receipt}; kind ${md(p.receiptKind)}.${p.pr === 118 ? ` Accepted union tree ${md(p.tree!)}; reviewed source tree ${md(p.reviewedTree!)}; source-proof base PR116 ${md(p.sourceProofBase!)}.` : ''}`).join('\n')}`).replace(/[ \t]+(?=\n)/g, '');
 }

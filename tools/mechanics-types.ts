@@ -40,6 +40,8 @@ export const MILESTONE_STATUSES = ['playable', 'partial', 'open', 'deferred'] as
 export interface AcceptedProof {
   id: string; pr: number; merge: string; head: string; reviewSha256: string;
   ci: string[]; automatic: string; receipt: string;
+  receiptKind: 'separate-receipt-comment' | 'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed';
+  tree?: string; reviewedTree?: string; sourceProofBase?: string;
 }
 export interface Milestone {
   id: string; title: string; status: typeof MILESTONE_STATUSES[number]; scope: string;

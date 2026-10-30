@@ -6,7 +6,7 @@ Training43 is the first complete original-level acceptance target, confirmed by 
 
 The register contains original behaviour and source locators, revision, mapping scope, eight separate evidence stages, implementation/test/document links, playable scenarios, remaining gaps and original-level relationships. It is an initial discovery inventory, not a certificate that every source branch has been found. Item categories, enemy-specific behaviours and interactions must be split into further stable IDs as their mapping advances. The 29 identified psi dispatch entries each have their own open row.
 
-The baseline is accepted main through PR116 (`db5d2930eb07ef98ddda1d09bb1968efed0f57d3`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
+The baseline is accepted main through PR118 (`decf689b2803772034bcae150544d1820395dcd5`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
@@ -50,7 +50,7 @@ The catalogue is the existing `research/evidence/campaign-catalogue.json`, outsi
 - **Inactive:** absent under the stated initial editor predicate; does not mean impossible after spawning/mutation.
 - **Unknown:** the inventory cannot settle the relationship.
 
-Training43's dry exit route and PR115 accepted supported wet entry/return are inherited from `docs/training43-completion.md`. Its wider water region and sign reachability stay unknown. Training44–47 and other maps have not been promoted from static inventory to required-route proof. Runtime/editor differences remain explicit.
+Training43's dry exit route and PR115 accepted supported wet entry/return are inherited from `docs/training43-completion.md`. PR118 now proves actual visits to all22 standing wet cells; the solid nonstanding cell and broader outcomes remain open. Training44–47 and other maps have not been promoted from static inventory to required-route proof. Runtime/editor differences remain explicit.
 
 ## Closing a gate
 
@@ -63,7 +63,7 @@ The original register tooling added no runtime execution, mechanics, source redi
 PR112 accepts bounded food/repair; PR114 accepts source CASE classifications;
 PR115 accepts supported wet entry/return and v15 recovery. PR116 separately accepts bounded wet injury/death/north corpse/head/control/manual
 survivor/first-exit/v16 recovery and Retry. Legacy v15 still refuses requested hits.
-Wider region/all-dead/original99-count timeout beyond45000 ticks/general corpse
+Unsupported wet branches/all-dead/original99-count timeout beyond45000 ticks/general corpse
 items/door-pad callers and whole-level acceptance remain open. The covered numerator is
 unchanged; newly supported broad wet rows remain partial.
 
@@ -80,7 +80,7 @@ Hardware is deferred separately and does not block keyboard software work.
 
 Each milestone has stable ID, strict status, scoped evidence, missing dependency,
 scenario/controls, lineage to existing mechanics/checklist and optional accepted
-registry proof references. PR112/114/115/116 receipts retain exact merge/implementation,
+registry proof references. PR112/114/115/116/118 receipts retain exact merge/implementation,
 independent review hash, CI and completed automatic IDs. Earlier accepted slices
 remain linked to their public proof documents. File presence is not a fresh run.
 
@@ -91,8 +91,16 @@ embedded JSON escapes less-than; evidence links accept only existing repository
 paths. Synthetic hostile metadata and positive offline canaries exercise the
 runtime-accepted boundary. Prior PR113 injection repair remains covered.
 
-This candidate index is for review at port5341 only, clearly UNREVIEWED until
+This candidate index is for review at port5361 only, clearly UNREVIEWED until
 independent review/current CI/automatic gates and coordinator acceptance. The
-older port5311/snapshot/root originals remain frozen. Serve docs with the Vite
+accepted port5341, older port5311/snapshot/root originals remain frozen. Serve docs with the Vite
 **development** server or open the canonical HTML file; production app fallback
 does not serve this engineering page.
+
+PR118 accepts [standing wet-region exploration](../training43-wet-region.md): actual keyboard visits to all **22 standing wet CASE cells**, by nonimmune race4 and source-immune race1, four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. The 23rd water cell is solid/nonstanding. Visits are replay-derived observations, not movement authority, hypothetical BFS proof or a whole-level percentage. The new corridor same-cell corpse/manual-survivor witness is distinct from PR116 stair aux10 NORTH corpse proof.
+
+Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Training43 setup, choose rules, then Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause, save/load paused and Retry fresh. V15 entry/return still refuses every non-null requested hit including zero; v16 remains the separate wet damage/lifecycle control. Exact versions1–16 remain supported.
+
+The current wet factory hardcodes ready indices `[11,3,0,5]`, including immune race1. Selected-team wet support and source all-dead remain open; the parallel selected-team/all-dead candidate is UNREVIEWED and receives no credit. General corpse items/replacement, unsupported source geometry/search branches, doors/pads/lifts/enemy AI, original99-count timeout beyond45000 ticks, full43/testbed and source CPU/runtime timing remain open. Physical controller/TV acceptance is separately DEFERRED. Broad T43-04/05/07/08 gates remain partial.
+
+PR118 receiptKind explicitly identifies the SAME completed automatic summary-state6525460623; no separate receipt comment was observed. Earlier separate receipt IDs remain unchanged. Required own DATA shapes precede all new API reads, including receiptKind and the118 union/reviewed tree/source-proof base fields.
