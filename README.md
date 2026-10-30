@@ -1,5 +1,7 @@
 # Hired Guns Revival
 
+**Mechanics coverage:** [Master Mechanics Register](docs/mechanics/index.html) · [text checklist](docs/mechanics/CHECKLIST.md). Tracks original behaviour/revision, mapping, evidence, tests, scenarios and level relationships. Training43 is the first complete original-level acceptance target; no complete original level is accepted yet.
+
 Browser revival in progress. Four synchronized 3D views support independent local navigation and a bounded extraction mission flow. One complete original level is the birthday fallback; full campaign is a stretch target. No complete faithful original level is validated yet.
 
 **Extraction missions:** choose **Extraction drill** for a newly authored timed test scenario. Move each mercenary into the glowing exit; cooperative mode finishes only when all four escape. Escaped mercenaries stop occupying the grid. Use **Retry mission** after success or timeout, or restore a checkpoint. **Mission rules** also offers the original training's first-exit race and navigation-only exploration; changing rules restarts the mission.

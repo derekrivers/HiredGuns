@@ -1,6 +1,7 @@
-# Current gameplay candidate — consumable dry-fall extension
+# Status — 30 October 2026
 
-Accepted base: PR111 merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`.
+Accepted gameplay: PR112 merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`
+(tree `6a329bd1463b02e5e5de7ec4e9bef5547df81155`), including accepted PR111.
 The same-app authored selected-team dry-fall extension now supports source-bound
 ordinary equipped food and repair use with H/button, integer fitness gain,
 equipment ID clearing and reduced source weight. Race restrictions, unsupported
@@ -12,22 +13,37 @@ remain intact. [Scope and controls](docs/training-consumables.md).
 Implementation validation: npm check, public synthetic chronology/arithmetic,
 private verified-source session checks and actual application browser checks.
 Exact commands, all attempts and production-build evidence are retained in the
-ignored worker handoff. Independent exact-final HIGH/current CI/completed
-automatic review and coordinator merge remain outstanding. Not self-approved.
+ignored worker handoff. The coordinator verified exact-final HIGH review,
+current CI, completed automatic review and resolved findings before accepting PR112.
 Training43 / complete functional test bed are not accepted. General inventory
 transfer, poison/wet/death/corpse, original enemy/world machinery and lifts remain
 open. Graphics/audio/controller/TV work stays deferred. Token usage unavailable.
 
-## Historical candidate assessment (preserved)
+## Mechanics register candidate — dated PR111 assessment
 
-# Status - 30 October 2026
+Mechanics coverage is now indexed in the [Master Mechanics Register](docs/mechanics/index.html)
+and [text checklist](docs/mechanics/CHECKLIST.md): 86 scoped mechanic/effect rows,
+eight independent evidence stages, 47 digest-checked editor-map inventories,
+Training43–47 relationships and ten first-level acceptance gates. Training43 is
+the user-confirmed first complete original-level target. Static presence never
+grants required-route or gameplay acceptance. The gameplay assessment is pinned
+through accepted PR111 `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`;
+the timed door and player-only authored pad described below are accepted.
+Broader original pad callers and complete-level acceptance remain open.
+No gameplay, campaign, physical-hardware or complete-level coverage is added
+by the register. Regenerate with `npx tsx tools/build-mechanics-register.ts`.
 
-Accepted base: PR110 merge `e4cfd07c675924a75d17a731569a72d9056a10af`
-(tree `0329329f169041fcfb4a63984788c4c70cbbee2b`), including same-app
+The register's canonical gameplay assessment remains pinned to PR111. PR112 is
+accepted gameplay above; merging that base does not upgrade canonical evidence
+states or acceptance. Register completion is 68/688 evidence checkpoints (9.9%),
+global across filters. The register candidate needs fresh exact-head review/CI.
+
+Accepted base: PR111 merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`
+(tree `1e460bd080a8017159f5b8061a0d831a592f657e`), including same-app
 timed door/v12, patrol extraction/v11, static gate/v9, ground-cache/v8,
 selected-team fall/v7, inventory and designated source gun arithmetic.
 
-Candidate on `codex/training43-pressure-pad`:
+Accepted PR111 player-only authored scenario:
 [pressure pad / timed door extraction](docs/training-pressure-pad.md).
 One canonical player-only pad in the same arena drives the accepted timed door:
 step on opens, step off closes; stationary/turn/blocked moves never retrigger.
@@ -38,14 +54,15 @@ and bounded last-action receipts from movement together with all prior state.
 Legacy v1-v12 shapes and replay/byte budgets stay unchanged. Actual four-actor
 keyboard extraction without C, paused recovery and Y Retry are exercised.
 
-Implementation and browser evidence belong to the ignored worker handoff.
-Independent HIGH review at exact final head, current CI, completed automatic
-review and resolved findings remain coordinator release gates. Unmerged.
+PR111 was accepted after exact-head independent HIGH review, current CI,
+completed automatic review and resolved findings; the coordinator retains
+its private receipts. This register candidate requires its own review and CI.
 
 Training43 and the functional test bed remain incomplete. Original signs and
 zero-position machinery stay inactive. Original enemy AI/combat/lifecycle,
 runtime door/pad selection, pushable/death/corpse/wet/fall pad calls, lifts,
 general item use and full-level acceptance remain open. No CPU timing or
 original runtime pad/animation parity is claimed. Graphics/audio integration
-and physical-controller/TV testing remain deferred.
+and physical-controller/TV testing remain deferred. Separate human hardware
+acceptance does not block keyboard software work. T43-01–10 remain partial/open.
 Token usage unavailable (not measured).

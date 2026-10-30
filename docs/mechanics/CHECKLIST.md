@@ -1,0 +1,2655 @@
+# Master Mechanics Register — Register completion: 9.9%
+
+68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Register evidence completion, not game completion, parity, effort or test-pass percentage. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
+
+Assessed 2026-10-30; accepted main through PR111: `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`.
+
+[Open the interactive HTML index](index.html) · [Canonical JSON](register.json)
+
+Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.
+
+Baseline: **OCS patched source 39.26 · explicit development-editor adaptation**. Primary behavioural reference is the older OCS patched source, with exact local OCS roster/items. Editor maps are individually digest-pinned; no retail authentication, whole-startup, runtime-map or wall-clock parity is implied. CD32 differences stay explicit.
+
+Covered means only the stated slice. Linked files are not fresh run receipts. No whole-game completion percentage or complete original-level pass is claimed.
+
+## Training43: first original-level acceptance
+
+- [ ] **T43-01 Pin level and source revision** — Partial. Use the exact editor digest; disclose runtime-body differences and north-facing adaptation. Identities are pinned; a reviewed whole-level acceptance receipt remains open.
+- [ ] **T43-02 Initialize and control four selected actors** — Partial. Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work.
+- [ ] **T43-03 Complete required dry traversal and exit** — Partial. Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance.
+- [ ] **T43-04 Classify every reachable interaction** — Partial. Resolve wider water reachability; classify required/reachable optional/inactive/unknown with evidence.
+- [ ] **T43-05 Wet stairs and environmental outcomes** — Open. Play reachable wet stairs with breath, item effects, damage and supported exit/return behaviour.
+- [ ] **T43-06 Death, control, occupancy and corpses** — Open. Exercise reachable lethal/all-dead cases with correct references, corpse state, control and retry.
+- [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Save before/during/after wet/lifecycle interactions; restore paused and continue with no duplicated effects.
+- [ ] **T43-08 Outcome, timeout and fresh retry** — Partial. Original first-exit and labelled cooperative variant, terminal ties, failure and complete fresh retry.
+- [ ] **T43-09 Physical four-player complete run** — Open. DEFERRED: separate human acceptance with four people on event PC/TV; verify disconnect recovery and usable inventory/interactions. This physical gate does not block keyboard software work.
+- [ ] **T43-10 Acceptance receipt and regression replay** — Open. Record exact build/source digests, modes, player/hardware observations and all open deviations; link reproducible tests.
+
+## Mechanics
+
+| ID | Mechanic | Mapping | Reference | Rules | Playable | Integration | Recovery | Original level | Physical |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [SYS-01](index.html#SYS-01) | Revision and resource identity | Partial | Partial | Covered slice | Covered slice | Partial | Partial | Open | Open |
+| [SYS-02](index.html#SYS-02) | Team initialization | Partial | Partial | Covered slice | Covered slice | Partial | Covered slice | Open | Open |
+| [SYS-03](index.html#SYS-03) | Counters and simulation timing | Partial | Partial | Covered slice | Covered slice | Partial | Partial | Open | Open |
+| [SYS-04](index.html#SYS-04) | Randomness and deterministic continuation | Open | Open | Partial | Partial | Open | Partial | Open | Open |
+| [SYS-05](index.html#SYS-05) | Input, selection and party control | Partial | Partial | Covered slice | Covered slice | Partial | Partial | Open | Open |
+| [SYS-06](index.html#SYS-06) | Leader and follower behaviour | Open | Open | Open | Open | Open | Open | Open | Open |
+| [MOV-01](index.html#MOV-01) | Grid movement and occupancy | Partial | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [MOV-02](index.html#MOV-02) | Standing support and clearance | Partial | Partial | Covered slice | Covered slice | Partial | Covered slice | Open | Open |
+| [MOV-03](index.html#MOV-03) | Directional stairs | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
+| [MOV-04](index.html#MOV-04) | Player falling and landing | Partial | Partial | Covered slice | Covered slice | Partial | Covered slice | Open | Open |
+| [MOV-05](index.html#MOV-05) | Pushable blocks | Open | Open | Open | Open | Open | Open | Open | Open |
+| [MOV-06](index.html#MOV-06) | Falling objects and squash | Open | Open | Open | Open | Open | Open | Open | Open |
+| [ENV-01](index.html#ENV-01) | Wall buttons and action dispatch | Partial | Partial | Covered slice | Covered slice | Partial | Covered slice | Open | Open |
+| [ENV-02](index.html#ENV-02) | Pressure pads and release | Partial | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [ENV-03](index.html#ENV-03) | Floor mutations | Open | Open | Open | Open | Open | Open | Open | Open |
+| [ENV-04](index.html#ENV-04) | Block mutations | Partial | Partial | Open | Open | Open | Open | Open | Open |
+| [ENV-05](index.html#ENV-05) | Door motion and reversal | Partial | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [ENV-06](index.html#ENV-06) | Door keys, locks and eligibility | Partial | Partial | Partial | Partial | Partial | Partial | Open | Open |
+| [ENV-07](index.html#ENV-07) | Lifts and moving support | Open | Open | Open | Open | Open | Open | Open | Open |
+| [ENV-08](index.html#ENV-08) | Water entry and wet traversal | Partial | Partial | Covered slice | Open | Open | Open | Open | Open |
+| [ENV-09](index.html#ENV-09) | Water level changes | Open | Open | Open | Open | Open | Open | Open | Open |
+| [ENV-10](index.html#ENV-10) | Teleport fields | Open | Open | Open | Open | Open | Open | Open | Open |
+| [ENV-11](index.html#ENV-11) | Repulsion and other field dispatch | Open | Open | Open | Open | Open | Open | Open | Open |
+| [INV-01](index.html#INV-01) | Roster, item decoding and initial inventory | Covered slice | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [INV-02](index.html#INV-02) | Equip, exchange and return | Partial | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [INV-03](index.html#INV-03) | Weight and movement encumbrance | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
+| [INV-04](index.html#INV-04) | Original ground items and pickup/drop | Partial | Partial | Covered slice | Covered slice | Partial | Covered slice | Open | Open |
+| [INV-05](index.html#INV-05) | Reload and ammunition use | Open | Open | Open | Open | Open | Open | Open | Open |
+| [INV-06](index.html#INV-06) | Food, repair and immunity items | Open | Open | Open | Open | Open | Open | Open | Open |
+| [INV-07](index.html#INV-07) | Containers, corpse loot and transfer | Open | Open | Open | Open | Open | Open | Open | Open |
+| [INV-08](index.html#INV-08) | Other item dispatch and utility devices | Open | Open | Open | Open | Open | Open | Open | Open |
+| [COMBAT-01](index.html#COMBAT-01) | Normal gun arithmetic | Covered slice | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [COMBAT-02](index.html#COMBAT-02) | Spatial targeting, range and hit resolution | Open | Open | Open | Open | Open | Open | Open | Open |
+| [COMBAT-03](index.html#COMBAT-03) | Launchers, flamers and projectiles | Open | Open | Open | Open | Open | Open | Open | Open |
+| [COMBAT-04](index.html#COMBAT-04) | Grenades and explosions | Open | Open | Open | Open | Open | Open | Open | Open |
+| [COMBAT-05](index.html#COMBAT-05) | Mines | Open | Open | Open | Open | Open | Open | Open | Open |
+| [COMBAT-06](index.html#COMBAT-06) | Sentries | Open | Open | Open | Open | Open | Open | Open | Open |
+| [AI-01](index.html#AI-01) | Original enemy navigation and detection | Open | Open | Partial | Partial | Partial | Partial | Open | Open |
+| [AI-02](index.html#AI-02) | Enemy attack, damage and death | Open | Open | Partial | Partial | Partial | Partial | Open | Open |
+| [AI-03](index.html#AI-03) | Eggs and spawning | Open | Open | Open | Open | Open | Open | Open | Open |
+| [AI-04](index.html#AI-04) | Enemy falling, water and teleport | Open | Open | Open | Open | Open | Open | Open | Open |
+| [LIFE-01](index.html#LIFE-01) | Fitness, armour and damage modifiers | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
+| [LIFE-02](index.html#LIFE-02) | Death, corpses and control transfer | Partial | Partial | Covered slice | Partial | Open | Partial | Open | Open |
+| [LIFE-03](index.html#LIFE-03) | Breath and drowning | Partial | Partial | Covered slice | Open | Open | Open | Open | Open |
+| [LIFE-04](index.html#LIFE-04) | Water inventory damage | Partial | Partial | Covered slice | Open | Open | Open | Open | Open |
+| [LIFE-05](index.html#LIFE-05) | Poison and timed statuses | Open | Open | Open | Open | Open | Open | Open | Open |
+| [LIFE-06](index.html#LIFE-06) | Healing, fitness fields and progression | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-01](index.html#PSI-01) | Psi dispatch, charges and effect lifetime | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-02](index.html#PSI-02) | Fireball | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-03](index.html#PSI-03) | Inferno | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-04](index.html#PSI-04) | Blast | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-05](index.html#PSI-05) | Devastate | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-06](index.html#PSI-06) | Fire shield | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-07](index.html#PSI-07) | Shield | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-08](index.html#PSI-08) | Granite strength | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-09](index.html#PSI-09) | Titanium strength | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-10](index.html#PSI-10) | Wall | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-11](index.html#PSI-11) | Banish wall | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-12](index.html#PSI-12) | Bridge | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-13](index.html#PSI-13) | Float | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-14](index.html#PSI-14) | Feather | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-15](index.html#PSI-15) | Sonic blast | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-16](index.html#PSI-16) | Shock blast | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-17](index.html#PSI-17) | Gills | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-18](index.html#PSI-18) | Part waves | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-19](index.html#PSI-19) | Quench | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-20](index.html#PSI-20) | Water tight | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-21](index.html#PSI-21) | Electrify | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-22](index.html#PSI-22) | Lightning | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-23](index.html#PSI-23) | Fry | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-24](index.html#PSI-24) | Farsight | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-25](index.html#PSI-25) | Teleport | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-26](index.html#PSI-26) | Shift | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-27](index.html#PSI-27) | Cure poison | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-28](index.html#PSI-28) | Heal | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-29](index.html#PSI-29) | Transmute | Open | Open | Open | Open | Open | Open | Open | Open |
+| [PSI-30](index.html#PSI-30) | Miracle | Open | Open | Open | Open | Open | Open | Open | Open |
+| [WORLD-01](index.html#WORLD-01) | Map import and runtime transformation | Partial | Partial | Covered slice | Covered slice | Partial | Partial | Open | Open |
+| [WORLD-02](index.html#WORLD-02) | Exit, timeout and mission outcome | Partial | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [WORLD-03](index.html#WORLD-03) | Messages, signs and triggers | Open | Open | Open | Open | Open | Open | Open | Open |
+| [WORLD-04](index.html#WORLD-04) | Campaign travel and completion | Partial | Partial | Partial | Open | Open | Open | Open | Open |
+| [WORLD-05](index.html#WORLD-05) | Checkpoint, retry and deterministic recovery | Covered slice | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
+| [WORLD-06](index.html#WORLD-06) | Complete original-level acceptance | Partial | Partial | Partial | Partial | Partial | Partial | Open | Open |
+| [PRESENT-01](index.html#PRESENT-01) | Four-view gameplay rendering | Partial | Partial | Partial | Covered slice | Partial | Open | Open | Open |
+| [PRESENT-02](index.html#PRESENT-02) | Gameplay audio and cue integration | Partial | Partial | Partial | Partial | Open | Open | Open | Open |
+| [PRESENT-03](index.html#PRESENT-03) | Physical controllers and event TV | Covered slice | Open | Covered slice | Partial | Partial | Open | Open | Open |
+
+### SYS-01 — Revision and resource identity
+
+**Original:** Use a named source/data revision; editor, OCS runtime and CD32 bodies are distinct inputs. Preserve unidentified fields.
+
+**Source:** OCS Equates.i; runtime loaders; campaign table audit; baseline ocs-3926.
+
+**Mapped scope:** Verified identities for selected map/roster/item resources; original startup/resource selection remains incomplete.
+
+**Evidence:** [campaign-location-baseline.md](../../docs/campaign-location-baseline.md), [map-format.md](../../docs/map-format.md), [character-format.md](../../docs/character-format.md), [item-format.md](../../docs/item-format.md)
+
+**Tests:** [import-editor-map.test.ts](../../tests/import-editor-map.test.ts), [characters.test.ts](../../tests/characters.test.ts), [items.test.ts](../../tests/items.test.ts)
+
+**Scenarios:** training43
+
+**Gaps:** Runtime map selection and full startup provenance remain unresolved.
+
+**Next:** Pin every level acceptance case to its editor/runtime digest and document deviations explicitly.
+
+### SYS-02 — Team initialization
+
+**Original:** Initialize chosen actors, source stats, carried inventory, controls and map references in original caller order.
+
+**Source:** Main.s startup; character initialization helpers; baseline ocs-3926.
+
+**Mapped scope:** Source-bound selected-team browser adaptation plus isolated original initialization observations.
+
+**Evidence:** [training-session.md](../../docs/training-session.md), [team-initialization-helpers.md](../../docs/team-initialization-helpers.md), [startup-reset-placement-observation.md](../../docs/startup-reset-placement-observation.md)
+
+**Tests:** [original-team.test.ts](../../tests/original-team.test.ts), [training-session.test.ts](../../tests/training-session.test.ts), [training-session.spec.ts](../../tests/browser/training-session.spec.ts)
+
+**Scenarios:** training43
+
+**Gaps:** Full original startup/hardware parity is unproved.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### SYS-03 — Counters and simulation timing
+
+**Original:** Advance gameplay counters in their original order with correct integer widths and interrupt/main-loop relationships.
+
+**Source:** Main.s; ColdStartup.s counter updates; baseline ocs-3926.
+
+**Mapped scope:** Fixed 50 Hz browser policy; source countdown arithmetic, not original wall-clock parity.
+
+**Evidence:** [timing-modernisation.md](../../docs/timing-modernisation.md), [mission-rules.md](../../docs/mission-rules.md)
+
+**Tests:** [timing-probe.test.ts](../../tests/timing-probe.test.ts), [mission.test.ts](../../tests/mission.test.ts)
+
+**Scenarios:** extraction
+
+**Gaps:** Original cadence measurement and all interacting counters remain open.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### SYS-04 — Randomness and deterministic continuation
+
+**Original:** Retain the original sources and consumption order of randomness for combat, AI and other random decisions.
+
+**Source:** Main.s and MonsterMovement.s; hardware-derived seed paths; baseline ocs-3926.
+
+**Mapped scope:** Architecture has explicit RNG state; no whole-game original RNG mapping.
+
+**Evidence:** [reference-comparison.md](../../docs/reference-comparison.md)
+
+**Tests:** [checkpoint.test.ts](../../tests/checkpoint.test.ts)
+
+**Scenarios:** None linked
+
+**Gaps:** Repeatability of authored rules does not prove original random outcomes.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### SYS-05 — Input, selection and party control
+
+**Original:** Route commands to controlled living actors; select views; preserve fewer-human party-control behaviour and original control gates.
+
+**Source:** Controls&Movement.s; Main.s death/control dispatch; baseline ocs-3926.
+
+**Mapped scope:** Browser four-input routing plus bounded original mouse-selection evidence.
+
+**Evidence:** [mouse0-selection-contract.md](../../docs/mouse0-selection-contract.md), [after-death-control-observation.md](../../docs/after-death-control-observation.md), [controller-tv-acceptance.md](../../docs/controller-tv-acceptance.md)
+
+**Tests:** [input.test.ts](../../tests/input.test.ts), [mouse0-selection.test.ts](../../tests/mouse0-selection.test.ts), [controller-preview.spec.ts](../../tests/browser/controller-preview.spec.ts)
+
+**Scenarios:** training43, controller
+
+**Gaps:** Following, death selection and four physical controllers are separate gaps.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### SYS-06 — Leader and follower behaviour
+
+**Original:** Move followers under original leader selection, spacing, obstruction and death rules.
+
+**Source:** Main.s follow_leader; Controls&Movement.s leadership controls; baseline ocs-3926.
+
+**Mapped scope:** Named source subsystem; detailed mapping not completed.
+
+**Evidence:** [after-death-control-observation.md](../../docs/after-death-control-observation.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Independent actor switching does not implement followers.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### MOV-01 — Grid movement and occupancy
+
+**Original:** Resolve forward/back/strafe/turn against cell geometry and actors, updating current/old references in order.
+
+**Source:** Controls&Movement.s movement; Main.s reference placement; baseline ocs-3926.
+
+**Mapped scope:** Dry browser movement works; stable-ID/no-swap policy is authored rather than full original collision parity.
+
+**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [initialized-player-reference-placement-observation.md](../../docs/initialized-player-reference-placement-observation.md)
+
+**Tests:** [navigation.test.ts](../../tests/navigation.test.ts), [navigation.spec.ts](../../tests/browser/navigation.spec.ts), [extraction.spec.ts](../../tests/browser/extraction.spec.ts)
+
+**Scenarios:** training43, patrol
+
+**Gaps:** Original simultaneous occupancy and dynamic/wet interactions need reference-backed cases.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### MOV-02 — Standing support and clearance
+
+**Original:** Determine valid standing/support cells, including unusual two-level support and overhead obstruction.
+
+**Source:** Controls&Movement.s movement obstruction; Main.s player_fall; baseline ocs-3926.
+
+**Mapped scope:** Dry supported floor/block/tree subset.
+
+**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [type1-support-contract.md](../../docs/type1-support-contract.md)
+
+**Tests:** [traversal.test.ts](../../tests/traversal.test.ts), [type1-support.test.ts](../../tests/type1-support.test.ts)
+
+**Scenarios:** training43, stairs
+
+**Gaps:** Moving support, wet state and entity squash remain outside the dry subset.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### MOV-03 — Directional stairs
+
+**Original:** Apply directional ascent/descent, paired stairs, target clearance and wet destination consequences.
+
+**Source:** Controls&Movement.s move and directional callers; baseline ocs-3926.
+
+**Mapped scope:** Dry transforms demonstrated; reachable wet stair pair still blocked.
+
+**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** [traversal.test.ts](../../tests/traversal.test.ts), [stairs.spec.ts](../../tests/browser/stairs.spec.ts)
+
+**Scenarios:** training43, stairs
+
+**Gaps:** Training43 reachable optional wet stairs must work before level acceptance.
+
+**Next:** Combine wet entry, descent and recovery with the selected live team.
+
+### MOV-04 — Player falling and landing
+
+**Original:** Accumulate fall damage using source agility/weight/physique; descend, land and apply lifecycle effects in order.
+
+**Source:** Main.s player_fall; damage_fitness; baseline ocs-3926.
+
+**Mapped scope:** Dry selected-team practice; narrow original descent/landing helpers are separately evidenced.
+
+**Evidence:** [selected-fall.md](../../docs/selected-fall.md), [dry-descent-contract.md](../../docs/dry-descent-contract.md), [landing-damage-contract.md](../../docs/landing-damage-contract.md)
+
+**Tests:** [fall.test.ts](../../tests/fall.test.ts), [landing-damage.test.ts](../../tests/landing-damage.test.ts), [selected-fall.spec.ts](../../tests/browser/selected-fall.spec.ts)
+
+**Scenarios:** fall
+
+**Gaps:** Original map/wet/pad/corpse lifecycle and changing-weight history are not integrated.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### MOV-05 — Pushable blocks
+
+**Original:** Push blocks only into eligible cells and update support, occupancy, pads and falling state.
+
+**Source:** Controls&Movement.s pushable movement; Main.s block fall; baseline ocs-3926.
+
+**Mapped scope:** Source inventory identified; executable/puzzle behaviour not mapped.
+
+**Evidence:** [map-format.md](../../docs/map-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Pushable metadata presence is not a functioning puzzle.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### MOV-06 — Falling objects and squash
+
+**Original:** Advance unsupported blocks/items/actors, trigger impacts and preserve crush/squash consequences and call order.
+
+**Source:** Main.s falling objects; MonsterMovement.s monsters_fall; baseline ocs-3926.
+
+**Mapped scope:** Only player dry-fall subset exists; object/squash rules unimplemented.
+
+**Evidence:** [dry-descent-observation.md](../../docs/dry-descent-observation.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Current authored no-crush guards do not prove original crushing.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-01 — Wall buttons and action dispatch
+
+**Original:** Dispatch panel types to the correct IN/OUT action, resolving target address domains and preserving no-ops.
+
+**Source:** Controls&Movement.s activate_panel; button_in/out; do_button_action; baseline ocs-3926.
+
+**Mapped scope:** Bounded source button-to-door core and authored keyboard panel.
+
+**Evidence:** [button-door-transition.md](../../docs/button-door-transition.md), [training-gate.md](../../docs/training-gate.md), [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** [button-door-transition.test.ts](../../tests/button-door-transition.test.ts), [training-gate.test.ts](../../tests/training-gate.test.ts), [training-gate.spec.ts](../../tests/browser/training-gate.spec.ts)
+
+**Scenarios:** gate, moving-door
+
+**Gaps:** Original runtime target binding and complete action table remain incomplete.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-02 — Pressure pads and release
+
+**Original:** Player/object entry invokes actionIn; release invokes actionOut; all occupant and lifecycle transitions must participate.
+
+**Source:** Controls&Movement.s movement and pad entry/release; Main.s death; baseline ocs-3926.
+
+**Mapped scope:** Accepted PR111: source-derived successful-player entry/release in one canonical authored pad/door arena. Original runtime selection and other entity/lifecycle callers remain outside scope.
+
+**Evidence:** [training43-completion.md](../../docs/training43-completion.md), [death-transition-contract.md](../../docs/death-transition-contract.md), [training-pressure-pad.md](../../docs/training-pressure-pad.md)
+
+**Tests:** [training-pressure-pad.test.ts](../../tests/training-pressure-pad.test.ts), [training-pressure-pad.spec.ts](../../tests/browser/training-pressure-pad.spec.ts)
+
+**Scenarios:** pressure-pad
+
+**Gaps:** Player-only authored entry/release: original pad/door runtime selection, pushable, death/corpse, wet and fall-trigger callers remain open.
+
+**Next:** Map and integrate each original pad caller, preserving release/press ordering and full recovery.
+
+### ENV-03 — Floor mutations
+
+**Original:** Button actions enable, remove or toggle floors with the correct support/falling consequences.
+
+**Source:** Equates.i button actions 1–3; Controls&Movement.s do_button_action; baseline ocs-3926.
+
+**Mapped scope:** Action family identified; target validity and integrated outcomes not mapped.
+
+**Evidence:** [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Stored action records can be dormant or unreachable.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-04 — Block mutations
+
+**Original:** Button actions enable, remove or toggle blocks and update collision, actors and dependent state.
+
+**Source:** Equates.i button actions 4–6; Controls&Movement.s do_button_action; baseline ocs-3926.
+
+**Mapped scope:** Selected block-off target classification exists; no general integrated action system.
+
+**Evidence:** [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** [training43-audit.test.ts](../../tests/training43-audit.test.ts)
+
+**Scenarios:** None linked
+
+**Gaps:** A static audit is not execution of a block-change puzzle.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-05 — Door motion and reversal
+
+**Original:** Open/close/reverse normal doors through source variants, counters, delayed closure and pending actions.
+
+**Source:** Main.s move_doors; Controls&Movement.s actions 14–18; baseline ocs-3926.
+
+**Mapped scope:** Accepted normal-door helper and authored tick/occupancy adapter.
+
+**Evidence:** [door-motion.md](../../docs/door-motion.md), [training-moving-door.md](../../docs/training-moving-door.md)
+
+**Tests:** [door-motion.test.ts](../../tests/door-motion.test.ts), [training-moving-door.test.ts](../../tests/training-moving-door.test.ts), [training-moving-door.spec.ts](../../tests/browser/training-moving-door.spec.ts)
+
+**Scenarios:** moving-door
+
+**Gaps:** Original runtime selection, wall-clock timing and obstruction/crush behaviour unproved.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-06 — Door keys, locks and eligibility
+
+**Original:** Resolve key possession, button-only restrictions, actor eligibility and lock/unlock conditions before door activation.
+
+**Source:** Equates.i door_key/button_only; Controls&Movement.s door action dispatch; baseline ocs-3926.
+
+**Mapped scope:** Authored accessible lock/unlock works; original key/actor eligibility not inferred.
+
+**Evidence:** [door-motion.md](../../docs/door-motion.md), [training-moving-door.md](../../docs/training-moving-door.md)
+
+**Tests:** [door-motion.test.ts](../../tests/door-motion.test.ts), [training-moving-door.spec.ts](../../tests/browser/training-moving-door.spec.ts)
+
+**Scenarios:** moving-door
+
+**Gaps:** Current synthetic fixture has no authentic original key puzzle.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-07 — Lifts and moving support
+
+**Original:** Move lifts through limits/directions/automove; carry eligible occupants and blocks while updating support and pads.
+
+**Source:** Main.s move_lifts; Equates.i lift records; baseline ocs-3926.
+
+**Mapped scope:** Records and action families identified; no live lift implementation.
+
+**Evidence:** [map-format.md](../../docs/map-format.md), [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Inactive Training43 lift slots cannot establish lift coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-08 — Water entry and wet traversal
+
+**Original:** Evaluate water depth, stairs, movement, immersion and actor-specific immunity without bypassing inventory/lifecycle effects.
+
+**Source:** Main.s drowning/player_fall; Controls&Movement.s movement; baseline ocs-3926.
+
+**Mapped scope:** Bounded immersion caller exists disconnected from original wet traversal.
+
+**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md)
+
+**Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
+
+**Scenarios:** None linked
+
+**Gaps:** Training43 wet region remains unknown beyond audited entry.
+
+**Next:** Integrate one source-bound wet entry with complete damage/lifecycle/recovery before widening routes.
+
+### ENV-09 — Water level changes
+
+**Original:** Advance water between bounds according to map state and timer, with resulting actor/item/geometry effects.
+
+**Source:** Main.s move_water; Equates.i water limits/speed; baseline ocs-3926.
+
+**Mapped scope:** Header fields decoded; changing-water behaviour unmapped.
+
+**Evidence:** [map-format.md](../../docs/map-format.md), [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Zero Training43 water speed does not disable immersion or prove moving-water mechanics.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-10 — Teleport fields
+
+**Original:** Resolve destination cells and transfer actors/entities with collision, references and environmental consequences.
+
+**Source:** Equates.i block type 6; Main.s teleport and MonsterMovement.s teleport_monster; baseline ocs-3926.
+
+**Mapped scope:** Field type identified; runtime behaviour unimplemented.
+
+**Evidence:** [map-format.md](../../docs/map-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Destination metadata and entity-specific caller rules need mapping.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### ENV-11 — Repulsion and other field dispatch
+
+**Original:** Retain field-type dispatch and documented no-op behaviour rather than inventing effects from graphics.
+
+**Source:** Equates.i field types; Controls&Movement.s movement dispatch; baseline ocs-3926.
+
+**Mapped scope:** Source enum describes repulsion as inert; executable dispatch not yet pinned.
+
+**Evidence:** [map-format.md](../../docs/map-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Confirm no-op semantics against selected source before marking mapped.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-01 — Roster, item decoding and initial inventory
+
+**Original:** Decode source records and initialize stats, equipment, carried entries and actions without treating unknown bytes as padding.
+
+**Source:** Character/Items record layouts; accepted initialization helpers; baseline ocs-3926.
+
+**Mapped scope:** Exact verified OCS pair supports pure initialization and browser selected team.
+
+**Evidence:** [character-format.md](../../docs/character-format.md), [item-format.md](../../docs/item-format.md), [training-session.md](../../docs/training-session.md)
+
+**Tests:** [characters.test.ts](../../tests/characters.test.ts), [items.test.ts](../../tests/items.test.ts), [original-team.test.ts](../../tests/original-team.test.ts), [items.spec.ts](../../tests/browser/items.spec.ts)
+
+**Scenarios:** training43
+
+**Gaps:** Mapping completion applies to the documented initialization slice, not every live item rule.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-02 — Equip, exchange and return
+
+**Original:** Transfer complete entries, compact/insert in original order, enforce capacity and recalculate weight.
+
+**Source:** Controls&Movement.s inventory ACTION3/ACTION4; calc_weight; baseline ocs-3926.
+
+**Mapped scope:** Repeatable paused selected-team transfers; broader original UI/caller semantics remain separate.
+
+**Evidence:** [training-inventory.md](../../docs/training-inventory.md), [backpack-transfer-contract.md](../../docs/backpack-transfer-contract.md)
+
+**Tests:** [training-inventory.test.ts](../../tests/training-inventory.test.ts), [training-inventory.spec.ts](../../tests/browser/training-inventory.spec.ts)
+
+**Scenarios:** training43, ground, patrol
+
+**Gaps:** Real-time controller inventory use and unsupported storage shapes remain open.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-03 — Weight and movement encumbrance
+
+**Original:** Compute total weight from item categories/counts and apply original encumbrance/cadence effects.
+
+**Source:** Controls&Movement.s calc_weight/add_weight; heavy_count updates; baseline ocs-3926.
+
+**Mapped scope:** Verified weight calculation and fall seed; ordinary movement weight effects not implemented.
+
+**Evidence:** [item-format.md](../../docs/item-format.md), [selected-fall.md](../../docs/selected-fall.md), [training-ground.md](../../docs/training-ground.md)
+
+**Tests:** [items.test.ts](../../tests/items.test.ts), [training-ground.test.ts](../../tests/training-ground.test.ts)
+
+**Scenarios:** ground, fall
+
+**Gaps:** Weight display and pickup refusal do not establish encumbered movement.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-04 — Original ground items and pickup/drop
+
+**Original:** Resolve original packed map items, ownership, pickup/drop, capacity and item-specific storage semantics.
+
+**Source:** Controls&Movement.s pick_up/get_item/drop; editor/runtime item layer; baseline ocs-3926.
+
+**Mapped scope:** Authored relocated cache demonstrates transfers; original packed placement remains unimplemented.
+
+**Evidence:** [ground-transfer.md](../../docs/ground-transfer.md), [training-ground.md](../../docs/training-ground.md)
+
+**Tests:** [ground-transfer.test.ts](../../tests/ground-transfer.test.ts), [training-ground.test.ts](../../tests/training-ground.test.ts), [training-ground.spec.ts](../../tests/browser/training-ground.spec.ts)
+
+**Scenarios:** ground
+
+**Gaps:** No direct carried drop, original ground packing, corpse/container or ground-swap coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-05 — Reload and ammunition use
+
+**Original:** Use compatible ammunition and update equipped weapon/carried quantities through original item-use dispatch.
+
+**Source:** ItemUsage.s .use_ammo; inventory item-use dispatch; baseline ocs-3926.
+
+**Mapped scope:** Source branch identified; encounter reset is not a reload mechanic.
+
+**Evidence:** [weapon-transition.md](../../docs/weapon-transition.md), [training-encounter.md](../../docs/training-encounter.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Gun encounter ammo is separate from the selected original inventory.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-06 — Food, repair and immunity items
+
+**Original:** Apply food, equipment repair and immunity items with correct consumption, caps, targets and counters.
+
+**Source:** ItemUsage.s .use_food/.use_repair/.use_immu; baseline ocs-3926.
+
+**Mapped scope:** Named original item-use branches; no behavioural mapping or integration.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Each dispatch branch needs separate cases before this family can close.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-07 — Containers, corpse loot and transfer
+
+**Original:** Expose contents and transfer items between actors, corpses/containers and ground without loss or duplication.
+
+**Source:** Equates.i container/dead-player auxiliary types; inventory callers; baseline ocs-3926.
+
+**Mapped scope:** Storage types identified; general interaction/loot rules unimplemented.
+
+**Evidence:** [death-transition-contract.md](../../docs/death-transition-contract.md), [ground-transfer.md](../../docs/ground-transfer.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Authored shared cache does not implement corpse or container inventories.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### INV-08 — Other item dispatch and utility devices
+
+**Original:** Preserve each original category dispatch, including detection devices and explicit inert handlers.
+
+**Source:** ItemUsage.s .use_dts/.use_dts2/.use_sentrycntrl and item dispatch; baseline ocs-3926.
+
+**Mapped scope:** Source dispatch discovery only; exact branch inventory needs completion.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Unclassified item categories must be added here or split into their own rows.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### COMBAT-01 — Normal gun arithmetic
+
+**Original:** Respect ammo/cooldown guards and full configured burst damage, including partial-ammo integer behaviour.
+
+**Source:** ItemUsage.s .use_gun/fire_missile; damage_fitness arithmetic; baseline ocs-3926.
+
+**Mapped scope:** One category-zero NAOMI IV family, authored dummy/miss target.
+
+**Evidence:** [weapon-transition.md](../../docs/weapon-transition.md), [training-encounter.md](../../docs/training-encounter.md)
+
+**Tests:** [weapon-transition.test.ts](../../tests/weapon-transition.test.ts), [training-encounter.test.ts](../../tests/training-encounter.test.ts), [training-encounter.spec.ts](../../tests/browser/training-encounter.spec.ts)
+
+**Scenarios:** encounter, patrol, moving-door
+
+**Gaps:** Mapped means this narrow family; not all weapons, spatial targeting or original CPU whole-shot parity.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### COMBAT-02 — Spatial targeting, range and hit resolution
+
+**Original:** Traverse facing/distance/obstructions and select player, monster, egg or sentry hit paths with original accuracy policy.
+
+**Source:** ItemUsage.s get_dist/get_player_hit/get_monster_hit/get_egg_hit/get_sentry_hit; baseline ocs-3926.
+
+**Mapped scope:** Source routines identified; F/T currently designates a target nonspatially.
+
+**Evidence:** [weapon-transition.md](../../docs/weapon-transition.md), [training-patrol.md](../../docs/training-patrol.md)
+
+**Tests:** Open
+
+**Scenarios:** encounter, patrol
+
+**Gaps:** No spatial aim/range/LOS, player hit or original accuracy outcomes.
+
+**Next:** Implement a bounded spatial shot with wall, range, facing, miss and target-kind cases.
+
+### COMBAT-03 — Launchers, flamers and projectiles
+
+**Original:** Spawn/advance projectile and area effects using original ammo, speed, direction, collision and target rules.
+
+**Source:** ItemUsage.s .use_launcher/.use_grlauncher/.use_flamer/do_fireballs; baseline ocs-3926.
+
+**Mapped scope:** Source subsystem identified; ordinary gun arithmetic does not cover projectile families.
+
+**Evidence:** [weapon-transition.md](../../docs/weapon-transition.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** All weapon categories beyond the accepted normal-gun slice remain open.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### COMBAT-04 — Grenades and explosions
+
+**Original:** Throw/advance grenades and apply timed blast/stun effects to world entities in original order.
+
+**Source:** ItemUsage.s .use_grenade; Main.s explosives/effect updates; baseline ocs-3926.
+
+**Mapped scope:** Source family identified; no live grenade/explosion system.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Fuse, height, ownership, blast/stun and save-in-flight cases required.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### COMBAT-05 — Mines
+
+**Original:** Arm, place and trigger mines for players/monsters/objects with correct damage and ownership effects.
+
+**Source:** ItemUsage.s .use_mine; Main.s test_mine/trigger_mine; MonsterMovement.s test_mine_monster; baseline ocs-3926.
+
+**Mapped scope:** Named callers inspected; no implemented mine behaviour.
+
+**Evidence:** [dry-descent-observation.md](../../docs/dry-descent-observation.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Movement/fall entry and every trigger caller need integration cases.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### COMBAT-06 — Sentries
+
+**Original:** Place and control sentries, reserve cells and execute their target/fire/damage lifecycle.
+
+**Source:** ItemUsage.s .use_sentry/.use_sentrycntrl; sentry systems; baseline ocs-3926.
+
+**Mapped scope:** Placement/control source branches identified; full system unmapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Do not interpret the inert source control handler as proof of the whole sentry system.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### AI-01 — Original enemy navigation and detection
+
+**Original:** Select eligible players and move using original approach/retreat/random/obstruction rules.
+
+**Source:** MonsterMovement.s find_closest_player/move_towards/move_away/do_movement; baseline ocs-3926.
+
+**Mapped scope:** Authored fixed patrol is playable; original AI is unimplemented.
+
+**Evidence:** [training-patrol.md](../../docs/training-patrol.md)
+
+**Tests:** [training-patrol.test.ts](../../tests/training-patrol.test.ts), [training-patrol.spec.ts](../../tests/browser/training-patrol.spec.ts)
+
+**Scenarios:** patrol, moving-door
+
+**Gaps:** Authored back-and-forth route is not original detection or pursuit.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### AI-02 — Enemy attack, damage and death
+
+**Original:** Apply monster-specific attacks/cadence, player injuries and original enemy health/death/occupancy outcomes.
+
+**Source:** MonsterMovement.s monster_fire_fireball/damage_monster_fitness; Main.s damage helpers; baseline ocs-3926.
+
+**Mapped scope:** Dummy zero-health defeat releases authored occupancy; original lifecycle not integrated.
+
+**Evidence:** [training-patrol.md](../../docs/training-patrol.md), [damage-death-contract.md](../../docs/damage-death-contract.md)
+
+**Tests:** [training-patrol.test.ts](../../tests/training-patrol.test.ts)
+
+**Scenarios:** patrol
+
+**Gaps:** Enemies cannot currently attack players; species-specific behaviours remain open.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### AI-03 — Eggs and spawning
+
+**Original:** Hatch eggs under original counters/actions and initialize spawned enemies with valid occupancy.
+
+**Source:** MonsterMovement.s hatch_eggs/do_hatch/add_monster; button hatch action; baseline ocs-3926.
+
+**Mapped scope:** Closed-egg markers identified; spawn behaviours not mapped.
+
+**Evidence:** [map-format.md](../../docs/map-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Graphics selectors and auxiliary presence do not prove a live hatch.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### AI-04 — Enemy falling, water and teleport
+
+**Original:** Apply entity-specific gravity, environmental movement and teleport transitions with occupancy and attacks.
+
+**Source:** MonsterMovement.s monsters_fall/teleport_monster; baseline ocs-3926.
+
+**Mapped scope:** Named original callers; not covered by player fall helpers.
+
+**Evidence:** [dry-descent-observation.md](../../docs/dry-descent-observation.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Entity-specific lifecycle must compose with movement, combat and saves.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### LIFE-01 — Fitness, armour and damage modifiers
+
+**Original:** Apply original integer fitness/physique/shield/modifier arithmetic and inventory damage under the correct caller guards.
+
+**Source:** Main.s damage_fitness; ItemUsage.s shooting path; baseline ocs-3926.
+
+**Mapped scope:** Selected pure arithmetic, ordinary-floor damage and bounded shooting arguments.
+
+**Evidence:** [damage-fitness-evidence.md](../../docs/damage-fitness-evidence.md), [damage-death-contract.md](../../docs/damage-death-contract.md), [shooting-argument-contract.md](../../docs/shooting-argument-contract.md)
+
+**Tests:** [damage-fitness.test.ts](../../tests/damage-fitness.test.ts), [health.test.ts](../../tests/health.test.ts), [shooting-argument.test.ts](../../tests/shooting-argument.test.ts)
+
+**Scenarios:** fall, encounter
+
+**Gaps:** Real enemy hits, all modifiers and original equipment-damage callers remain incomplete.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### LIFE-02 — Death, corpses and control transfer
+
+**Original:** Mark death, remove occupancy, release pads, clear leaders and write corpse markers in original order; preserve original selection rules.
+
+**Source:** Main.s death transition; Controls&Movement.s actor/control gates; baseline ocs-3926.
+
+**Mapped scope:** Bounded disconnected original helper; dry practice uses authored incapacitation.
+
+**Evidence:** [death-transition-contract.md](../../docs/death-transition-contract.md), [after-death-control-observation.md](../../docs/after-death-control-observation.md), [initialized-postdeath-fixture-fit.md](../../docs/initialized-postdeath-fixture-fit.md)
+
+**Tests:** [death-transition.test.ts](../../tests/death-transition.test.ts)
+
+**Scenarios:** fall
+
+**Gaps:** Original live death/pads/corpse/control composition remains absent.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### LIFE-03 — Breath and drowning
+
+**Original:** Evaluate guards/depth/immunity, increment/reset breath and apply threshold damage in original integer order.
+
+**Source:** Main.s drowning; pinned OCS wet-entry CPU observations; baseline ocs-3926.
+
+**Mapped scope:** Bounded decision and immersion caller, not live wet traversal/drowning.
+
+**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md)
+
+**Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
+
+**Scenarios:** None linked
+
+**Gaps:** Actual drowning injury/death and full wet-route recovery are unintegrated.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### LIFE-04 — Water inventory damage
+
+**Original:** Process equipped/carried entries and weight before breath immunity, retaining spell-specific bypass behaviour.
+
+**Source:** Main.s immersion inventory ordering; water inventory helper; baseline ocs-3926.
+
+**Mapped scope:** Selected original inventory cases and pure caller remain disconnected.
+
+**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md)
+
+**Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts)
+
+**Scenarios:** None linked
+
+**Gaps:** No original wet inventory mutations installed in the running world.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### LIFE-05 — Poison and timed statuses
+
+**Original:** Accumulate poison and other statuses through timer updates, apply delayed damage and expire effects in source order.
+
+**Source:** ColdStartup.s poison accumulation; Main.s status/damage updates; baseline ocs-3926.
+
+**Mapped scope:** Original source branch identified; no complete timed-status implementation.
+
+**Evidence:** [damage-death-contract.md](../../docs/damage-death-contract.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Hardware-driven gameplay counters must be mapped rather than discarded.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### LIFE-06 — Healing, fitness fields and progression
+
+**Original:** Apply fitness-boost fields, healing, experience gains and resulting stat/cap changes as defined by original callers.
+
+**Source:** Equates.i field type 2; Main.s fitness; ItemUsage.s experience updates; baseline ocs-3926.
+
+**Mapped scope:** Initial stats inspection is implemented; live gains and healing unimplemented.
+
+**Evidence:** [character-format.md](../../docs/character-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Split progression/experience into separate rows when its full branch inventory is established.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-01 — Psi dispatch, charges and effect lifetime
+
+**Original:** Resolve original psi effect dispatch, consumption, eligibility, experience, duration and world/actor consequences.
+
+**Source:** ItemUsage.s .use_psiamp/psi_table; baseline ocs-3926.
+
+**Mapped scope:** Dispatch names inventoried; no live psi effects. Individual effect rows below remain open.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** An immunity branch observed by drowning tests does not implement casting the spell.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-02 — Fireball
+
+**Original:** Projectile fire effect. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Fireball; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-03 — Inferno
+
+**Original:** Multi-direction fire effect. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Inferno; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-04 — Blast
+
+**Original:** Area blast effect. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Blast; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-05 — Devastate
+
+**Original:** Larger destructive effect. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Devastate; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-06 — Fire shield
+
+**Original:** Timed fire protection. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Fire shield; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-07 — Shield
+
+**Original:** Timed damage protection. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Shield; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-08 — Granite strength
+
+**Original:** Strength/physique modification. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Granite strength; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-09 — Titanium strength
+
+**Original:** Strength/physique modification. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Titanium strength; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-10 — Wall
+
+**Original:** World block creation. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Wall; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-11 — Banish wall
+
+**Original:** World block removal. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Banish wall; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-12 — Bridge
+
+**Original:** World support creation. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Bridge; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-13 — Float
+
+**Original:** Actor support/fall modification. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Float; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-14 — Feather
+
+**Original:** Actor fall modification. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Feather; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-15 — Sonic blast
+
+**Original:** Area attack. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Sonic blast; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-16 — Shock blast
+
+**Original:** Area attack. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Shock blast; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-17 — Gills
+
+**Original:** Breath immunity. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Gills; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-18 — Part waves
+
+**Original:** Water/world modification. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Part waves; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-19 — Quench
+
+**Original:** Water/fire interaction. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Quench; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-20 — Water tight
+
+**Original:** Inventory immersion protection. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Water tight; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-21 — Electrify
+
+**Original:** Electrical attack. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Electrify; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-22 — Lightning
+
+**Original:** Electrical attack. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Lightning; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-23 — Fry
+
+**Original:** Electrical attack. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Fry; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-24 — Farsight
+
+**Original:** Visibility effect. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Farsight; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-25 — Teleport
+
+**Original:** Actor relocation. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Teleport; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-26 — Shift
+
+**Original:** Actor/world relocation. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Shift; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-27 — Cure poison
+
+**Original:** Status removal. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Cure poison; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-28 — Heal
+
+**Original:** Fitness recovery. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Heal; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-29 — Transmute
+
+**Original:** Item/world transformation. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Transmute; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PSI-30 — Miracle
+
+**Original:** Combined effect. Exact targets, arithmetic, charges, duration and refusal cases require original branch mapping.
+
+**Source:** ItemUsage.s psi_table branch: Miracle; baseline ocs-3926.
+
+**Mapped scope:** Dispatch-name discovery only; behavioural description is provisional until its handler is mapped.
+
+**Evidence:** [item-format.md](../../docs/item-format.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** No casting, executable reference, playable scenario or integrated recovery coverage.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### WORLD-01 — Map import and runtime transformation
+
+**Original:** Parse the chosen resource and apply original runtime table/entity/map transformations before installing gameplay.
+
+**Source:** Map loader; Equates.i; runtime selector producers; baseline ocs-3926.
+
+**Mapped scope:** Byte-preserving editor importer exists; full runtime map loader/startup remains gated.
+
+**Evidence:** [map-format.md](../../docs/map-format.md), [runtime-map-selector-producer.md](../../docs/runtime-map-selector-producer.md), [runtime-lower-cell-load-origin.md](../../docs/runtime-lower-cell-load-origin.md)
+
+**Tests:** [import-editor-map.test.ts](../../tests/import-editor-map.test.ts), [training43-audit.test.ts](../../tests/training43-audit.test.ts)
+
+**Scenarios:** training43
+
+**Gaps:** Editor geometry equality is not runtime-map identity.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### WORLD-02 — Exit, timeout and mission outcome
+
+**Original:** Evaluate exits, clock, dead/uncontrolled participants and terminal priority; preserve first-exit reference mode.
+
+**Source:** Main.s check_exit; source countdown logic; baseline ocs-3926.
+
+**Mapped scope:** All-alive first-exit and labelled cooperative extraction work; dead/control cases unresolved.
+
+**Evidence:** [mission-rules.md](../../docs/mission-rules.md), [training-patrol-mission.md](../../docs/training-patrol-mission.md), [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** [mission.test.ts](../../tests/mission.test.ts), [extraction.spec.ts](../../tests/browser/extraction.spec.ts), [training-patrol-mission.spec.ts](../../tests/browser/training-patrol-mission.spec.ts)
+
+**Scenarios:** training43, extraction, patrol
+
+**Gaps:** Complete original participant and all-dead semantics require live lifecycle.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### WORLD-03 — Messages, signs and triggers
+
+**Original:** Dispatch cell signs and one-shot positional messages, including speaker and language conditions.
+
+**Source:** Main.s push_messages; Controls&Movement.s panel text dispatch; baseline ocs-3926.
+
+**Mapped scope:** Trigger records preserved; original message/sign gameplay not activated.
+
+**Evidence:** [map-format.md](../../docs/map-format.md), [training43-completion.md](../../docs/training43-completion.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Inactive panel actions must not be promoted into functioning switches.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### WORLD-04 — Campaign travel and completion
+
+**Original:** Select allowed destinations, load matching resources and preserve equipment/progress through campaign ending.
+
+**Source:** WorldMap.s validate_choice; OCS Locations table and runtime map loaders; baseline ocs-3926.
+
+**Mapped scope:** Location baseline discrepancy explained; executable travel and full campaign unimplemented.
+
+**Evidence:** [campaign-location-baseline.md](../../docs/campaign-location-baseline.md), [runtime-map-selector-producer.md](../../docs/runtime-map-selector-producer.md)
+
+**Tests:** Open
+
+**Scenarios:** None linked
+
+**Gaps:** Start-map runtime resource, dispatcher provenance and every campaign route remain open.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### WORLD-05 — Checkpoint, retry and deterministic recovery
+
+**Original:** Atomically save/restore all installed mutable state and reset a mission without duplicating or replaying effects.
+
+**Source:** Browser adaptation contract; original save parity separately unproved; baseline ocs-3926.
+
+**Mapped scope:** World checkpoint v3 plus source-bound accepted scenario wrappers through v13.
+
+**Evidence:** [checkpoints.md](../../docs/checkpoints.md), [training-session.md](../../docs/training-session.md), [training-moving-door.md](../../docs/training-moving-door.md), [training-pressure-pad.md](../../docs/training-pressure-pad.md)
+
+**Tests:** [checkpoint.test.ts](../../tests/checkpoint.test.ts), [training-session.test.ts](../../tests/training-session.test.ts), [checkpoints.spec.ts](../../tests/browser/checkpoints.spec.ts), [training-moving-door.spec.ts](../../tests/browser/training-moving-door.spec.ts), [training-pressure-pad.spec.ts](../../tests/browser/training-pressure-pad.spec.ts)
+
+**Scenarios:** training43, ground, fall, moving-door, pressure-pad
+
+**Gaps:** Coverage is restricted to accepted modes; wet/lifecycle/lift state is not saved because it is not installed.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### WORLD-06 — Complete original-level acceptance
+
+**Original:** A source-pinned level supports all required and reachable optional interactions, failure/retry and recoverable progress with four local players.
+
+**Source:** Training43 completion boundary and user-selected first acceptance target; baseline ocs-3926.
+
+**Mapped scope:** Training43 static route proven; whole-level acceptance remains open.
+
+**Evidence:** [training43-completion.md](../../docs/training43-completion.md), [fallback-assessment.md](../../docs/fallback-assessment.md), [controller-tv-acceptance.md](../../docs/controller-tv-acceptance.md)
+
+**Tests:** [training43-audit.test.ts](../../tests/training43-audit.test.ts), [extraction.spec.ts](../../tests/browser/extraction.spec.ts)
+
+**Scenarios:** training43
+
+**Gaps:** Wet stairs/region, lifecycle and complete recovery block keyboard software acceptance. Physical four-player controller/TV acceptance is DEFERRED separately and does not block keyboard software work.
+
+**Next:** Close the Training43 acceptance checklist; retain the original first-exit and labelled cooperative variant.
+
+### PRESENT-01 — Four-view gameplay rendering
+
+**Original:** Show every actor and active mechanic with legible geometry, state and feedback in all four views.
+
+**Source:** Browser renderer; original graphics reference separately scoped; baseline ocs-3926.
+
+**Mapped scope:** Placeholder 3D views and authored overlays; NPC appears in overhead marker rather than original actor rendering.
+
+**Evidence:** [render-performance.md](../../docs/render-performance.md), [testbed-ux.md](../../docs/testbed-ux.md), [training-patrol.md](../../docs/training-patrol.md)
+
+**Tests:** [grid-mesh.test.ts](../../tests/grid-mesh.test.ts), [render-preview.spec.ts](../../tests/browser/render-preview.spec.ts), [testbed-ux.spec.ts](../../tests/browser/testbed-ux.spec.ts)
+
+**Scenarios:** training43, patrol
+
+**Gaps:** Original asset/animation integration and complete visual gameplay feedback remain deferred.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PRESENT-02 — Gameplay audio and cue integration
+
+**Original:** Trigger correct gameplay cues from accepted events and route readable four-player feedback.
+
+**Source:** Original cue mapping; browser event/audio adaptation; baseline ocs-3926.
+
+**Mapped scope:** Separate audio diagnostic exists; gameplay cue integration deferred.
+
+**Evidence:** [browser-audio.md](../../docs/browser-audio.md)
+
+**Tests:** [audio-service.test.ts](../../tests/audio-service.test.ts), [audio-preview.spec.ts](../../tests/browser/audio-preview.spec.ts)
+
+**Scenarios:** audio
+
+**Gaps:** Sound helper effects may remain inert; previews are not in-game cue acceptance.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+### PRESENT-03 — Physical controllers and event TV
+
+**Original:** Four people control distinct actors and use inventory/interactions, recover device faults and read all views on event hardware.
+
+**Source:** Modern platform acceptance; original controller fidelity is separate; baseline ocs-3926.
+
+**Mapped scope:** Synthetic routing and a physical-observation diagnostic; no accepted physical session.
+
+**Evidence:** [controller-tv-acceptance.md](../../docs/controller-tv-acceptance.md)
+
+**Tests:** [input.test.ts](../../tests/input.test.ts), [controller-preview.spec.ts](../../tests/browser/controller-preview.spec.ts)
+
+**Scenarios:** controller
+
+**Gaps:** Real controllers, disconnect/reconnect, full gameplay and seating-distance TV checks outstanding.
+
+**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+
+## Original-level relationships
+
+Flags/sentinels are static observations. Only Training43 has the existing detailed approach/route audit. Other map requirements and reachability remain unverified.
+
+### 01 · ArtificialIsland
+
+Maps/Game/Map01_ArtificialIsland/01.map; SHA-256 `fc7d5734b4e0dafc68eff7d67122c9bc48be94f5655cfcbb5f5cc3fd3d02f5ef`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 02 · CaveSystem
+
+Maps/Game/Map02_CaveSystem/02.map; SHA-256 `bd5b4f880f64321919f1960d42177caa79712e0452831c0c67c3478568e33b65`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 03 · LabTestSite
+
+Maps/Game/Map03_LabTestSite/03.map; SHA-256 `08c29bbfad5ebebe3398e4cb436ad70ef68d092f3b68740bda69aa58318d3225`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 04 · Laboratory
+
+Maps/Game/Map04_Laboratory/04.map; SHA-256 `1395ffb86240b0077288963f86645522693843f01cca70672ec45fd480a444fc`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 05 · Refinery
+
+Maps/Game/Map05_Refinery/05.map; SHA-256 `ad470ea8697cc706e16ffafaec9ac5ebf82ed5df0f0db04058e2c77e87de6fc8`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 06 · UrbanDevelopment
+
+Maps/Game/Map06_UrbanDevelopment/06.map; SHA-256 `c5fb49f5876cf950fce5e9edcf9678983fff5200d0fa9a5ba2360a1cbfa5f6d4`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 07 · AbandonedDepot
+
+Maps/Game/Map07_AbandonedDepot/07.map; SHA-256 `d7a187fe80821d231dac6a4a7abef40537f5bc621248c75a56e04e0fa307b8e5`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 08 · Tomb
+
+Maps/Game/Map08_Tomb/08.map; SHA-256 `1be65b7cf3f91ba15b86f0b412be57d8f43bd14e8b6e77ee2c641fee20c2a7bf`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 09 · Tomb
+
+Maps/Game/Map09_Tomb/09.map; SHA-256 `4490eba70a8892aefbe6dd3768c938f33df8faaf8a75ff5ba79103c69809cbf7`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 10 · AmmoDepot
+
+Maps/Game/Map10_AmmoDepot/10.map; SHA-256 `fed60e0e6770734363bc20df466052c6be909931b45c0b4bf4ec388eca686712`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 11 · SatelliteUplink
+
+Maps/Game/Map11_SatelliteUplink/11.map; SHA-256 `5f010ca9ad80a23c6b3913ca7033789fe55123357a3f212ca7e50c553f5ac8a1`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 12 · DefenseBattery
+
+Maps/Game/Map12_DefenseBattery/12.map; SHA-256 `74fc0a7ff325eaddb7527190f4d2120841f0db7415413e756aa9df349c320698`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 13 · Dropzone
+
+Maps/Game/Map13_Dropzone/13.map; SHA-256 `28df7fb340f3560054b3ee2c2195253ed13f773a91a1b516df95107d1d82aba1`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 14 · Tomb
+
+Maps/Game/Map14_Tomb/14.map; SHA-256 `ca1ff19e7704c12e96a5d4af790f06fd982eb80eae509d6e657781f15f541be2`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 15 · Tomb
+
+Maps/Game/Map15_Tomb/15.map; SHA-256 `a0ac32b845e0ed57d6380dd3b54a831fc3496475146533f11b970ae346840839`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 16 · NotUsed
+
+Maps/Game/Map16_NotUsed/16.map; SHA-256 `dd411b49be7e613452ab0c9561843b8e3a8985a877e85f1dce4b68acf5a8bae9`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 17 · OperationCentre
+
+Maps/Game/Map17_OperationCentre/17.map; SHA-256 `f4592859bb0383c1acf4e35641e8b46d5f5a08265e1688d5d0e09dbd82bb9deb`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 18 · FusionReactor
+
+Maps/Game/Map18_FusionReactor/18.map; SHA-256 `089c63c029e06b4ac59ac7b1dfd7bf8f4a884c4e176517a0099f00b14547228b`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 19 · DesalinationPlant
+
+Maps/Game/Map19_DesalinationPlant/19.map; SHA-256 `b274ddff50dcffba690dfa431a5c43d6acf65a25f85acb64d4283fdb12000589`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 20 · UrbanDevelopment
+
+Maps/Game/Map20_UrbanDevelopment/20.map; SHA-256 `c4918825c323f6e6fb276ccf1de2f38cc691fd2c45220a95b4e1101ae407b01c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 21 · Spaceport
+
+Maps/Game/Map21_Spaceport/21.map; SHA-256 `84148bae8705d6deb73632ecdddbe8331c58b7618381de20b518e259fcef2a61`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 22 · Stopover
+
+Maps/Game/Map22_Stopover/22.map; SHA-256 `85052fa7ed373de185a01934c2cc1e207404bf8cf35d93551702d4602686c0e2`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 23 · 1pl
+
+Maps/Game/Map23_1pl/23.map; SHA-256 `897e51c723b504d423e7189d8dd206b6849d27270535bda12dbf1cfa909e5817`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 24 · 1pl
+
+Maps/Game/Map24_1pl/24.map; SHA-256 `f1a1952dba1451c6e7a14d79d95a6ae563ae139aacc89e55c2e8df12c95bb9ec`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 25 · 1pl
+
+Maps/Game/Map25_1pl/25.map; SHA-256 `78b2d00e44375bbfdf132c1c2a00858f51e7f8be9e1032c613ed69bb762362e6`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 26 · 1pl
+
+Maps/Game/Map26_1pl/26.map; SHA-256 `97efd43f7dace1188c9db724a06af86c87c766533b1748008503e9a470642d5d`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 27 · 1pl
+
+Maps/Game/Map27_1pl/27.map; SHA-256 `f1d3ba442713589cb5ddb68d94b3370658e16fc564d8e3130d7afddab0300d1c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 28 · 2pl
+
+Maps/Game/Map28_2pl/28.map; SHA-256 `9907689ff4796c284cd6c9b23853ad53ebf8b9c0da551e695e75cadaff3729cf`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 29 · 2pl
+
+Maps/Game/Map29_2pl/29.map; SHA-256 `f6d95382294c93ee85fef2a268447d60ca657a9416e96dbb33712df4efa63467`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 30 · 2pl
+
+Maps/Game/Map30_2pl/30.map; SHA-256 `40fe602ce5b24437930da0d4496c8a0ca78e2ffb85fff37e7fecb42dd5842699`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 31 · 2pl
+
+Maps/Game/Map31_2pl/31.map; SHA-256 `49ebafb1dbbe458de06fe94fcbeaeb189805a5a3db71c298bd642d2876782af8`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 32 · 2pl
+
+Maps/Game/Map32_2pl/32.map; SHA-256 `d9907cb64b7b3d459ba1e8e2030aa025e85f926c99714111288fec57c8f15026`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 33 · 3pl
+
+Maps/Game/Map33_3pl/33.map; SHA-256 `f30888ad9e678f95424314622f8df8388535ddb966fcc50eeabba0439a98600d`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [ENV-09](index.html#ENV-09): **present-unverified** — Water flags plus nonzero editor water speed; movement, limits and runtime transforms unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 34 · 3pl
+
+Maps/Game/Map34_3pl/34.map; SHA-256 `8b0a66edbdc1505616c7b4823363aa279b986bbbb7804c8e86d9dbe3bb3b7379`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 35 · 3pl
+
+Maps/Game/Map35_3pl/35.map; SHA-256 `95760f9536ade3e3552b2316abcbf2110a6022da22ebf7d360a7488e71bf3e53`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 36 · 3pl
+
+Maps/Game/Map36_3pl/36.map; SHA-256 `7653e6cfbbd6bc032a2e868e733dcbba7f9c6304f7d474bb610e7af36ac0d267`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 37 · 3pl
+
+Maps/Game/Map37_3pl/37.map; SHA-256 `77de8f628af793cc28b06180a816cf32557ee99ab0fe9c504e4f85c6dfa8f5d0`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 38 · 4pl
+
+Maps/Game/Map38_4pl/38.map; SHA-256 `56caf1ec3158417a780261e8f938345fb9bbd05de2841ebc6c3184a14bc54b74`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 39 · 4pl
+
+Maps/Game/Map39_4pl/39.map; SHA-256 `552b42c0d16d0dd9e88fa02686cd19fae3df14aec43fc89654e14b06ff7c7042`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 40 · 4pl
+
+Maps/Game/Map40_4pl/40.map; SHA-256 `4ed88e088126d0f6874e96b8329f6ea686d9f8c64367d641c43ce2fea12023c4`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 41 · 4pl
+
+Maps/Game/Map41_4pl/41.map; SHA-256 `739d1f3d8654fb76b88e78676915b96cc25c3a7f198fecffd4ef75c8900f678c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### 42 · 4pl
+
+Maps/Game/Map42_4pl/42.map; SHA-256 `5118cf81c05a79f3dbbc5d8e6679f55102d0984882506a0232c4b653e5a205a7`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [WORLD-03](index.html#WORLD-03): **present-unverified** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### Training43
+
+Maps/Game/Map43_Training/43.map; SHA-256 `646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
+- [MOV-03](index.html#MOV-03): **reachable-optional** — Existing source-derived dry approach reaches the upper wet-stair entry. Supported static route bypasses it; live wet traversal is blocked.
+- [ENV-08](index.html#ENV-08): **unknown** — Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough.
+- [LIFE-03](index.html#LIFE-03): **unknown** — Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough.
+- [WORLD-02](index.html#WORLD-02): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
+- [WORLD-03](index.html#WORLD-03): **unknown** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [MOV-02](index.html#MOV-02): **reachable-optional** — Existing Training43 audit identifies reachable two-level support; guarded immediate-above entry remains distinct.
+- [WORLD-05](index.html#WORLD-05): **required** — Original-level recovery must include all installed environment/lifecycle state, not just the current dry route.
+- [WORLD-06](index.html#WORLD-06): **required** — User-selected first original-level acceptance case: Training43.
+- [PRESENT-03](index.html#PRESENT-03): **required** — Birthday human acceptance requires four physical players/controllers and TV validation. DEFERRED separately; does not block keyboard software work.
+
+### Training44
+
+Maps/Game/Map44_Training/44.map; SHA-256 `0de94cdae32aceabc02a4038972894915e2c840eb46a63011c40caa222272ca5`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### Training45
+
+Maps/Game/Map45_Training/45.map; SHA-256 `a8fa4fe2799e609150cf373b4b7d716f64c86534475669240afa61d56a2cf18f`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-10](index.html#ENV-10): **present-unverified** — Teleport block type 6 observed; destination storage and traversal unverified.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### Training46
+
+Maps/Game/Map46_Training/46.map; SHA-256 `7dc18eff0cd9f250b7b8f2bf54266031c9bb1fc621bde670e29b7d6ed67e8db0`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+### Training47
+
+Maps/Game/Map47_Training/47.map; SHA-256 `06f7a8ef46fd541f314bc6d33f4d19741cb635ff081019e30d8a511a8047e94f`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
+
+- [MOV-01](index.html#MOV-01): **present-unverified** — Four editor start triples exist. Start walkability, occupancy and executable startup are separate checks.
+- [MOV-03](index.html#MOV-03): **present-unverified** — Stair block/auxiliary types decoded; direction, wet entry and reachability not replayed.
+- [ENV-01](index.html#ENV-01): **present-unverified** — Panel bit plus dispatch type 1/2. Types 0/3 and editor used flags do not activate buttons.
+- [ENV-02](index.html#ENV-02): **present-unverified** — Floor-present bit plus floor type 1. Descriptor/target validity, entry/release and reachability remain unaudited.
+- [ENV-05](index.html#ENV-05): **present-unverified** — Nonzero door position sentinel. Door cell/record binding and reachability remain unaudited.
+- [ENV-07](index.html#ENV-07): **present-unverified** — Nonzero lift position sentinel; hydraulic geometry alone is not a moving lift.
+- [MOV-05](index.html#MOV-05): **present-unverified** — Pushable flag or push-block type observed; ability to push and required puzzle role unverified.
+- [ENV-08](index.html#ENV-08): **present-unverified** — Water presence flag observed; depth, drowning eligibility and navigable routes unverified.
+- [LIFE-03](index.html#LIFE-03): **present-unverified** — Water is a candidate for immersion/drowning, not proof that an eligible actor reaches deep water.
+- [INV-04](index.html#INV-04): **present-unverified** — Item-layer low byte is nonzero; upper texture/question flags alone do not establish an item.
+- [AI-03](index.html#AI-03): **present-unverified** — Auxiliary-present with closed-egg type 0, including zero hatch timer. Hatch outcome/reachability unverified.
+- [WORLD-02](index.html#WORLD-02): **present-unverified** — Exit block type 3 observed. Header coordinates alone do not activate completion; approach and outcome not replayed.
+- [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [AI-02](index.html#AI-02): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+- [PSI-01](index.html#PSI-01): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
+
+## Maintenance
+
+Edit register.json, reconcile accepted main and evidence, then run `npx tsx tools/build-mechanics-register.ts`. Use `--check` to verify generated files and links. Original inputs remain private. See the HTML method section for acceptance receipt requirements.

@@ -1,0 +1,212 @@
+import { expect, test } from '@playwright/test';
+import { readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { STAGES, type MechanicsRegister } from '../../tools/mechanics-types';
+import { renderHtml, validateRegister } from '../../tools/build-mechanics-register';
+
+async function expectedCompletion() {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const total = data.mechanics.length * STAGES.length;
+  const covered = data.mechanics.reduce((sum, m) => sum + STAGES.filter(stage => m.stages[stage] === 'covered').length, 0);
+  const percent = total === 0 ? 0 : covered === total ? 100 : Math.min(99.9, Math.round(covered / total * 1000) / 10);
+  return { covered, total, percent };
+}
+
+
+test('register search, evidence navigation, level relationships and export work', async ({ page }, testInfo) => {
+  const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+  await page.goto('/docs/mechanics/index.html');
+  await expect(page.getByRole('heading', { name: 'Master Mechanics Register' })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('overview.png') });
+  await page.getByRole('link', { name: '02 · Mechanics register' }).click();
+  await page.getByRole('searchbox', { name: 'Find a mechanic' }).fill('drowning');
+  await expect(page.locator('#LIFE-03')).toBeVisible();
+  await expect(page.locator('#ENV-05')).toBeHidden();
+  await page.locator('#LIFE-03 > summary').click();
+  await expect(page.locator('#LIFE-03 .original')).toContainText('threshold damage');
+  await expect(page.locator('#LIFE-03 a[href="../../tests/drowning-decision.test.ts"]')).toBeVisible();
+  await page.locator('#LIFE-03 a[href="#map-43"]').click();
+  await expect(page.locator('#map-43')).toBeVisible();
+  await expect(page.locator('#map-43')).toHaveAttribute('open', '');
+  await expect(page.locator('#map-43 .card-body')).toContainText('wider water-region');
+  await page.locator('#map-43 .interaction-list a[href="#MOV-03"]').click();
+  await expect(page.locator('#MOV-03')).toBeVisible();
+  await expect(page.locator('#MOV-03')).toHaveAttribute('open', '');
+  await expect(page.getByRole('searchbox')).toHaveValue('');
+  await page.getByLabel('Family', { exact: true }).selectOption('Psi');
+  await page.getByLabel('Mapping status').selectOption('open');
+  await expect(page.locator('#PSI-12')).toBeVisible();
+  await expect(page.locator('#MOV-03')).toBeHidden();
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(page.locator('#MOV-03')).toBeVisible();
+  await page.getByRole('searchbox').fill('no-such-mechanic-999');
+  await expect(page.locator('#no-results')).toBeVisible();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export register JSON' }).click();
+  const exported = JSON.parse(await readFile((await (await download).path())!, 'utf8'));
+  expect(exported.levels.filter((l: { firstAcceptance: boolean }) => l.firstAcceptance).map((l: { id: string }) => l.id)).toEqual(['map-43']);
+  expect(exported.mechanics).toHaveLength(86);
+  expect(errors).toEqual([]);
+});
+
+test('deep links and training group retain explicit unverified classifications', async ({ page }) => {
+  await page.goto('/docs/mechanics/index.html#map-45');
+  await expect(page.locator('#map-45')).toBeVisible();
+  await expect(page.locator('#map-45')).toHaveAttribute('open', '');
+  await expect(page.locator('#map-45 .card-body')).toContainText('present unverified');
+  await expect(page.locator('#map-45 .classification.required')).toHaveCount(0);
+  await page.getByRole('link', { name: '03 · Training43 acceptance' }).click();
+  await expect(page.locator('#acceptance .check')).toHaveCount(10);
+  await expect(page.locator('#T43-05')).toContainText('Open');
+  await expect(page.locator('#acceptance input[type="checkbox"]')).toHaveCount(0);
+});
+
+for (const width of [390, 1440]) test(`register fits ${width}px and remains keyboard operable`, async ({ page }, testInfo) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.goto('/docs/mechanics/index.html#register');
+  await page.locator('#COMBAT-01 > summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#COMBAT-01')).toHaveAttribute('open', '');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath(`mechanic-${width}.png`) });
+  await page.goto('/docs/mechanics/index.html#map-47');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('standalone HTML works offline as a local file', async ({ page }) => {
+  const remoteRequests: string[] = [];
+  await page.context().setOffline(true);
+  page.on('request', request => { if (/^https?:/.test(request.url())) remoteRequests.push(request.url()); });
+  const file = fileURLToPath(new URL('../../docs/mechanics/index.html', import.meta.url));
+  await page.goto(`${pathToFileURL(file).href}#LIFE-03`);
+  await expect(page.locator('#LIFE-03')).toBeVisible();
+  await expect(page.locator('#LIFE-03')).toHaveAttribute('open', '');
+  const completion = await expectedCompletion();
+  await expect(page.getByRole('progressbar', { name: 'Register completion' })).toHaveAttribute('value', String(completion.percent));
+  await page.locator('.completion-method > summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#completion-method')).toBeVisible();
+  await page.getByRole('searchbox').focus();
+  await page.keyboard.insertText('MOV-03');
+  await expect(page.locator('#MOV-03')).toBeVisible();
+  await expect(page.locator('#LIFE-03')).toBeHidden();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export register JSON' }).focus();
+  await page.keyboard.press('Enter');
+  const exported = JSON.parse(await readFile((await (await download).path())!, 'utf8'));
+  expect(exported).toEqual(JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')));
+  expect(remoteRequests).toEqual([]);
+});
+
+test('global register completion stays stable under search, filters, level groups and deep links', async ({ page }) => {
+  const { covered, total, percent } = await expectedCompletion();
+  await page.goto('/docs/mechanics/index.html#register');
+  const progress = page.getByRole('progressbar', { name: 'Register completion' });
+  const verify = async () => {
+    await expect(progress).toHaveAttribute('value', String(percent));
+    await expect(progress).toHaveAttribute('max', '100');
+    await expect(page.locator('.completion-value')).toHaveText(percent.toFixed(1) + '%');
+    await expect(page.locator('#completion-counts')).toHaveText(`${covered} / ${total} evidence checkpoints covered`);
+  };
+  await verify();
+  await page.getByRole('searchbox').fill('no-such-mechanic-999');
+  await expect(page.locator('#no-results')).toBeVisible(); await verify();
+  await page.getByLabel('Family', { exact: true }).selectOption('Psi'); await verify();
+  await page.getByLabel('Mapping status').selectOption('open'); await verify();
+  await page.goto('/docs/mechanics/index.html#levels');
+  await page.locator('#level-group').selectOption('training');
+  await expect(page.locator('#map-01')).toBeHidden(); await verify();
+  await page.goto('/docs/mechanics/index.html#map-45');
+  await expect(page.locator('#map-45')).toHaveAttribute('open', ''); await verify();
+  await page.goto('/docs/mechanics/index.html#MOV-03');
+  await expect(page.locator('#MOV-03')).toHaveAttribute('open', ''); await verify();
+});
+
+for (const width of [390, 1440]) test(`register completion placement and accessible method at ${width}px`, async ({ page }, testInfo) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.goto('/docs/mechanics/index.html');
+  const heading = (await page.getByRole('heading', { level: 1 }).boundingBox())!;
+  const indicator = (await page.locator('#register-completion').boundingBox())!;
+  if (width === 1440) {
+    expect(indicator.x).toBeGreaterThan(heading.x + heading.width);
+    expect(indicator.y).toBeLessThan(heading.y + heading.height);
+  } else {
+    expect(indicator.y).toBeGreaterThanOrEqual(heading.y + heading.height);
+    expect(indicator.y - (heading.y + heading.height)).toBeLessThan(30);
+  }
+  expect(indicator.x + indicator.width).toBeLessThanOrEqual(width);
+  await page.screenshot({ path: testInfo.outputPath(`completion-${width}.png`) });
+  await page.locator('.completion-method > summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#completion-method')).toBeVisible();
+  await expect(page.locator('#completion-method')).toContainText('partial/open earn zero');
+  await expect(page.getByRole('progressbar')).toHaveAccessibleName('Register completion');
+  await expect(page.getByRole('progressbar')).toHaveAccessibleDescription(/covered checkpoints.*all registered evidence checkpoints/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+for (const field of ['scenario-id', 'scenario-kind', 'level-id', 'level-group', 'acceptance-id']) test(`offline HTML contains refused ${field} metadata without executing it`, async ({ page }, testInfo) => {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const payload = 'x"><img src=x onerror="window.__registerInjected=1">';
+  if (field === 'scenario-id') {
+    const old = data.scenarios[0]!.id; data.scenarios[0]!.id = payload;
+    for (const m of data.mechanics) m.scenarios = m.scenarios.map(id => id === old ? payload : id);
+  }
+  if (field === 'scenario-kind') Object.assign(data.scenarios[0]!, { kind: payload });
+  if (field === 'level-id') data.levels.find(l => !l.firstAcceptance)!.id = payload;
+  if (field === 'level-group') Object.assign(data.levels.find(l => !l.firstAcceptance)!, { group: payload });
+  if (field === 'acceptance-id') data.acceptanceChecks[0]!.id = payload;
+  await expect(validateRegister(data)).rejects.toThrow('Invalid');
+  // Exercise escaping independently of validation: callers may render a preview
+  // before validating. The old renderer executed these exact five payloads.
+  const file = testInfo.outputPath('refused-metadata.html');
+  await writeFile(file, renderHtml(data));
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto(pathToFileURL(file).href);
+  expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  await expect(page.locator('img, [onerror]')).toHaveCount(0);
+  await expect(page.locator('script')).toHaveCount(2);
+  const record = field.startsWith('scenario') ? page.locator('.scenario').first() : field.startsWith('level') ? page.locator('.level').first() : page.locator('.check').first();
+  if (field.endsWith('-id')) await expect(record).toHaveAttribute('id', field === 'scenario-id' ? `scenario-${payload}` : payload);
+  if (field === 'level-group') await expect(record).toHaveAttribute('data-group', payload);
+  if (field === 'scenario-kind') await expect(record.locator('.kind')).toHaveText(payload);
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+
+test('accepted hostile prose survives offline text, attribute, search and JSON export round trips', async ({ page }, testInfo) => {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const prose = '" \' & <img src=x onerror="window.__registerInjected=1"> </script><script>window.__registerInjected=2</script>';
+  const m = data.mechanics[0]!;
+  m.family = prose; m.title = prose; m.original = prose; m.mappingScope = prose;
+  m.source = prose; m.next = prose; m.gaps = [prose];
+  m.evidence[0]!.label = prose; m.evidence[0]!.scope = prose;
+  data.baseline.label = prose; data.baseline.description = prose; data.scope = prose;
+  data.scenarios[0]!.title = prose; data.scenarios[0]!.instructions = prose; data.scenarios[0]!.scope = prose;
+  const l = data.levels[0]!; l.title = prose; l.audit = prose; l.revision = prose; l.archivePath = prose; l.blockers = [prose]; l.interactions[0]!.basis = prose;
+  data.acceptanceChecks[0]!.title = prose; data.acceptanceChecks[0]!.requirement = prose;
+  data.commands[0] = { label: prose, command: prose, scope: prose }; data.limitations = [prose];
+  await validateRegister(data);
+  const file = testInfo.outputPath('accepted-prose.html'); await writeFile(file, renderHtml(data));
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto(`${pathToFileURL(file).href}#${m.id}`);
+  const card = page.locator(`#${m.id}`);
+  await expect(card).toHaveAttribute('data-family', prose);
+  await expect(card.locator('.original')).toHaveText(prose);
+  await expect(card.locator('.identity strong')).toHaveText(prose);
+  await expect(page.locator('.scenario h3').first()).toHaveText(prose);
+  await expect(page.locator('.check p').first()).toHaveText(prose);
+  await expect(page.locator('.level .card-body > p').first()).toHaveText(prose);
+  await expect(page.locator('img, [onerror], [onfocus], [autofocus]')).toHaveCount(0);
+  await expect(page.locator('script')).toHaveCount(2);
+  await page.getByRole('searchbox').fill('<img'); await expect(card).toBeVisible();
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
+  expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
+  expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
