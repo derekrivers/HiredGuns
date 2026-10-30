@@ -10,7 +10,7 @@ Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Trai
 
 Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team.
 
-Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
+Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
 
 The original mode-specific proof below retains its exact v15/v16 scope.
 
@@ -147,3 +147,5 @@ Bounded PR115 repair evidence is separate in `.local/repair115`; it covers
 retired-head ownership, scheduled dry delay, exact object/array collection caps,
 and the then-current baseline label through PR114. The coordinator subsequently accepted the exact PR115 final head above.
 Model requested: gpt-6.1-sol medium. Token usage unavailable. No delegation.
+
+Current extension: [accepted PR122 original99 timeout/full responsive v19 recovery](training43-source-timeout-recovery.md). This distinct opt-in profile retains TOTAL59,499; this document’s legacy version/caps/bytes and physical scope remain unchanged. Legacy1–18 replay is not newly async-cancellable. Whole Training43 software remains incomplete; signs/readability remain UNKNOWN/OPEN. Assets/hardware are separately deferred.

@@ -172,11 +172,11 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });
 
-test('accepted120 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+test('accepted122 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
   const data = await load();
-  expect(data.acceptedThrough).toBe(120);
-  expect(data.reviewedHead).toBe('9c11a985d79b28ef6c4e167966f1863647af5ba8');
-  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120]);
+  expect(data.acceptedThrough).toBe(122);
+  expect(data.reviewedHead).toBe('81353ad52118875195c925d668cc469ad72d106e');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120,122]);
   const before = registerCompletion(data.mechanics);
   expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
   expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(129);
@@ -186,7 +186,7 @@ test('accepted120 dashboard separates capability lineage, proof and broad eviden
   extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
   await validateRegister(extended);
   expect(registerCompletion(extended.mechanics)).toEqual(before);
-  expect(renderHtml(extended)).toContain('11 listed milestones');
+  expect(renderHtml(extended)).toContain('12 listed milestones');
   const food = data.mechanics.find(m => m.id === 'INV-06')!;
   expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
   expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
@@ -342,7 +342,7 @@ test('accepted118 records actual summary receipt and distinct accepted/source id
   }
 });
 
-for (const pr of [118,120]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
+for (const pr of [118,120,122]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
   const original = await load();
   for (const field of Object.keys(original.acceptedProofs.find(p => p.pr === pr)!)) {
     for (const api of [validateRegister, renderHtml, renderMarkdown]) for (const throwing of [false,true]) {
@@ -388,7 +388,7 @@ test('accepted120 retains distinct union/source/base, separate receipt and uncha
   }
   // Tree/base extensions are conditional, not accepted arbitrarily on older records.
   const bad=structuredClone(data);Object.assign(bad.acceptedProofs[0]!,{tree:p.tree,reviewedTree:p.reviewedTree,sourceProofBase:p.sourceProofBase});await expect(validateRegister(bad)).rejects.toThrow();
-  for(const board of data.dashboards){const m=board.milestones.find(m=>m.id.endsWith('-selected-all-dead'))!;expect(m.proofs).toEqual(['proof-120']);expect(m.scenario).toBe('wet-party');expect(m.status).toBe('playable');expect(m.missing).toContain('UNREVIEWED');}
+  for(const board of data.dashboards){const m=board.milestones.find(m=>m.id.endsWith('-selected-all-dead'))!;expect(m.proofs).toEqual(['proof-120']);expect(m.scenario).toBe('wet-party');expect(m.status).toBe('playable');expect(m.missing).toContain('Accepted PR122');}
   expect(registerCompletion(data.mechanics)).toMatchObject({covered:68,total:688,display:'9.9%'});
   expect(data.mechanics.reduce((n,m)=>n+STAGES.filter(s=>m.stages[s]==='partial').length,0)).toBe(129);
   for(const c of data.acceptanceChecks)expect(c.state).not.toBe('covered');
@@ -401,4 +401,43 @@ test('accepted120 invalid preview fields escape all contexts without weakening r
  const hostile='</script><img src=x onerror="bad()"> [link](javascript:bad)';
  Object.assign(p,{tree:hostile,reviewedTree:hostile,sourceProofBase:hostile,receiptKind:hostile});
  await expect(validateRegister(data)).rejects.toThrow();expect(renderHtml(data)).not.toContain('<img');expect(renderHtml(data)).toContain('\\u003c/script>');expect(renderMarkdown(data)).not.toContain('[link](javascript:bad)');
+});
+
+
+test('accepted122 binds actual union, reviewed source, base and separate actual receipt without broad credit', async () => {
+  const data = await load(), p = data.acceptedProofs.find(p => p.pr === 122)!;
+  expect(p).toEqual({ id:'proof-122', pr:122, merge:'81353ad52118875195c925d668cc469ad72d106e', head:'7540c012f8a7bb9ee343b09628eecb0c85c4fb85',
+    tree:'07126bf9a65a38fb15d3c4f75b6f915ad134b611', reviewedTree:'6f28744d18198aa929c042d9ca2041ee816e22f1', sourceProofBase:'9c11a985d79b28ef6c4e167966f1863647af5ba8',
+    reviewSha256:'c7ad6b0b461bd0ea049cfea8b9e1d957650c8b5b3ddc5c01e93f03155a95e180', ci:['41136204108','41136195941'], automatic:'6533377523', receipt:'6534702086', receiptKind:'separate-receipt-comment' });
+  expect(new Set([p.tree,p.reviewedTree,p.sourceProofBase]).size).toBe(3);
+  for (const change of [{receipt:p.automatic},{receiptKind:'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed'},{tree:null},{reviewedTree:'bad'},{sourceProofBase:42}]) {
+    const bad = structuredClone(data); Object.assign(bad.acceptedProofs.find(p => p.pr === 122)!,change); await expect(validateRegister(bad)).rejects.toThrow();
+  }
+  for (const board of data.dashboards) {
+    const m = board.milestones.find(m => m.id.endsWith('-source-timeout'))!;
+    expect(m).toMatchObject({status:'playable',scenario:'source-timeout',proofs:['proof-122']});
+    expect(m.missing).toContain('UNKNOWN/OPEN'); expect(m.missing).toContain('INCOMPLETE');
+  }
+  const scenario = data.scenarios.find(s => s.id === 'source-timeout')!;
+  for (const value of ['Apply team to Training43','Enable original 99-unit timeout','fresh PAUSED tick zero','[1,3,0,5]','[0,0,3,4]','Save progress','Load progress']) expect(scenario.instructions).toContain(value);
+  expect(registerCompletion(data.mechanics)).toMatchObject({covered:68,total:688,display:'9.9%'});
+  for(const check of data.acceptanceChecks) expect(check.state).not.toBe('covered');
+});
+
+test('122 malformed records and late accessors refuse before any public API invokes a hook', async () => {
+  const original = await load();
+  for (const api of [validateRegister,renderHtml,renderMarkdown]) {
+    for (const mode of ['null','custom','null-prototype','hidden','late-hook']) {
+      const data = structuredClone(original), i = data.acceptedProofs.findIndex(p => p.pr === 122); let reads = 0;
+      if(mode === 'null') Reflect.set(data.acceptedProofs,i,null);
+      else if(mode === 'custom') Object.setPrototypeOf(data.acceptedProofs[i]!,{marker:true});
+      else if(mode === 'null-prototype') Object.setPrototypeOf(data.acceptedProofs[i]!,null);
+      else if(mode === 'hidden') Object.defineProperty(data.acceptedProofs[i]!,'sourceProofBase',{value:original.acceptedProofs[i]!.sourceProofBase,enumerable:false});
+      else Object.defineProperty(data.acceptedProofs[i]!,'sourceProofBase',{enumerable:true,get(){reads++;throw new Error('LATE122');}});
+      let error:unknown;try {await api(data);}catch(caught){error=caught;}
+      expect(error,`${api.name}/${mode}`).toBeInstanceOf(Error);expect(reads).toBe(0);
+    }
+  }
+  // Live own-accessor positive control distinguishes an inactive canary from refusal.
+  let reads=0;const control={get tree(){reads++;return 'live';}};expect(control.tree).toBe('live');expect(reads).toBe(1);
 });

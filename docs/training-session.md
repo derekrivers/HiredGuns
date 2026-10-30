@@ -1,8 +1,8 @@
 # Standalone selected-team Training43 session
 
-Current assessment: accepted PR120 selected-team all-dead and v18 recovery are separate from the earlier mode below. See [current function/behavior register](training43-completion.md#requiredreachable-training43-software-register) and [selected-team controls](training43-selected-team-all-dead.md).
+Current assessment: PR122 original99/full responsive v19 recovery is accepted; see [timeout controls/proof](training43-source-timeout-recovery.md). Accepted PR120 selected-team all-dead and v18 recovery are separate from the earlier mode below. See [current function/behavior register](training43-completion.md#requiredreachable-training43-software-register) and [selected-team controls](training43-selected-team-all-dead.md).
 
-Current accepted scope through PR120 (`9c11a985d79b28ef6c4e167966f1863647af5ba8`):
+Inherited accepted scope through PR120 (`9c11a985d79b28ef6c4e167966f1863647af5ba8`):
 same four-view app, selected-team startup/movement/extraction, bounded paused
 inventory and authored ground cache, designated-target combat/patrol/doors/pads,
 PR112 food/repair after authored dry-fall injury with v14 replay, and PR115
@@ -13,7 +13,7 @@ and [accepted wet controls/limits](training43-wet-traversal.md).
 PR116 additionally accepts [bounded wet lifecycle and v16 recovery](training43-wet-lifecycle.md):
 actual injury/death/north corpse/heads/dead-control guard/manual survivor/first exit
 and Retry. Medical64 poison cure, revival, unsupported wet branches, original99-count
-timeout beyond45000 replay ticks/general corpse items/door-pad callers and complete-level
+general corpse items/door-pad callers and complete-level
 acceptance remain open. Legacy v15 still refuses non-null damage including zero. Older mode-specific
 statements below retain their narrower scope; source-bound weight now applies in
 the selected dry-fall, consumable and bounded wet extensions.
@@ -24,7 +24,7 @@ Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Trai
 
 Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team.
 
-Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
+Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
 
 The browser can now apply four explicitly chosen characters to the exact locally
 imported Training43 map. Open the local map, open the verified OCS Characters

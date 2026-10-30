@@ -117,3 +117,5 @@ The v17 ready team remains `[11,3,0,5]`, with immune race1. Accepted PR120 separ
 slice adds no broad mechanic covered credit, row denominator or whole-level pass.
 Historical failed worker runs remain private and preserved; later clean independent
 proof does not relabel them as passing.
+
+Current extension: [accepted PR122 original99 timeout/full responsive v19 recovery](training43-source-timeout-recovery.md). This distinct opt-in profile retains TOTAL59,499; this document’s legacy version/caps/bytes and physical scope remain unchanged. Legacy1–18 replay is not newly async-cancellable. Whole Training43 software remains incomplete; signs/readability remain UNKNOWN/OPEN. Assets/hardware are separately deferred.
