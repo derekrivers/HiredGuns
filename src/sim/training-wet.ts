@@ -107,7 +107,7 @@ export function serializeWet(c:TrainingCandidate):string{
  if(new TextEncoder().encode(json).length>=WET_LIMITS.bytes)fail('future save byte budget');return json;
 }
 /** Read buffer internals through intrinsic getters, never caller source/typed-array accessors. */
-function rawSnapshot(input:TrainingSources):Required<TrainingSources>{
+export function rawSnapshot(input:TrainingSources):Required<TrainingSources>{
  if(!input||Object.getPrototypeOf(input)!==Object.prototype||Reflect.ownKeys(input).length!==3)fail('raw source fields');
  const proto=Object.getPrototypeOf(Uint8Array.prototype) as object;
  const intrinsic=(name:string,v:unknown)=>Object.getOwnPropertyDescriptor(proto,name)!.get!.call(v) as number;

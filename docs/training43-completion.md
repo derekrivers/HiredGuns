@@ -1,16 +1,18 @@
 # Training43 completion boundary
 
-Accepted main is PR112/113/114 merge `b211895b0bf4600bc7c8fa830814284c46293c97`.
-PR112 accepts the bounded same-app equipped food/repair extension and v14 replay;
-PR113 accepts the mechanics register; PR114 accepts the [bounded wet interaction
-CASE](training43-wet-acceptance.md), including the four-actor dry approach,
-water/sign classification and source-only wet expectations. T43-04 stays partial.
+Accepted main through PR115 is `e2b2d5ff4090c5c39006abea147a24450ca5c17b`.
+PR112 food/repair, PR113 register and PR114 bounded interaction CASE remain accepted.
+PR115 accepts the [bounded keyboard wet consumer](training43-wet-traversal.md):
+actual original-editor entry/return, full-team heads, scheduled delay and v15
+paused recovery, with an atomic refusal at every damage request including zero.
 
-The new [keyboard wet consumer](training43-wet-traversal.md) is **UNREVIEWED**.
-It adds actual supported entry/reverse, live four-actor state and v15 recovery
-in the original editor geometry. Unsupported damage/search/lifecycle transitions
-refuse atomically; original Training43, T43-05 and the functional test bed remain
-incomplete. Training44–47 remain register cases; hardware is deferred.
+The new [wet damage/lifecycle extension](training43-wet-lifecycle.md) is
+**UNREVIEWED**. It adds source arithmetic and the bounded wet-stair corpse search
+in the same four-view app, explicit survivor selection and v16 recovery.
+T43-04 remains partial; T43-05/06 remain open and T43-07/08 partial. Wider water,
+original all-dead outcomes and whole-level acceptance remain unproven; the ready
+team includes a breath-immune actor. No invented all-dead route is credited.
+Controllers/TV remain separately deferred. Training44-47 remain register cases.
 
 ## Historical PR111 candidate assessment (preserved)
 

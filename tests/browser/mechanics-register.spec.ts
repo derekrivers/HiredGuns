@@ -28,7 +28,13 @@ test('register search, evidence navigation, level relationships and export work'
   await page.locator('#LIFE-03 a[href="#map-43"]').click();
   await expect(page.locator('#map-43')).toBeVisible();
   await expect(page.locator('#map-43')).toHaveAttribute('open', '');
-  await expect(page.locator('#map-43 .card-body')).toContainText('wider water-region');
+  const training = page.locator('#map-43 .card-body');
+  await expect(training).toContainText('PR115 actual wet entry/return, four-actor heads, scheduled delay and v15 recovery');
+  await expect(training).toContainText('Wider wet region, damage/lifecycle and complete original level remain unaccepted');
+  await expect(training).toContainText('Wider water outcomes and new lifecycle candidate remain unaccepted');
+  await expect(page.locator('#LIFE-03')).toContainText('lifecycle candidate is UNREVIEWED');
+  await expect(page.locator('#T43-05')).toContainText('Open');
+  await expect(page.locator('#T43-06')).toContainText('Open');
   await page.locator('#map-43 .interaction-list a[href="#MOV-03"]').click();
   await expect(page.locator('#MOV-03')).toBeVisible();
   await expect(page.locator('#MOV-03')).toHaveAttribute('open', '');
