@@ -9,12 +9,23 @@ import { wetSnapshot, rawSnapshot, wetHistory, WET_LIMITS, type WetEvent } from 
 import { equalConsumableState as equal } from './training-consumables';
 
 export const WET_PARTY_SCENARIO='training43-selected-wet-party-v1';
-export interface TrainingWetParty { profile:'four-controlled-selected-v1' }
+export interface TrainingWetParty { profile:'four-controlled-selected-v1'|'four-controlled-timeout-v1' }
 // Four independent approaches need more command records than one ready actor.
 // New tuple encoding bounds bytes and work; v1-v17 retain their exact formats.
 export const PARTY_EVENTS=256;
 const actions:Action[]=['forward','backward','strafe-left','strafe-right','turn-left','turn-right'];
 const fail=(why:string):never=>{throw Error(`Selected wet party refused atomically: ${why}`);};
+/** Shared public Retry/export dispatch: an unknown marker must not select a
+ * legacy reset and silently change the caller's recovery profile. */
+export function ownedPartyProfile(session:TrainingSession):TrainingWetParty['profile']|null{
+ if(!session||Object.getPrototypeOf(session)!==Object.prototype)fail('session owner');
+ const d=Object.getOwnPropertyDescriptor(session,'wetParty');if(!d)return null;
+ if(!d.enumerable||!Object.hasOwn(d,'value')||Object.getOwnPropertyDescriptor(session,'wetRegion'))fail('party/region data owner');
+ if(!d.value||typeof d.value!=='object')fail('unsupported party profile');
+ const p=wetSnapshot(d.value);
+ if(!p||typeof p!=='object'||Object.keys(p).join(',')!=='profile'||!['four-controlled-selected-v1','four-controlled-timeout-v1'].includes(p.profile))fail('unsupported party profile');
+ return p.profile;
+}
 function validateEvents(input:unknown):WetEvent[]{
  const data=wetSnapshot(input);if(!Array.isArray(data)||data.length>PARTY_EVENTS*2+1)return fail('expanded event budget');
  let ticks=0;const result=data.map(e=>{const v=wetHistory([e])[0]!;ticks+=v.count;if(ticks>WET_LIMITS.ticks)fail('tick budget');return v;});return result;

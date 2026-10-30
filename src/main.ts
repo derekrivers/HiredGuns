@@ -1,3 +1,5 @@
+import {activateTimeout,stepTimeout,hasTimeoutProfile,type TimeoutRecoveryControl} from './sim/training-timeout';
+import {installTrainingTimeoutPanel} from './training-timeout-panel';
 import { activateWetParty, stepWetParty } from './sim/training-wet-party';
 import { hasOwnWetParty, installTrainingWetPartyPanel } from './training-wet-party-panel';
 import { activateWetLifecycle, stepWetLifecycle } from './sim/training-wet-lifecycle';
@@ -87,6 +89,18 @@ let level = createDemoLevel(), world = createWorld(level);
 let renderer: FourViews | null = null;
 let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
+let timeoutRecoveryGeneration:number|null=null;
+function timeoutRecoveryControl(generation:number):TimeoutRecoveryControl{
+ return {isCurrent:()=>generation===loadGeneration,onProgress:progress=>{
+  if(generation!==loadGeneration)return;
+  const began=timeoutRecoveryGeneration!==generation;
+  timeoutRecoveryGeneration=generation;
+  get('recovery-status').textContent=progress.phase==='verifying'
+   ? 'Verifying all recovery sources. Start, Save and Load are unavailable. Retry, change rules or clear sources to cancel.'
+   : `Reconstructing checkpoint: ${progress.processed} / ${progress.total} ticks processed. Start, Save and Load are unavailable. Retry, change rules or clear sources to cancel.`;
+  if(began)updateMissionHud();
+ }};
+}
 let latestPresetGeneration = 0;
 let session: TrainingSession | null = null;
 let importedMapBytes: Uint8Array | undefined;
@@ -172,6 +186,13 @@ const partyPanel=installTrainingWetPartyPanel(partyHost,()=>({session,world,paus
  try{if(loading||!session)throw Error('Load the fresh selected Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
  const candidate=await activateWetParty(level,raw,session,world,paused);if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);return {status:'installed',isCurrent};
  }catch(error){return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
+});
+const timeoutHost=document.createElement('section');timeoutHost.id='training-timeout';wetHost.before(timeoutHost);
+const timeoutPanel=installTrainingTimeoutPanel(timeoutHost,()=>({session,world,paused,loading,recovering:loading&&timeoutRecoveryGeneration===loadGeneration,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
+ let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
+ try{if(loading||!session)throw Error('Load the fresh selected Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
+ const candidate=await activateTimeout(level,raw,session,world,paused,timeoutRecoveryControl(generation));if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);get('recovery-status').textContent='Original 99-unit timeout enabled, PAUSED.';return {status:'installed',isCurrent};
+ }catch(error){if(isCurrent())get('recovery-status').textContent='Timeout setup failed; current team retained. Review the error and retry.';return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
 });
 const lifecyclePanel=installTrainingWetLifecyclePanel(lifecycleHost,()=>({session,world,paused,loading,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
  let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
@@ -331,7 +352,7 @@ function showSession(): void {
   groundHost.style.display = session?.gate ? 'none' : '';
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = hasOwnWetParty(session) ? 'Training43 selected-team wet lifecycle: source-bound v18 recovery and all-dead failure. Explicit survivor selection; selected-team adaptation, original level incomplete.' : session?.wetRegion ? 'Training43 wet-region exploration: actual visited cells, full lifecycle and source-bound v17 recovery; explicit survivor selection, original level incomplete.' : session?.wetLifecycle ? 'Training43 wet damage/lifecycle: source-derived injury, death and bounded corpse search; v16 chronological recovery. Explicit survivor selection; retained display feedback adapter, original level incomplete.' : session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
+  label.textContent = hasTimeoutProfile(session) ? 'Training43 original99 timeout: full source-bound v19 recovery; all-dead / timeout / exit priority. Fixed50Hz adaptation; original CPU timing unproven.' : hasOwnWetParty(session) ? 'Training43 selected-team wet lifecycle: source-bound v18 recovery and all-dead failure. Explicit survivor selection; selected-team adaptation, original level incomplete.' : session?.wetRegion ? 'Training43 wet-region exploration: actual visited cells, full lifecycle and source-bound v17 recovery; explicit survivor selection, original level incomplete.' : session?.wetLifecycle ? 'Training43 wet damage/lifecycle: source-derived injury, death and bounded corpse search; v16 chronological recovery. Explicit survivor selection; retained display feedback adapter, original level incomplete.' : session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   refreshEncounterPanel(); patrolPanel.refresh(); doorPanel.refresh();
@@ -423,12 +444,15 @@ function updateMissionHud(): void {
   if (challenge && gateRun) gateRun.textContent = world.mission.outcome !== 'active' ? 'FINISHED · Y Retry' : paused ? 'PAUSED · Start mission for C' : 'RUNNING';
   challengeButton.disabled = loading || !session || !renderer || graphicsLost;
   get<HTMLSelectElement>('mission-mode').disabled=!!session?.consumables;
-  consumablePanel.refresh(); wetPanel.refresh(); lifecyclePanel.refresh(); regionPanel.refresh(); partyPanel.refresh();regionHost.hidden=!!hasOwnWetParty(session);wetHost.hidden=!!session?.wetLifecycle;
+  consumablePanel.refresh(); wetPanel.refresh(); lifecyclePanel.refresh(); regionPanel.refresh(); partyPanel.refresh(); timeoutPanel.refresh(); partyHost.hidden=hasTimeoutProfile(session); lifecycleHost.hidden=hasTimeoutProfile(session);regionHost.hidden=!!hasOwnWetParty(session);wetHost.hidden=!!session?.wetLifecycle;
   selectedFallButton.disabled = !!session?.wet || loading || !session || !!session.ground || !!session.gate || selectedFallLevel(level);
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
   const play = get<HTMLButtonElement>('play');
-  play.disabled = !renderer || graphicsLost || terminal;
+  const recoveringTimeout=loading&&timeoutRecoveryGeneration===loadGeneration;
+  play.disabled = !renderer || graphicsLost || terminal || recoveringTimeout;
+  get<HTMLButtonElement>('save-checkpoint').disabled=recoveringTimeout;
+  get<HTMLInputElement>('checkpoint-file').disabled=recoveringTimeout;
   play.textContent = terminal ? allDead ? 'Drill finished' : 'Mission finished' : paused ? active ? 'Start mission' : fallDrill ? 'Start drill' : 'Start navigation' : 'Pause';
   const runState = terminal ? 'FINISHED' : paused ? 'PAUSED' : 'RUNNING';
   if (get('run-state').textContent !== runState) get('run-state').textContent = runState;
@@ -438,7 +462,7 @@ function updateMissionHud(): void {
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
   get('mission-objective').textContent = session?.consumables ? 'Authored consumable practice: land injured, Esc pause, equip source-owned food/repair in Inventory & equipment, then H. 1–4 selects actor; Retry resets the complete practice.' : session?.gate?.pad ? 'D steps onto P (4,5); wait for WALK THROUGH, W crosses door, W vacates. Release requests close. F defeats target; extract all four at E. C remains a manual alternative. 1–4 select WASD; Esc pauses.' : session?.gate?.moving ? 'C opens/closes timed door at the panel; WAIT for WALK THROUGH. F defeats target; extract all four at E (8,5). Lock/unlock: Tab to door buttons, Enter. 1–4 select WASD; Esc pauses.' : patrolMissionLevel(level) ? '1. C opens gate · 2. F defeats designated target (T: miss) · 3. Extract all four at E (8,5). 1–4 select WASD; Q/E turn; Esc pause; Y Retry after outcome. Limit: 10 source counts × 601 ticks.' : session?.patrol ? 'Authored patrol: C opens gate; F designates patrol target or T chooses miss. Health zero stops and releases it. Esc pauses; Retry resets the scenario.' : session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = hasOwnWetParty(session) && mission.reason==='all-dead' ? '4 / 4 DEAD · FAILED' : active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : fallDrill ? allDead ? 'PRACTICE EXHAUSTED · Retry or restore' : `${world.physics.mode === 'dry-fall' ? world.physics.actors.filter(a=>a.dead).length : 0} / 4 incapacitated` : '';
-  get('prototype-label').textContent = hasOwnWetParty(session) ? 'TRAINING43 SELECTED-TEAM WET LIFECYCLE ADAPTATION' : session?.wetLifecycle ? 'TRAINING43 WET DAMAGE / LIFECYCLE ADAPTATION' : session?.wet ? 'TRAINING43 WET / FIXED-STEP ADAPTATION' : session?.consumables ? 'AUTHORED CONSUMABLE / DRY-FALL PRACTICE' : session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  get('prototype-label').textContent = hasTimeoutProfile(session) ? 'TRAINING43 ORIGINAL99 / FIXED-STEP ADAPTATION' : hasOwnWetParty(session) ? 'TRAINING43 SELECTED-TEAM WET LIFECYCLE ADAPTATION' : session?.wetLifecycle ? 'TRAINING43 WET DAMAGE / LIFECYCLE ADAPTATION' : session?.wet ? 'TRAINING43 WET / FIXED-STEP ADAPTATION' : session?.consumables ? 'AUTHORED CONSUMABLE / DRY-FALL PRACTICE' : session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
   if (mission.clock) {
     const units = mission.clock.tens * 10 + mission.clock.units;
@@ -615,18 +639,19 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
   try {
     const sources = sessionSources();
     if (session && !sources) throw new Error('Reopen the matching roster and items before saving this session.');
-    const json = session ? await exportTrainingSession(level, world, session, sources!) : await exportCheckpoint(level, world);
+    const json = session ? await exportTrainingSession(level, world, session, sources!,timeoutRecoveryControl(generation)) : await exportCheckpoint(level, world);
     if (generation !== loadGeneration) return;
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `hired-guns-checkpoint-${world.tick}.json`;
     link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. ${session ? 'Keep the same local map, roster and items for session recovery.' : 'Keep the same source map for recovery.'}`;
-  } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
+  } catch (error) { if (generation === loadGeneration) {get('error').textContent = `Checkpoint not saved: ${errorText(error)}`;if(timeoutRecoveryGeneration===generation)get('recovery-status').textContent='Checkpoint save failed; current state retained. Review the error and retry.';} }
   finally { if (generation === loadGeneration) { loading = false; updateMissionHud(); rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); } }
 });
 get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
   if (!file) return;
+  if(loading&&timeoutRecoveryGeneration===loadGeneration)return;
   const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
   try {
     if (file.size >= MAX_SESSION_BYTES) throw new Error('Session save must be smaller than 24 KiB.');
@@ -637,7 +662,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     if (isTrainingSessionSave(json)) {
       const sources = sessionSources();
       if (!sources) throw new Error('Open the matching verified OCS roster and item table before restoring a session.');
-      const candidate = await importTrainingSession(level, sources, json);
+      const candidate = await importTrainingSession(level, sources, json,timeoutRecoveryControl(generation));
       restoredSession = candidate.session; restored = candidate.world;
     } else {
       if (session) throw new Error('An active selected team requires a Training43 session save. Clear the session by opening a map before loading a legacy checkpoint.');
@@ -648,7 +673,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     const restoredLevel = patrolMissionLevel(level) && restored.levelId === createTrainingGateLevel().id ? createTrainingGateLevel() : level;
     replaceGateRenderer(restoredSession,restoredLevel); level = restoredLevel; session = restoredSession; world = restored; showSession(); updateLevelInfo(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
-  } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
+  } catch (error) { if (generation === loadGeneration) {get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`;if(timeoutRecoveryGeneration===generation)get('recovery-status').textContent='Checkpoint load failed; current state retained. Review the error and retry.';} }
   finally { if (generation === loadGeneration) { loading = false; updateMissionHud(); rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); } }
 });
 
@@ -707,7 +732,7 @@ function frame(now: number): void {
       const activation = pendingGateActor, action = pendingDoorAction; pendingGateActor = null; pendingDoorAction = 16;
       const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation,action) : null;
       const consumableResult=session?.consumables?stepConsumables(level,session,world,commands):null;
-      const wetResult=hasOwnWetParty(session)?stepWetParty(level,session,world,commands):session?.wetRegion?stepWetRegion(level,session,world,commands):session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
+      const wetResult=hasTimeoutProfile(session)?stepTimeout(level,session!,world,commands):hasOwnWetParty(session)?stepWetParty(level,session,world,commands):session?.wetRegion?stepWetRegion(level,session,world,commands):session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
       const result = wetResult ?? consumableResult ?? gateResult ?? stepWorld(level,world,commands);
       const nextSession = wetResult ? wetResult.session : consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
       replaceGateRenderer(nextSession);
