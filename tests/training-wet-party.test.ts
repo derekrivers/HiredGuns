@@ -6,7 +6,7 @@ import {importItems,ITEM_FILE_BYTES} from '../src/import/items';
 import {importCharacters,CHARACTER_FILE_BYTES} from '../src/import/characters';
 import {constructInitialTeam} from '../src/import/original-team';
 import {importEditorMap} from '../src/import/editor-map';
-import {initialWetParty,stepWetParty,serializeWetParty,activateWetParty,encodePartyHistory,decodePartyHistory,replayWetParty,PARTY_EVENTS} from '../src/sim/training-wet-party';
+import {initialWetParty,stepWetParty,serializeWetParty,activateWetParty,exportWetParty,importWetParty,encodePartyHistory,decodePartyHistory,replayWetParty,PARTY_EVENTS} from '../src/sim/training-wet-party';
 import {initialWetLifecycle,stepWetLifecycle,damageWetCandidate} from '../src/sim/training-wet-lifecycle';
 import {createTrainingSession,exportTrainingSession,importTrainingSession,resetTrainingInventory,type TrainingSession,type TrainingCandidate} from '../src/sim/training-session';
 import {sourcePartyDecision,resolveSelectedPartyMission,SOURCE_CLOCK_PERIOD} from '../src/sim/mission';
@@ -100,3 +100,33 @@ it('public UTF8 input size refuses before raw-source getter hooks',async()=>{
  const row=[0,1,0];Object.defineProperty(row,'extra',{value:1,enumerable:true});expect(()=>decodePartyHistory([row])).toThrow('dense array');
  c.world.tick=45000;const before=structuredClone(c);expect(()=>stepWetParty(level,c.session,c.world,[{mercenaryId:0,action:'turn-left'}])).toThrow('tick budget');expect(c).toEqual(before);
 });
+
+it.each(['wetParty','wetRegion'] as const)('selected constructor omits only own data without reading inherited %s',async field=>{
+ const {level,baseline,c}=await fixture();const original=Object.getOwnPropertyDescriptor(Object.prototype,field);
+ for(const throwing of [false,true]){let reads=0,result:TrainingCandidate|undefined;
+  try{Object.defineProperty(Object.prototype,field,{configurable:true,get(){reads++;if(throwing)throw Error('inherited hook');return undefined;}});
+   result=initialWetParty(level,baseline,[0,0,3,4],c.world.mission.rules);
+  }finally{if(original)Object.defineProperty(Object.prototype,field,original);else Reflect.deleteProperty(Object.prototype,field);}
+  expect(reads).toBe(0);expect(result).toEqual(c);
+ }
+ let reads=0;for(const enumerable of [false,true]){const bad=structuredClone(baseline);Object.defineProperty(bad,field,{enumerable,get(){reads++;throw Error('own hook');}});expect(()=>initialWetParty(level,bad,[0,0,3,4],c.world.mission.rules)).toThrow('descriptors');}expect(reads).toBe(0);
+});
+it.skipIf(!process.env.HIRED_GUNS_T43_CASE_INPUTS)('private actual v18 all entrypoints preserve canonical state with inherited hooks at call and digest 1/3/7',async()=>{
+ const m=JSON.parse(await readFile(process.env.HIRED_GUNS_T43_CASE_INPUTS!,'utf8')),raw={map:new Uint8Array(await readFile(m.inputs.map)),roster:new Uint8Array(await readFile(m.inputs.roster)),items:new Uint8Array(await readFile(m.inputs.items))};
+ const {level}=await importEditorMap(raw.map),b=await createTrainingSession(level,raw,[1,3,0,5]),c=await activateWetParty(level,raw,b.session,b.world,true),json=await exportTrainingSession(level,c.world,c.session,raw);
+ expect(JSON.parse(json).version).toBe(18);expect(c.session.indices).toEqual([1,3,0,5]);
+ const operations=[()=>activateWetParty(level,raw,b.session,b.world,true),()=>exportTrainingSession(level,c.world,c.session,raw),()=>exportWetParty(level,raw,c.session,c.world),()=>importTrainingSession(level,raw,json),()=>importWetParty(level,raw,JSON.parse(json))];
+ const original=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty'),digest=SubtleCrypto.prototype.digest;
+ for(const throwing of [false,true])for(const phase of [0,1,3,7])for(const operation of operations){let reads=0,calls=0,result:TrainingCandidate|string|undefined;
+  const install=()=>Object.defineProperty(Object.prototype,'wetParty',{configurable:true,get(){reads++;if(throwing)throw Error('live inherited hook');return undefined;}});
+  try{install();const getter=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty')!.get!;try{getter.call({});}catch{/* positive throwing canary */}expect(reads).toBe(1);reads=0;Reflect.deleteProperty(Object.prototype,'wetParty');
+   if(!phase)install();SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){if(++calls===phase)install();return digest.apply(this,args);};
+   result=await operation();
+  }finally{SubtleCrypto.prototype.digest=digest;if(original)Object.defineProperty(Object.prototype,'wetParty',original);else Reflect.deleteProperty(Object.prototype,'wetParty');}
+  expect(reads).toBe(0);expect(calls).toBe(8);expect(typeof result==='string'?result:serializeWetParty(result!)).toBe(json);expect(typeof result==='string'?JSON.parse(result).checkpoint.world:result!.world).toEqual(c.world);
+ }
+ let reads=0;for(const kind of ['accessor','hidden','custom','null']){const bad=structuredClone(c),base=structuredClone(b);
+  for(const session of [bad.session,base.session]){if(kind==='accessor')Object.defineProperty(session,'wetParty',{enumerable:true,get(){reads++;throw Error('own accessor');}});else if(kind==='hidden')Object.defineProperty(session,'wetParty',{value:{profile:'four-controlled-selected-v1'},enumerable:false});else Object.setPrototypeOf(session,kind==='null'?null:{});}
+  await expect(exportTrainingSession(level,bad.world,bad.session,raw)).rejects.toThrow();await expect(exportWetParty(level,raw,bad.session,bad.world)).rejects.toThrow();await expect(activateWetParty(level,raw,base.session,base.world,true)).rejects.toThrow();
+ }expect(reads).toBe(0);
+},60000);

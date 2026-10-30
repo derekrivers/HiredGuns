@@ -43,7 +43,9 @@ export function decodePartyHistory(input:unknown):WetEvent[]{
 }
 export function initialWetParty(level:LevelData,baseline:TrainingSession,races:number[],rules:MissionRules):TrainingCandidate{
  if(baseline.indices.length!==4||new Set(baseline.indices).size!==4||baseline.indices.some(i=>!Number.isInteger(i)||i<0||i>11)||races.length!==4||races.some(r=>!Number.isInteger(r)||r<0||r>4))fail('four distinct initialized source selections required');
- const {wetParty:_party,wetRegion:_region,...fresh}=baseline;void _party;void _region;
+ // Snapshot validates own data before omission; absent extensions must never
+ // perform inherited reads, including after asynchronous source verification.
+ const fresh=wetSnapshot(baseline);Reflect.deleteProperty(fresh,'wetParty');Reflect.deleteProperty(fresh,'wetRegion');
  const c=initialSelectedLifecycle(level,fresh,races,rules);c.session={...c.session,wetParty:{profile:'four-controlled-selected-v1'}};return c;
 }
 export function serializeWetParty(c:TrainingCandidate):string{
@@ -69,7 +71,7 @@ async function rebuild(level:LevelData,sources:TrainingSources,indices:readonly 
  return replayWetParty(imported.level,baseline.session,chosen.map(i=>roster.records[i]!.race),policy,history);
 }
 export async function activateWetParty(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState,paused:boolean):Promise<TrainingCandidate>{
- const saved=wetSnapshot({session,world});if(!paused||saved.world.tick!==0||saved.session.wet||saved.session.wetParty||saved.session.gate||saved.session.ground||saved.session.consumables||saved.session.inventory.commands.length)fail('fresh paused selected team required');
+ const saved=wetSnapshot({session,world});if(!paused||saved.world.tick!==0||saved.session.wet||Object.getOwnPropertyDescriptor(saved.session,'wetParty')?.value||saved.session.gate||saved.session.ground||saved.session.consumables||saved.session.inventory.commands.length)fail('fresh paused selected team required');
  return rebuild(level,sources,saved.session.indices,saved.world.mission.rules,[]);
 }
 export async function exportWetParty(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState):Promise<string>{
