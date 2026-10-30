@@ -172,11 +172,11 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });
 
-test('accepted116 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+test('accepted118 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
   const data = await load();
-  expect(data.acceptedThrough).toBe(116);
-  expect(data.reviewedHead).toBe('db5d2930eb07ef98ddda1d09bb1968efed0f57d3');
-  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116]);
+  expect(data.acceptedThrough).toBe(118);
+  expect(data.reviewedHead).toBe('decf689b2803772034bcae150544d1820395dcd5');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118]);
   const before = registerCompletion(data.mechanics);
   expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
   expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(129);
@@ -186,7 +186,7 @@ test('accepted116 dashboard separates capability lineage, proof and broad eviden
   extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
   await validateRegister(extended);
   expect(registerCompletion(extended.mechanics)).toEqual(before);
-  expect(renderHtml(extended)).toContain('9 listed milestones');
+  expect(renderHtml(extended)).toContain('10 listed milestones');
   const food = data.mechanics.find(m => m.id === 'INV-06')!;
   expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
   expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
@@ -312,4 +312,67 @@ test('all new rendered prose survives validation and stays inert in HTML, JSON a
   expect(md).not.toContain('<img');
   expect(md).not.toContain('[link](javascript:bad)');
   expect(JSON.parse(renderHtml(data).match(/<script id="register-data" type="application\/json">([^]*?)<\/script>/)![1]!)).toEqual(data);
+});
+
+test('accepted118 records actual summary receipt and distinct accepted/source identities', async () => {
+  const data = await load(), proof = data.acceptedProofs.find(p => p.pr === 118)!;
+  expect(proof).toEqual({ id: 'proof-118', pr: 118,
+    merge: 'decf689b2803772034bcae150544d1820395dcd5', head: 'b3710c91d980597b1e13905c3afd432a491ff76e',
+    reviewSha256: 'f117875e938d538cec7436be22ba5b2f7e71aa89528b550b38745bd2fe20f848',
+    ci: ['41071904326','41071757626'], automatic: '6525460623', receipt: '6525460623',
+    receiptKind: 'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed',
+    tree: 'd78e3293e6f67e91c6d15c53631bb54f46510224', reviewedTree: 'a3b5964dbede6c20c16285c4db8661b3b176c8e4',
+    sourceProofBase: 'db5d2930eb07ef98ddda1d09bb1968efed0f57d3' });
+  expect(data.acceptedProofs.filter(p => p.pr !== 118).every(p => p.receiptKind === 'separate-receipt-comment' && p.automatic !== p.receipt)).toBe(true);
+  for (const change of [
+    { receiptKind: 'separate-receipt-comment' }, { receipt: '6525460624' },
+    { receiptKind: 'unknown' }, { tree: '../bad' }, { reviewedTree: 42 }, { sourceProofBase: null },
+  ]) {
+    const bad = structuredClone(data); Object.assign(bad.acceptedProofs.find(p => p.pr === 118)!, change);
+    await expect(validateRegister(bad)).rejects.toThrow();
+  }
+  const scenario = data.scenarios.find(s => s.id === 'wet-region')!;
+  expect(scenario.path).toBe('docs/training43-wet-region.md');
+  expect(scenario.instructions).toContain('Enable wet-region exploration');
+  expect(scenario.scope).toContain('v17 paused chronological recovery');
+  for (const dashboard of data.dashboards) {
+    const milestone = dashboard.milestones.find(m => m.id.endsWith('-standing22'))!;
+    expect(milestone.scenario).toBe('wet-region'); expect(milestone.proofs).toEqual(['proof-118']);
+    expect(milestone.status).toBe('playable');
+  }
+});
+
+test('every118 proof field rejects inherited replacement and accessors before all API reads', async () => {
+  const original = await load();
+  for (const field of Object.keys(original.acceptedProofs.find(p => p.pr === 118)!)) {
+    for (const api of [validateRegister, renderHtml, renderMarkdown]) for (const throwing of [false,true]) {
+      const data = structuredClone(original), target = data.acceptedProofs.find(p => p.pr === 118)!;
+      const saved = Object.getOwnPropertyDescriptor(target, field)!;
+      Reflect.deleteProperty(target, field);
+      const previous = Object.getOwnPropertyDescriptor(Object.prototype, field);
+      let reads = 0, error: unknown;
+      try {
+        Object.defineProperty(Object.prototype, field, { configurable: true, get() { reads++; if (throwing) throw new Error('HOOK118'); return saved.value; } });
+        try { await api(data); } catch (caught) { error = caught; }
+      } finally {
+        if (previous) Object.defineProperty(Object.prototype, field, previous); else Reflect.deleteProperty(Object.prototype, field);
+      }
+      expect(reads, `${field}/${api.name}`).toBe(0); expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toContain('Missing own dashboard data field');
+    }
+    const data = structuredClone(original); let reads = 0;
+    Object.defineProperty(data.acceptedProofs.find(p => p.pr === 118)!, field, { enumerable: true, get() { reads++; return ''; } });
+    await expect(validateRegister(data)).rejects.toThrow();
+    expect(() => renderHtml(data)).toThrow(); expect(() => renderMarkdown(data)).toThrow(); expect(reads).toBe(0);
+  }
+});
+
+test('new proof fields escape invalid preview prose independently of semantic refusal', async () => {
+  const data = await load(), proof = data.acceptedProofs.find(p => p.pr === 118)!;
+  const hostile = '</script><img src=x onerror="bad()"> [link](javascript:bad)';
+  Object.assign(proof, { tree: hostile, reviewedTree: hostile, sourceProofBase: hostile, receiptKind: hostile });
+  await expect(validateRegister(data)).rejects.toThrow();
+  expect(renderHtml(data)).not.toContain('<img');
+  expect(renderMarkdown(data)).not.toContain('<img');
+  expect(renderMarkdown(data)).not.toContain('[link](javascript:bad)');
 });

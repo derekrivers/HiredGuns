@@ -2,7 +2,7 @@
 
 68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Whole-game evidence coverage: 68 covered, 129 partial, 491 open. All eight stages have equal weight; 172 cells are original-level acceptance plus hardware, and 232 cells are PSI effects. Broad aggregate rows measure evidence, not software effort, playable-testbed completion, source parity or overall game completion. New accepted playable slices can leave broad rows partial and the percentage unchanged. The earlier roughly 60% was a subjective estimate of a smaller authored functional testbed, not this measured denominator. No replacement effort percentage is calculated. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
 
-Assessed 2026-10-30; accepted main through PR116: `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`.
+Assessed 2026-10-30; accepted main through PR118: `decf689b2803772034bcae150544d1820395dcd5`.
 
 [Open the interactive HTML index](index.html) · [Canonical JSON](register.json)
 
@@ -14,9 +14,9 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 ## Current playable testbed capability
 
-Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered.
+Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change.
 
-8 listed milestones: 6 playable · 0 partial · 1 open · 1 deferred.
+9 listed milestones: 7 playable · 0 partial · 1 open · 1 deferred.
 
 ### cap-start — Selected-team startup, movement and extraction: playable
 
@@ -68,7 +68,7 @@ Lineage: [COMBAT-01](index.html#COMBAT-01), [COMBAT-02](index.html#COMBAT-02), [
 
 PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
 
-Missing dependency / boundary: Legacy v15 refuses every non-null requested hit including zero. Choose the separately accepted v16 lifecycle mode for bounded injury/death; wider wet region remains open.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 Lineage: [MOV-03](index.html#MOV-03), [ENV-08](index.html#ENV-08), [LIFE-03](index.html#LIFE-03), [LIFE-04](index.html#LIFE-04), [T43-05](index.html#T43-05), [T43-07](index.html#T43-07). [Entry and controls](index.html#scenario-wet). [proof-115](index.html#proof-115)
 
@@ -80,7 +80,7 @@ Lineage: [MOV-03](index.html#MOV-03), [ENV-08](index.html#ENV-08), [LIFE-03](ind
 
 Accepted bounded slices do not constitute programme acceptance.
 
-Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-training43).
 
@@ -90,7 +90,7 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 Lineage: [LIFE-01](index.html#LIFE-01), [LIFE-02](index.html#LIFE-02), [LIFE-03](index.html#LIFE-03), [T43-05](index.html#T43-05), [T43-06](index.html#T43-06), [T43-07](index.html#T43-07). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
 
@@ -108,11 +108,23 @@ Lineage: [T43-09](index.html#T43-09). [Entry and controls](index.html#scenario-t
 
 - [training43-completion.md](../../docs/training43-completion.md): Separate physical acceptance; does not block keyboard software.
 
+### cap-standing22 — All 22 standing wet cells and corridor survivor recovery: playable
+
+Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
+
+Lineage: [MOV-03](index.html#MOV-03), [ENV-08](index.html#ENV-08), [LIFE-02](index.html#LIFE-02), [LIFE-03](index.html#LIFE-03), [T43-04](index.html#T43-04), [T43-05](index.html#T43-05), [T43-07](index.html#T43-07), [T43-08](index.html#T43-08). [Entry and controls](index.html#scenario-wet-region). [proof-118](index.html#proof-118)
+
+- [training43-wet-region.md](../../docs/training43-wet-region.md): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+- [training-wet-region.test.ts](../../tests/training-wet-region.test.ts): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+- [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+
 ## Training43 software acceptance
 
-First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution.
+First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change.
 
-7 listed milestones: 4 playable · 2 partial · 1 open · 0 deferred.
+8 listed milestones: 5 playable · 2 partial · 1 open · 0 deferred.
 
 ### t43-dry — Selected team and bounded dry route: playable
 
@@ -139,7 +151,7 @@ Lineage: [T43-04](index.html#T43-04). [Entry and controls](index.html#scenario-w
 
 PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
 
-Missing dependency / boundary: V15 refuses requested hits; separate accepted v16 mode handles bounded injury/death. Broader wet traversal remains open.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 Lineage: [T43-04](index.html#T43-04), [T43-05](index.html#T43-05). [Entry and controls](index.html#scenario-wet). [proof-115](index.html#proof-115)
 
@@ -159,20 +171,21 @@ Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08). [Entry and co
 
 ### t43-lifecycle — Complete wet and lifecycle outcomes: partial
 
-PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 remain partial.
+PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 remain partial. PR118 separately accepts standing22 and corridor same-cell corpse with v17; the broad family remains partial.
 
-Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
-Lineage: [T43-05](index.html#T43-05), [T43-06](index.html#T43-06). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
+Lineage: [T43-05](index.html#T43-05), [T43-06](index.html#T43-06). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116), [proof-118](index.html#proof-118)
 
 - [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): T43-05/06 remain partial with accepted entry/return and bounded lifecycle subrecords; wider wet and whole-level outcomes remain open.
 - [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+- [training43-wet-region.md](../../docs/training43-wet-region.md): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
 
 ### t43-fatal — Bounded wet injury, fatal continuation and survivor recovery: playable
 
 Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 Lineage: [LIFE-01](index.html#LIFE-01), [LIFE-02](index.html#LIFE-02), [LIFE-03](index.html#LIFE-03), [T43-05](index.html#T43-05), [T43-06](index.html#T43-06), [T43-07](index.html#T43-07). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
 
@@ -184,29 +197,42 @@ Lineage: [LIFE-01](index.html#LIFE-01), [LIFE-02](index.html#LIFE-02), [LIFE-03]
 
 No complete original level accepted.
 
-Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-training43).
 
 - [training43-completion.md](../../docs/training43-completion.md): No complete original level accepted.
 
+### t43-standing22 — All 22 standing wet cells and corridor survivor recovery: playable
+
+Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+
+Missing dependency / boundary: Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices &#91;11,3,0,5&#93;, including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
+
+Lineage: [MOV-03](index.html#MOV-03), [ENV-08](index.html#ENV-08), [LIFE-02](index.html#LIFE-02), [LIFE-03](index.html#LIFE-03), [T43-04](index.html#T43-04), [T43-05](index.html#T43-05), [T43-07](index.html#T43-07), [T43-08](index.html#T43-08). [Entry and controls](index.html#scenario-wet-region). [proof-118](index.html#proof-118)
+
+- [training43-wet-region.md](../../docs/training43-wet-region.md): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+- [training-wet-region.test.ts](../../tests/training-wet-region.test.ts): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+- [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts): Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.
+
 ## Accepted proof receipts
 
-- PR112: merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`; implementation `90fef3f83a8fe6e7eb5b0c54ed6789f5166ce06f`; independent review SHA-256 `fd88fc085b4fc6f0fd12feef669d95d6125722de28960602bd342956f857bae0`; CI 41031464191, 41031455459; automatic 6518416644; receipt 6519283288.
-- PR114: merge `b211895b0bf4600bc7c8fa830814284c46293c97`; implementation `e6367e6f5e2489c40f5acbd00da7dc27d9b6169f`; independent review SHA-256 `c94d256773bf2502f282352c242d71e5a7cc0d357b8af7b8f940d18815e004d0`; CI 41035558425, 41035553248; automatic 6519462817; receipt 6519933477.
-- PR115: merge `e2b2d5ff4090c5c39006abea147a24450ca5c17b`; implementation `4d3c8f1aaee8b5ce5911904e17d48f75c49896b9`; independent review SHA-256 `20672779d17533e354a40847002ab5b8f8b4484636a61c0f03abc6863ce8e350`; CI 41049281097, 41049271263; automatic 6520939225; receipt 6521769394.
-- PR116: merge `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`; implementation `2c1178d68ad887c218f2bc3975bba7b6024d032f`; independent review SHA-256 `0352332ec54bf4e29d70798a06c98ba43e2047f265d904a282b08e5cff0ec24a`; CI 41064673415, 41064666632; automatic 6523347081; receipt 6524247429.
+- PR112: merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`; implementation `90fef3f83a8fe6e7eb5b0c54ed6789f5166ce06f`; independent review SHA-256 `fd88fc085b4fc6f0fd12feef669d95d6125722de28960602bd342956f857bae0`; CI 41031464191, 41031455459; automatic 6518416644; receipt 6519283288; kind separate-receipt-comment.
+- PR114: merge `b211895b0bf4600bc7c8fa830814284c46293c97`; implementation `e6367e6f5e2489c40f5acbd00da7dc27d9b6169f`; independent review SHA-256 `c94d256773bf2502f282352c242d71e5a7cc0d357b8af7b8f940d18815e004d0`; CI 41035558425, 41035553248; automatic 6519462817; receipt 6519933477; kind separate-receipt-comment.
+- PR115: merge `e2b2d5ff4090c5c39006abea147a24450ca5c17b`; implementation `4d3c8f1aaee8b5ce5911904e17d48f75c49896b9`; independent review SHA-256 `20672779d17533e354a40847002ab5b8f8b4484636a61c0f03abc6863ce8e350`; CI 41049281097, 41049271263; automatic 6520939225; receipt 6521769394; kind separate-receipt-comment.
+- PR116: merge `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`; implementation `2c1178d68ad887c218f2bc3975bba7b6024d032f`; independent review SHA-256 `0352332ec54bf4e29d70798a06c98ba43e2047f265d904a282b08e5cff0ec24a`; CI 41064673415, 41064666632; automatic 6523347081; receipt 6524247429; kind separate-receipt-comment.
+- PR118: merge `decf689b2803772034bcae150544d1820395dcd5`; implementation `b3710c91d980597b1e13905c3afd432a491ff76e`; independent review SHA-256 `f117875e938d538cec7436be22ba5b2f7e71aa89528b550b38745bd2fe20f848`; CI 41071904326, 41071757626; automatic 6525460623; receipt 6525460623; kind actual-summary-state-completed-exact-no-findings;no separate receipt comment observed. Accepted union tree d78e3293e6f67e91c6d15c53631bb54f46510224; reviewed source tree a3b5964dbede6c20c16285c4db8661b3b176c8e4; source-proof base PR116 db5d2930eb07ef98ddda1d09bb1968efed0f57d3.
 
 ## Training43: first original-level acceptance
 
 - [ ] **T43-01 Pin level and source revision** — Partial. Use the exact editor digest; disclose runtime-body differences and north-facing adaptation. Identities are pinned; a reviewed whole-level acceptance receipt remains open.
 - [ ] **T43-02 Initialize and control four selected actors** — Partial. Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work.
 - [ ] **T43-03 Complete required dry traversal and exit** — Partial. Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance.
-- [ ] **T43-04 Classify every reachable interaction** — Partial. Accepted PR114 classifies 23 water cells (22 hypothetical movement candidates, one solid support), signs and inactive trigger sentinel; bounded source entry/reverse case. Live outcomes and level review remain open.
-- [ ] **T43-05 Wet stairs and environmental outcomes** — Partial. Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
-- [ ] **T43-06 Death, control, occupancy and corpses** — Partial. Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
-- [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Accepted v15 supported wet entry-return and v16 bounded lifecycle chronology; paused restores before damage/after injury/death/survivor/terminal continue without duplicate effects. Complete original-level recovery remains open.
-- [ ] **T43-08 Outcome, timeout and fresh retry** — Partial. Bounded original first exit, single cooperative retirement and fresh Retry accepted; authored timeout exists. Original all-dead and original99-count timeout beyond45000 replay ticks remain open.
+- [ ] **T43-04 Classify every reachable interaction** — Partial. Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial.
+- [ ] **T43-05 Wet stairs and environmental outcomes** — Partial. Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial.
+- [ ] **T43-06 Death, control, occupancy and corpses** — Partial. Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial.
+- [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial.
+- [ ] **T43-08 Outcome, timeout and fresh retry** — Partial. Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial.
 - [ ] **T43-09 Physical four-player complete run** — Open. DEFERRED: separate human acceptance with four people on event PC/TV; verify disconnect recovery and usable inventory/interactions. This physical gate does not block keyboard software work.
 - [ ] **T43-10 Acceptance receipt and regression replay** — Open. Record exact build/source digests, modes, player/hardware observations and all open deviations; link reproducible tests.
 
@@ -453,13 +479,13 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 **Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [training43-completion.md](../../docs/training43-completion.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
+**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [training43-completion.md](../../docs/training43-completion.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md), [training43-wet-region.md](../../docs/training43-wet-region.md)
 
-**Tests:** [traversal.test.ts](../../tests/traversal.test.ts), [stairs.spec.ts](../../tests/browser/stairs.spec.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
+**Tests:** [traversal.test.ts](../../tests/traversal.test.ts), [stairs.spec.ts](../../tests/browser/stairs.spec.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts), [training-wet-region.test.ts](../../tests/training-wet-region.test.ts), [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts)
 
-**Scenarios:** training43, stairs, wet, wet-lifecycle
+**Scenarios:** training43, stairs, wet, wet-lifecycle, wet-region
 
-**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+**Gaps:** Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 **Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
@@ -651,13 +677,13 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 **Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
+**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md), [training43-wet-region.md](../../docs/training43-wet-region.md)
 
-**Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
+**Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts), [training-wet-region.test.ts](../../tests/training-wet-region.test.ts), [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts)
 
-**Scenarios:** wet, wet-lifecycle
+**Scenarios:** wet, wet-lifecycle, wet-region
 
-**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+**Gaps:** Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 **Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
@@ -1047,13 +1073,13 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 **Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [damage-fitness-evidence.md](../../docs/damage-fitness-evidence.md), [damage-death-contract.md](../../docs/damage-death-contract.md), [shooting-argument-contract.md](../../docs/shooting-argument-contract.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
+**Evidence:** [damage-fitness-evidence.md](../../docs/damage-fitness-evidence.md), [damage-death-contract.md](../../docs/damage-death-contract.md), [shooting-argument-contract.md](../../docs/shooting-argument-contract.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md), [training43-wet-region.md](../../docs/training43-wet-region.md)
 
-**Tests:** [damage-fitness.test.ts](../../tests/damage-fitness.test.ts), [health.test.ts](../../tests/health.test.ts), [shooting-argument.test.ts](../../tests/shooting-argument.test.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
+**Tests:** [damage-fitness.test.ts](../../tests/damage-fitness.test.ts), [health.test.ts](../../tests/health.test.ts), [shooting-argument.test.ts](../../tests/shooting-argument.test.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts), [training-wet-region.test.ts](../../tests/training-wet-region.test.ts), [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts)
 
-**Scenarios:** fall, encounter, wet-lifecycle
+**Scenarios:** fall, encounter, wet-lifecycle, wet-region
 
-**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+**Gaps:** Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 **Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
@@ -1065,13 +1091,13 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 **Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [death-transition-contract.md](../../docs/death-transition-contract.md), [after-death-control-observation.md](../../docs/after-death-control-observation.md), [initialized-postdeath-fixture-fit.md](../../docs/initialized-postdeath-fixture-fit.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
+**Evidence:** [death-transition-contract.md](../../docs/death-transition-contract.md), [after-death-control-observation.md](../../docs/after-death-control-observation.md), [initialized-postdeath-fixture-fit.md](../../docs/initialized-postdeath-fixture-fit.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md), [training43-wet-region.md](../../docs/training43-wet-region.md)
 
-**Tests:** [death-transition.test.ts](../../tests/death-transition.test.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
+**Tests:** [death-transition.test.ts](../../tests/death-transition.test.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts), [training-wet-region.test.ts](../../tests/training-wet-region.test.ts), [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts)
 
-**Scenarios:** fall, wet-lifecycle
+**Scenarios:** fall, wet-lifecycle, wet-region
 
-**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+**Gaps:** Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 **Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
@@ -1083,13 +1109,13 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 **Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
+**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md), [training43-wet-region.md](../../docs/training43-wet-region.md)
 
-**Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
+**Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts), [training-wet-region.test.ts](../../tests/training-wet-region.test.ts), [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts)
 
-**Scenarios:** wet, wet-lifecycle
+**Scenarios:** wet, wet-lifecycle, wet-region
 
-**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+**Gaps:** Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 **Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
@@ -1101,13 +1127,13 @@ Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-t
 
 **Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
+**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md), [training43-wet-region.md](../../docs/training43-wet-region.md)
 
-**Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
+**Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts), [training-wet-region.test.ts](../../tests/training-wet-region.test.ts), [training-wet-region.spec.ts](../../tests/browser/training-wet-region.spec.ts)
 
-**Scenarios:** wet, wet-lifecycle
+**Scenarios:** wet, wet-lifecycle, wet-region
 
-**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+**Gaps:** Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.
 
 **Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
@@ -2736,9 +2762,9 @@ Maps/Game/Map42_4pl/42.map; SHA-256 `5118cf81c05a79f3dbbc5d8e6679f55102d09848825
 Maps/Game/Map43_Training/43.map; SHA-256 `646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
 
 - [MOV-01](index.html#MOV-01): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
-- [MOV-03](index.html#MOV-03): **reachable-optional** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged.
-- [ENV-08](index.html#ENV-08): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged.
-- [LIFE-03](index.html#LIFE-03): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged.
+- [MOV-03](index.html#MOV-03): **reachable-optional** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass.
+- [ENV-08](index.html#ENV-08): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass.
+- [LIFE-03](index.html#LIFE-03): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass.
 - [WORLD-02](index.html#WORLD-02): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
 - [WORLD-03](index.html#WORLD-03): **unknown** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
 - [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.

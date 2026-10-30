@@ -28,7 +28,7 @@ test('register search, evidence navigation, level relationships and export work'
   await expect(page.locator('#map-43')).toHaveAttribute('open', '');
   await expect(page.locator('#map-43 .card-body')).toContainText('PR116 bounded wet injury/death');
   await expect(page.locator('#map-43 .card-body')).toContainText('complete original level remain unaccepted');
-  await expect(page.locator('#map-43 .card-body')).toContainText('Wider water-region/full-level outcomes remain unknown');
+  await expect(page.locator('#map-43 .card-body')).toContainText('Standing22 is accepted PR118; unsupported and whole-level outcomes remain open');
   await page.goto('/docs/mechanics/index.html#T43-05');
   await expect(page.locator('#T43-05')).toContainText('Partial');
   await expect(page.locator('#T43-06')).toContainText('Partial');
@@ -211,7 +211,7 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
 test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#testbed-capability');
   await expect(page.locator('#testbed-capability')).toBeVisible();
-  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('8 listed milestones: 6 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('9 listed milestones: 7 playable · 0 partial · 1 open · 1 deferred');
   await expect(page.locator('#cap-food')).toContainText('medical64');
   await expect(page.locator('#cap-wet')).toContainText('including zero');
   await expect(page.locator('#cap-lifecycle')).toContainText('Accepted PR116');
@@ -220,7 +220,7 @@ test('separate capability and original-level summaries retain scope, lineage and
   await page.locator('#cap-food a[href="#INV-06"]').click();
   await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
   await page.goto('/docs/mechanics/index.html#training43-software');
-  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('7 listed milestones: 4 playable · 2 partial · 1 open · 0 deferred');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('8 listed milestones: 5 playable · 2 partial · 1 open · 0 deferred');
   await page.locator('#t43-entry a[href="#scenario-wet"]').click();
   await expect(page.locator('#scenario-wet')).toBeVisible();
   await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');
@@ -286,5 +286,53 @@ for (const width of [390,1440]) test(`offline accepted dashboard prose stays ine
   const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
   expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
   expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+
+for (const width of [390,1440]) test(`canonical offline standing22 links select accepted v17 at ${width}px`, async ({ page }, testInfo) => {
+  await page.setViewportSize({ width, height: 1000 }); await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  const file = new URL('../../docs/mechanics/index.html', import.meta.url);
+  await page.goto(`${file.href}#t43-standing22`);
+  await expect(page.locator('#t43-standing22 .badge')).toHaveText('playable');
+  await page.locator('#t43-standing22').getByRole('link', { name: 'Runnable entry / controls' }).focus();
+  await page.keyboard.press('Enter'); await expect(page).toHaveURL(/#scenario-wet-region$/);
+  const controls = page.locator('#scenario-wet-region');
+  await expect(controls).toContainText('Enable wet-region exploration');
+  await expect(controls).toContainText('v17 paused chronological recovery');
+  await expect(controls).not.toContainText('Enable Training43 wet traversal');
+  await expect(controls).not.toContainText('Enable wet damage and lifecycle');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath(`standing22-${width}.png`) });
+  await controls.getByRole('link', { name: 'Instructions & limitations →' }).focus(); await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/docs\/training43-wet-region.md$/);
+  await expect(page.locator('body')).toContainText('accepted PR118');
+  await expect(page.locator('body')).toContainText('Enable wet-region exploration');
+  await page.goto(`${file.href}#proof-118`);
+  await expect(page.locator('#proof-118')).toContainText('no separate receipt comment observed');
+  await expect(page.locator('#proof-118')).toContainText('d78e3293e6f67e91c6d15c53631bb54f46510224');
+  await expect(page.locator('#proof-118')).toContainText('a3b5964dbede6c20c16285c4db8661b3b176c8e4');
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).focus(); await page.keyboard.press('Enter');
+  expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')));
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+
+test('invalid new proof-field previews stay inert offline and export exact data', async ({ page }, testInfo) => {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const payload = '" \' & </script><img src=x onerror="window.__registerInjected=1"> [link](javascript:bad)';
+  Object.assign(data.acceptedProofs.find(p => p.pr === 118)!, { receiptKind: payload, tree: payload, reviewedTree: payload, sourceProofBase: payload });
+  await expect(validateRegister(data)).rejects.toThrow();
+  const file = testInfo.outputPath('refused-proof-fields.html'); await writeFile(file, renderHtml(data));
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); }); page.on('pageerror', e => errors.push(e.message));
+  await page.goto(`${pathToFileURL(file).href}#proof-118`);
+  await expect(page.locator('#proof-118')).toContainText(payload);
+  await expect(page.locator('img, [onerror]')).toHaveCount(0); await expect(page.locator('script')).toHaveCount(2);
+  expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
+  expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
   expect(requests).toEqual([]); expect(errors).toEqual([]);
 });

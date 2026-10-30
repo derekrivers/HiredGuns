@@ -1,8 +1,8 @@
-# Training43 supported wet-region exploration
+# Training43 supported wet-region exploration — accepted PR118
 
 The existing four-view application has a **wet-region exploration** setup beside
 the earlier wet modes. Load the verified local ready-to-play Training43 inputs,
-enable at fresh PAUSED tick zero, choose mission rules, then Start mission.
+choose **Enable wet-region exploration** at fresh PAUSED tick zero, choose mission rules, then Start mission.
 Select slots with 1–4; W/S move forward/back, A/D strafe, Q/E turn and Esc pauses.
 Save and restore while paused. Retry reconstructs the complete initial team.
 Original map, source files, routes and screenshots remain private ignored inputs.
@@ -80,6 +80,39 @@ accepted stair auxiliary redirect and does not broaden general corpse items.
 No all-dead original playthrough, full source timeout beyond the replay cap,
 general corpse items, broader world interactions, complete original Training43,
 complete test bed or physical controller/TV acceptance is inferred. Graphics,
-audio production and campaign work remain deferred. Independent final review,
-current CI, completed automatic review and coordinator integration still gate
-release of this candidate.
+audio production and campaign work remain deferred. PR118 gameplay is accepted at the normal merge below. This new dashboard reconciliation is a separate candidate requiring its own independent HIGH/current CI/automatic/coordinator gates.
+
+## Accepted identity and bounded evidence
+
+Accepted main merge `decf689b2803772034bcae150544d1820395dcd5`, union tree
+`d78e3293e6f67e91c6d15c53631bb54f46510224`, parents accepted117 `c8f80d9ff2f362e2e5752badcd2797deba623ca2`
+and reviewed118 `b3710c91d980597b1e13905c3afd432a491ff76e`.
+Source-proof head is that exact b371 commit, tree `a3b5964dbede6c20c16285c4db8661b3b176c8e4`,
+based on accepted116 `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`.
+The actual union equals the independently tested predicted union. These are distinct identities.
+Independent final report SHA256 `f117875e938d538cec7436be22ba5b2f7e71aa89528b550b38745bd2fe20f848`.
+CI runs `41071904326` and `41071757626`; actual automatic `6525460623` completed
+on exact b371 with no findings. Registry receipt `6525460623` is that SAME
+actual completed summary-state comment; no separate receipt comment was observed.
+[Accepted proof metadata](mechanics/index.html#proof-118) preserves this distinction.
+
+Fresh independent proof scope: 57 production definitions (26 region, 2 additional,
+29 clean legacy); 99 targeted tests including 5 original-source definitions;
+1039 public pass /53 optional skip at source head; 1046 public pass /53 skip in
+accepted117+118 union. These counts are separate scopes, not completion rates or
+57 original playthroughs. Unchanged accepted116 numerical/source/search authority
+is explicitly reused within unchanged blobs; no new CPU/archive study is claimed.
+
+Race4 first hit5200 leaves fitness60335; return/exit fitness37535. Race1 keeps
+breath0 and zero damage requests while inventory changes. Full paused recovery
+covers before/within/far/injury/dry return/scheduled reset/terminal, plus corridor
+before death/death/guarded input/corpse survivor/return/exit terminal and Retry.
+All22 standing cells have inert immediate and two-below support66. Each tick
+uses the same accepted indivisible `stepWetLifecycle`; no geometry/flag stripping,
+teleport, autoroute or authored substitute broadens source physics.
+
+Current ready team is `[11,3,0,5]`; its immune actor prevents an honest all-dead
+wet witness. Selected-team/all-dead work remains UNREVIEWED. This accepted narrow
+slice adds no broad mechanic covered credit, row denominator or whole-level pass.
+Historical failed worker runs remain private and preserved; later clean independent
+proof does not relabel them as passing.

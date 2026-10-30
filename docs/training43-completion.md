@@ -1,7 +1,7 @@
 # Training43 completion boundary
 
-Accepted main through PR116: `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`
-(tree `9fc72ab7680fed7105094b79be737b77b0348a34`). Training43 (map43) is the
+Accepted main through PR118: `decf689b2803772034bcae150544d1820395dcd5`
+(tree `d78e3293e6f67e91c6d15c53631bb54f46510224`). Training43 (map43) is the
 first original-level target. **The complete original level and functional
 software testbed remain unaccepted.** Hardware is deferred separately.
 
@@ -20,12 +20,18 @@ T43-04 and compound T43-05/06 remain partial.
 The [dashboard](mechanics/index.html#training43-software) lists narrow accepted
 milestones with lineage to the unchanged broad gates. Its whole-game evidence
 percentage counts covered checkpoints, not software effort or playable scope.
-Complete wet-region outcomes, broader lifecycle, all-dead, original99-count timeout
+Unsupported wet-region outcomes, broader lifecycle, all-dead, original99-count timeout
 beyond45000 replay ticks/general corpse items/door-pad callers
 and full environmental replay still need acceptance. Source/runtime/editor
 identity and Locations CRC df31 versus archived 5c21 limits remain explicit.
 PR116 receives only its bounded accepted scope. The material below is historical;
 its candidate/blocked/current-main descriptions are dated snapshots, not current status.
+
+PR118 accepts [standing wet-region exploration](training43-wet-region.md): actual keyboard visits to all **22 standing wet CASE cells**, by nonimmune race4 and source-immune race1, four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. The 23rd water cell is solid/nonstanding. Visits are replay-derived observations, not movement authority, hypothetical BFS proof or a whole-level percentage. The new corridor same-cell corpse/manual-survivor witness is distinct from PR116 stair aux10 NORTH corpse proof.
+
+Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Training43 setup, choose rules, then Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause, save/load paused and Retry fresh. V15 entry/return still refuses every non-null requested hit including zero; v16 remains the separate wet damage/lifecycle control. Exact versions1–16 remain supported.
+
+The current wet factory hardcodes ready indices `[11,3,0,5]`, including immune race1. Selected-team wet support and source all-dead remain open; the parallel selected-team/all-dead candidate is UNREVIEWED and receives no credit. General corpse items/replacement, unsupported source geometry/search branches, doors/pads/lifts/enemy AI, original99-count timeout beyond45000 ticks, full43/testbed and source CPU/runtime timing remain open. Physical controller/TV acceptance is separately DEFERRED. Broad T43-04/05/07/08 gates remain partial.
 
 ## Historical PR111 candidate assessment (preserved)
 

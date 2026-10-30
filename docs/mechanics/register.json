@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-30",
-  "reviewedHead": "db5d2930eb07ef98ddda1d09bb1968efed0f57d3",
+  "reviewedHead": "decf689b2803772034bcae150544d1820395dcd5",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,7 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Accepted through PR116: bounded source wet injury/death/north-search corpse/head ownership/dead input guard/manual survivor movement/first exit/v16 paused recovery and Retry. Wider wet region/all-dead/original99-count timeout beyond45000 ticks/general corpse items/doors-pads/whole43/testbed/hardware/runtime CPU parity remain open. Legacy v15 still refuses all non-null damage including zero.",
+    "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Exact v1-v16 remain; v15 refuses every non-null requested hit including zero.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
     "Static editor observations do not prove runtime activation, target validity, reachability, required puzzle roles or completed gameplay.",
@@ -173,6 +173,14 @@
       "path": "docs/training43-wet-lifecycle.md",
       "instructions": "Same app: ready Training43 at paused tick zero, Enable wet damage and lifecycle, Start mission; select4 and use W/S A/D Q/E, Esc pause. After death controls guard; choose a living actor explicitly with1–4. Save/load paused; Retry fresh.",
       "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Legacy v15 entry-return mode retains its damage refusal boundary."
+    },
+    {
+      "id": "wet-region",
+      "title": "Training43 accepted standing wet-region exploration",
+      "kind": "original",
+      "path": "docs/training43-wet-region.md",
+      "instructions": "Same app: ready Training43, Enable wet-region exploration at fresh PAUSED tick zero, choose rules and Start mission. 1–4 select, W/S A/D move, Q/E turn, Esc pause; save/load paused; Retry fresh. After death explicitly select a living survivor.",
+      "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. v17 paused chronological recovery; v15 and v16 remain distinct earlier controls."
     }
   ],
   "mechanics": [
@@ -692,6 +700,11 @@
           "path": "docs/training43-wet-lifecycle.md",
           "label": "training43-wet-lifecycle.md",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "docs/training43-wet-region.md",
+          "label": "training43-wet-region.md",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "tests": [
@@ -724,6 +737,16 @@
           "path": "tests/browser/training-wet-lifecycle.spec.ts",
           "label": "training-wet-lifecycle.spec.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/training-wet-region.test.ts",
+          "label": "training-wet-region.test.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+        },
+        {
+          "path": "tests/browser/training-wet-region.spec.ts",
+          "label": "training-wet-region.spec.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "implementation": [
@@ -741,16 +764,23 @@
           "path": "src/sim/training-wet-lifecycle.ts",
           "label": "training-wet-lifecycle.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "src/sim/training-wet-region.ts",
+          "label": "training-wet-region.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "scenarios": [
         "training43",
         "stairs",
         "wet",
-        "wet-lifecycle"
+        "wet-lifecycle",
+        "wet-region"
       ],
       "gaps": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -1309,6 +1339,11 @@
           "path": "docs/training43-wet-lifecycle.md",
           "label": "training43-wet-lifecycle.md",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "docs/training43-wet-region.md",
+          "label": "training43-wet-region.md",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "tests": [
@@ -1336,6 +1371,16 @@
           "path": "tests/browser/training-wet-lifecycle.spec.ts",
           "label": "training-wet-lifecycle.spec.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/training-wet-region.test.ts",
+          "label": "training-wet-region.test.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+        },
+        {
+          "path": "tests/browser/training-wet-region.spec.ts",
+          "label": "training-wet-region.spec.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "implementation": [
@@ -1353,14 +1398,21 @@
           "path": "src/sim/training-wet-lifecycle.ts",
           "label": "training-wet-lifecycle.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "src/sim/training-wet-region.ts",
+          "label": "training-wet-region.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "scenarios": [
         "wet",
-        "wet-lifecycle"
+        "wet-lifecycle",
+        "wet-region"
       ],
       "gaps": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2350,6 +2402,11 @@
           "path": "docs/training43-wet-lifecycle.md",
           "label": "training43-wet-lifecycle.md",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "docs/training43-wet-region.md",
+          "label": "training43-wet-region.md",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "tests": [
@@ -2377,6 +2434,16 @@
           "path": "tests/browser/training-wet-lifecycle.spec.ts",
           "label": "training-wet-lifecycle.spec.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/training-wet-region.test.ts",
+          "label": "training-wet-region.test.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+        },
+        {
+          "path": "tests/browser/training-wet-region.spec.ts",
+          "label": "training-wet-region.spec.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "implementation": [
@@ -2394,15 +2461,22 @@
           "path": "src/sim/training-wet-lifecycle.ts",
           "label": "training-wet-lifecycle.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "src/sim/training-wet-region.ts",
+          "label": "training-wet-region.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "scenarios": [
         "fall",
         "encounter",
-        "wet-lifecycle"
+        "wet-lifecycle",
+        "wet-region"
       ],
       "gaps": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2444,6 +2518,11 @@
           "path": "docs/training43-wet-lifecycle.md",
           "label": "training43-wet-lifecycle.md",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "docs/training43-wet-region.md",
+          "label": "training43-wet-region.md",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "tests": [
@@ -2461,6 +2540,16 @@
           "path": "tests/browser/training-wet-lifecycle.spec.ts",
           "label": "training-wet-lifecycle.spec.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/training-wet-region.test.ts",
+          "label": "training-wet-region.test.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+        },
+        {
+          "path": "tests/browser/training-wet-region.spec.ts",
+          "label": "training-wet-region.spec.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "implementation": [
@@ -2473,14 +2562,21 @@
           "path": "src/sim/training-wet-lifecycle.ts",
           "label": "training-wet-lifecycle.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "src/sim/training-wet-region.ts",
+          "label": "training-wet-region.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "scenarios": [
         "fall",
-        "wet-lifecycle"
+        "wet-lifecycle",
+        "wet-region"
       ],
       "gaps": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2532,6 +2628,11 @@
           "path": "docs/training43-wet-lifecycle.md",
           "label": "training43-wet-lifecycle.md",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "docs/training43-wet-region.md",
+          "label": "training43-wet-region.md",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "tests": [
@@ -2564,6 +2665,16 @@
           "path": "tests/browser/training-wet-lifecycle.spec.ts",
           "label": "training-wet-lifecycle.spec.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/training-wet-region.test.ts",
+          "label": "training-wet-region.test.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+        },
+        {
+          "path": "tests/browser/training-wet-region.spec.ts",
+          "label": "training-wet-region.spec.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "implementation": [
@@ -2586,14 +2697,21 @@
           "path": "src/sim/training-wet-lifecycle.ts",
           "label": "training-wet-lifecycle.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "src/sim/training-wet-region.ts",
+          "label": "training-wet-region.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "scenarios": [
         "wet",
-        "wet-lifecycle"
+        "wet-lifecycle",
+        "wet-region"
       ],
       "gaps": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2640,6 +2758,11 @@
           "path": "docs/training43-wet-lifecycle.md",
           "label": "training43-wet-lifecycle.md",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "docs/training43-wet-region.md",
+          "label": "training43-wet-region.md",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "tests": [
@@ -2667,6 +2790,16 @@
           "path": "tests/browser/training-wet-lifecycle.spec.ts",
           "label": "training-wet-lifecycle.spec.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/training-wet-region.test.ts",
+          "label": "training-wet-region.test.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+        },
+        {
+          "path": "tests/browser/training-wet-region.spec.ts",
+          "label": "training-wet-region.spec.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "implementation": [
@@ -2684,14 +2817,21 @@
           "path": "src/sim/training-wet-lifecycle.ts",
           "label": "training-wet-lifecycle.ts",
           "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "src/sim/training-wet-region.ts",
+          "label": "training-wet-region.ts",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
         }
       ],
       "scenarios": [
         "wet",
-        "wet-lifecycle"
+        "wet-lifecycle",
+        "wet-region"
       ],
       "gaps": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -9639,7 +9779,7 @@
       "sha256": "646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c",
       "revision": "Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body",
       "firstAcceptance": true,
-      "audit": "Accepted PR114 CASE, PR115 supported wet entry/return and PR116 bounded wet injury/death/north-search corpse/manual survivor/first-exit/v16 recovery. Wider region and complete original level remain unaccepted.",
+      "audit": "Accepted PR114 CASE, PR115 supported wet entry/return, PR116 bounded wet injury/death and PR118 actual keyboard all22 standing wet cells/corridor same-cell corpse/manual survivor/v17 recovery. Unsupported outcomes and complete original level remain unaccepted.",
       "acceptance": "open",
       "interactions": [
         {
@@ -9650,7 +9790,7 @@
         {
           "mechanic": "MOV-03",
           "classification": "reachable-optional",
-          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged."
+          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass."
         },
         {
           "mechanic": "ENV-01",
@@ -9680,7 +9820,7 @@
         {
           "mechanic": "ENV-08",
           "classification": "unknown",
-          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged."
+          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass."
         },
         {
           "mechanic": "ENV-09",
@@ -9690,7 +9830,7 @@
         {
           "mechanic": "LIFE-03",
           "classification": "unknown",
-          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged."
+          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass."
         },
         {
           "mechanic": "INV-04",
@@ -9774,9 +9914,10 @@
         }
       ],
       "blockers": [
-        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Unsupported wet branches, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
         "Every remaining required/reachable optional interaction needs a reviewed complete-level recovery/outcome receipt.",
-        "DEFERRED physical four-player/controller/TV run; does not block keyboard software."
+        "DEFERRED physical four-player/controller/TV run; does not block keyboard software.",
+        "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED."
       ]
     },
     {
@@ -10324,9 +10465,10 @@
       "state": "partial",
       "evidence": [
         "docs/training43-completion.md",
-        "docs/training43-wet-acceptance.md"
+        "docs/training43-wet-acceptance.md",
+        "docs/training43-wet-region.md"
       ],
-      "requirement": "Accepted PR114 classifies 23 water cells (22 hypothetical movement candidates, one solid support), signs and inactive trigger sentinel; bounded source entry/reverse case. Live outcomes and level review remain open."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial."
     },
     {
       "id": "T43-05",
@@ -10336,9 +10478,10 @@
         "docs/wet-entry-observation.md",
         "docs/immersion-caller-contract.md",
         "docs/training43-wet-traversal.md",
-        "docs/training43-wet-lifecycle.md"
+        "docs/training43-wet-lifecycle.md",
+        "docs/training43-wet-region.md"
       ],
-      "requirement": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial."
     },
     {
       "id": "T43-06",
@@ -10347,9 +10490,10 @@
       "evidence": [
         "docs/death-transition-contract.md",
         "docs/after-death-control-observation.md",
-        "docs/training43-wet-lifecycle.md"
+        "docs/training43-wet-lifecycle.md",
+        "docs/training43-wet-region.md"
       ],
-      "requirement": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial."
     },
     {
       "id": "T43-07",
@@ -10358,9 +10502,10 @@
       "evidence": [
         "docs/checkpoints.md",
         "docs/training-session.md",
-        "docs/training43-wet-lifecycle.md"
+        "docs/training43-wet-lifecycle.md",
+        "docs/training43-wet-region.md"
       ],
-      "requirement": "Accepted v15 supported wet entry-return and v16 bounded lifecycle chronology; paused restores before damage/after injury/death/survivor/terminal continue without duplicate effects. Complete original-level recovery remains open."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial."
     },
     {
       "id": "T43-08",
@@ -10368,9 +10513,10 @@
       "state": "partial",
       "evidence": [
         "docs/mission-rules.md",
-        "tests/browser/extraction.spec.ts"
+        "tests/browser/extraction.spec.ts",
+        "docs/training43-wet-region.md"
       ],
-      "requirement": "Bounded original first exit, single cooperative retirement and fresh Retry accepted; authored timeout exists. Original all-dead and original99-count timeout beyond45000 replay ticks remain open."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED. Broad gate remains partial."
     },
     {
       "id": "T43-09",
@@ -10418,7 +10564,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 116,
+  "acceptedThrough": 118,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10431,7 +10577,8 @@
         "41031455459"
       ],
       "automatic": "6518416644",
-      "receipt": "6519283288"
+      "receipt": "6519283288",
+      "receiptKind": "separate-receipt-comment"
     },
     {
       "id": "proof-114",
@@ -10444,7 +10591,8 @@
         "41035553248"
       ],
       "automatic": "6519462817",
-      "receipt": "6519933477"
+      "receipt": "6519933477",
+      "receiptKind": "separate-receipt-comment"
     },
     {
       "id": "proof-115",
@@ -10457,7 +10605,8 @@
         "41049271263"
       ],
       "automatic": "6520939225",
-      "receipt": "6521769394"
+      "receipt": "6521769394",
+      "receiptKind": "separate-receipt-comment"
     },
     {
       "id": "proof-116",
@@ -10470,14 +10619,32 @@
         "41064666632"
       ],
       "automatic": "6523347081",
-      "receipt": "6524247429"
+      "receipt": "6524247429",
+      "receiptKind": "separate-receipt-comment"
+    },
+    {
+      "id": "proof-118",
+      "pr": 118,
+      "merge": "decf689b2803772034bcae150544d1820395dcd5",
+      "head": "b3710c91d980597b1e13905c3afd432a491ff76e",
+      "reviewSha256": "f117875e938d538cec7436be22ba5b2f7e71aa89528b550b38745bd2fe20f848",
+      "ci": [
+        "41071904326",
+        "41071757626"
+      ],
+      "automatic": "6525460623",
+      "receipt": "6525460623",
+      "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed",
+      "tree": "d78e3293e6f67e91c6d15c53631bb54f46510224",
+      "reviewedTree": "a3b5964dbede6c20c16285c4db8661b3b176c8e4",
+      "sourceProofBase": "db5d2930eb07ef98ddda1d09bb1968efed0f57d3"
     }
   ],
   "dashboards": [
     {
       "id": "testbed-capability",
       "title": "Current playable testbed capability",
-      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered.",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change.",
       "milestones": [
         {
           "id": "cap-start",
@@ -10630,7 +10797,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Legacy v15 refuses every non-null requested hit including zero. Choose the separately accepted v16 lifecycle mode for bounded injury/death; wider wet region remains open.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": [
             "proof-115"
           ]
@@ -10651,7 +10818,7 @@
               "scope": "Accepted bounded slices do not constitute programme acceptance."
             }
           ],
-          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": []
         },
         {
@@ -10685,7 +10852,7 @@
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": [
             "proof-116"
           ]
@@ -10708,13 +10875,51 @@
           ],
           "missing": "Actual complete four-player hardware run and reviewed receipt.",
           "proofs": []
+        },
+        {
+          "id": "cap-standing22",
+          "title": "All 22 standing wet cells and corridor survivor recovery",
+          "status": "playable",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.",
+          "lineage": [
+            "MOV-03",
+            "ENV-08",
+            "LIFE-02",
+            "LIFE-03",
+            "T43-04",
+            "T43-05",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "wet-region",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-region.md",
+              "label": "training43-wet-region.md",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+            },
+            {
+              "path": "tests/training-wet-region.test.ts",
+              "label": "training-wet-region.test.ts",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+            },
+            {
+              "path": "tests/browser/training-wet-region.spec.ts",
+              "label": "training-wet-region.spec.ts",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+            }
+          ],
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
+          "proofs": [
+            "proof-118"
+          ]
         }
       ]
     },
     {
       "id": "training43-software",
       "title": "Training43 software acceptance",
-      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution.",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change.",
       "milestones": [
         {
           "id": "t43-dry",
@@ -10785,7 +10990,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "V15 refuses requested hits; separate accepted v16 mode handles bounded injury/death. Broader wet traversal remains open.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": [
             "proof-115"
           ]
@@ -10821,7 +11026,7 @@
           "id": "t43-lifecycle",
           "title": "Complete wet and lifecycle outcomes",
           "status": "partial",
-          "scope": "PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 remain partial.",
+          "scope": "PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 remain partial. PR118 separately accepts standing22 and corridor same-cell corpse with v17; the broad family remains partial.",
           "lineage": [
             "T43-05",
             "T43-06"
@@ -10837,11 +11042,17 @@
               "path": "docs/training43-wet-lifecycle.md",
               "label": "training43-wet-lifecycle.md",
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            },
+            {
+              "path": "docs/training43-wet-region.md",
+              "label": "training43-wet-region.md",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": [
-            "proof-116"
+            "proof-116",
+            "proof-118"
           ]
         },
         {
@@ -10875,7 +11086,7 @@
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": [
             "proof-116"
           ]
@@ -10896,8 +11107,46 @@
               "scope": "No complete original level accepted."
             }
           ],
-          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.",
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
           "proofs": []
+        },
+        {
+          "id": "t43-standing22",
+          "title": "All 22 standing wet cells and corridor survivor recovery",
+          "status": "playable",
+          "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage.",
+          "lineage": [
+            "MOV-03",
+            "ENV-08",
+            "LIFE-02",
+            "LIFE-03",
+            "T43-04",
+            "T43-05",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "wet-region",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-region.md",
+              "label": "training43-wet-region.md",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+            },
+            {
+              "path": "tests/training-wet-region.test.ts",
+              "label": "training-wet-region.test.ts",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+            },
+            {
+              "path": "tests/browser/training-wet-region.spec.ts",
+              "label": "training-wet-region.spec.ts",
+              "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
+            }
+          ],
+          "missing": "Solid nonstanding 23rd water cell, unsupported geometry/search branches, general corpse items/replacement, doors/pads/lifts/enemy AI, source all-dead, original99-count timeout beyond45000 replay ticks, complete original43/testbed and runtime CPU parity remain open. Wet factory is limited to ready indices [11,3,0,5], including immune race1; selected-team/all-dead candidate is UNREVIEWED and receives no credit. Hardware/controller/TV acceptance is separately DEFERRED.",
+          "proofs": [
+            "proof-118"
+          ]
         }
       ]
     }
