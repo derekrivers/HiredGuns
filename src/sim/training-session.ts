@@ -157,7 +157,11 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
-  if(session.wetLifecycle)return exportWetLifecycle(level,sources,session,world);
+  // Inspect the new extension without evaluating caller accessors before its snapshot.
+  if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  const lifecycle = Object.getOwnPropertyDescriptor(session, 'wetLifecycle');
+  if (lifecycle && (!lifecycle.enumerable || !('value' in lifecycle))) throw new Error('Training43 session data descriptors required.');
+  if (lifecycle?.value) return exportWetLifecycle(level,sources,session,world);
   if (session.wet) return exportWet(level,sources,session,world);
   if (session.consumables) {
     const {candidate} = await verifyConsumableSession(level,sources,session,world);

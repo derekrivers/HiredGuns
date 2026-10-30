@@ -169,3 +169,45 @@ it.skipIf(!enabled)('private original actual route: first injury, fatal north co
  expect(replayWetLifecycle(level,base.session,initial.session.wet!.actors.map(a=>a.body.race),c.session.wet!.rules,c.session.wet!.history)).toEqual({session:c.session,world:c.world});
  expect(serializeWetLifecycle(c).length).toBeLessThan(24576);
 },120000);
+
+// Exercise the public save button dispatcher, including its synchronous boundary.
+it.each([false,true])('public export rejects an own lifecycle accessor without reads (truthy=%s)',async truthy=>{
+ const {level,c}=await fixture();let reads=0,sideEffects=0;
+ const session=structuredClone(c.session);
+ Object.defineProperty(session,'wetLifecycle',{enumerable:true,get(){reads++;sideEffects++;return truthy?c.session.wetLifecycle:undefined;}});
+ await expect(exportTrainingSession(level,c.world,session,{roster:new Uint8Array(),items:new Uint8Array()})).rejects.toThrow('descriptors');
+ expect(reads).toBe(0);expect(sideEffects).toBe(0);
+});
+it('public export rejects unsupported prototypes before own or inherited lifecycle getters',async()=>{
+ const {level,c}=await fixture();let reads=0;
+ for(const own of [false,true]){
+  const session=structuredClone(c.session);delete (session as {wetLifecycle?:unknown}).wetLifecycle;
+  const target=own?session:{};Object.defineProperty(target,'wetLifecycle',{enumerable:true,get(){reads++;return c.session.wetLifecycle;}});
+  Object.setPrototypeOf(session,own?{}:target);
+  await expect(exportTrainingSession(level,c.world,session,{roster:new Uint8Array(),items:new Uint8Array()})).rejects.toThrow('prototype');
+ }
+ expect(reads).toBe(0);
+});
+it.skipIf(!enabled)('private public export snapshots valid lifecycle and refuses invalid call-time data before await',async()=>{
+ const m=JSON.parse(await readFile(process.env.HIRED_GUNS_T43_CASE_INPUTS!,'utf8'));
+ const raw={map:new Uint8Array(await readFile(m.inputs.map)),roster:new Uint8Array(await readFile(m.inputs.roster)),items:new Uint8Array(await readFile(m.inputs.items))};
+ const {level}=await importEditorMap(raw.map),base=await createTrainingSession(level,raw,[11,3,0,5]);
+ const c=await activateWetLifecycle(level,raw,base.session,base.world,true);
+ const expected=await exportTrainingSession(level,c.world,c.session,raw);
+ expect(JSON.parse(expected).version).toBe(16);expect(await importTrainingSession(level,raw,expected)).toEqual(c);
+ const supplied=structuredClone(c),map=structuredClone(level),bytes=structuredClone(raw);
+ const pending=exportTrainingSession(map,supplied.world,supplied.session,bytes);
+ supplied.session.wetLifecycle!.actors[3]!.requests++;supplied.world.tick++;map.layers[0].fill(0);bytes.map.fill(0);bytes.roster.fill(0);bytes.items.fill(0);
+ expect(await pending).toBe(expected);
+ let reads=0;const getter=structuredClone(c.session);
+ Object.defineProperty(getter,'wetLifecycle',{configurable:true,enumerable:true,get(){reads++;throw Error('caller side effect');}});
+ const refused=exportTrainingSession(level,c.world,getter,raw);
+ Object.defineProperty(getter,'wetLifecycle',{enumerable:true,value:c.session.wetLifecycle});
+ await expect(refused).rejects.toThrow('descriptors');expect(reads).toBe(0);
+ const bad=structuredClone(c);bad.session.wetLifecycle!.actors[3]!.requests++;
+ const invalid=exportTrainingSession(level,bad.world,bad.session,raw);bad.session.wetLifecycle!.actors[3]!.requests--;
+ await expect(invalid).rejects.toThrow('mismatch');
+ const custom=structuredClone(c.session);Object.setPrototypeOf(custom,{});
+ const prototype=exportTrainingSession(level,c.world,custom,raw);Object.setPrototypeOf(custom,Object.prototype);
+ await expect(prototype).rejects.toThrow('prototype');
+});
