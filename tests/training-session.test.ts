@@ -415,3 +415,52 @@ it.skipIf(!privateInputs).each([['equip',equipTrainingSession],['exchange',excha
  const expected=await change(map,sources,c.session,0,0,true,c.world),call=structuredClone(c),raw=structuredClone(sources),m=structuredClone(map);const pending=change(m,raw,call.session,0,0,true,call.world);
  raw.roster.fill(0);raw.items.fill(0);m.layers[0][0]=0;call.world.tick++;call.world.mission.outcome='failed';call.session.patrol!.history.push({kind:'target'});(call.session.indices as number[]).reverse();let reads=0;Object.defineProperty(raw,'items',{get(){reads++;throw Error('late read');}});Object.defineProperty(call.session,'indices',{get(){reads++;throw Error('late indices');}});expect(await pending).toEqual(expected);expect(reads).toBe(0);
 });
+
+it.skipIf(!privateInputs)('v12 complete door phases, raw records, ordered history, interlock and canonical retry roundtrip; tampering is atomic',async()=>{
+ const {createMovingDoorLevel}=await import('../src/world/training-gate');const {createMovingDoorSession,commandPatrolEncounter}=await import('../src/sim/training-session');
+ const {sources}=await local(),map=createMovingDoorLevel();const base=await createTrainingSession(map,sources,order);let c=await createMovingDoorSession(sources,base.session);const baseline=structuredClone(c);
+ const roundtrip=async()=>{const save=await exportTrainingSession(map,c.world,c.session,sources);expect(JSON.parse(save).version).toBe(12);expect(await importTrainingSession(map,sources,save)).toEqual({world:c.world,session:c.session});return save;};
+ let attempts=0;
+ const tick=(actor:number|null=null,action:14|15|16|17|18=16,commands:Parameters<typeof advanceGateTrainingSession>[3]=[])=>{if(++attempts>3000)throw Error('Loop stalled '+JSON.stringify({door:c.session.gate!.moving,patrol:c.session.patrol,world:c.world}));c=advanceGateTrainingSession(map,c.session,c.world,commands,actor,action);};
+ await roundtrip();tick(0,14);for(let i=0;i<24;i++)tick();expect(c.session.gate!.moving!.record.direction).toBe(1);await roundtrip();
+ tick(0,17);expect(c.session.gate!.moving!.record.trigger).toBe(3);await roundtrip();
+ while(c.session.gate!.moving!.record.direction!==3)tick();await roundtrip();tick(0,18);while(c.session.gate!.moving!.record.direction===3)tick();await roundtrip();
+ tick(0,15);while(c.session.gate!.moving!.record.direction!==2)tick();await roundtrip();
+ while(c.session.gate!.moving!.record.direction!==0)tick();tick(0,14);while(c.session.gate!.overlay.word&2)tick();
+ // Release the NPC using the existing designated encounter, then put player in doorway.
+ for(let i=0;i<6&&c.session.encounter!.fitness>0;i++){c={...c,session:commandPatrolEncounter(map,c.session,c.world,'fire',false)};for(let t=0;t<40;t++)tick();}
+ tick(null,16,[{mercenaryId:0,action:'strafe-right'}]);tick(null,16,[{mercenaryId:0,action:'forward'}]);
+ expect(c.world.mercenaries[0]).toMatchObject({x:5,y:5});tick(1,15);while(!c.session.gate!.moving!.deferred)tick();await roundtrip();
+ tick(null,16,[{mercenaryId:0,action:'forward'}]);expect(c.session.gate!.moving!.deferred).toBe(true);tick();expect(c.session.gate!.moving!.deferred).toBe(false);const saved=await roundtrip();
+ expect(resetTrainingInventory(c.session,map)).toEqual(baseline.session);
+ const envelope=JSON.parse(saved),snapshot=structuredClone(c);
+ for(const mutate of [
+  (e:typeof envelope)=>{e.gate.moving.record.storedType^=64;},(e:typeof envelope)=>{e.gate.moving.record.delay++;},(e:typeof envelope)=>{e.gate.moving.record.key++;},
+  (e:typeof envelope)=>{e.gate.moving.record.buttonOnly=0;},(e:typeof envelope)=>{e.gate.moving.record.position+=4;},(e:typeof envelope)=>{e.gate.moving.counter++;},
+  (e:typeof envelope)=>{e.gate.moving.word^=2;},(e:typeof envelope)=>{e.gate.moving.deferred=true;},(e:typeof envelope)=>{e.gate.moving.pendingAction=15;},
+  (e:typeof envelope)=>{e.gate.moving.adapter='original';},(e:typeof envelope)=>{e.patrol.history[0].action=15;},(e:typeof envelope)=>{e.patrol.history=Array(129).fill({kind:'target'});},
+  (e:typeof envelope)=>{e.patrol.history=[{kind:'wait',ticks:45001}];},(e:typeof envelope)=>{e.sources.map='fake';},(e:typeof envelope)=>{e.version=11;},
+  (e:typeof envelope)=>{e.checkpoint=' '.repeat(16384);},(e:typeof envelope)=>{e.gate.extra=true;}
+ ]){const bad=structuredClone(envelope);mutate(bad);await expect(importTrainingSession(map,sources,JSON.stringify(bad))).rejects.toThrow();expect(c).toEqual(snapshot);}
+ await expect(importTrainingSession(map,{...sources,items:new Uint8Array(sources.items.length)},saved)).rejects.toThrow();
+ const wrong=structuredClone(map);wrong.layers[0][0]=1;await expect(importTrainingSession(wrong,sources,saved)).rejects.toThrow('geometry');
+ // Exact history budget refuses entire prospective ticks, C/actions, F and T.
+ const full={...baseline.session,patrol:{...baseline.session.patrol!,history:Array.from({length:128},()=>({kind:'target' as const}))}};
+ for(const action of [14,15,16,17,18] as const)expect(()=>advanceGateTrainingSession(map,full,baseline.world,[],0,action)).toThrow('history budget');
+ for(const kind of ['fire','target'] as const)expect(()=>commandPatrolEncounter(map,full,baseline.world,kind,false)).toThrow('history budget');
+ expect(()=>advanceGateTrainingSession(map,full,baseline.world,[],null)).toThrow('history budget');
+},120000);
+
+it.skipIf(!privateInputs).each(['save','import','setup','equip','exchange','return'] as const)('v12 %s owns every caller input before first await throughout rebuild',async(kind)=>{
+ const {createMovingDoorLevel}=await import('../src/world/training-gate');const {createMovingDoorSession}=await import('../src/sim/training-session');
+ const {sources}=await local(),map=createMovingDoorLevel();const base=await createTrainingSession(map,sources,order);let c=await createMovingDoorSession(sources,base.session);
+ c=advanceGateTrainingSession(map,c.session,c.world,[],0,14);for(let i=0;i<14;i++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);
+ if(kind==='exchange'||kind==='return')c=await equipTrainingSession(map,sources,c.session,0,0,true,c.world);
+ const save=await exportTrainingSession(map,c.world,c.session,sources),caller=structuredClone(c),raw=structuredClone(sources),m=structuredClone(map);
+ const change=kind==='equip'?equipTrainingSession:kind==='exchange'?exchangeTrainingSession:returnTrainingSession;
+ const expected=kind==='setup'?await createMovingDoorSession(sources,c.session):kind==='save'||kind==='import'?{world:c.world,session:c.session}:await change(map,sources,c.session,0,0,true,c.world);
+ const pending=kind==='save'?exportTrainingSession(m,caller.world,caller.session,raw):kind==='import'?importTrainingSession(m,raw,save):kind==='setup'?createMovingDoorSession(raw,caller.session):change(m,raw,caller.session,0,0,true,caller.world);
+ raw.items.fill(0);raw.roster.fill(0);m.layers[0][0]=1;caller.world.tick++;caller.world.rng++;caller.session.gate!.moving!.counter++;caller.session.patrol!.history.length=0;(caller.session.indices as number[]).reverse();
+ let reads=0;Object.defineProperty(raw,'items',{get(){reads++;throw Error('late source');}});Object.defineProperty(caller.session,'indices',{get(){reads++;throw Error('late indices');}});
+ const result=await pending;expect(reads).toBe(0);expect(typeof result==='string'?await importTrainingSession(map,sources,result):result).toEqual(expected);
+},120000);

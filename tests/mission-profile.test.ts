@@ -19,3 +19,15 @@ describe('canonical authored patrol mission profile',()=>{
   }
  });
 });
+
+it('v12 permits only canonical timed-door word overlays and exit transitions',async()=>{
+ const {createMovingDoorLevel,initialTrainingGate}=await import('../src/world/training-gate');
+ const {advanceMovingDoor}=await import('../src/world/training-moving-door');
+ const map=createMovingDoorLevel();let gate=initialTrainingGate(true);
+ for(let t=0;t<150;t++){
+  gate={...gate,moving:advanceMovingDoor(gate.moving!,t===0?14:t===70?15:0,[])};
+  gate.overlay={...gate.overlay,word:gate.moving!.word};
+  expect(extractionProfile(effectivePatrolLevel(map,gate,null))?.timeLimit).toBe(10);
+ }
+ for(const mutate of [(m:typeof map)=>{m.layers[0][649]!^=64;},(m:typeof map)=>{m.layers[0][649]=0x8580a003;},(m:typeof map)=>{m.layers[0][650]=66;},(m:typeof map)=>{m.starts[0]!.x++;}]){const bad=structuredClone(map);mutate(bad);expect(extractionProfile(bad)).toBeNull();}
+});

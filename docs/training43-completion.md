@@ -1,31 +1,31 @@
 # Training43 completion boundary
 
-Accepted gameplay through PR107 at `011cb17e7f5d1683b4a5949fe01d22b8e2798f5f`
-(tree `4711a2b2b5d8522e6f697a65fda95a2a1bf410a3`). Verified team, inventory,
-isolated gun, ready preset, selected-team dry fall, guided controls, ground cache,
-keyboard static gate and deterministic authored gate patrol have accepted packets.
+Accepted gameplay through PR109 merge `48cff7ed7b56e7ec7dfd81784510328297baaa38`
+(tree `833a10767f3b2bc92ee65bef3fee9c2e7bf5b4fc`): verified team, inventory,
+isolated gun, ready preset, selected-team fall, guided controls, ground cache,
+static gate, authored patrol/extraction and the bounded source door helper.
 
-Candidate: [authored cooperative patrol extraction](training-patrol-mission.md),
-one same-app finishable objective: open gate, defeat designated F/T patrol target,
-then extract all four through a marked exit unlocked by target defeat. Fixed ten
-601-tick source counts, existing cooperative retirement and timeout-before-success
-policy, visible progress/controls and terminal Y Retry. V11 canonical replay binds
-complete world/gate/NPC/inventory/encounter/clock/outcome receipts to verified raw
-sources. Checkpoint 3 and existing size/history bounds are unchanged. This awaits
-independent exact-final HIGH/current CI/completed automatic review and coordinator
-integration; it is not Training43 or functional-test-bed acceptance.
+Candidate: [timed door / patrol extraction](training-moving-door.md), a v12
+opt-in version of the same authored arena. C requests source open/close; wait for
+variants and extra completion step, traverse, reverse or close; source delay and
+accessible lock/unlock operate beside the views. Authored accepted-tick timing and
+complete player/NPC current/destination closure guards prevent overlap. V12 rebuilds
+raw record/word/counter/pending/interlock plus world/NPC/inventory/gun/mission receipts
+from canonical starts and verified source bytes. Existing save budgets and v1–v11
+remain unchanged. This awaits independent exact-final HIGH/current CI/completed
+automatic review and coordinator integration; it is not full-test-bed acceptance.
 
 | Capability | Current scope and remaining boundary |
 | --- | --- |
 | Startup / movement / selection / pause | Same guided app; four views, verified OCS team and keyboard control. Original startup and hardware-controller parity remain separate. |
 | Inventory / ground | Accepted paused equip/exchange/return and authored cache pickup/drop/v8. Patrol supports interleaved inventory. No original item placement or general use. |
 | Weapons / encounters | Accepted designated-target F/T and source gun arithmetic. Zero target health releases authored patrol occupancy. No spatial aim/range/LOS, enemy attacks or player damage. |
-| Buttons / gates / patrol | Accepted static gate/v9 and deterministic route/v10 with closure interlock/reservations. Candidate adds an explicitly authored objective lock/exit. Original AI, moving doors, pads and lifts remain unavailable. |
+| Buttons / gates / patrol | Accepted static gate/v9 and deterministic route/v10 with closure interlock/reservations. Accepted objective lock/exit; candidate adds timed normal door/v12 in that arena. Original runtime door selection, AI, pads and lifts remain unavailable. |
 | Falling / water / death | Accepted selected-team dry fall/v7. No mixed gate/ground fall replay or old-fall recalculation. Wet outcomes and original lifecycle remain unavailable. |
-| Mission / retry / recovery | Existing extraction, timeout and retirement rules compose with patrol in candidate v11; full replay, paused recovery and atomic Retry. Existing practice modes retain navigation. |
+| Mission / retry / recovery | Existing extraction, timeout and retirement rules compose with accepted patrol/v11 and candidate timed door/v12; full replay, paused recovery and atomic Retry. Existing practice modes retain navigation. |
 
 Training43 and the functional test bed remain incomplete. No original-map runtime
-parity, complete original enemy behavior, full level, wet, moving-door, campaign,
+parity, complete original enemy behavior, full level, wet, original runtime doors, campaign,
 graphics or audio completion is claimed. Public tests use synthetic fixtures;
 private originals and browser evidence stay ignored. Controllers/TV remain deferred.
 
