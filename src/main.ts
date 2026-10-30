@@ -1,3 +1,5 @@
+import { activateWet, stepWet } from './sim/training-wet';
+import { installTrainingWetPanel } from './training-wet-panel';
 import { installTrainingConsumablePanel, type ConsumableOperationResult } from './training-consumable-panel';
 import { createConsumableSession, changeConsumableSession } from './sim/training-session';
 import { stepConsumables } from './sim/training-consumables';
@@ -81,6 +83,8 @@ let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
 let latestPresetGeneration = 0;
 let session: TrainingSession | null = null;
+let importedMapBytes: Uint8Array | undefined;
+const sessionSources = () => { const raw=rosterPanel.sources();return raw ? {...raw,map:importedMapBytes} : null; };
 let pendingGateActor: number | null = null;
 let pendingDoorAction: DoorAction = 16;
 const activationKeys = new Set<string>();
@@ -101,10 +105,10 @@ selectedFallButton.textContent = 'Selected-team dry-fall practice (authored)';
 get('fall').after(selectedFallButton);
 const inventoryHost = document.createElement('section'); inventoryHost.id = 'training-inventory';
 tools.append(inventoryHost);
-const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null, async (actor, slot, kind) => {
+const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused && !loading && session !== null && !session.wet, async (actor, slot, kind) => {
   if (!paused || loading || !session) throw new Error('Pause an available selected-team session before changing inventory.');
   if (session.inventory.commands.length >= MAX_INVENTORY_COMMANDS) throw new Error('Inventory operation budget exhausted. Retry or Apply a new team to reset.');
-  const sources = rosterPanel.sources();
+  const sources = sessionSources();
   if (!sources) throw new Error('Open the matching roster and items first.');
   const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
   try {
@@ -128,7 +132,7 @@ async function runConsumableOperation(actor?: number): Promise<ConsumableOperati
  try {
   if(loading||!session)throw Error('Selected-team practice is not ready.');
   if(actor!==undefined&&!session.consumables)throw Error('Start the consumable extension first.');
-  const sources=rosterPanel.sources();if(!sources)throw Error('Open matching roster and items first.');
+  const sources=sessionSources();if(!sources)throw Error('Open matching roster and items first.');
   if(actor!==undefined&&!paused)throw Error('PAUSED required: Esc before using an equipped item.');
   generation=++loadGeneration;started=true;loading=true;setPaused(true);
   const candidate=actor===undefined?await createConsumableSession(level,sources,session):await changeConsumableSession(level,sources,session,world,{kind:'use',actor},paused);
@@ -141,6 +145,13 @@ async function runConsumableOperation(actor?: number): Promise<ConsumableOperati
  }finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
 }
 
+const wetHost=document.createElement('section');wetHost.id='training-wet';get('scenario-actions').before(wetHost);
+const wetPanel=installTrainingWetPanel(wetHost,()=>({session,world,paused,loading,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
+ let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
+ try{if(loading||!session)throw Error('Load the ready-to-play Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
+ const candidate=await activateWet(level,raw,session,world,paused);if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);return {status:'installed',isCurrent};
+ }catch(error){return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
+});
 const encounterHost = document.createElement('section'); encounterHost.id = 'training-encounter';
 live.querySelector('h2')!.after(encounterHost);
 const display = document.createElement('div'); display.className = 'test-display';
@@ -154,9 +165,9 @@ const encounterPanel = installTrainingEncounterPanel(encounterHost, () => sessio
 encounterHost.addEventListener('click', refreshEncounterPanel);
 function refreshEncounterPanel(): void {
   encounterPanel.refresh();
-  encounterHost.hidden=!session || !!session.consumables;
+  encounterHost.hidden=!session || !!session.consumables || !!session.wet;
   const patrolActive = !!session?.patrol;
-  if(session?.consumables) for(const control of encounterHost.querySelectorAll<HTMLButtonElement|HTMLSelectElement>('button,select'))control.disabled=true;
+  if(session?.consumables || session?.wet) for(const control of encounterHost.querySelectorAll<HTMLButtonElement|HTMLSelectElement>('button,select'))control.disabled=true;
   for (const kind of ['arm','reset']) if (patrolActive) encounterHost.querySelector<HTMLButtonElement>(`[data-command="${kind}"]`)!.disabled = true;
   encounterHost.querySelector('h3')!.textContent = patrolActive ? 'Combat test · designated patrol target' : 'Combat test · isolated authored gun encounter';
   encounterHost.querySelector<HTMLElement>('#encounter-help')!.textContent = patrolActive ? 'F: designate the patrol target once per press while running. T: deliberate miss toggle. Esc: pause. Retry resets the entire scenario.' : 'F: fire once per press while running. T: change target while running or paused. R: reset this authored loadout while paused. Esc: pause.';
@@ -171,7 +182,7 @@ function refreshEncounterPanel(): void {
   scope.textContent = patrolActive ? 'Source-derived gun/ammo/damage arithmetic. F designates the patrol target regardless of position; T chooses miss. Authored saturating health zero defeats this target and releases its occupancy. Accuracy is retained source state, not a hit probability. Cooldown uses accepted world ticks. Retry resets the whole scenario.' : 'Source-derived gun/ammo/damage arithmetic; dummy/miss selection and saturating dummy health are authored policy. Zero dummy health has no actor death or occupancy effect. Accuracy is retained source state, not a hit probability. Cooldown decreases one unit per accepted 50 Hz tick; pause freezes it. Retry resets the authored baseline and team inventory replay.';
 }
 function encounterCommand(action: EncounterCommand): void {
-  if (session?.consumables || loading || !session || world.mission.outcome !== 'active' || !renderer || graphicsLost) return;
+  if (session?.wet || session?.consumables || loading || !session || world.mission.outcome !== 'active' || !renderer || graphicsLost) return;
   const state = session.encounter;
   if (action.kind === 'arm' ? !paused : !state || (action.kind === 'reset' ? !paused : action.kind === 'fire' && paused)) return;
   try {
@@ -196,7 +207,7 @@ const groundPanel = installTrainingGroundPanel(groundHost, () => session, () => 
   () => !session?.gate && !loading && !!session && !!renderer && !graphicsLost && world.mission.outcome === 'active', () => paused,
   async (actor, groundId, slot, transfer) => {
     if (!session || loading) return;
-    const sources = rosterPanel.sources();
+    const sources = sessionSources();
     if (!sources) throw new Error('Open matching raw roster and items first.');
     const generation = ++loadGeneration; loading = true; inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
     try {
@@ -212,7 +223,7 @@ const gatePanel = installTrainingGatePanel(gateHost, () => session, () => world,
   () => !loading && !!session && !!renderer && !graphicsLost && world.mission.outcome === 'active', () => paused,
   async () => {
     if (loading || !paused || !session) throw new Error('Pause an available selected team first.');
-    const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw roster and items.');
+    const sources = sessionSources(); if (!sources) throw new Error('Open matching raw roster and items.');
     const current = session, generation = ++loadGeneration; loading = true; setPaused(true);
     try {
       const candidate = await createGateTrainingSession(sources,current,level);
@@ -227,7 +238,7 @@ const challengeButton = document.createElement('button'); challengeButton.id = '
 get('scenario-actions').append(challengeButton);
 challengeButton.addEventListener('click', async () => {
   if (loading || !session || !renderer || graphicsLost) return;
-  const sources = rosterPanel.sources(); if (!sources) return;
+  const sources = sessionSources(); if (!sources) return;
   const current = session, generation = ++loadGeneration; loading = true; setPaused(true);
   try {
     const candidate = await createPatrolMissionSession(sources,current);
@@ -242,7 +253,7 @@ const patrolHost = document.createElement('section'); patrolHost.id = 'training-
 const patrolPanel = installTrainingPatrolPanel(patrolHost,() => session,() => world,() => level,
   () => !loading && !!renderer && !graphicsLost && world.mission.outcome === 'active',() => paused,async () => {
     if (loading || !session) throw new Error('Selected team unavailable.');
-    const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw sources.');
+    const sources = sessionSources(); if (!sources) throw new Error('Open matching raw sources.');
     const current = session, saved = world, generation = ++loadGeneration; loading = true; setPaused(true);
     try {
       const candidate = await createPatrolTrainingSession(level,sources,current,saved,paused);
@@ -266,7 +277,7 @@ async function setupDoorScenario(pad: boolean): Promise<DoorSetupResult> {
   const isCurrent = () => generation === loadGeneration;
   try {
     if (loading || !session) throw new Error('Apply a verified team first.');
-    const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw sources.');
+    const sources = sessionSources(); if (!sources) throw new Error('Open matching raw sources.');
     const current = session;
     generation = ++loadGeneration; started = true; loading = true; setPaused(true);
     const candidate = await (pad ? createPressurePadSession(sources,current) : createMovingDoorSession(sources,current));
@@ -293,7 +304,7 @@ function showSession(): void {
   groundHost.style.display = session?.gate ? 'none' : '';
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
+  label.textContent = session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   refreshEncounterPanel(); patrolPanel.refresh(); doorPanel.refresh();
@@ -311,8 +322,9 @@ function showSession(): void {
   }
 }
 function clearSession(): void {
+  const wasWet=!!session?.wet;
   cancelSessionOperation(); session = null;
-  if (selectedFallLevel(level) || gateLevel(level)) installLevel(createDemoLevel());
+  if (wasWet || selectedFallLevel(level) || gateLevel(level)) installLevel(createDemoLevel());
   else showSession();
 }
 const rosterPanel = installRosterPanel(rosterHost, () => setPaused(true), {
@@ -354,7 +366,7 @@ get('local-test-preset').addEventListener('click', async () => {
     const nextRenderer = new FourViews(canvas, panes, nextLevel);
     try { commitRoster(); } catch (error) { nextRenderer.dispose(); throw error; }
     renderer?.dispose(); renderer = nextRenderer; graphicsLost = false;
-    level = nextLevel; world = candidate.world;
+    level = nextLevel; importedMapBytes = new Uint8Array(map); world = candidate.world;
     session = Object.freeze({ ...candidate.session, encounter });
     extraDiagnostics = `Import report: ${JSON.stringify(report, null, 2)}`;
     events.fill('READY'); loading = false; showSession(); setPaused(true); updateLevelInfo(); updateHud(readPads());
@@ -384,8 +396,8 @@ function updateMissionHud(): void {
   if (challenge && gateRun) gateRun.textContent = world.mission.outcome !== 'active' ? 'FINISHED · Y Retry' : paused ? 'PAUSED · Start mission for C' : 'RUNNING';
   challengeButton.disabled = loading || !session || !renderer || graphicsLost;
   get<HTMLSelectElement>('mission-mode').disabled=!!session?.consumables;
-  consumablePanel.refresh();
-  selectedFallButton.disabled = loading || !session || !!session.ground || !!session.gate || selectedFallLevel(level);
+  consumablePanel.refresh(); wetPanel.refresh();
+  selectedFallButton.disabled = !!session?.wet || loading || !session || !!session.ground || !!session.gate || selectedFallLevel(level);
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
   const play = get<HTMLButtonElement>('play');
@@ -399,7 +411,7 @@ function updateMissionHud(): void {
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
   get('mission-objective').textContent = session?.consumables ? 'Authored consumable practice: land injured, Esc pause, equip source-owned food/repair in Inventory & equipment, then H. 1–4 selects actor; Retry resets the complete practice.' : session?.gate?.pad ? 'D steps onto P (4,5); wait for WALK THROUGH, W crosses door, W vacates. Release requests close. F defeats target; extract all four at E. C remains a manual alternative. 1–4 select WASD; Esc pauses.' : session?.gate?.moving ? 'C opens/closes timed door at the panel; WAIT for WALK THROUGH. F defeats target; extract all four at E (8,5). Lock/unlock: Tab to door buttons, Enter. 1–4 select WASD; Esc pauses.' : patrolMissionLevel(level) ? '1. C opens gate · 2. F defeats designated target (T: miss) · 3. Extract all four at E (8,5). 1–4 select WASD; Q/E turn; Esc pause; Y Retry after outcome. Limit: 10 source counts × 601 ticks.' : session?.patrol ? 'Authored patrol: C opens gate; F designates patrol target or T chooses miss. Health zero stops and releases it. Esc pauses; Retry resets the scenario.' : session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : fallDrill ? allDead ? 'PRACTICE EXHAUSTED · Retry or restore' : `${world.physics.mode === 'dry-fall' ? world.physics.actors.filter(a=>a.dead).length : 0} / 4 incapacitated` : '';
-  get('prototype-label').textContent = session?.consumables ? 'AUTHORED CONSUMABLE / DRY-FALL PRACTICE' : session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  get('prototype-label').textContent = session?.wet ? 'TRAINING43 WET / FIXED-STEP ADAPTATION' : session?.consumables ? 'AUTHORED CONSUMABLE / DRY-FALL PRACTICE' : session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
   if (mission.clock) {
     const units = mission.clock.tens * 10 + mission.clock.units;
@@ -517,8 +529,8 @@ get<HTMLButtonElement>('fall').addEventListener('click', () => {
 });
 for (const id of ['demo', 'drill', 'stairs', 'fall']) get(id).addEventListener('click', () => get('play').focus());
 selectedFallButton.addEventListener('click', async () => {
-  if (loading || !session || session.ground || session.gate) return;
-  const sources = rosterPanel.sources(); if (!sources) return;
+  if (loading || !session || session.wet || session.ground || session.gate) return;
+  const sources = sessionSources(); if (!sources) return;
   const current = session, nextLevel = createSelectedFallLevel();
   const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
   try {
@@ -554,8 +566,10 @@ get<HTMLInputElement>('map-file').addEventListener('change', async event => {
   const generation = ++loadGeneration; loading = true; setPaused(true); rosterPanel.refresh(); get('error').textContent = '';
   try {
     if (file.size !== 157738) throw new Error('Expected a 157,738-byte raw editor .map file. Packed/runtime maps are not supported.');
-    const { level: imported, report } = await importEditorMap(new Uint8Array(await file.arrayBuffer()));
+    const mapBytes=new Uint8Array(await file.arrayBuffer());
+    const { level: imported, report } = await importEditorMap(mapBytes);
     if (generation !== loadGeneration) return;
+    importedMapBytes=mapBytes;
     installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
     loading = false; rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
@@ -566,7 +580,7 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
   if (loading) return;
   const generation = ++loadGeneration; setPaused(true); loading = true; get('error').textContent = '';
   try {
-    const sources = rosterPanel.sources();
+    const sources = sessionSources();
     if (session && !sources) throw new Error('Reopen the matching roster and items before saving this session.');
     const json = session ? await exportTrainingSession(level, world, session, sources!) : await exportCheckpoint(level, world);
     if (generation !== loadGeneration) return;
@@ -588,7 +602,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     let restoredSession: TrainingSession | null = null;
     let restored;
     if (isTrainingSessionSave(json)) {
-      const sources = rosterPanel.sources();
+      const sources = sessionSources();
       if (!sources) throw new Error('Open the matching verified OCS roster and item table before restoring a session.');
       const candidate = await importTrainingSession(level, sources, json);
       restoredSession = candidate.session; restored = candidate.world;
@@ -632,7 +646,7 @@ window.addEventListener('keydown', event => {
   if(event.code==='KeyH'){event.preventDefault();if(!event.repeat)consumablePanel.keyboard();return;}
   if (['KeyG','KeyB','KeyV'].includes(event.code)) { event.preventDefault(); if (!event.repeat) groundPanel.keyboard(event.code); return; }
   if (['KeyF', 'KeyT', 'KeyR'].includes(event.code)) {
-    if(session?.consumables){event.preventDefault();return;}
+    if(session?.wet||session?.consumables){event.preventDefault();return;}
     event.preventDefault();
     if (!event.repeat) encounterCommand({ kind: event.code === 'KeyF' ? 'fire' : event.code === 'KeyT' ? 'target' : 'reset' });
     return;
@@ -660,10 +674,12 @@ function frame(now: number): void {
       const activation = pendingGateActor, action = pendingDoorAction; pendingGateActor = null; pendingDoorAction = 16;
       const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation,action) : null;
       const consumableResult=session?.consumables?stepConsumables(level,session,world,commands):null;
-      const result = consumableResult ?? gateResult ?? stepWorld(level,world,commands);
-      const nextSession = consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
+      const wetResult=session?.wet?stepWet(level,session,world,commands):null;
+      const result = wetResult ?? consumableResult ?? gateResult ?? stepWorld(level,world,commands);
+      const nextSession = wetResult ? wetResult.session : consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
       replaceGateRenderer(nextSession);
       world = result.world; session = nextSession;
+      if(wetResult && world.tick%50===0)inventoryPanel.render(session);
       if (gateResult?.feedback) {gatePanel.feedback(gateResult.feedback); doorPanel.feedback(gateResult.feedback);}
       if (world.tick !== previousTick && session?.encounter && !session.patrol) session = Object.freeze({ ...session, encounter: tickTrainingEncounter(session.encounter) });
       result.events.forEach((event: SimulationEvent) => { events[event.mercenaryId] = event.kind === 'blocked' ? `BLOCKED: ${event.reason}`.toUpperCase() : event.kind.toUpperCase(); });
@@ -671,6 +687,7 @@ function frame(now: number): void {
     if (world.mission.outcome !== 'active' || teamDead(world)) setPaused(true);
   }
   inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
+  wetPanel.refresh();
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }

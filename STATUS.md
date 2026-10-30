@@ -1,5 +1,7 @@
 # Status — 30 October 2026
 
+New UNREVIEWED candidate: [Training43 keyboard wet traversal](docs/training43-wet-traversal.md). Same original editor geometry/four views; explicit enable, actual keyboard entry/reverse and chronological v15 recovery. Damage/search/corpse/control boundaries pause before the whole candidate tick commits. T43-04 partial, T43-05 open, original level incomplete. Accepted union PR112/113/114 is `b211895b0bf4600bc7c8fa830814284c46293c97`; new play is not credited as accepted level/hardware evidence.
+
 Accepted gameplay: PR112 merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`
 (tree `6a329bd1463b02e5e5de7ec4e9bef5547df81155`), including accepted PR111.
 The same-app authored selected-team dry-fall extension now supports source-bound
@@ -19,24 +21,24 @@ Training43 / complete functional test bed are not accepted. General inventory
 transfer, poison/wet/death/corpse, original enemy/world machinery and lifts remain
 open. Graphics/audio/controller/TV work stays deferred. Token usage unavailable.
 
-## Mechanics register candidate — dated PR111 assessment
+## Accepted register and case — assessment reconciled through PR114
 
 Mechanics coverage is now indexed in the [Master Mechanics Register](docs/mechanics/index.html)
 and [text checklist](docs/mechanics/CHECKLIST.md): 86 scoped mechanic/effect rows,
 eight independent evidence stages, 47 digest-checked editor-map inventories,
 Training43–47 relationships and ten first-level acceptance gates. Training43 is
 the user-confirmed first complete original-level target. Static presence never
-grants required-route or gameplay acceptance. The gameplay assessment is pinned
-through accepted PR111 `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`;
+grants required-route or gameplay acceptance. The gameplay assessment is now pinned through accepted PR112/113/114
+`b211895b0bf4600bc7c8fa830814284c46293c97`;
 the timed door and player-only authored pad described below are accepted.
 Broader original pad callers and complete-level acceptance remain open.
 No gameplay, campaign, physical-hardware or complete-level coverage is added
 by the register. Regenerate with `npx tsx tools/build-mechanics-register.ts`.
 
-The register's canonical gameplay assessment remains pinned to PR111. PR112 is
-accepted gameplay above; merging that base does not upgrade canonical evidence
-states or acceptance. Register completion is 68/688 evidence checkpoints (9.9%),
-global across filters. The register candidate needs fresh exact-head review/CI.
+The canonical register now reconciles accepted PR112 food/repair and PR114 CASE
+proof, on the PR113 accepted builder/schema. Register completion remains 68/688
+evidence checkpoints (9.9%), global across filters. No new wet consumer, original
+level or hardware credit is awarded; this gameplay packet needs fresh exact-head review/CI.
 
 Accepted base: PR111 merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`
 (tree `1e460bd080a8017159f5b8061a0d831a592f657e`), including same-app

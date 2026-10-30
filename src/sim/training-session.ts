@@ -1,3 +1,4 @@
+import { exportWet, importWet, initialWet, type TrainingWet } from './training-wet';
 import { CONSUMABLE_FIXTURE, serializeConsumables as consumableJSON, replayConsumables, consumableHistory, appendConsumableEvent, equalConsumableState, type TrainingConsumables, type ConsumableEvent } from './training-consumables';
 import { PRESSURE_PAD_FIXTURE, pressurePadLevel } from '../world/training-pressure-pad';
 import { MOVING_DOOR_FIXTURE, type DoorAction } from '../world/training-moving-door';
@@ -20,8 +21,9 @@ import { createWorld } from './world';
 import { selectedFallLevel, type FallProfile } from './fall';
 
 export const MAX_SESSION_BYTES = 24 * 1024;
-export interface TrainingSources { roster: Uint8Array; items: Uint8Array }
+export interface TrainingSources { roster: Uint8Array; items: Uint8Array; map?: Uint8Array }
 export interface TrainingSession {
+  readonly wet?: TrainingWet;
   readonly consumables?: TrainingConsumables;
   readonly indices: readonly number[];
   readonly names: readonly string[];
@@ -85,6 +87,7 @@ export async function createTrainingSession(level: LevelData, sources: TrainingS
 /** Reverify and validate a complete prospective save before exposing a command candidate. */
 async function changeInventory(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean, kind: 'equip' | 'return' | 'exchange', currentWorld?: WorldState): Promise<TrainingCandidate> {
   if (!paused) throw new Error('Pause before changing equipment.');
+  if (session.wet) throw Error('Wet traversal owns inventory. Retry or Apply a fresh team to change equipment.');
   if (session.consumables) {
     if (!currentWorld) throw new Error('Consumable inventory requires current world.');
     return changeConsumableSession(level,sources,session,currentWorld,{kind,actor,slot},paused);
@@ -142,6 +145,7 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
+  if (session.wet) return initialWet(level!,session,session.wet.actors.map(a=>a.body.race),rules??session.wet.rules).session;
   if (session.consumables) return freeze(replayConsumables(level!,{...session,inventory:replayTrainingInventory(session.team,session.items,[])},session.consumables.races,[]).session);
   const baseline = session.ground ? replayTrainingGround(level ?? (() => { throw new Error('Ground retry requires its level.'); })(), session.team, session.items, { version: 1, fixture: GROUND_FIXTURE, rules: rules ?? session.ground.rules, history: [] }) : null;
   return freeze({ ...session, patrol: session.patrol ? initialTrainingPatrol(session.patrol.fixture === PATROL_MISSION_FIXTURE,session.patrol.fixture === MOVING_DOOR_FIXTURE || session.patrol.fixture === PRESSURE_PAD_FIXTURE,session.patrol.fixture === PRESSURE_PAD_FIXTURE) : null, gate: session.gate ? initialTrainingGate(!!session.gate.moving,!!session.gate.pad) : null, ground: baseline?.ground ?? null, inventory: baseline?.inventory ?? replayTrainingInventory(session.team, session.items, []),
@@ -150,6 +154,7 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
+  if (session.wet) return exportWet(level,sources,session,world);
   if (session.consumables) {
     const {candidate} = await verifyConsumableSession(level,sources,session,world);
     return consumableJSON(candidate);
@@ -178,6 +183,7 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   const parsed: unknown = JSON.parse(json);
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const version = (parsed as { version?: unknown }).version;
+  if (version === 15) return importWet(level,sources,parsed);
   if (version === 14) return importConsumableSession(level,sources,parsed);
   const selected = version === 7, grounded = version === 8, patrolling = version === 10 || version === 11 || version === 12 || version === 13, gated = version === 9 || patrolling;
   const hasEncounter = (selected || grounded || gated) && Object.hasOwn(parsed, 'encounter');

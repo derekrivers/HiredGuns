@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-30",
-  "reviewedHead": "46dec166f0604b6cdcbe75c58f3736dc5fd19da9",
+  "reviewedHead": "b211895b0bf4600bc7c8fa830814284c46293c97",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,7 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Status is a dated assessment of accepted main through PR111, not live CI telemetry. The player-only authored pressure pad is accepted; broader original callers remain open.",
+    "Accepted main through PR112 food/repair, PR113 register, and PR114 bounded interaction CASE. New keyboard wet consumer is UNREVIEWED; no level, hardware or T43-05 acceptance is inferred.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
     "Static editor observations do not prove runtime activation, target validity, reachability, required puzzle roles or completed gameplay.",
@@ -1228,6 +1228,11 @@
           "path": "docs/water-executable-evidence.md",
           "label": "water-executable-evidence.md",
           "scope": "Bounded immersion caller exists disconnected from original wet traversal."
+        },
+        {
+          "path": "docs/training43-wet-acceptance.md",
+          "label": "Accepted PR114 bounded CASE",
+          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
         }
       ],
       "tests": [
@@ -1659,14 +1664,14 @@
       "baseline": "ocs-3926",
       "original": "Apply food, equipment repair and immunity items with correct consumption, caps, targets and counters.",
       "source": "ItemUsage.s .use_food/.use_repair/.use_immu",
-      "mappingScope": "Named original item-use branches; no behavioural mapping or integration.",
+      "mappingScope": "Accepted PR112: paused source-owned equipped food/repair in authored selected-team dry-fall practice, full v14 chronological recovery. Immunity items, poison/medical and original world callers remain open.",
       "stages": {
-        "mapping": "open",
-        "reference": "open",
-        "rules": "open",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "mapping": "partial",
+        "reference": "partial",
+        "rules": "partial",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -1675,6 +1680,31 @@
           "path": "docs/item-format.md",
           "label": "item-format.md",
           "scope": "Named original item-use branches; no behavioural mapping or integration."
+        },
+        {
+          "path": "src/items/consumable-use.ts",
+          "label": "consumable-use.ts",
+          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
+        },
+        {
+          "path": "src/sim/training-consumables.ts",
+          "label": "training-consumables.ts",
+          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
+        },
+        {
+          "path": "tests/training-consumables.test.ts",
+          "label": "training-consumables.test.ts",
+          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
+        },
+        {
+          "path": "tests/browser/training-consumables.spec.ts",
+          "label": "training-consumables.spec.ts",
+          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
+        },
+        {
+          "path": "docs/training-session.md",
+          "label": "training-session.md",
+          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
         }
       ],
       "tests": [],
@@ -1683,7 +1713,7 @@
       "gaps": [
         "Each dispatch branch needs separate cases before this family can close."
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "next": "Compose additional original item/status callers separately; preserve accepted food/repair race guards and weight/health chronology."
     },
     {
       "id": "INV-07",
@@ -2332,6 +2362,11 @@
           "path": "docs/immersion-caller-contract.md",
           "label": "immersion-caller-contract.md",
           "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+        },
+        {
+          "path": "docs/training43-wet-acceptance.md",
+          "label": "Accepted PR114 bounded CASE",
+          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
         }
       ],
       "tests": [
@@ -2392,6 +2427,11 @@
           "path": "docs/immersion-caller-contract.md",
           "label": "immersion-caller-contract.md",
           "scope": "Selected original inventory cases and pure caller remain disconnected."
+        },
+        {
+          "path": "docs/training43-wet-acceptance.md",
+          "label": "Accepted PR114 bounded CASE",
+          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
         }
       ],
       "tests": [
@@ -10019,9 +10059,10 @@
       "title": "Classify every reachable interaction",
       "state": "partial",
       "evidence": [
-        "docs/training43-completion.md"
+        "docs/training43-completion.md",
+        "docs/training43-wet-acceptance.md"
       ],
-      "requirement": "Resolve wider water reachability; classify required/reachable optional/inactive/unknown with evidence."
+      "requirement": "Accepted PR114 classifies 23 water cells (22 hypothetical movement candidates, one solid support), signs and inactive trigger sentinel; bounded source entry/reverse case. Live outcomes and level review remain open."
     },
     {
       "id": "T43-05",
