@@ -1,6 +1,8 @@
 # Standalone selected-team Training43 session
 
-Current accepted scope through PR118 (`decf689b2803772034bcae150544d1820395dcd5`):
+Current assessment: accepted PR120 selected-team all-dead and v18 recovery are separate from the earlier mode below. See [current function/behavior register](training43-completion.md#requiredreachable-training43-software-register) and [selected-team controls](training43-selected-team-all-dead.md).
+
+Current accepted scope through PR120 (`9c11a985d79b28ef6c4e167966f1863647af5ba8`):
 same four-view app, selected-team startup/movement/extraction, bounded paused
 inventory and authored ground cache, designated-target combat/patrol/doors/pads,
 PR112 food/repair after authored dry-fall injury with v14 replay, and PR115
@@ -10,7 +12,7 @@ original level. See [current capability milestones](mechanics/index.html#testbed
 and [accepted wet controls/limits](training43-wet-traversal.md).
 PR116 additionally accepts [bounded wet lifecycle and v16 recovery](training43-wet-lifecycle.md):
 actual injury/death/north corpse/heads/dead-control guard/manual survivor/first exit
-and Retry. Medical64 poison cure, revival, unsupported wet branches, all-dead, original99-count
+and Retry. Medical64 poison cure, revival, unsupported wet branches, original99-count
 timeout beyond45000 replay ticks/general corpse items/door-pad callers and complete-level
 acceptance remain open. Legacy v15 still refuses non-null damage including zero. Older mode-specific
 statements below retain their narrower scope; source-bound weight now applies in
@@ -20,7 +22,9 @@ PR118 accepts [standing wet-region exploration](training43-wet-region.md): actua
 
 Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Training43 setup, choose rules, then Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause, save/load paused and Retry fresh. V15 entry/return still refuses every non-null requested hit including zero; v16 remains the separate wet damage/lifecycle control. Exact versions1–16 remain supported.
 
-The current wet factory hardcodes ready indices `[11,3,0,5]`, including immune race1. Selected-team wet support and source all-dead remain open; the parallel selected-team/all-dead candidate is UNREVIEWED and receives no credit. General corpse items/replacement, unsupported source geometry/search branches, doors/pads/lifts/enemy AI, original99-count timeout beyond45000 ticks, full43/testbed and source CPU/runtime timing remain open. Physical controller/TV acceptance is separately DEFERRED. Broad T43-04/05/07/08 gates remain partial.
+Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team.
+
+Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
 
 The browser can now apply four explicitly chosen characters to the exact locally
 imported Training43 map. Open the local map, open the verified OCS Characters

@@ -1,5 +1,7 @@
 # Training43 supported wet-region exploration — accepted PR118
 
+Current assessment: accepted PR120 selected-team all-dead and v18 recovery are separate from the earlier mode below. See [current function/behavior register](training43-completion.md#requiredreachable-training43-software-register) and [selected-team controls](training43-selected-team-all-dead.md).
+
 The existing four-view application has a **wet-region exploration** setup beside
 the earlier wet modes. Load the verified local ready-to-play Training43 inputs,
 choose **Enable wet-region exploration** at fresh PAUSED tick zero, choose mission rules, then Start mission.
@@ -111,8 +113,7 @@ All22 standing cells have inert immediate and two-below support66. Each tick
 uses the same accepted indivisible `stepWetLifecycle`; no geometry/flag stripping,
 teleport, autoroute or authored substitute broadens source physics.
 
-Current ready team is `[11,3,0,5]`; its immune actor prevents an honest all-dead
-wet witness. Selected-team/all-dead work remains UNREVIEWED. This accepted narrow
+The v17 ready team remains `[11,3,0,5]`, with immune race1. Accepted PR120 separately uses selected nonimmune records and v18, preserving the v17 witness. This accepted narrow
 slice adds no broad mechanic covered credit, row denominator or whole-level pass.
 Historical failed worker runs remain private and preserved; later clean independent
 proof does not relabel them as passing.

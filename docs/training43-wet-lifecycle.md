@@ -1,12 +1,16 @@
 # Training43 wet damage and lifecycle extension — accepted PR116
 
+Current assessment: accepted PR120 selected-team all-dead and v18 recovery are separate from the earlier mode below. See [current function/behavior register](training43-completion.md#requiredreachable-training43-software-register) and [selected-team controls](training43-selected-team-all-dead.md).
+
 ## Current accepted118 relationship
 
 PR118 accepts [standing wet-region exploration](training43-wet-region.md): actual keyboard visits to all **22 standing wet CASE cells**, by nonimmune race4 and source-immune race1, four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. The 23rd water cell is solid/nonstanding. Visits are replay-derived observations, not movement authority, hypothetical BFS proof or a whole-level percentage. The new corridor same-cell corpse/manual-survivor witness is distinct from PR116 stair aux10 NORTH corpse proof.
 
 Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Training43 setup, choose rules, then Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause, save/load paused and Retry fresh. V15 entry/return still refuses every non-null requested hit including zero; v16 remains the separate wet damage/lifecycle control. Exact versions1–16 remain supported.
 
-The current wet factory hardcodes ready indices `[11,3,0,5]`, including immune race1. Selected-team wet support and source all-dead remain open; the parallel selected-team/all-dead candidate is UNREVIEWED and receives no credit. General corpse items/replacement, unsupported source geometry/search branches, doors/pads/lifts/enemy AI, original99-count timeout beyond45000 ticks, full43/testbed and source CPU/runtime timing remain open. Physical controller/TV acceptance is separately DEFERRED. Broad T43-04/05/07/08 gates remain partial.
+Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team.
+
+Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
 
 The original mode-specific proof below retains its exact v15/v16 scope.
 
@@ -131,7 +135,7 @@ variant still requires all four extractions; a dead actor does not count as
 extracted and therefore prevents that goal. Timeout and Retry retain their
 existing meaning. No all-dead wet playthrough is claimed: this ready team has a
 breath-immune race1 actor. Wider water geometry, general corpse replacement,
-doors/pads/lifts/enemies/items and original all-dead mission policy remain open.
+General doors/pads/lifts/enemies/items remain unsupported beyond this bounded mode; PR120 separately accepts the selected-team all-dead policy.
 
 ## Recovery and verification
 
@@ -176,7 +180,7 @@ Exact fresh commands/results, failures and hashes are in `.local/handoff.md`.
 Required commands: `npm run check`,
 `npx tsx tools/build-mechanics-register.ts --check`, private opt-in relevant unit
 tests and production Playwright lifecycle plus accepted115 wet regressions.
-Register assessment is reconciled through **accepted PR118**, with narrow scope
+Register assessment is reconciled through **accepted PR120**, with narrow scope
 and broader families/whole-level gates still partial/open. Global evidence68/688 remains
 dynamic register evidence, not game/effort/test completion. Model requested:
 gpt-6.1-sol medium; tokens unavailable, no delegation or model escalation.
