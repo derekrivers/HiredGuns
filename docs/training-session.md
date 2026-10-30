@@ -162,3 +162,6 @@ One feature attempt, with evidence-driven encoding, test input/observation and
 legacy oversized-file error corrections; no blind repair cycle. Independent current-head HIGH simulation/save review, completed
 automatic review/findings resolution and relevant CI are coordinator gates; this
 implementation does not approve or merge itself.
+
+
+Ground-enabled static sessions use the bounded [v8 authored cache replay](training-ground.md). Legacy v1–v7 remain supported. Ground inventory, weight, overlay and movement are reconstructed together from verified initial ownership; selected dry-fall ground actions are unavailable.

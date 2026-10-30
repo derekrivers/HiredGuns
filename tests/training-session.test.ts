@@ -201,3 +201,34 @@ describe.skipIf(!privateInputs)('opt-in source-bound encounter session recovery'
     }
   });
 });
+
+// v8 ground inventory is rebuilt from verified initial ownership plus one ordered history.
+it.skipIf(!privateInputs)('ground v8 interleaves commands, rejects tampering, resets and snapshots complete candidates', async () => {
+  const {activateTrainingGround,transferTrainingGround,equipTrainingSession,exchangeTrainingSession,returnTrainingSession,resetTrainingInventory,recordTrainingGroundStep}=await import('../src/sim/training-session');
+  const {level,sources}=await local(), initial=await createTrainingSession(level,sources,order);
+  let current=await activateTrainingGround(level,sources,initial.session,initial.world,true);
+  const baseline=structuredClone(current), slots=current.session.ground!.slots;
+  const pickup=(id:string,kind:'pickup-equipment'|'pickup-carried'|'drop-equipment')=>transferTrainingGround(level,sources,current.session,current.world,0,id,0,{version:1,kind},true);
+  current=await pickup(slots[0]!.id,'pickup-equipment');current=await pickup(slots[1]!.id,'pickup-equipment');
+  current=await exchangeTrainingSession(level,sources,current.session,0,0,true,current.world);
+  current=await returnTrainingSession(level,sources,current.session,0,0,true,current.world);
+  current=await equipTrainingSession(level,sources,current.session,0,0,true,current.world);
+  current=await pickup(slots[0]!.id,'drop-equipment');
+  const commands=[{mercenaryId:0,action:'turn-right' as const}], next=stepWorld(level,current.world,commands).world;
+  current={session:recordTrainingGroundStep(current.session,current.world,next,commands),world:next};
+  const json=await exportTrainingSession(level,current.world,current.session,sources), envelope=JSON.parse(json);
+  expect(envelope.version).toBe(8);expect(envelope).not.toHaveProperty('commands');expect(envelope.ground).not.toHaveProperty('slots');
+  expect(await importTrainingSession(level,sources,json)).toEqual(current);
+  for(const mutate of [
+    (e:typeof envelope)=>{e.ground.fixture='unknown';},(e:typeof envelope)=>{e.ground.history[0].actor=1;},
+    (e:typeof envelope)=>{e.ground.history[0].groundId='cache-99-99';},(e:typeof envelope)=>{e.ground.history[0].transfer.extra=1;},
+    (e:typeof envelope)=>{const c=JSON.parse(e.checkpoint);c.world.mercenaries[0].facing=(c.world.mercenaries[0].facing+1)%4;e.checkpoint=JSON.stringify(c);},
+    (e:typeof envelope)=>{e.ground.history=Array(129).fill(e.ground.history[0]);},(e:typeof envelope)=>{e.sources.items.sha256='0'.repeat(64);}
+  ]){const bad=structuredClone(envelope);mutate(bad);await expect(importTrainingSession(level,sources,JSON.stringify(bad))).rejects.toThrow();}
+  expect(resetTrainingInventory(current.session,level).inventory).toEqual(baseline.session.inventory);
+  expect(resetTrainingInventory(current.session,level).ground).toEqual(baseline.session.ground);
+  const fall=await createTrainingSession(createSelectedFallLevel(),sources,order);
+  await expect(activateTrainingGround(createSelectedFallLevel(),sources,fall.session,fall.world,true)).rejects.toThrow('static');
+  const snapshot=structuredClone(current), pending=importTrainingSession(level,sources,json);sources.items.fill(0);level.name+=' changed';
+  expect(await pending).toEqual(snapshot);
+});

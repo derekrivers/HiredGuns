@@ -1,3 +1,5 @@
+Candidate: authored Training43 ground-cache consumer on `codex/training43-ground-keyboard`; pending independent HIGH/current CI/automatic gates. G/B/V equipment/carried pickup and equipment drop, 30-slot refusals, full-entry ownership and source-bound v8 chronological static replay. See [ground workflow](docs/training-ground.md). Ground actions remain unavailable in selected dry-fall.
+
 # Status — 29 October 2026
 
 Gameplay accepted through PR102 at base
