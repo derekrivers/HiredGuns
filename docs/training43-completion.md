@@ -1,5 +1,15 @@
 # Training43 completion boundary
 
+PR111 was accepted at merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`.
+The next [consumable extension candidate](training-consumables.md) delivers
+ordinary food/repair in the same selected-team authored dry-fall workflow,
+with fitness/equipment/weight feedback and chronological v14 recovery.
+It awaits independent exact-final review and coordinator gates. This closes
+a bounded item-use interaction; it does not complete original Training43.
+Training44–47 remain register cases.
+
+## Historical PR111 candidate assessment (preserved)
+
 Accepted gameplay through PR110 merge `e4cfd07c675924a75d17a731569a72d9056a10af`
 (tree `0329329f169041fcfb4a63984788c4c70cbbee2b`): verified team, inventory,
 isolated gun, ready preset, selected-team fall, guided controls, ground cache,
