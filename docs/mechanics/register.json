@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-30",
-  "reviewedHead": "9c11a985d79b28ef6c4e167966f1863647af5ba8",
+  "reviewedHead": "81353ad52118875195c925d668cc469ad72d106e",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,13 +46,15 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Exact v1-v16 remain; v15 refuses every non-null requested hit including zero.",
+    "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Exact v1-v16 remain; v15 refuses every non-null requested hit including zero.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
     "Static editor observations do not prove runtime activation, target validity, reachability, required puzzle roles or completed gameplay.",
     "Zero complete original levels are accepted. No whole-game completion percentage is calculated.",
     "Original archives, assembly, maps, routes and raw traces remain local/ignored. This page contains summaries and links, not original content.",
-    "PR119 accepted metadata only: no new gameplay proof. PR120 accepted union tree differs from reviewed source tree; source-proof base remains accepted118. Legacy wetRegion panel/HUD inherited reads after API reconstruction are outside F4 full-API-hook proof; no broad UI or Proxy-security claim."
+    "PR119 accepted metadata only: no new gameplay proof. PR120 accepted union tree differs from reviewed source tree; source-proof base remains accepted118. Legacy wetRegion panel/HUD inherited reads after API reconstruction are outside F4 full-API-hook proof; no broad UI or Proxy-security claim.",
+    "Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
+    "Accepted121 metadata identity: merge ad0bba84911e816778c0aaed2a3e9684ed2fc1ac, head3b3cf632b2b40f7d7857e51017e97ec3f6261456, tree72c872d4ba8ef5bd1bbb727734d55aa7e0b450f5; assessed120 only, no new gameplay proof. Accepted122 union07126 differs from reviewed source6f287; source-proof base is accepted1209c11."
   ],
   "scenarios": [
     {
@@ -190,6 +192,14 @@
       "path": "docs/training43-selected-team-all-dead.md",
       "instructions": "Same app: load verified Training43 and local roster/items; in Local character roster / team preparation choose four distinct raw records using Character for team slot 1–4; Apply team to Training43. At fresh PAUSED tick zero choose Enable selected-team wet lifecycle, then Start mission. 1–4 select; W/S A/D move; Q/E turn; Esc pauses; Save/Load paused; Retry fresh. The accepted nonimmune witness uses indices [1,3,0,5], races [0,0,3,4]; ready [11,3,0,5] includes immune race1. Select survivors manually.",
       "scope": "Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Selected-team editor adaptation on the same original43 geometry, not ready v15/v16 or wet-region v17. V18 has256 packed tuples/513 internal events/45000 total ticks/strict UTF8<24576 bytes; legacy1–17 unchanged."
+    },
+    {
+      "id": "source-timeout",
+      "title": "Original99 timeout and full responsive recovery",
+      "kind": "original",
+      "path": "docs/training43-source-timeout-recovery.md",
+      "instructions": "Load local Training43, choose four distinct source characters and Apply team to Training43; Enable original 99-unit timeout at fresh PAUSED tick zero, then Start mission. Genuine proof team [1,3,0,5], races [0,0,3,4]. 1–4 select manually; W/S A/D move; Q/E turn; Esc pauses. Save progress / Load progress while paused reconstruct full history with visible progress; Retry/source-clear cancel obsolete work. Both action rules retain original99.",
+      "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
     }
   ],
   "mechanics": [
@@ -794,8 +804,8 @@
         "wet-party"
       ],
       "gaps": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
-        "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
+        "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -1432,8 +1442,8 @@
         "wet-party"
       ],
       "gaps": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
-        "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
+        "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2496,8 +2506,8 @@
         "wet-region"
       ],
       "gaps": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
-        "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
+        "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2596,8 +2606,8 @@
         "wet-region"
       ],
       "gaps": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
-        "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
+        "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2659,6 +2669,11 @@
           "path": "docs/training43-selected-team-all-dead.md",
           "label": "PR120 selected-team all-dead",
           "scope": "Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team."
+        },
+        {
+          "path": "docs/training43-source-timeout-recovery.md",
+          "label": "Accepted122 timeout/recovery",
+          "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
         }
       ],
       "tests": [
@@ -2737,8 +2752,8 @@
         "wet-party"
       ],
       "gaps": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
-        "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
+        "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -2795,6 +2810,11 @@
           "path": "docs/training43-selected-team-all-dead.md",
           "label": "PR120 selected-team all-dead",
           "scope": "Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team."
+        },
+        {
+          "path": "docs/training43-source-timeout-recovery.md",
+          "label": "Accepted122 timeout/recovery",
+          "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
         }
       ],
       "tests": [
@@ -2863,8 +2883,8 @@
         "wet-party"
       ],
       "gaps": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
-        "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
+        "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ],
       "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
@@ -4043,6 +4063,11 @@
           "path": "docs/training43-completion.md",
           "label": "training43-completion.md",
           "scope": "All-alive first-exit and labelled cooperative extraction work; dead/control cases unresolved."
+        },
+        {
+          "path": "docs/training43-source-timeout-recovery.md",
+          "label": "Accepted122 timeout/recovery",
+          "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
         }
       ],
       "tests": [
@@ -9812,7 +9837,7 @@
       "sha256": "646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c",
       "revision": "Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body",
       "firstAcceptance": true,
-      "audit": "Accepted PR114 CASE, PR115 supported wet entry/return, PR116 bounded wet injury/death and PR118 actual keyboard all22 standing wet cells/corridor same-cell corpse/manual survivor/v17 recovery. Unsupported outcomes and complete original level remain unaccepted.",
+      "audit": "Accepted PR114 CASE, PR115 supported wet entry/return, PR116 bounded wet injury/death and PR118 actual keyboard all22 standing wet cells/corridor same-cell corpse/manual survivor/v17 recovery. Unsupported outcomes and complete original level remain unaccepted. Accepted120 adds selected-team all-dead/v18; accepted122 adds original99 timeout/full responsive v19 recovery. Signs/readability remain UNKNOWN/OPEN.",
       "acceptance": "open",
       "interactions": [
         {
@@ -9898,7 +9923,7 @@
         {
           "mechanic": "WORLD-03",
           "classification": "unknown",
-          "basis": "Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified."
+          "basis": "Reachable dry signs; button type0 dispatch is nop, followed by use_item, so whole activation is not proved nop. DrawViews.s2984–3044 and Equates.i480-byte/36 bitmap slots require separate rendering/readability proof. UNKNOWN/OPEN; unaccepted sign-view candidate receives no credit."
         },
         {
           "mechanic": "ENV-03",
@@ -9947,10 +9972,10 @@
         }
       ],
       "blockers": [
-        "Unsupported wet branches, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Accepted122 covers bounded original99 timeout/full v19 recovery. General corpse items/replacement and unsupported wet/source/geometry branches remain open where reachable. Initial pinned machinery predicates are inactive only at that revision; no whole43 or hardware acceptance.",
         "Every remaining required/reachable optional interaction needs a reviewed complete-level recovery/outcome receipt.",
         "DEFERRED physical four-player/controller/TV run; does not block keyboard software.",
-        "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
+        "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates."
       ]
     },
     {
@@ -10481,7 +10506,7 @@
         "docs/controller-tv-acceptance.md",
         "docs/training43-selected-team-all-dead.md"
       ],
-      "requirement": "Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-03",
@@ -10492,7 +10517,7 @@
         "tests/browser/extraction.spec.ts",
         "docs/training43-selected-team-all-dead.md"
       ],
-      "requirement": "Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-04",
@@ -10502,9 +10527,10 @@
         "docs/training43-completion.md",
         "docs/training43-wet-acceptance.md",
         "docs/training43-wet-region.md",
-        "docs/training43-selected-team-all-dead.md"
+        "docs/training43-selected-team-all-dead.md",
+        "docs/training43-source-timeout-recovery.md"
       ],
-      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-05",
@@ -10516,9 +10542,10 @@
         "docs/training43-wet-traversal.md",
         "docs/training43-wet-lifecycle.md",
         "docs/training43-wet-region.md",
-        "docs/training43-selected-team-all-dead.md"
+        "docs/training43-selected-team-all-dead.md",
+        "docs/training43-source-timeout-recovery.md"
       ],
-      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-06",
@@ -10531,7 +10558,7 @@
         "docs/training43-wet-region.md",
         "docs/training43-selected-team-all-dead.md"
       ],
-      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-07",
@@ -10542,9 +10569,10 @@
         "docs/training-session.md",
         "docs/training43-wet-lifecycle.md",
         "docs/training43-wet-region.md",
-        "docs/training43-selected-team-all-dead.md"
+        "docs/training43-selected-team-all-dead.md",
+        "docs/training43-source-timeout-recovery.md"
       ],
-      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-08",
@@ -10554,9 +10582,10 @@
         "docs/mission-rules.md",
         "tests/browser/extraction.spec.ts",
         "docs/training43-wet-region.md",
-        "docs/training43-selected-team-all-dead.md"
+        "docs/training43-selected-team-all-dead.md",
+        "docs/training43-source-timeout-recovery.md"
       ],
-      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
+      "requirement": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad gate remains partial."
     },
     {
       "id": "T43-09",
@@ -10604,7 +10633,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 120,
+  "acceptedThrough": 122,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10695,13 +10724,30 @@
       "tree": "574c5a954aa390883d79906bff80a803f2eb4009",
       "reviewedTree": "fdb34eb8a0f7229d46482e5319bd483961b04653",
       "sourceProofBase": "decf689b2803772034bcae150544d1820395dcd5"
+    },
+    {
+      "id": "proof-122",
+      "pr": 122,
+      "merge": "81353ad52118875195c925d668cc469ad72d106e",
+      "head": "7540c012f8a7bb9ee343b09628eecb0c85c4fb85",
+      "reviewSha256": "c7ad6b0b461bd0ea049cfea8b9e1d957650c8b5b3ddc5c01e93f03155a95e180",
+      "ci": [
+        "41136204108",
+        "41136195941"
+      ],
+      "automatic": "6533377523",
+      "receipt": "6534702086",
+      "receiptKind": "separate-receipt-comment",
+      "tree": "07126bf9a65a38fb15d3c4f75b6f915ad134b611",
+      "reviewedTree": "6f28744d18198aa929c042d9ca2041ee816e22f1",
+      "sourceProofBase": "9c11a985d79b28ef6c4e167966f1863647af5ba8"
     }
   ],
   "dashboards": [
     {
       "id": "testbed-capability",
       "title": "Current playable testbed capability",
-      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage.",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows.",
       "milestones": [
         {
           "id": "cap-start",
@@ -10854,7 +10900,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-115"
           ]
@@ -10875,7 +10921,7 @@
               "scope": "Accepted bounded slices do not constitute programme acceptance."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": []
         },
         {
@@ -10909,7 +10955,7 @@
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-116"
           ]
@@ -10966,7 +11012,7 @@
               "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-118"
           ]
@@ -11002,9 +11048,48 @@
               "scope": "Own shape before optional discriminator reads; entire history and source-bound state reconstruction."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-120"
+          ]
+        },
+        {
+          "id": "cap-source-timeout",
+          "title": "Original99 timeout and full responsive v19 recovery",
+          "status": "playable",
+          "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable.",
+          "lineage": [
+            "T43-07",
+            "T43-08",
+            "LIFE-03",
+            "LIFE-04"
+          ],
+          "scenario": "source-timeout",
+          "evidence": [
+            {
+              "path": "docs/training43-source-timeout-recovery.md",
+              "label": "Accepted122 proof and controls",
+              "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
+            },
+            {
+              "path": "tests/training-timeout.test.ts",
+              "label": "Source-bound full replay definitions",
+              "scope": "Definitions; fresh accepted HIGH18 source cases and whole native expectations are distinct from this metadata verification."
+            },
+            {
+              "path": "tests/browser/training-timeout.spec.ts",
+              "label": "Actual production controls and recovery definitions",
+              "scope": "Accepted HIGH49 committed definitions in one clean13.69min run plus9 independent definitions in one separate clean run; no count sum as coverage."
+            },
+            {
+              "path": "src/sim/training-timeout.ts",
+              "label": "Accepted full-history transition and cancellation",
+              "scope": "Source locators only; this metadata packet changes no src."
+            }
+          ],
+          "missing": "Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
+          "proofs": [
+            "proof-122"
           ]
         }
       ]
@@ -11012,7 +11097,7 @@
     {
       "id": "training43-software",
       "title": "Training43 software acceptance",
-      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage.",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows.",
       "milestones": [
         {
           "id": "t43-dry",
@@ -11083,7 +11168,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-115"
           ]
@@ -11142,7 +11227,7 @@
               "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-116",
             "proof-118"
@@ -11179,7 +11264,7 @@
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-116"
           ]
@@ -11200,7 +11285,7 @@
               "scope": "No complete original level accepted."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": []
         },
         {
@@ -11236,7 +11321,7 @@
               "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-118"
           ]
@@ -11272,9 +11357,48 @@
               "scope": "Own shape before optional discriminator reads; entire history and source-bound state reconstruction."
             }
           ],
-          "missing": "Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-120"
+          ]
+        },
+        {
+          "id": "t43-source-timeout",
+          "title": "Original99 timeout and full responsive v19 recovery",
+          "status": "playable",
+          "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable.",
+          "lineage": [
+            "T43-07",
+            "T43-08",
+            "LIFE-03",
+            "LIFE-04"
+          ],
+          "scenario": "source-timeout",
+          "evidence": [
+            {
+              "path": "docs/training43-source-timeout-recovery.md",
+              "label": "Accepted122 proof and controls",
+              "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
+            },
+            {
+              "path": "tests/training-timeout.test.ts",
+              "label": "Source-bound full replay definitions",
+              "scope": "Definitions; fresh accepted HIGH18 source cases and whole native expectations are distinct from this metadata verification."
+            },
+            {
+              "path": "tests/browser/training-timeout.spec.ts",
+              "label": "Actual production controls and recovery definitions",
+              "scope": "Accepted HIGH49 committed definitions in one clean13.69min run plus9 independent definitions in one separate clean run; no count sum as coverage."
+            },
+            {
+              "path": "src/sim/training-timeout.ts",
+              "label": "Accepted full-history transition and cancellation",
+              "scope": "Source locators only; this metadata packet changes no src."
+            }
+          ],
+          "missing": "Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
+          "proofs": [
+            "proof-122"
           ]
         }
       ]
