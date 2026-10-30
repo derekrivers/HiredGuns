@@ -1,9 +1,11 @@
-import { readFile } from 'node:fs/promises';
+import { mkdtemp, open, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { cellIndex, type Facing, type LevelData, type Position } from '../src/contracts';
 import type { EditorRecord } from '../src/import/editor-map';
 import { resolveTraversal } from '../src/sim/traversal';
-import { classifyInteractions, classifyTextTriggers, generateAcceptanceCase, PINS, sourceWetCandidate,
+import { classifyInteractions, classifyTextTriggers, generateAcceptanceCase, CONSUMER, PINS, WITNESS_LIMITS, snapshotAcceptanceWitness, parseAcceptanceWitness, readAcceptanceWitness, sourceWetCandidate,
   validateAcceptanceCase, verifyRawInputs, type AcceptanceCase, type RawCaseInputs } from '../tools/training43-acceptance-case';
 
 const from = { x: 2, y: 3, z: 2 }, wet = { x: 2, y: 2, z: 1 };
@@ -165,6 +167,61 @@ describe('source authority boundary', () => {
   });
 });
 
+describe('bounded descriptor snapshots and CLI parsing', () => {
+  it('freezes exported policy authority recursively', () => {
+    for (const object of [PINS, CONSUMER, CONSUMER.browser, CONSUMER.ownership, CONSUMER.refusesUntilProven, WITNESS_LIMITS]) {
+      expect(Object.isFrozen(object)).toBe(true);
+      expect(() => Object.defineProperty(object, Object.keys(object)[0]!, { value: false })).toThrow();
+    }
+  });
+  it('copies data and shared subtrees independently without prototype setters', () => {
+    const shared = { x: 1 }; const value = { a: shared, b: shared, nested: [1] };
+    const snapshot = snapshotAcceptanceWitness(value);
+    shared.x = 2; value.nested[0] = 3;
+    expect(snapshot).toEqual({ a: { x: 1 }, b: { x: 1 }, nested: [1] });
+    expect(snapshotAcceptanceWitness(JSON.parse('{"__proto__":{"x":1}}'))).toEqual(JSON.parse('{"__proto__":{"x":1}}'));
+  });
+  it('bounds depth, visits and repeated acyclic references deterministically', () => {
+    let deep: unknown = 0;
+    for (let i = 0; i <= WITNESS_LIMITS.depth; i++) deep = { x: deep };
+    expect(() => snapshotAcceptanceWitness(deep)).toThrow('depth budget');
+    let graph: unknown = {};
+    for (let i = 0; i < 16; i++) graph = { a: graph, b: graph };
+    expect(() => snapshotAcceptanceWitness(graph)).toThrow('visit budget');
+    const many = Array.from({ length: 128 }, () => Array<number>(256).fill(0));
+    expect(() => snapshotAcceptanceWitness(many)).toThrow('visit budget');
+  });
+  it('checks collection length before allocating or descending', () => {
+    expect(() => snapshotAcceptanceWitness(new Array(0xffffffff))).toThrow('collection budget');
+    expect(() => snapshotAcceptanceWitness(Object.fromEntries(Array.from({ length: 257 }, (_, i) => [i, 0])))).toThrow('collection budget');
+    expect(() => snapshotAcceptanceWitness(Array<number>(257).fill(0))).toThrow('collection budget');
+  });
+  it('bounds individual strings, keys and aggregate string work', () => {
+    expect(() => snapshotAcceptanceWitness('x'.repeat(4097))).toThrow('string budget');
+    expect(() => snapshotAcceptanceWitness({ ['x'.repeat(4097)]: 1 })).toThrow('string budget');
+    expect(() => snapshotAcceptanceWitness(Array<string>(65).fill('x'.repeat(4096)))).toThrow('string budget');
+  });
+  it('checks bytes and lexical nesting before parse, including escaped string brackets', () => {
+    expect(() => parseAcceptanceWitness(' '.repeat(WITNESS_LIMITS.bytes + 1))).toThrow('byte budget');
+    expect(() => parseAcceptanceWitness('"' + 'é'.repeat(WITNESS_LIMITS.bytes / 2) + '"')).toThrow('byte budget');
+    expect(() => parseAcceptanceWitness('['.repeat(33) + '0' + ']'.repeat(33))).toThrow('nesting budget');
+    const text = JSON.stringify({ text: '[{]}' + String.fromCharCode(92, 34) });
+    expect(parseAcceptanceWitness(text)).toEqual(JSON.parse(text));
+    expect(() => parseAcceptanceWitness('{')).toThrow();
+  });
+  it('checks sparse file size before reading/parsing and accepts bounded files', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 't43-witness-'));
+    const path = join(directory, 'witness.json');
+    try {
+      const file = await open(path, 'wx');
+      await file.truncate(WITNESS_LIMITS.bytes + 1); await file.close();
+      await expect(readAcceptanceWitness(path)).rejects.toThrow('byte budget');
+      const small = await open(path, 'w'); await small.writeFile('{"ok":true}'); await small.close();
+      expect(await readAcceptanceWitness(path)).toEqual({ ok: true });
+    } finally { await rm(directory, { recursive: true }); }
+  });
+});
+
 // Explicit opt-in only. No original fixture, filename discovery or original bytes in public CI.
 const manifest = process.env.HIRED_GUNS_T43_CASE_INPUTS;
 it.skipIf(!manifest)('private exact Training43 case: raw pins, actual approach and strict regeneration/tampering', async () => {
@@ -187,6 +244,29 @@ it.skipIf(!manifest)('private exact Training43 case: raw pins, actual approach a
   expect(actual.bodyAndHeadContract.afterEntry.arrivedFirst & 0x60004).toBe(actual.entry.sourceWord & 0x60004);
   expect(actual.bodyAndHeadContract.afterReturn.departedFirst & 0x60004).toBe(actual.entry.sourceWord & 0x60004);
   expect(actual.wetSupport.sourceExpectedCalls.map(c => c.delayAfter)).toEqual([2, 1, 0]);
+  // Mutate actual returned objects, including nested arrays: no canonical alias.
+  for (const make of [() => generateAcceptanceCase(input), () => validateAcceptanceCase(witness, input)]) {
+    const returned = await make();
+    Object.defineProperty(returned.consumer, 'mandatoryNext', { value: false });
+    Object.defineProperty(returned.consumer.browser, '0', { value: 'tampered' });
+    Object.defineProperty(returned.consumer.refusesUntilProven, '0', { value: 'tampered' });
+    Object.defineProperty(returned.pins, 'map', { value: 'tampered' });
+    await expect(validateAcceptanceCase(returned, input)).rejects.toThrow('canonical');
+    expect(await generateAcceptanceCase(input)).toEqual(actual);
+  }
+  const accessor = structuredClone(actual);
+  const pendingAccessor = validateAcceptanceCase(accessor, input);
+  let reads = 0;
+  Object.defineProperty(accessor, 'format', { enumerable: true, get() { reads++; return actual.format; } });
+  Object.defineProperty(accessor.setup.actor, 'race', { enumerable: true, get() { reads++; return 4; } });
+  expect(await pendingAccessor).toEqual(actual); expect(reads).toBe(0);
+  const invalid = structuredClone(actual); invalid.setup.actor.race = 1;
+  const pendingInvalid = validateAcceptanceCase(invalid, input); invalid.setup.actor.race = 4;
+  await expect(pendingInvalid).rejects.toThrow('canonical');
+  const rawCopy = Object.fromEntries(Object.entries(input).map(([k, v]) => [k, new Uint8Array(v)])) as RawCaseInputs;
+  const pendingRaw = validateAcceptanceCase(witness, rawCopy);
+  for (const bytes of Object.values(rawCopy)) bytes[0] = bytes[0]! ^ 1;
+  expect(await pendingRaw).toEqual(actual);
   const changes: ((c: AcceptanceCase) => void)[] = [
     c => { c.classification.waters[0]!.classification = 'inactive'; },
     c => { c.classification.waters[0]!.candidateReachable = false; },

@@ -166,3 +166,32 @@ current CI, completed automatic review and coordinator acceptance remain open.
 No browser is needed for this tool-only change; browser execution is mandatory
 in the named next consumer. Model: gpt-6.1-sol medium; no delegation or new CPU
 observation. Token usage unavailable. Test counts are not completion percentages.
+
+
+## Witness ownership and resource budgets
+
+Exported pins, consumer policy and limits are deeply frozen at runtime. Each
+returned case owns separate policy arrays and pins. Validation synchronously
+captures a descriptor-only private copy before its first await; later caller
+edits cannot repair invalid call-time evidence or introduce getter reads.
+Raw source buffers retain their existing synchronous snapshot/hash boundary.
+
+The pinned witness measures 226,892 pretty-printed UTF-8 bytes, 7,782 value
+visits, depth 9 (root depth 0), maximum collection 50, longest string/key 274
+UTF-16 units, and 53,960 total string/key units. Explicit headroom limits are
+1,048,576 file bytes, depth 32, 32,768 value visits, 256 entries per collection,
+4,096 units per string/key and 262,144 total string/key units. Shared subtrees
+are copied per occurrence and charged each time; active cycles reject. Thus a
+small shared DAG cannot multiply work beyond the visit budget. Dense-array
+length is checked before output allocation; unknown/hidden/symbol/accessor and
+malformed fields still reject. Limits grant no authority: full pinned canonical
+regeneration and equality remain required.
+
+CLI validation opens and stats the witness before a fixed capped read, detects
+growth beyond the byte limit, then checks UTF-8 bytes and lexical JSON nesting
+before parsing. The parsed value passes the same collection/string/work limits.
+Reflection necessarily obtains an object's own-key list before checking its size;
+JavaScript proxies can run traps during reflection and cannot be sandboxed by
+this API. Ordinary property getters are never evaluated, including after await.
+These limits bound traversal/copy work for ordinary in-process data and file
+parsing bytes/nesting; they do not promise isolation from hostile proxy code.

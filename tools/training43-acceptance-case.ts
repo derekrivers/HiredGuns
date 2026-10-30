@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { mkdir, open, readFile, realpath, writeFile } from 'node:fs/promises';
 import { isDeepStrictEqual } from 'node:util';
 import { dirname, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -12,7 +12,16 @@ import { transitionImmersion, type ImmersionActor } from '../src/character/immer
 import { obstruction, resolveTraversal } from '../src/sim/traversal';
 import { createWorld, stepWorld } from '../src/sim/world';
 
-export const PINS = {
+// Only module-authored finite policy trees pass through this helper.
+function freezePolicy<T>(value: T): T {
+  if (value && typeof value === 'object') {
+    for (const child of Object.values(value)) freezePolicy(child);
+    Object.freeze(value);
+  }
+  return value;
+}
+
+export const PINS = freezePolicy({
   map: '646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c',
   roster: '79a712653bcbef89f4579ef27a036897aa43dd74bbd965dd440deac13c3e5439',
   items: '633249c73e99c9019e653a0054ab0a613b3a2c313f60d93f7d0075e8bc94e6bc',
@@ -20,7 +29,7 @@ export const PINS = {
   ocsMain: 'cb52786738b11783e5736abb4153b1a2ad25b49fa8ffa769f08ca1907d17e3f9',
   ocsControls: 'd8544279d106d531514ecfa2338ab669a4c5bedbbef683eb6d633424a3109c15',
   ocsEquates: 'ae22603c9c17d4a6c6f6c8064ef69383f23b211fbbd3169839157eb830a1b759',
-} as const;
+} as const);
 export type RawCaseInputs = { -readonly [K in keyof typeof PINS]: Uint8Array };
 const digest = (b: Uint8Array | string) => createHash('sha256').update(b).digest('hex');
 const key = (p: Position) => `${p.x},${p.y},${p.z}`;
@@ -184,7 +193,7 @@ export function verifyRawInputs(input: RawCaseInputs): RawCaseInputs {
   return snapshot;
 }
 
-export const CONSUMER = {
+export const CONSUMER = freezePolicy({
   id: 'training43-keyboard-wet-traversal', mandatoryNext: true, app: 'existing four-view application, exact imported editor geometry',
   ownership: ['one serialized live owner for body/current/old references and packed heads',
     'stats dead word and runtime dead word distinct; window/control separate',
@@ -202,7 +211,7 @@ export const CONSUMER = {
     'existing dry-only ordinary-floor damage/death helper rejects this wet supported stair; never strip water or fabricate floor',
     'no stepping beyond supported cells, occupancy bypass, continued submerged damage or partial recovery'],
   scheduler: 'Declare fixed-step adaptation explicitly: OCS game loop drowning before stuff_falls/controls; drowning signed gate >=50 resets global count; stuff_falls unsigned gate >6 subtracts 6 once, players_fall in party order; wet delay 0->2->1->0 clears pending. No wall-clock claim.',
-} as const;
+} as const);
 
 /** Rehash bytes and regenerate all evidence; metadata and saved claims grant no authority. */
 export async function generateAcceptanceCase(input: RawCaseInputs) {
@@ -290,35 +299,98 @@ export async function generateAcceptanceCase(input: RawCaseInputs) {
       control: 'retain selected actor/device assignment on source death; leader clear is separate. No automatic survivor selection inferred from after-death evidence. Explicit keyboard selection is an adapter; dead controls, all-dead/exit ties and corpse ownership must be reconciled.' },
     reusedDryExit: { sha256: PINS.historicalAudit, routes: historical.routes,
       limit: 'historical accepted dry full-team/first-exit evidence reused unchanged; no new exit run or wet-to-exit execution' },
-    consumer: CONSUMER,
+    consumer: structuredClone(CONSUMER),
     acceptance: { T43_04: 'partial: complete bounded static water/sign classification; live wet candidates remain unknown',
       T43_05: 'not passed', deeperWet: 'all source water depth=2 on one elevation; no deeper water target is established; supported corridor candidates are not gameplay',
       lifecycle: 'source handle_dead support search on wet stairs and after-death controls/occupancy/corpse/recovery remain prerequisites' } };
 }
 export type AcceptanceCase = Awaited<ReturnType<typeof generateAcceptanceCase>>;
 
-function jsonData(value: unknown, active = new WeakSet<object>()): void {
-  if (value === null || typeof value === 'string' || typeof value === 'boolean') return;
-  if (typeof value === 'number' && Number.isSafeInteger(value)) return;
-  if (!value || typeof value !== 'object' || active.has(value) ||
-    ![Object.prototype, Array.prototype].includes(Object.getPrototypeOf(value) as object)) throw new Error('Case requires plain JSON data');
-  active.add(value);
-  const keys = Reflect.ownKeys(value);
-  if (Array.isArray(value) && (keys.length !== value.length + 1 ||
-    Array.from({ length: value.length }, (_, i) => String(i)).some(k => !Object.hasOwn(value, k)))) throw new Error('Case requires dense JSON arrays');
-  for (const key of keys) {
-    if (Array.isArray(value) && key === 'length') continue;
-    const d = Object.getOwnPropertyDescriptor(value, key)!;
-    if (typeof key !== 'string' || !('value' in d) || !d.enumerable) throw new Error('Case requires enumerable JSON data fields');
-    jsonData(d.value, active);
+// Measured pinned witness: 226892 pretty-printed bytes, 7782 value visits,
+// depth 9, largest collection 50, largest string/key 274, total string/key units 53960.
+export const WITNESS_LIMITS = freezePolicy({ bytes: 1048576, depth: 32, visits: 32768,
+  collection: 256, string: 4096, stringUnits: 262144 } as const);
+
+/** Descriptor-only call-time copy. Shared subtrees count again, so DAGs cannot
+ * bypass the visit budget; active cycles reject. Never rereads a caller value. */
+export function snapshotAcceptanceWitness(value: unknown): unknown {
+  const active = new WeakSet<object>();
+  let visits = 0, units = 0;
+  const string = (s: string) => {
+    if (s.length > WITNESS_LIMITS.string || (units += s.length) > WITNESS_LIMITS.stringUnits)
+      throw new Error('JSON witness string budget exceeded');
+  };
+  const copy = (v: unknown, depth: number): unknown => {
+    if (++visits > WITNESS_LIMITS.visits) throw new Error('JSON witness visit budget exceeded');
+    if (depth > WITNESS_LIMITS.depth) throw new Error('JSON witness depth budget exceeded');
+    if (typeof v === 'string') { string(v); return v; }
+    if (v === null || typeof v === 'boolean' || typeof v === 'number' && Number.isSafeInteger(v)) return v;
+    if (!v || typeof v !== 'object' || active.has(v) ||
+      ![Object.prototype, Array.prototype].includes(Object.getPrototypeOf(v) as object)) throw new Error('Case requires plain JSON data');
+    const array = Array.isArray(v);
+    const length = array ? Object.getOwnPropertyDescriptor(v, 'length')?.value as unknown : 0;
+    if (array && (typeof length !== 'number' || !Number.isSafeInteger(length) || length < 0 || length > WITNESS_LIMITS.collection))
+      throw new Error('JSON witness collection budget exceeded');
+    const keys = Reflect.ownKeys(v);
+    if (keys.length > WITNESS_LIMITS.collection + (array ? 1 : 0)) throw new Error('JSON witness collection budget exceeded');
+    if (array && keys.length !== (length as number) + 1) throw new Error('Case requires dense JSON arrays');
+    active.add(v);
+    const result: Record<string, unknown> | unknown[] = array ? [] : {};
+    for (const key of keys) {
+      if (array && key === 'length') continue;
+      const d = Object.getOwnPropertyDescriptor(v, key);
+      if (typeof key !== 'string' || !d || !('value' in d) || !d.enumerable) throw new Error('Case requires enumerable JSON data fields');
+      string(key);
+      if (array && (!/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= (length as number))) throw new Error('Case requires dense JSON arrays');
+      Object.defineProperty(result, key, { value: copy(d.value, depth + 1), enumerable: true, writable: true, configurable: true });
+    }
+    active.delete(v);
+    return result;
+  };
+  return copy(value, 0);
+}
+
+/** Byte and lexical nesting checks precede JSON.parse's allocations. */
+export function parseAcceptanceWitness(text: string): unknown {
+  if (text.length > WITNESS_LIMITS.bytes || Buffer.byteLength(text, 'utf8') > WITNESS_LIMITS.bytes)
+    throw new Error('JSON witness byte budget exceeded');
+  let depth = 0, quoted = false, escaped = false;
+  for (const c of text) {
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (c === '\\') escaped = true;
+      else if (c === '"') quoted = false;
+    } else if (c === '"') quoted = true;
+    else if (c === '[' || c === '{') {
+      if (++depth > WITNESS_LIMITS.depth) throw new Error('JSON witness nesting budget exceeded');
+    } else if (c === ']' || c === '}') depth--;
   }
-  active.delete(value);
+  return snapshotAcceptanceWitness(JSON.parse(text) as unknown);
+}
+
+export async function readAcceptanceWitness(path: string): Promise<unknown> {
+  const file = await open(path, 'r');
+  try {
+    const metadata = await file.stat();
+    if (!metadata.isFile()) throw new Error('JSON witness requires a regular file');
+    if (metadata.size > WITNESS_LIMITS.bytes) throw new Error('JSON witness byte budget exceeded');
+    // Fixed-size allocation and capped reads also handle growth after stat.
+    const buffer = Buffer.alloc(WITNESS_LIMITS.bytes + 1);
+    let used = 0;
+    while (used < buffer.length) {
+      const { bytesRead } = await file.read(buffer, used, buffer.length - used, null);
+      if (!bytesRead) break;
+      used += bytesRead;
+    }
+    if (used > WITNESS_LIMITS.bytes) throw new Error('JSON witness byte budget exceeded');
+    return parseAcceptanceWitness(buffer.subarray(0, used).toString('utf8'));
+  } finally { await file.close(); }
 }
 
 export async function validateAcceptanceCase(value: unknown, raw: RawCaseInputs): Promise<AcceptanceCase> {
-  jsonData(value);
+  const snapshot = snapshotAcceptanceWitness(value);
   const expected = await generateAcceptanceCase(raw);
-  if (!isDeepStrictEqual(value, expected)) throw new Error('Case differs from canonical source regeneration');
+  if (!isDeepStrictEqual(snapshot, expected)) throw new Error('Case differs from canonical source regeneration');
   return expected;
 }
 
@@ -338,7 +410,7 @@ async function main() {
   await mkdir(dirname(destination), { recursive: true });
   const actualParent = await realpath(dirname(destination));
   if (relative(root, await realpath(local)) !== '.local' || relative(local, actualParent).startsWith('..')) throw new Error('Private directory redirects outside worktree');
-  const result = mode === 'validate' ? await validateAcceptanceCase(JSON.parse(await readFile(destination, 'utf8')), raw) : await generateAcceptanceCase(raw);
+  const result = mode === 'validate' ? await validateAcceptanceCase(await readAcceptanceWitness(destination), raw) : await generateAcceptanceCase(raw);
   const json = `${JSON.stringify(result, null, 2)}\n`;
   if (mode === 'generate') await writeFile(destination, json, { flag: 'wx' });
   process.stdout.write(`${mode}: ${relative(root, destination)} SHA256 ${digest(json)}\n`);
