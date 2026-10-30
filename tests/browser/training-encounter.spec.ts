@@ -62,9 +62,8 @@ test('opt-in keyboard full/partial/empty, dummy/miss, cooldown/pause, reset/retr
   test.setTimeout(90000);
   test.skip(!privateInputs, 'Requires explicit local originals.');
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
-  await open(page); const initialInventory = await inventory(page);
-  // Keep real keyboard events deterministic while advancing only the application's accepted clock.
-  await freeze(page);
+  // Install before navigation so animation frames share the same clock from startup.
+  await freeze(page); await open(page); const initialInventory = await inventory(page);
   await arm(page, 'full', 2); const baseline = await state(page);
   expect(baseline.canonicalIndex).toBe(0);
   await start(page); await page.keyboard.down('f');
@@ -184,7 +183,7 @@ for (const cancellation of ['retry', 'rules', 'apply', 'map'] as const) {
 
 test('opt-in terminal catch-up frame advances cooldown only for the final accepted world tick', async ({ page }) => {
   test.skip(!privateInputs, 'Requires explicit local originals.');
-  await open(page); await freeze(page); await arm(page, 'full'); await start(page);
+  await freeze(page); await open(page); await arm(page, 'full'); await start(page);
   await page.keyboard.press('f'); await page.keyboard.press('Escape');
   const saved = await save(page), checkpoint = JSON.parse(saved.checkpoint);
   checkpoint.world.tick = checkpoint.world.mission.rules.timeLimit * 601 - 1;
@@ -202,7 +201,7 @@ test('opt-in terminal catch-up frame advances cooldown only for the final accept
 
 test('opt-in holding Enter on Fire does not generate repeated button shots', async ({ page }) => {
   test.skip(!privateInputs, 'Requires explicit local originals.');
-  await open(page); await freeze(page); await arm(page, 'full'); await start(page);
+  await freeze(page); await open(page); await arm(page, 'full'); await start(page);
   await page.getByRole('button', { name: 'Fire authored gun (F)', exact: true }).focus();
   await page.keyboard.down('Enter'); expect((await state(page)).shots).toBe(1);
   await page.clock.runFor(1000); await page.keyboard.down('Enter'); await page.keyboard.up('Enter');
