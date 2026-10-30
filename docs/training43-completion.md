@@ -600,3 +600,6 @@ unchanged. Independent exact-head review and CI are coordinator-owned gates.
 Model: gpt-6.1-sol, one implementation attempt, one diagnostic correction for
 object-key-order-sensitive checkpoint comparison; no failed repair cycle or
 recursive delegation. Token usage unavailable.
+
+
+Pending review: the [authored ground cache consumer](training-ground.md) adds same-app keyboard equipment/carried pickup and equipment drop, physical 30-slot capacity, source-bound ownership/weight and chronological static-world v8 recovery. It relocates initial team carried entries into a labelled authored overlay. Original map-item placement, general use, direct carried drop, ground swaps, corpses and weight-dependent interleaved dry-fall remain outside this candidate. Existing ground-core acceptance is distinct from this consumer’s pending independent HIGH/CI/automatic gates.
