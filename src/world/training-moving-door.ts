@@ -21,10 +21,17 @@ export function initialMovingDoor(): TrainingMovingDoor {
  * freezes ALL source fields/counter; retain the action for retry, latest explicit
  * action wins. No accumulated catch-up, intermediate effects or audio commits.
  * Reservations are recomputed from current + prospective world/NPC footprints. */
-export function advanceMovingDoor(previous: TrainingMovingDoor, action: DoorAction, reservations: readonly Position[]): TrainingMovingDoor {
-  const pendingAction = action || previous.pendingAction;
-  const result = transitionDoorMotion({record:previous.record,target:{position:previous.record.position,word:previous.word},
-    counter:(previous.counter+1)&65535,action:pendingAction,onLift:false});
+export function advanceMovingDoor(previous: TrainingMovingDoor, action: DoorAction | readonly DoorAction[], reservations: readonly Position[]): TrainingMovingDoor {
+  const actions = typeof action === 'number' ? action ? [action] : [] : action;
+  const pendingAction = actions.at(-1) || previous.pendingAction;
+  let record = previous.record;
+  for (const requested of actions.length ? actions : previous.pendingAction ? [previous.pendingAction] : []) {
+    const applied = transitionDoorMotion({record,target:{position:record.position,word:previous.word},counter:0,action:requested,onLift:false});
+    if (applied.status === 'refused') throw new Error('Door action refused.');
+    record = applied.candidate.record;
+  }
+  const result = transitionDoorMotion({record,target:{position:previous.record.position,word:previous.word},
+    counter:(previous.counter+1)&65535,action:0,onLift:false});
   if (result.status === 'refused') throw new Error(`Moving door refused: ${result.reason}`);
   const c = result.candidate;
   const closing = c.record.direction === 2 || result.effects.some(e => e.kind === 'closed');

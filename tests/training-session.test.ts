@@ -17,6 +17,38 @@ const sources = () => ({ roster: characterFixture(), items: new Uint8Array(ITEM_
 const order = [11, 3, 0, 5];
 const privateInputs = !!(process.env.HIRED_GUNS_TRAINING_MAP && process.env.HIRED_GUNS_CHARACTERS && process.env.HIRED_GUNS_ITEMS);
 
+it.skipIf(!privateInputs)('v13 pad-derived edges, pressed/opening/released/deferred/closing replay, raw geometry and receipts',async()=>{
+ const {createPressurePadLevel}=await import('../src/world/training-gate');const {createPressurePadSession,commandPatrolEncounter}=await import('../src/sim/training-session');
+ const {sources}=await local(),map=createPressurePadLevel(),base=await createTrainingSession(map,sources,order);let c=await createPressurePadSession(sources,base.session);const baseline=structuredClone(c);
+ let attempts=0;const tick=(commands:Parameters<typeof advanceGateTrainingSession>[3]=[])=>{if(++attempts>2000)throw Error('Pad stalled '+JSON.stringify({tick:c.world.tick,pad:c.session.gate!.pad,door:c.session.gate!.moving,poses:c.world.mercenaries}));c=advanceGateTrainingSession(map,c.session,c.world,commands,null);};
+ const roundtrip=async()=>{const saved=await exportTrainingSession(map,c.world,c.session,sources);expect(JSON.parse(saved).version).toBe(13);expect(await importTrainingSession(map,sources,saved)).toEqual({world:c.world,session:c.session});return saved;};
+ await roundtrip();for(let i=0;i<6&&c.session.encounter!.fitness>0;i++){c={...c,session:commandPatrolEncounter(map,c.session,c.world,'fire',false)};for(let n=0;n<40;n++)tick();}
+ tick([{mercenaryId:0,action:'strafe-right'}]);expect(c.session.gate!.pad!.occupants).toEqual([0]);await roundtrip();
+ for(let n=0;n<20;n++)tick();await roundtrip();while(c.session.gate!.overlay.word&2)tick();await roundtrip();
+ tick([{mercenaryId:0,action:'forward'}]);expect(c.session.gate!.pad!.lastActions[0]!.edge).toBe('release');await roundtrip();
+ while(!c.session.gate!.moving!.deferred)tick();const deferred=await roundtrip();tick([{mercenaryId:0,action:'forward'}]);tick();expect(c.session.gate!.overlay.word&2).toBe(2);await roundtrip();
+ expect(resetTrainingInventory(c.session,map)).toEqual(baseline.session);
+ const saved=JSON.parse(deferred);
+ for(const change of [(s:typeof saved)=>{s.gate.pad.occupants=[0];},(s:typeof saved)=>{s.gate.pad.lastActions[0].action=14;},(s:typeof saved)=>{s.gate.pad.lastActions[0].datum=2592;},(s:typeof saved)=>{s.gate.pad.lastActions[0].index=0;},(s:typeof saved)=>{s.gate.pad.lastActions[0].actor=1;},(s:typeof saved)=>{s.gate.pad.lastActions.reverse();s.gate.pad.lastActions.push({...s.gate.pad.lastActions[0]});},(s:typeof saved)=>{s.version=12;},(s:typeof saved)=>{s.patrol.history=Array(129).fill({kind:'target'});}]){const bad=structuredClone(saved);change(bad);await expect(importTrainingSession(map,sources,JSON.stringify(bad))).rejects.toThrow();}
+ for(const index of [648,119]){const bad=structuredClone(map);bad.layers[0][index]!^=0x80;await expect(importTrainingSession(bad,sources,deferred)).rejects.toThrow('geometry');}
+ const full={...baseline.session,patrol:{...baseline.session.patrol!,history:Array.from({length:128},()=>({kind:'target' as const}))}};
+ expect(()=>advanceGateTrainingSession(map,full,baseline.world,[{mercenaryId:0,action:'strafe-right'}],null)).toThrow('history budget');expect(baseline.session.gate!.pad!.occupants).toEqual([]);
+},120000);
+
+it.skipIf(!privateInputs).each(['save','import','setup','equip','exchange','return'] as const)('v13 %s detaches raw bytes, geometry, indices, history and receipts before await',async(kind)=>{
+ const {createPressurePadLevel}=await import('../src/world/training-gate');const {createPressurePadSession}=await import('../src/sim/training-session');
+ const {sources}=await local(),map=createPressurePadLevel(),base=await createTrainingSession(map,sources,order);let c=await createPressurePadSession(sources,base.session);
+ c=advanceGateTrainingSession(map,c.session,c.world,[{mercenaryId:0,action:'strafe-right'}],null);
+ if(kind==='exchange'||kind==='return')c=await equipTrainingSession(map,sources,c.session,0,0,true,c.world);
+ const saved=await exportTrainingSession(map,c.world,c.session,sources),caller=structuredClone(c),raw=structuredClone(sources),m=structuredClone(map);
+ const change=kind==='equip'?equipTrainingSession:kind==='exchange'?exchangeTrainingSession:returnTrainingSession;
+ const expected=kind==='setup'?await createPressurePadSession(sources,c.session):kind==='save'||kind==='import'?{world:c.world,session:c.session}:await change(map,sources,c.session,0,0,true,c.world);
+ const pending=kind==='save'?exportTrainingSession(m,caller.world,caller.session,raw):kind==='import'?importTrainingSession(m,raw,saved):kind==='setup'?createPressurePadSession(raw,caller.session):change(m,raw,caller.session,0,0,true,caller.world);
+ raw.items.fill(0);raw.roster.fill(0);m.layers[0][119]=0;m.layers[0][648]=1;caller.world.tick++;caller.session.gate!.pad!.lastActions[0]!.action=15;caller.session.gate!.pad!.occupants=[];caller.session.patrol!.history.length=0;(caller.session.indices as number[]).reverse();
+ let reads=0;Object.defineProperty(raw,'items',{get(){reads++;throw Error('late bytes');}});Object.defineProperty(caller.session,'indices',{get(){reads++;throw Error('late indices');}});
+ const result=await pending;expect(reads).toBe(0);expect(typeof result==='string'?await importTrainingSession(map,sources,result):result).toEqual(expected);
+},120000);
+
 it.skipIf(!privateInputs)('selected practice binds real stats/current weight, landing, incapacitation and atomic v7 recovery', async () => {
   const {sources,level:original} = await local(), level = createSelectedFallLevel();
   const initial = await createTrainingSession(level,sources,order);

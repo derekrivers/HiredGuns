@@ -1,4 +1,5 @@
-import { createMovingDoorLevel, movingDoorLevel, createPatrolMissionLevel, patrolMissionLevel, PATROL_EXIT } from '../world/training-gate';
+import { pressurePadLevel, PAD_INDEX } from '../world/training-pressure-pad';
+import { createPressurePadLevel, createMovingDoorLevel, movingDoorLevel, createPatrolMissionLevel, patrolMissionLevel, PATROL_EXIT } from '../world/training-gate';
 import { cellIndex } from '../contracts';
 import type { LevelData, MissionMode, MissionRules } from '../contracts';
 
@@ -23,9 +24,10 @@ export function missionRulesForLevel(level: LevelData, mode: MissionMode = extra
 }
 
 let canonicalMission: LevelData | undefined;
+let canonicalPad: LevelData | undefined;
 let canonicalMoving: LevelData | undefined;
 function canonicalPatrolGeometry(level: LevelData): boolean {
-  const base = movingDoorLevel(level) ? canonicalMoving ??= createMovingDoorLevel() : canonicalMission ??= createPatrolMissionLevel();
+  const base = pressurePadLevel(level) ? canonicalPad ??= createPressurePadLevel() : movingDoorLevel(level) ? canonicalMoving ??= createMovingDoorLevel() : canonicalMission ??= createPatrolMissionLevel();
   const {layers, ...metadata} = level, {layers: expected, ...identity} = base;
   if (JSON.stringify(metadata) !== JSON.stringify(identity) || !Array.isArray(layers) || layers.length !== 3) return false;
   const panel = (1*23+4)*23+5, gate = (1*23+5)*23+5, exit = cellIndex(base,PATROL_EXIT);
@@ -36,5 +38,5 @@ function canonicalPatrolGeometry(level: LevelData): boolean {
       (p === 0x8010004b && g === 0x80000001 && d === 0x80000400))) return false;
   if (layers[0]?.[exit] !== 67 && layers[0]?.[exit] !== 6146) return false;
   return expected.every((plane,z) => layers[z]?.length === plane.length && plane.every((word,i) =>
-    (z === 0 && (i === panel || i === gate || i === exit)) || (z === 1 && i === gate) || word === layers[z]![i]));
+    (z === 0 && (i === panel || i === gate || i === exit)) || (z === 1 && i === gate) || (pressurePadLevel(level) && z === 0 && i === PAD_INDEX && layers[z]![i] === 0x80000001) || word === layers[z]![i]));
 }

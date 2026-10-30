@@ -258,3 +258,16 @@ installation. Limits remain128 events,45000 ticks, <24KiB outer/<16KiB nested,
 checked prospectively before all mutations. Legacy v1–v11 keep their existing
 fields/behavior. Timed mode requires its matching canonical fixture; existing
 static gate, patrol and extraction setup remain available.
+
+## Authored pressure pad extraction (v13)
+
+The [pressure-pad variant](training-pressure-pad.md) adds one player-only P to
+the same timed-door/patrol/extraction arena. Successful movement derives old-pad
+release then new-pad press in stable actor order from canonical raw floor and
+preceding-plane descriptor/button bytes. Manual input precedes those actions;
+one door scheduler step follows. Idle/turn/blocked moves do not retrigger.
+The gate's bounded `pad:{occupants,lastActions}` receipt is compared against
+canonical replay, alongside every prior world/door/NPC/gun/inventory/mission field.
+No pad event is appended separately from movement. All source ownership,
+generation cancellation, prospective budgets and paused atomic recovery rules
+above apply. Exact v1–v12 field sets and scenarios stay unchanged.
