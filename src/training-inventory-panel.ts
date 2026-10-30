@@ -8,7 +8,13 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
   const controls: { actor: number; select: HTMLSelectElement; button: HTMLButtonElement; position: HTMLSelectElement; returnButton: HTMLButtonElement; exchangeButton: HTMLButtonElement }[] = [];
   const text = (session: TrainingSession, slot: InventorySlot) => slot.itemId === 0 ? `Empty / ${slot.rawHex}` :
     `${slot.itemId}: ${session.items.records[slot.itemId - 1]!.text.header1.trim()} ${session.items.records[slot.itemId - 1]!.text.header2.trim()} / ${slot.rawHex}`;
-  function refresh() {
+  function refresh(next?: TrainingSession | null) {
+    if (next !== undefined) current = next;
+    const budget = host.querySelector<HTMLElement>('#inventory-budget');
+    if (budget && current?.consumables) {
+      const remaining = MAX_INVENTORY_COMMANDS-current.consumables.history.length;
+      budget.textContent = `Shared chronological movement/item/use events remaining: ${remaining} / ${MAX_INVENTORY_COMMANDS}.${remaining === 0 ? ' Budget exhausted. Retry or Apply a new team to reset.' : ''}`;
+    }
     for (const { actor, select, button, position, returnButton, exchangeButton } of controls) {
       const state = current?.inventory.actors[actor];
       const exhausted = !current || (current.consumables ? current.consumables.history.length >= MAX_INVENTORY_COMMANDS : current.ground ? current.ground.history.length >= MAX_GROUND_HISTORY : current.inventory.commands.length >= MAX_INVENTORY_COMMANDS);
