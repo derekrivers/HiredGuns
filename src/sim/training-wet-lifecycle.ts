@@ -23,7 +23,7 @@ export interface LifecycleEvent { idle:number; count:number; commands:PlayerComm
 /** V16 packs each preceding idle run with its command run. One trailing idle
  * record is permitted. V15's RLE format and exact 128-segment gate are untouched.
  */
-function lifecycleHistory(input:unknown):WetEvent[]{
+export function lifecycleHistory(input:unknown):WetEvent[]{
  const data=wetSnapshot(input);if(!Array.isArray(data)||data.length>WET_LIMITS.events*2+1)return fail('internal event budget');let ticks=0;
  const events=data.map(e=>{const event=wetHistory([e])[0]!;ticks+=event.count;if(ticks>WET_LIMITS.ticks)fail('tick budget');return event;});
  encodeLifecycleHistory(events);return events;
