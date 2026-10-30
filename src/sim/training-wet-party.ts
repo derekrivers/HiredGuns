@@ -54,7 +54,13 @@ export function serializeWetParty(c:TrainingCandidate):string{
  if(new TextEncoder().encode(json).length>=WET_LIMITS.bytes)fail('future save byte budget');return json;
 }
 export function stepWetParty(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record=true){
- if(!session.wetParty||session.wetRegion)fail('inactive/owner');
+ // An initialized party owns wetParty and omits wetRegion. Inspect both
+ // discriminators as descriptors: absence is not an inherited value.
+ if(!session||Object.getPrototypeOf(session)!==Object.prototype)fail('inactive/owner');
+ const party=Object.getOwnPropertyDescriptor(session,'wetParty'),region=Object.getOwnPropertyDescriptor(session,'wetRegion');
+ if(!party||!party.enumerable||!('value'in party)||region)return fail('inactive/owner');
+ const owned=wetSnapshot(party.value);
+ if(!owned||Object.keys(owned).join(',')!=='profile'||owned.profile!=='four-controlled-selected-v1')fail('inactive/owner');
  if(previous.mission.outcome!=='active')return {session,world:previous,events:[]};
  const c=stepWetLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission);
  if(record){const ordered=structuredClone([...commands]).sort((a,b)=>a.mercenaryId-b.mercenaryId),h=c.session.wet!.history,last=h.at(-1);if(last&&equal(last.commands,ordered))last.count++;else h.push({count:1,commands:ordered});decodePartyHistory(encodePartyHistory(h));serializeWetParty(c);}return c;

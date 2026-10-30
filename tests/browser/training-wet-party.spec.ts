@@ -111,3 +111,25 @@ test('selected-party source clear after a real live turn restores the entire fre
  test.skip(!manifestPath,'Private pinned originals required');await open(page);await key(page,'1');await page.locator('#play').click();await move(page,'e');await key(page,'Escape');const turned=await save(page);expect(turned.checkpoint.world.tick).toBeGreaterThan(0);expect(turned.checkpoint.world.mercenaries[0].facing).toBe(1);
  await page.locator('#items-clear').click();const cleared=await save(page);expect(cleared.world).toEqual(createWorld(createDemoLevel()));await expect(page.locator('#wet-party-enable')).toBeDisabled();await expect(page.locator('#wet-party-state')).toContainText('Inactive');await expect(page.locator('#pause-overlay')).toBeVisible();
 });
+
+// Scope wetRegion instrumentation to full API reconstruction. Legacy panels also
+// inspect this absent extension; remove the hook only AFTER both complete v18
+// serializations (rebuild and final comparison/export), before UI refresh.
+async function regionReplayHook(page:Page,canonical:string,throwing:boolean,phase:number){await page.evaluate(({canonical,throwing,phase})=>{
+ const w=window as unknown as {regionReads:number;regionCalls:number;regionSerializations:number;restoreRegion:()=>void};
+ const old=Object.getOwnPropertyDescriptor(Object.prototype,'wetRegion'),digest=SubtleCrypto.prototype.digest,stringify=JSON.stringify;
+ w.regionReads=0;w.regionCalls=0;w.regionSerializations=0;
+ const remove=()=>{if(old)Object.defineProperty(Object.prototype,'wetRegion',old);else Reflect.deleteProperty(Object.prototype,'wetRegion');};
+ const get=()=>{w.regionReads++;if(throwing)throw Error('REGION_REPLAY_CANARY');return {sideEffectCanary:true};};
+ Object.defineProperty(Object.prototype,'wetRegion',{configurable:true,get});try{Reflect.get({},'wetRegion');}catch{/* positive canary */}remove();if(w.regionReads!==1)throw Error('dead region canary');w.regionReads=0;
+ SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){if(++w.regionCalls===phase)Object.defineProperty(Object.prototype,'wetRegion',{configurable:true,get});return digest.apply(this,args);};
+ JSON.stringify=function(...args:Parameters<typeof JSON.stringify>){const text=stringify.apply(JSON,args);if(text===canonical&&++w.regionSerializations===2)remove();return text;} as typeof JSON.stringify;
+ w.restoreRegion=()=>{SubtleCrypto.prototype.digest=digest;JSON.stringify=stringify;remove();};
+ },{canonical,throwing,phase});}
+async function finishRegionReplayHook(page:Page){const r=await page.evaluate(()=>{const w=window as unknown as {regionReads:number;regionCalls:number;regionSerializations:number;restoreRegion:()=>void};const result={reads:w.regionReads,calls:w.regionCalls,serializations:w.regionSerializations};w.restoreRegion();return result;});await writeFile(test.info().outputPath('region-replay-'+(++number)+'.json'),JSON.stringify(r,null,2));expect(r.reads).toBe(0);expect(r.calls).toBe(16);expect(r.serializations).toBe(2);}
+for(const throwing of [false,true])for(const operation of ['export','import'])test('nonempty source replay ignores inherited region during '+operation+' throwing='+throwing,async({page})=>{
+ test.skip(!manifestPath,'Private pinned originals required');const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await open(page);await page.locator('#play').click();await move(page,'e');await key(page,'Escape');const before=await save(page),canonical=JSON.stringify(before);
+ expect(before.indices).toEqual([1,3,0,5]);expect(before.history.length).toBeGreaterThan(0);expect(before.checkpoint.world.tick).toBeGreaterThan(0);expect(before.checkpoint.world.mercenaries[0].facing).toBe(1);
+ for(const phase of [1,3,7]){await regionReplayHook(page,canonical,throwing,phase);try{if(operation==='export')expect(JSON.stringify(await save(page))).toBe(canonical);else await restore(page,before);}finally{await finishRegionReplayHook(page);}expect(JSON.stringify(await save(page))).toBe(canonical);}
+ await expect(page.locator('#error')).toHaveText('');await expect(page.locator('#play')).toBeEnabled();await page.locator('#reset').click();expect((await save(page)).checkpoint.world.tick).toBe(0);expect(errors).toEqual([]);
+});

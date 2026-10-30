@@ -147,17 +147,51 @@ it.skipIf(!process.env.HIRED_GUNS_T43_CASE_INPUTS)('private actual v18 all entry
  const {level}=await importEditorMap(raw.map),b=await createTrainingSession(level,raw,[1,3,0,5]),c=await activateWetParty(level,raw,b.session,b.world,true),json=await exportTrainingSession(level,c.world,c.session,raw);
  expect(JSON.parse(json).version).toBe(18);expect(c.session.indices).toEqual([1,3,0,5]);
  const operations=[()=>activateWetParty(level,raw,b.session,b.world,true),()=>exportTrainingSession(level,c.world,c.session,raw),()=>exportWetParty(level,raw,c.session,c.world),()=>importTrainingSession(level,raw,json),()=>importWetParty(level,raw,JSON.parse(json))];
- const original=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty'),digest=SubtleCrypto.prototype.digest;
+ for(const field of ['wetParty','wetRegion'] as const){const original=Object.getOwnPropertyDescriptor(Object.prototype,field),digest=SubtleCrypto.prototype.digest;
  for(const throwing of [false,true])for(const phase of [0,1,3,7])for(const operation of operations){let reads=0,calls=0,result:TrainingCandidate|string|undefined;
-  const install=()=>Object.defineProperty(Object.prototype,'wetParty',{configurable:true,get(){reads++;if(throwing)throw Error('live inherited hook');return undefined;}});
-  try{install();const getter=Object.getOwnPropertyDescriptor(Object.prototype,'wetParty')!.get!;try{getter.call({});}catch{/* positive throwing canary */}expect(reads).toBe(1);reads=0;Reflect.deleteProperty(Object.prototype,'wetParty');
+  const install=()=>Object.defineProperty(Object.prototype,field,{configurable:true,get(){reads++;if(throwing)throw Error('live inherited hook');return undefined;}});
+  try{install();const getter=Object.getOwnPropertyDescriptor(Object.prototype,field)!.get!;try{getter.call({});}catch{/* positive throwing canary */}expect(reads).toBe(1);reads=0;Reflect.deleteProperty(Object.prototype,field);
    if(!phase)install();SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){if(++calls===phase)install();return digest.apply(this,args);};
    result=await operation();
-  }finally{SubtleCrypto.prototype.digest=digest;if(original)Object.defineProperty(Object.prototype,'wetParty',original);else Reflect.deleteProperty(Object.prototype,'wetParty');}
+  }finally{SubtleCrypto.prototype.digest=digest;if(original)Object.defineProperty(Object.prototype,field,original);else Reflect.deleteProperty(Object.prototype,field);}
   expect(reads).toBe(0);expect(calls).toBe(8);expect(typeof result==='string'?result:serializeWetParty(result!)).toBe(json);expect(typeof result==='string'?JSON.parse(result).checkpoint.world:result!.world).toEqual(c.world);
+ }
  }
  let reads=0;for(const kind of ['accessor','hidden','custom','null']){const bad=structuredClone(c),base=structuredClone(b);
   for(const session of [bad.session,base.session]){if(kind==='accessor')Object.defineProperty(session,'wetParty',{enumerable:true,get(){reads++;throw Error('own accessor');}});else if(kind==='hidden')Object.defineProperty(session,'wetParty',{value:{profile:'four-controlled-selected-v1'},enumerable:false});else Object.setPrototypeOf(session,kind==='null'?null:{});}
   await expect(exportTrainingSession(level,bad.world,bad.session,raw)).rejects.toThrow();await expect(exportWetParty(level,raw,bad.session,bad.world)).rejects.toThrow();await expect(activateWetParty(level,raw,base.session,base.world,true)).rejects.toThrow();
  }expect(reads).toBe(0);
+},60000);
+
+it.each(['wetParty','wetRegion'] as const)('step owner refuses malformed own %s without getter reads or mutation',async field=>{
+ const {level,c}=await fixture();let reads=0;
+ for(const kind of ['absent','accessor','hidden','null','undefined','false','wrong','extra','profile-accessor','custom','null-prototype']){
+  if(field==='wetRegion'&&kind==='absent')continue;
+  const bad=structuredClone(c.session),value=field==='wetParty'?{profile:'four-controlled-selected-v1'}:{};
+  if(kind==='absent')Reflect.deleteProperty(bad,field);
+  else if(kind==='custom'||kind==='null-prototype')Object.setPrototypeOf(bad,kind==='custom'?{}:null);
+  else if(kind==='accessor')Object.defineProperty(bad,field,{enumerable:true,get(){reads++;throw Error('OWNER_GET');}});
+  else if(kind==='hidden')Object.defineProperty(bad,field,{enumerable:false,value});
+  else {const v:unknown=kind==='null'?null:kind==='undefined'?undefined:kind==='false'?false:kind==='wrong'?{profile:'wrong'}:kind==='extra'?{...value,extra:1}:Object.defineProperty({},'profile',{enumerable:true,get(){reads++;throw Error('PROFILE_GET');}});Object.defineProperty(bad,field,{enumerable:true,value:v});}
+  expect(()=>stepWetParty(level,bad,c.world,[])).toThrow();expect(reads).toBe(0);
+ }
+ for(const throwing of [false,true]){const old=Object.getOwnPropertyDescriptor(Object.prototype,field);let result;
+  try{Object.defineProperty(Object.prototype,field,{configurable:true,get(){reads++;if(throwing)throw Error('INHERITED_OWNER');return {profile:'conflicting-inherited'};}});result=stepWetParty(level,c.session,c.world,[{mercenaryId:0,action:'turn-right'}]);}
+  finally{if(old)Object.defineProperty(Object.prototype,field,old);else Reflect.deleteProperty(Object.prototype,field);}
+  expect(reads).toBe(0);expect(result!.world.tick).toBe(1);expect(Object.hasOwn(result!.session,'wetRegion')).toBe(false);
+ }
+});
+it.skipIf(!process.env.HIRED_GUNS_T43_CASE_INPUTS)('private nonempty v18 replay keeps both absent and owned extensions descriptor-safe through all four save APIs',async()=>{
+ const m=JSON.parse(await readFile(process.env.HIRED_GUNS_T43_CASE_INPUTS!,'utf8')),raw={map:new Uint8Array(await readFile(m.inputs.map)),roster:new Uint8Array(await readFile(m.inputs.roster)),items:new Uint8Array(await readFile(m.inputs.items))};
+ const {level}=await importEditorMap(raw.map),b=await createTrainingSession(level,raw,[1,3,0,5]),initial=await activateWetParty(level,raw,b.session,b.world,true),stepped=stepWetParty(level,initial.session,initial.world,[{mercenaryId:0,action:'turn-right'}]),c={session:stepped.session,world:stepped.world},json=await exportTrainingSession(level,c.world,c.session,raw);
+ expect(JSON.parse(json).history).toEqual([[0,1,5]]);expect(c.world.tick).toBe(1);expect(Object.hasOwn(c.session,'wetRegion')).toBe(false);
+ const operations=[()=>exportTrainingSession(level,c.world,c.session,raw),()=>exportWetParty(level,raw,c.session,c.world),()=>importTrainingSession(level,raw,json),()=>importWetParty(level,raw,JSON.parse(json))];
+ for(const field of ['wetParty','wetRegion'] as const)for(const throwing of [false,true])for(const phase of [0,1,3,7])for(const operation of operations){
+  const original=Object.getOwnPropertyDescriptor(Object.prototype,field),digest=SubtleCrypto.prototype.digest;let reads=0,calls=0,result:TrainingCandidate|string|undefined;
+  const install=()=>Object.defineProperty(Object.prototype,field,{configurable:true,get(){reads++;if(throwing)throw Error('NONEMPTY_REPLAY_HOOK');return {sideEffectCanary:true};}});
+  try{install();try{Reflect.get({},field);}catch{/* live throwing canary */}expect(reads).toBe(1);reads=0;Reflect.deleteProperty(Object.prototype,field);if(!phase)install();
+   SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){if(++calls===phase)install();return digest.apply(this,args);};result=await operation();
+  }finally{SubtleCrypto.prototype.digest=digest;if(original)Object.defineProperty(Object.prototype,field,original);else Reflect.deleteProperty(Object.prototype,field);}
+  expect(reads).toBe(0);expect(calls).toBe(8);if(typeof result==='string')expect(result).toBe(json);else {expect(result).toEqual(c);expect(serializeWetParty(result!)).toBe(json);}
+ }
 },60000);
