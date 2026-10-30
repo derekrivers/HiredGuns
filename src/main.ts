@@ -38,7 +38,8 @@ import { createWorld, stepWorld } from './sim/world';
 import { teamDead, isDead, createSelectedFallLevel, selectedFallLevel } from './sim/fall';
 import { FourViews } from './render/four-views';
 // Both manual imports and the opt-in local test provider use the raw importer.
-import { importEditorMap } from './import/editor-map';
+import { importSignMap as importEditorMap, type SignSource } from './sim/training-sign';
+import { installTrainingSignPanel } from './training-sign-panel';
 import { exportCheckpoint, importCheckpoint, MAX_CHECKPOINT_BYTES } from './sim/checkpoint';
 import { installRosterPanel, fetchLocalTestResource } from './roster-panel';
 import { MAX_INVENTORY_COMMANDS } from './sim/training-inventory';
@@ -104,6 +105,7 @@ function timeoutRecoveryControl(generation:number):TimeoutRecoveryControl{
 let latestPresetGeneration = 0;
 let session: TrainingSession | null = null;
 let importedMapBytes: Uint8Array | undefined;
+let signSource: SignSource | null = null;
 const sessionSources = () => { const raw=rosterPanel.sources();return raw ? {...raw,map:importedMapBytes} : null; };
 let pendingGateActor: number | null = null;
 let pendingDoorAction: DoorAction = 16;
@@ -115,6 +117,7 @@ const router = new InputRouter(), clock = new FixedClock(), keys = new Set<strin
 const events: string[] = ['READY', 'READY', 'READY', 'READY'];
 const canvas = app.querySelector<HTMLCanvasElement>('canvas')!;
 const panes = [...app.querySelectorAll<HTMLElement>('.view')];
+const signPanel = installTrainingSignPanel(panes);
 const selects = [0, 1, 2, 3].map(i => get<HTMLSelectElement>(`assign-${i}`));
 const rosterHost = document.createElement('div');
 app.querySelector('footer')!.append(rosterHost);
@@ -402,7 +405,7 @@ get('local-test-preset').addEventListener('click', async () => {
       fetchLocalTestResource('map', 157738), fetchLocalTestResource('roster', 16320), fetchLocalTestResource('items', 32604),
     ]);
     if (generation !== loadGeneration) return;
-    const { level: nextLevel, report } = await importEditorMap(map);
+    const { level: nextLevel, report, signSource: nextSignSource } = await importEditorMap(map);
     if (generation !== loadGeneration) return;
     const sources = { roster, items }, indices = [11, 3, 0, 5];
     const [candidate, commitRoster] = await Promise.all([
@@ -414,7 +417,7 @@ get('local-test-preset').addEventListener('click', async () => {
     const nextRenderer = new FourViews(canvas, panes, nextLevel);
     try { commitRoster(); } catch (error) { nextRenderer.dispose(); throw error; }
     renderer?.dispose(); renderer = nextRenderer; graphicsLost = false;
-    level = nextLevel; importedMapBytes = new Uint8Array(map); world = candidate.world;
+    level = nextLevel; signSource = nextSignSource; importedMapBytes = new Uint8Array(map); world = candidate.world;
     session = Object.freeze({ ...candidate.session, encounter });
     extraDiagnostics = `Import report: ${JSON.stringify(report, null, 2)}`;
     events.fill('READY'); loading = false; showSession(); setPaused(true); updateLevelInfo(); updateHud(readPads());
@@ -436,6 +439,7 @@ function setPaused(value: boolean): void {
   inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
 }
 function updateMissionHud(): void {
+  signPanel.refresh({source:signSource,level,world,session,loading});
   const challenge = patrolMissionLevel(level);
   gateHost.querySelector('h3')!.textContent = challenge ? 'Challenge gate · C at the front-cell panel' : 'Authored button / static gate practice';
   get('author-gate').hidden = challenge;
@@ -534,7 +538,7 @@ function updateLevelInfo(): void {
     'Keyboard: forward/back, strafe left/right; Q/E, U/O, comma/period or numpad 7/9 turn. Numbers 1–4 move keyboard A assignment. Keyboard rollover depends on hardware.',
     'Standard gamepads: left stick or D-pad moves/turns; shoulder buttons strafe. Assign each pad above. Press a pad button if the browser has not exposed it yet. Non-standard mappings require future remapping support.',
     'Disconnect stops that controller. Matching index and device ID can reconnect; otherwise reassign. Four physical controllers on the event PC/TV have NOT been tested.',
-    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. Dry gravity and fitness damage are restricted to the synthetic fall drill. Other maps block drops. Selected-team sessions additionally expose paused source inventory and an isolated authored gun encounter beside the live display. The optional authored gate patrol uses a separate overhead placeholder; original enemy combat, sound and campaign travel remain unavailable. Water, pressure pads and lifts remain blocked. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
+    '50 Hz prototype clock; movement repeats at 160 ms while held. Dry directional stairs and bounded static support (stone/stairs below or tree two levels below). Amber blocks mark stairs; shapes remain placeholders. Dry gravity and fitness damage are restricted to the synthetic fall drill. Other maps block drops. Selected-team sessions additionally expose paused source inventory and an isolated authored gun encounter beside the live display. The optional authored gate patrol uses a separate overhead placeholder; original enemy combat, sound and campaign travel remain unavailable. Water is supported only in explicitly enabled source-bound Training43 wet modes, including original99; other maps and unsupported hazards remain blocked. Authored pressure-pad practice is separate; original lifts remain unsupported. Type-0 signs show a derived facing cue; original lettering remains deferred artwork. Unsafe drops and hazard cells are blocked. This is not original timing/behaviour parity. Checkpoints preserve positions, mission state, tick and RNG; they require the exact same map and do not save device assignments.',
     'Mission support is restricted to the exact verified Training43 editor revision and the newly authored extraction drill. Moving into a type-3 exit block retires that mercenary. Cooperative extraction requires all four; Original first-exit race preserves the alive-player source success rule. Source countdown counters borrow after 601 logical ticks. The UI converts this prototype 50 Hz clock to time; original wall-clock parity has not been verified. Unsupported original areas remain blocked, so this proves an extraction route rather than the complete original level.',
     'Dry fall drill: authored empty-inventory profiles, physique/agility 100 and fitness 65535. Source-derived integer damage, first gravity pulse at tick 7 then every 6 ticks, landing damage on the next pulse. No water, actor squash, inventory damage or corpse mutation. This is not an original roster or runtime-parity claim.',
     `Source: ${level.source.revision}; SHA-256: ${level.source.sha256 ?? 'synthetic'}`,
@@ -542,13 +546,13 @@ function updateLevelInfo(): void {
     extraDiagnostics,
   ].filter(Boolean).join('\n\n');
 }
-function installLevel(nextLevel: LevelData, diagnostics = ''): void {
+function installLevel(nextLevel: LevelData, diagnostics = '', nextSignSource: SignSource | null = null): void {
   const nextWorld = createWorld(nextLevel); // Validate before replacing the current working level.
   setPaused(true); session = null; showSession();
   renderer?.dispose(); renderer = null;
   try { renderer = new FourViews(canvas, panes, nextLevel); graphicsLost = false; }
   catch (error) { get<HTMLButtonElement>('play').disabled = true; throw new Error(`WebGL2 unavailable: ${errorText(error)}`); }
-  level = nextLevel; world = nextWorld; extraDiagnostics = diagnostics;
+  level = nextLevel; signSource = nextSignSource; world = nextWorld; extraDiagnostics = diagnostics;
   events.fill('READY'); setPaused(true); updateLevelInfo(); updateHud(readPads());
   get<HTMLButtonElement>('play').disabled = false;
   get('recovery-status').textContent = 'Checkpoints restore team state. Reopen the same map or drill first.';
@@ -624,10 +628,10 @@ get<HTMLInputElement>('map-file').addEventListener('change', async event => {
   try {
     if (file.size !== 157738) throw new Error('Expected a 157,738-byte raw editor .map file. Packed/runtime maps are not supported.');
     const mapBytes=new Uint8Array(await file.arrayBuffer());
-    const { level: imported, report } = await importEditorMap(mapBytes);
+    const { level: imported, report, signSource: nextSignSource } = await importEditorMap(mapBytes);
     if (generation !== loadGeneration) return;
     importedMapBytes=mapBytes;
-    installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`);
+    installLevel(imported, `Import report: ${JSON.stringify(report, null, 2)}`, nextSignSource);
     loading = false; rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
   } catch (error) { if (generation === loadGeneration) get('error').textContent = `Map not loaded: ${errorText(error)}`; }
   finally { if (generation === loadGeneration) { loading = false; updateMissionHud(); rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); } }
