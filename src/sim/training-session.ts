@@ -82,8 +82,8 @@ async function changeInventory(level: LevelData, sources: TrainingSources, sessi
   if (!paused) throw new Error('Pause before changing equipment.');
   if (session.patrol) {
     if (!currentWorld) throw new Error('Patrol inventory requires current world.');
-    const prior = await verifyPatrolSession(level,sources,session,currentWorld);
-    return rebuildPatrolSession(level,sources,session.indices,appendPatrolEvent(prior.session.patrol!,{kind,actor,slot}));
+    const {candidate:prior,map,raw} = await verifyPatrolSession(level,sources,session,currentWorld);
+    return rebuildPatrolSession(map,raw,prior.session.indices,appendPatrolEvent(prior.session.patrol!,{kind,actor,slot}));
   }
   if (session.gate) {
     if (!currentWorld) throw new Error('Gate inventory requires its current world.');
@@ -140,8 +140,8 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
   if (session.patrol) {
-    const candidate = await verifyPatrolSession(level,sources,session,world);
-    return sessionJSON(candidate.session,await exportCheckpoint(effectiveGateLevel(level,candidate.session.gate),candidate.world));
+    const {candidate,map} = await verifyPatrolSession(level,sources,session,world);
+    return sessionJSON(candidate.session,await exportCheckpoint(effectiveGateLevel(map,candidate.session.gate),candidate.world));
   }
   const map = trainingLevel(level);
   const savedWorld = structuredClone(world), encounterState = structuredClone(session.encounter), gateState = structuredClone(session.gate);
@@ -283,10 +283,11 @@ async function rebuildPatrolSession(level: LevelData, sources: TrainingSources, 
   return {session,world:result.world};
 }
 async function verifyPatrolSession(level: LevelData, sources: TrainingSources, session: TrainingSession, world: WorldState) {
-  const saved = structuredClone({session,world}), raw = {roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)};
-  const candidate = await rebuildPatrolSession(level,raw,saved.session.indices,saved.session.patrol);
+  // Own all inputs before hashing; callers reuse these snapshots through the final save/replay.
+  const saved = structuredClone({session,world}), raw = {roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)}, map = trainingLevel(level);
+  const candidate = await rebuildPatrolSession(map,raw,saved.session.indices,saved.session.patrol);
   if (canonical(candidate) !== canonical(saved)) throw new Error('Patrol world/session history mismatch.');
-  return candidate;
+  return {candidate,map,raw};
 }
 /** Explicit setup resets gate/world/inventory/gun to one canonical authored baseline. */
 export async function createPatrolTrainingSession(level: LevelData, sources: TrainingSources, session: TrainingSession, world: WorldState, paused: boolean): Promise<TrainingCandidate> {

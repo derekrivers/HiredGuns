@@ -34,6 +34,7 @@ test('production keyboard gate/patrol occupancy, miss/ammo/defeat, pause/selecti
   await page.clock.runFor(320);expect((await state(page)).patrol.routeIndex).toBe(1);
   await pulse(page,'d');expect((await state(page)).world.mercenaries[0]).toMatchObject({x:4,y:4});await expect(page.locator('#event-0')).toContainText('BLOCKED');
   await page.clock.runFor(240);expect((await state(page)).patrol.routeIndex).toBe(2);
+  await expect(page.locator('#gate-status')).toContainText('Gate occupancy: active NPC');
   await key(page,'2');await pulse(page,'c');await expect(page.locator('#gate-feedback')).toContainText('occupied-target');
   await key(page,'Escape');const openPatrol=await save(page),openState=await state(page);await page.clock.runFor(1000);expect(await state(page)).toEqual(openState);
   await page.locator('#reset').click();await restore(page,openPatrol);expect(await state(page)).toEqual(openState);await expect(page.locator('#run-state')).toHaveText('PAUSED');
@@ -44,9 +45,11 @@ test('production keyboard gate/patrol occupancy, miss/ammo/defeat, pause/selecti
   await page.clock.runFor(1000);await key(page,'t');
   for(let i=0;i<4&&(await state(page)).encounter.fitness>0;i++){await key(page,'f');await page.clock.runFor(1000);}
   shot=await state(page);expect(shot.encounter.fitness).toBe(0);await expect(page.locator('#patrol-status')).toContainText('DEFEATED');
+  await expect(page.locator('#gate-status')).toContainText('Gate occupancy: clear');
   const stopped=shot.patrol;await page.clock.runFor(1000);expect((await state(page)).patrol.routeIndex).toBe(stopped.routeIndex);expect((await state(page)).patrol.counter).toBe(stopped.counter);
   // The designated NPC is defeated; the same gate lane is now traversable.
   await key(page,'1');await pulse(page,'d');await pulse(page,'w');expect((await state(page)).world.mercenaries[0]).toMatchObject({x:5,y:5});
+  await expect(page.locator('#gate-status')).toContainText('Gate occupancy: 1');
   await key(page,'2');await pulse(page,'c');await expect(page.locator('#gate-feedback')).toContainText('occupied-target');await key(page,'Escape');
   await page.locator('#inventory-tools > summary').click();await page.getByLabel('Carried slot for team slot 1').selectOption('0');await page.getByRole('button',{name:'Equip for team slot 1',exact:true}).click();await expect(page.locator('#recovery-status')).toContainText('Equipped');
   const defeated=await save(page),final=await state(page);expect(defeated.commands).toHaveLength(1);await page.locator('#reset').click();expect(await state(page)).toEqual(baseline);await restore(page,defeated);expect(await state(page)).toEqual(final);expect(await save(page)).toEqual(defeated);

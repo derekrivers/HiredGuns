@@ -288,6 +288,46 @@ it.skipIf(!privateInputs)('gate snapshots sources/world/envelope before asynchro
   await expect(importTrainingSession(map,sources,JSON.stringify(saving))).rejects.toThrow();
 });
 
+it.skipIf(!privateInputs)('patrol export retains caller geometry, sources, history and world through canonical restore',async()=>{
+  const {createPatrolTrainingSession}=await import('../src/sim/training-session');
+  const {sources}=await local(), map=createTrainingGateLevel();
+  const base=await createTrainingSession(map,sources,order);
+  const c=await createPatrolTrainingSession(map,sources,base.session,base.world,true);
+  const caller=structuredClone(c), raw=structuredClone(sources);
+  const pending=exportTrainingSession(map,caller.world,caller.session,raw);
+  map.name+=' changed after call';map.layers[0][0] = 0;
+  raw.roster.fill(0);raw.items.fill(0);caller.world.rng++;
+  (caller.session.indices as number[])[0]=1;caller.session.patrol!.history.push({kind:'target'});
+  const saved=await pending;
+  expect(await importTrainingSession(createTrainingGateLevel(),sources,saved)).toEqual(c);
+  await expect(importTrainingSession(createTrainingGateLevel(),raw,saved)).rejects.toThrow();
+});
+
+it.skipIf(!privateInputs).each([
+  ['equip',equipTrainingSession],['exchange',exchangeTrainingSession],['return',returnTrainingSession]
+] as const)('patrol %s owns sources, geometry, indices, history and world before awaiting',async(kind,change)=>{
+  const {createPatrolTrainingSession}=await import('../src/sim/training-session');
+  const {sources}=await local(), map=createTrainingGateLevel();
+  const base=await createTrainingSession(map,sources,order);
+  let c=await createPatrolTrainingSession(map,sources,base.session,base.world,true);
+  if(kind!=='equip')c=await equipTrainingSession(map,sources,c.session,0,0,true,c.world);
+  const expected=await change(map,sources,c.session,0,0,true,c.world);
+  const caller=structuredClone(c), raw=structuredClone(sources);
+  const pending=change(map,raw,caller.session,0,0,true,caller.world);
+  raw.items.fill(0);raw.roster.fill(0);map.name+=' changed after call';map.layers[0][0] = 0;
+  (caller.session.indices as number[]).reverse();caller.session.patrol!.history.push({kind:'target'});
+  caller.world.rng++;caller.session.inventory.commands.length=0;
+  // Any late read of the caller's source/indices would execute these accessors.
+  let reads=0;
+  Object.defineProperty(raw,'items',{get(){reads++;throw new Error('late source read');}});
+  Object.defineProperty(caller.session,'indices',{get(){reads++;throw new Error('late indices read');}});
+  const result=await pending;
+  expect(reads).toBe(0);expect(result).toEqual(expected);
+  expect(await importTrainingSession(createTrainingGateLevel(),sources,await exportTrainingSession(createTrainingGateLevel(),result.world,result.session,sources))).toEqual(expected);
+  const wrong={...sources,items:new Uint8Array(sources.items.length)};
+  await expect(change(createTrainingGateLevel(),wrong,c.session,0,0,true,c.world)).rejects.toThrow();
+});
+
 it.skipIf(!privateInputs)('patrol v10 replays source-bound chronological gate, NPC, full encounter, inventory and checkpoint receipts atomically',async()=>{
   const {createPatrolTrainingSession,commandPatrolEncounter}=await import('../src/sim/training-session');
   const {patrolPosition}=await import('../src/world/training-patrol');

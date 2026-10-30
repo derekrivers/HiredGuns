@@ -4,6 +4,7 @@ import type { LevelData } from './contracts';
 import type { TrainingSession } from './sim/training-session';
 import { GATE_PANEL, GATE_TARGET, MAX_GATE_HISTORY } from './world/training-gate';
 import { DIRECTIONS } from './sim/world';
+import { patrolPosition } from './world/training-patrol';
 
 export function installTrainingGatePanel(host: HTMLElement, current: () => TrainingSession | null, world: () => WorldState, level: () => LevelData,
   available: () => boolean, paused: () => boolean, setup: () => Promise<void>) {
@@ -20,7 +21,10 @@ export function installTrainingGatePanel(host: HTMLElement, current: () => Train
     host.hidden = !session;
     get<HTMLButtonElement>('author-gate').disabled = !available() || !paused() || !!gate || !!session?.ground || selectedFallLevel(level());
     const p = world().mercenaries[actor]!;
-    const text = gate ? `${paused() ? 'PAUSED — start navigation for C' : 'RUNNING'} | ${gate.overlay.word & 2 ? 'CLOSED — blocks movement' : 'OPEN — walk through'} | WASD slot ${actor + 1}: ${session!.names[actor]} at ${p.x},${p.y},${p.z} | ${near(actor) ? 'Panel in front — C activates' : 'Face panel from 4,4 east or 6,4 west'} | Gate occupancy: ${world().mercenaries.filter(p => p.x === GATE_TARGET.x && p.y === GATE_TARGET.y && p.z === GATE_TARGET.z).map(p => p.id + 1).join(', ') || 'clear'} | Replay ${gate.history.length}/${MAX_GATE_HISTORY}` : 'No gate practice. Pause a fresh selected-team Training43 session, then set up the authored arena.';
+    const occupants = world().mercenaries.filter(p => p.x === GATE_TARGET.x && p.y === GATE_TARGET.y && p.z === GATE_TARGET.z).map(p => String(p.id + 1));
+    const npc = session?.patrol && session.encounter && session.encounter.fitness > 0 ? patrolPosition(session.patrol) : null;
+    if (npc && npc.x === GATE_TARGET.x && npc.y === GATE_TARGET.y && npc.z === GATE_TARGET.z) occupants.push('active NPC');
+    const text = gate ? `${paused() ? 'PAUSED — start navigation for C' : 'RUNNING'} | ${gate.overlay.word & 2 ? 'CLOSED — blocks movement' : 'OPEN — walk through'} | WASD slot ${actor + 1}: ${session!.names[actor]} at ${p.x},${p.y},${p.z} | ${near(actor) ? 'Panel in front — C activates' : 'Face panel from 4,4 east or 6,4 west'} | Gate occupancy: ${occupants.join(', ') || 'clear'} | Replay ${gate.history.length}/${MAX_GATE_HISTORY}` : 'No gate practice. Pause a fresh selected-team Training43 session, then set up the authored arena.';
     if (text !== last) {
       last = text; const status = get('gate-status'); status.replaceChildren();
       Object.assign(status.style,{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:'6px 16px'});
