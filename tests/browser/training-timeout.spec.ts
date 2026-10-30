@@ -11,9 +11,22 @@ async function selected(page:Page,activate=true){
  await page.locator('#roster-apply').focus();await page.keyboard.press('Enter');await expect(page.locator('#recovery-status')).toContainText('Selected team applied');
  if(activate){await page.locator('#timeout-enable').focus();await page.keyboard.press('Enter');await expect(page.locator('#timeout-feedback')).toContainText('enabled');await expect(page.locator('#training-wet-lifecycle')).toBeHidden();}
 }
-let checkpointNumber=0;
-async function save(page:Page,name='checkpoint-'+(++checkpointNumber)){const download=page.waitForEvent('download',{timeout:120000});await page.locator('#save-checkpoint').click();const text=await readFile((await (await download).path())!,'utf8');await writeFile(test.info().outputPath(name+'.json'),text);return text;}
-async function restore(page:Page,text:string){await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'timeout.json',mimeType:'application/json',buffer:Buffer.from(text)});await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored',{timeout:120000});await expect(page.locator('#pause-overlay')).toBeVisible();await expect(page.locator('#run-state')).toHaveText(JSON.parse(text).checkpoint.world.mission.outcome==='active'?'PAUSED':'FINISHED');}
+let checkpointNumber=0,recoveryObservationNumber=0;
+async function observeFullRecovery(page:Page){
+ await page.evaluate(()=>{const w=window as unknown as {fullObserver:{timer:ReturnType<typeof setInterval>;observer:PerformanceObserver;gaps:number[];tasks:number[];start:number}},gaps:number[]=[],tasks:number[]=[];let last=performance.now();const observer=new PerformanceObserver(list=>tasks.push(...list.getEntries().map(e=>e.duration)));observer.observe({entryTypes:['longtask']});w.fullObserver={start:performance.now(),gaps,tasks,observer,timer:setInterval(()=>{const now=performance.now();gaps.push(now-last);last=now;},25)};});
+}
+async function finishFullRecovery(page:Page,operation:string){
+ const observation=await page.evaluate(()=>{const o=(window as unknown as {fullObserver:{timer:ReturnType<typeof setInterval>;observer:PerformanceObserver;gaps:number[];tasks:number[];start:number}}).fullObserver;clearInterval(o.timer);o.observer.disconnect();return {totalMs:performance.now()-o.start,maxGapMs:Math.max(0,...o.gaps),maxNativeLongTaskMs:Math.max(0,...o.tasks),gaps:o.gaps,tasks:o.tasks};});
+ await writeFile(test.info().outputPath(`full-${operation}-${++recoveryObservationNumber}.json`),JSON.stringify(observation,null,2));expect(observation.maxGapMs).toBeLessThan(1000);expect(observation.maxNativeLongTaskMs).toBeLessThan(1000);
+}
+async function save(page:Page,name='checkpoint-'+(++checkpointNumber)){
+ const full=/tick 5949[89]/.test(await page.locator('#tick').textContent()??'');if(full)await observeFullRecovery(page);
+ const download=page.waitForEvent('download',{timeout:120000});await page.locator('#save-checkpoint').click();const text=await readFile((await (await download).path())!,'utf8');await writeFile(test.info().outputPath(name+'.json'),text);if(full)await finishFullRecovery(page,'save');return text;
+}
+async function restore(page:Page,text:string){
+ const full=JSON.parse(text).checkpoint.world.tick>=59498;if(full)await observeFullRecovery(page);
+ await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'timeout.json',mimeType:'application/json',buffer:Buffer.from(text)});await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored',{timeout:120000});await expect(page.locator('#pause-overlay')).toBeVisible();await expect(page.locator('#run-state')).toHaveText(JSON.parse(text).checkpoint.world.mission.outcome==='active'?'PAUSED':'FINISHED');if(full)await finishFullRecovery(page,'load');
+}
 test('original99 timeout setup explains full chronology and is keyboard accessible',async({page})=>{
  await page.goto('/');await expect(page.locator('#timeout-enable')).toBeDisabled();await expect(page.locator('#training-timeout')).toContainText('59,499 full fixed steps');await expect(page.locator('#training-timeout')).toContainText('original CPU timing is unproven');
 });
@@ -100,10 +113,51 @@ for(const cancel of ['retry','source-clear'])for(const reject of [false,true])te
  let observation;try{
   await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'long-before.json',mimeType:'application/json',buffer:Buffer.from(canonical)});await expect.poll(()=>page.evaluate(()=>(window as unknown as {held:boolean}).held)).toBe(true);
   const loading=await page.evaluate(()=>({runState:document.querySelector('#run-state')!.textContent,playDisabled:(document.querySelector('#play') as HTMLButtonElement).disabled,saveDisabled:(document.querySelector('#save-checkpoint') as HTMLButtonElement).disabled,tick:document.querySelector('#tick')!.textContent}));
+  expect(loading.playDisabled).toBe(true);expect(loading.saveDisabled).toBe(true);
   let downloads=0;const downloaded=()=>downloads++;page.on('download',downloaded);if(!loading.playDisabled)await page.locator('#play').click();await key(page,'e');if(!loading.saveDisabled)await page.locator('#save-checkpoint').click();await page.waitForTimeout(60);page.off('download',downloaded);expect(downloads).toBe(0);await expect(page.locator('#run-state')).toHaveText('PAUSED');
   if(cancel==='retry')await page.locator('#reset').click();else await page.locator('#items-clear').click();const current=await save(page,'long-current'),status=await page.locator('#recovery-status').textContent(),error=await page.locator('#error').textContent();
-  await page.evaluate(()=>(window as unknown as {release:()=>void}).release());if(reject)await expect.poll(()=>page.evaluate(()=>(window as unknown as {rejected:boolean}).rejected)).toBe(true);else await expect.poll(()=>page.evaluate(()=>(window as unknown as {matches:number}).matches),{timeout:120000}).toBe(2);await page.waitForTimeout(60);
+  await page.evaluate(()=>(window as unknown as {release:()=>void}).release());if(reject)await expect.poll(()=>page.evaluate(()=>(window as unknown as {rejected:boolean}).rejected)).toBe(true);else {await expect.poll(()=>page.evaluate(()=>(window as unknown as {releasedAt:number}).releasedAt)).toBeGreaterThan(0);expect(await page.evaluate(()=>(window as unknown as {matches:number}).matches)).toBe(0);}await page.waitForTimeout(60);
   expect(await page.locator('#recovery-status').textContent()).toBe(status);expect(await page.locator('#error').textContent()).toBe(error);expect(await save(page,'long-after')).toBe(current);
   observation=await page.evaluate(()=>{const w=window as unknown as {matches:number;rejected:boolean;maxGap:number;releasedAt:number;serializedAt:number};return {matches:w.matches,rejected:w.rejected,maxSynchronousGapMs:w.maxGap,reconstructionAfterReleaseMs:w.serializedAt?w.serializedAt-w.releasedAt:null};});await writeFile(test.info().outputPath('long-reconstruction.json'),JSON.stringify({cancel,reject,loading,observation,errors},null,2));expect(errors).toEqual([]);
  }finally{await page.evaluate(()=>(window as unknown as {restore:()=>void}).restore());}
+});
+
+interface NativeRecoveryObservation {gaps:number[];tasks:{start:number;duration:number}[];progress:{at:number;processed:number;total:number}[];transitions:{at:number;status:string}[];scheduledAt:number;firedAt:number;processedAtSchedule:number;processedAtCancel:number;completed:boolean;timer:ReturnType<typeof setInterval>;observer:PerformanceObserver;mutation:MutationObserver;controls?:{play:boolean;save:boolean;load:boolean};}
+// Native task observers are deliberately independent of digest holds: cancellation
+// is delivered by a browser timer while the real per-tick CPU replay is running.
+for(const tick of [59498,59499])for(const cancel of ['retry','source-clear'] as const)for(const operation of ['load','save'] as const)test(`cooperative native ${operation} ${tick} during replay / ${cancel}`,async({page})=>{
+ test.skip(!privateInputs||!process.env.HIRED_GUNS_TIMEOUT_BEFORE||!process.env.HIRED_GUNS_TIMEOUT_TERMINAL,'Private full native-derived chronology required');test.setTimeout(240000);
+ const canonical=await readFile(tick===59498?process.env.HIRED_GUNS_TIMEOUT_BEFORE!:process.env.HIRED_GUNS_TIMEOUT_TERMINAL!,'utf8');expect(JSON.parse(canonical).checkpoint.world.tick).toBe(tick);
+ await selected(page);const initial=await save(page,'native-initial');if(operation==='save')await restore(page,canonical);
+ let downloads=0;page.on('download',()=>downloads++);
+ await page.evaluate(({cancel})=>{
+  const w=window as unknown as {native:NativeRecoveryObservation};const o=w.native={gaps:[],tasks:[],progress:[],transitions:[],scheduledAt:0,firedAt:0,processedAtSchedule:0,processedAtCancel:0,completed:false} as unknown as NativeRecoveryObservation;let last=performance.now();
+  o.timer=setInterval(()=>{const now=performance.now();o.gaps.push(now-last);last=now;},25);
+  o.observer=new PerformanceObserver(list=>o.tasks.push(...list.getEntries().map(e=>({start:e.startTime,duration:e.duration}))));o.observer.observe({entryTypes:['longtask']});
+  o.mutation=new MutationObserver(()=>{
+   const status=document.querySelector('#recovery-status')!.textContent!;o.transitions.push({at:performance.now(),status});
+   const match=/Reconstructing checkpoint: (\d+) \/ (\d+) ticks/.exec(status);
+   if(match){const processed=Number(match[1]),total=Number(match[2]);o.progress.push({at:performance.now(),processed,total});if(processed===total)o.completed=true;
+    if(processed>=128&&!o.scheduledAt){o.scheduledAt=performance.now();o.processedAtSchedule=processed;setTimeout(()=>{
+     o.firedAt=performance.now();o.processedAtCancel=o.progress.at(-1)!.processed;
+     o.controls={play:(document.querySelector('#play')as HTMLButtonElement).disabled,save:(document.querySelector('#save-checkpoint')as HTMLButtonElement).disabled,load:(document.querySelector('#checkpoint-file')as HTMLInputElement).disabled};
+     (document.querySelector(cancel==='retry'?'#reset':'#items-clear')as HTMLButtonElement).click();
+    },250);}
+   }
+  });o.mutation.observe(document.querySelector('#recovery-status')!,{childList:true,subtree:true,characterData:true});
+ },{cancel});
+ if(operation==='load')await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'native-full.json',mimeType:'application/json',buffer:Buffer.from(canonical)});else await page.locator('#save-checkpoint').click();
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {native:NativeRecoveryObservation}).native.firedAt),{timeout:30000}).toBeGreaterThan(0);
+ await expect(page.locator('#tick')).toContainText('tick 0');await page.waitForTimeout(200);
+ const status=await page.locator('#recovery-status').textContent(),error=await page.locator('#error').textContent();
+ const observed=await page.evaluate(()=>{const o=(window as unknown as {native:NativeRecoveryObservation}).native;clearInterval(o.timer);o.observer.disconnect();o.mutation.disconnect();const {timer:_,observer:__,mutation:___,...result}=o;void _;void __;void ___;return result;});
+ expect(observed.completed).toBe(false);expect(observed.processedAtCancel).toBeGreaterThanOrEqual(128);expect(observed.processedAtCancel).toBeLessThan(tick);expect(observed.controls).toEqual({play:true,save:true,load:true});
+ expect(observed.firedAt-observed.scheduledAt).toBeLessThan(1000);expect(Math.max(...observed.gaps)).toBeLessThan(1000);
+ expect(observed.tasks.every((x:{duration:number})=>x.duration<1000)).toBe(true);expect(downloads).toBe(0);expect(error).toBe('');expect(observed.transitions.some((x:{status:string})=>x.status.includes('Checkpoint restored')||x.status.includes('Checkpoint exported'))).toBe(false);
+ for(let i=1;i<observed.progress.length;i++)expect(observed.progress[i]!.processed-observed.progress[i-1]!.processed).toBeLessThanOrEqual(16);
+ // No further obsolete progress, installation, error or finally/control writes.
+ await page.waitForTimeout(150);expect(await page.locator('#recovery-status').textContent()).toBe(status);expect(await page.locator('#error').textContent()).toBe(error);
+ const current=await save(page,'native-current');if(cancel==='retry')expect(current).toBe(initial);else expect(JSON.parse(current).world).toEqual(createWorld(createDemoLevel()));
+ await expect(page.locator('#play')).toBeEnabled();await expect(page.locator('#save-checkpoint')).toBeEnabled();await expect(page.getByLabel('Load navigation checkpoint')).toBeEnabled();
+ await writeFile(test.info().outputPath('native-cooperative.json'),JSON.stringify({tick,cancel,operation,...observed,maxGap:Math.max(...observed.gaps),timerDelay:observed.firedAt-observed.scheduledAt},null,2));
 });

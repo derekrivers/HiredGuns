@@ -15,6 +15,17 @@ export const TIMEOUT_PROFILE='four-controlled-timeout-v1';
 // These v19-only constants are independently pinned to original99 x 601 and
 // the existing strict24KiB format contract; tests compare both authorities.
 export const TIMEOUT_LIMITS=Object.freeze({ticks:99*601,packed:256,expanded:513,bytes:24*1024});
+/** Runtime UI ownership only; never participates in saved state or legacy dispatch. */
+export interface TimeoutRecoveryControl {
+ isCurrent:()=>boolean;
+ onProgress?:(progress:Readonly<{phase:'verifying'|'replaying';processed:number;total:number}>)=>void;
+}
+function runtime(control?:TimeoutRecoveryControl){
+ // Capture callback references once, after all authoritative input snapshots.
+ const current=control?.isCurrent,progress=control?.onProgress;
+ const check=()=>{if(current&&!current())throw Error('Source timeout reconstruction cancelled.');};
+ return {check,report(phase:'verifying'|'replaying',processed:number,total:number){check();progress?.(Object.freeze({phase,processed,total}));check();}};
+}
 const actions:Action[]=['forward','backward','strafe-left','strafe-right','turn-left','turn-right'];
 const fail=(why:string):never=>{throw Error(`Source timeout refused atomically: ${why}`);};
 /** UI/dispatch discriminator. Absent, hidden, accessor and inherited values are never read. */
@@ -96,24 +107,47 @@ export function replayTimeout(level:LevelData,baseline:TrainingSession,races:num
  for(const e of history)for(let n=0;n<e.count;n++){if(c.world.mission.outcome!=='active')fail('history after terminal');const r=stepTimeout(level,c.session,c.world,e.commands,false);c={session:r.session,world:r.world};}
  c.session.wet!.history=history;serializeOwnedTimeout(c);return c;
 }
-async function rebuild(level:LevelData,sources:TrainingSources,indices:readonly number[],rules:MissionRules,input:unknown):Promise<TrainingCandidate>{
- const map=wetSnapshot(level),chosen=wetSnapshot(indices),r=wetSnapshot(rules),history=encodeTimeoutHistory(decodeTimeoutHistory(input)),raw=rawSnapshot(sources);policy(r);
- const imported=await importEditorMap(raw.map);if(imported.level.source.sha256!==TRAINING_43_SHA256||!equal(imported.level,map))fail('raw map identity/geometry');
- const baseline=await createTrainingSession(imported.level,raw,chosen),roster=await importCharacters(raw.roster);
- return replayTimeout(imported.level,baseline.session,chosen.map(i=>roster.records[i]!.race),r,history);
+/** Same full transition as the synchronous reference, with real event-task yields.
+ * A single tick is indivisible; each chunk stops after 16 ticks or 8ms, whichever
+ * comes first. No saved/raw authority is exposed to runtime callbacks. */
+export async function replayTimeoutAsync(level:LevelData,baseline:TrainingSession,races:number[],rules:MissionRules,input:unknown,control?:TimeoutRecoveryControl):Promise<TrainingCandidate>{
+ const map=wetSnapshot(level),saved=wetSnapshot({baseline,races,rules}),history=decodeTimeoutHistory(input);
+ return replayOwnedTimeoutAsync(map,saved.baseline,saved.races,saved.rules,history,runtime(control));
 }
-export async function activateTimeout(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState,paused:boolean):Promise<TrainingCandidate>{
+async function replayOwnedTimeoutAsync(level:LevelData,baseline:TrainingSession,races:number[],rules:MissionRules,history:WetEvent[],run:ReturnType<typeof runtime>):Promise<TrainingCandidate>{
+ run.check();let c=initialTimeout(level,baseline,races,rules),processed=0,chunk=0,start=performance.now();
+ const total=history.reduce((n,e)=>n+e.count,0);run.report('replaying',0,total);
+ for(const e of history)for(let n=0;n<e.count;n++){
+  run.check();if(c.world.mission.outcome!=='active')fail('history after terminal');
+  const r=stepTimeout(level,c.session,c.world,e.commands,false);c={session:r.session,world:r.world};processed++;chunk++;
+  if(chunk>=16||performance.now()-start>=8){
+   run.report('replaying',processed,total);
+   await new Promise<void>(resolve=>setTimeout(resolve,0));run.check();chunk=0;start=performance.now();
+  }
+ }
+ run.check();c.session.wet!.history=history;serializeOwnedTimeout(c);run.report('replaying',processed,total);return c;
+}
+async function rebuild(level:LevelData,sources:TrainingSources,indices:readonly number[],rules:MissionRules,input:unknown,control?:TimeoutRecoveryControl):Promise<{candidate:TrainingCandidate;check:()=>void}>{
+ const map=wetSnapshot(level),chosen=wetSnapshot(indices),r=wetSnapshot(rules),history=encodeTimeoutHistory(decodeTimeoutHistory(input)),raw=rawSnapshot(sources);policy(r);
+ const run=runtime(control),decoded=decodeTimeoutHistory(history);run.report('verifying',0,decoded.reduce((n,e)=>n+e.count,0));
+ const imported=await importEditorMap(raw.map);run.check();if(imported.level.source.sha256!==TRAINING_43_SHA256||!equal(imported.level,map))fail('raw map identity/geometry');
+ const baseline=await createTrainingSession(imported.level,raw,chosen);run.check();
+ const roster=await importCharacters(raw.roster);run.check();
+ const candidate=await replayOwnedTimeoutAsync(imported.level,baseline.session,chosen.map(i=>roster.records[i]!.race),r,decoded,run);run.check();
+ return {candidate,check:run.check};
+}
+export async function activateTimeout(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState,paused:boolean,control?:TimeoutRecoveryControl):Promise<TrainingCandidate>{
  const saved=wetSnapshot({session,world});
  if(!paused||saved.world.tick!==0||saved.session.wet||Object.getOwnPropertyDescriptor(saved.session,'wetParty')||Object.getOwnPropertyDescriptor(saved.session,'wetRegion')||saved.session.gate||saved.session.ground||saved.session.consumables||saved.session.inventory.commands.length)fail('fresh paused selected team required');
- return rebuild(level,sources,saved.session.indices,saved.world.mission.rules,[]);
+ const {candidate,check}=await rebuild(level,sources,saved.session.indices,saved.world.mission.rules,[],control);check();return candidate;
 }
-export async function exportTimeout(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState):Promise<string>{
+export async function exportTimeout(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState,control?:TimeoutRecoveryControl):Promise<string>{
  const saved=wetSnapshot({session,world});owner(saved.session);
- const c=await rebuild(level,sources,saved.session.indices,saved.session.wet!.rules,encodeTimeoutHistory(saved.session.wet!.history));
- if(!equal(c,saved))fail('complete source/history/outcome mismatch');return serializeOwnedTimeout(c);
+ const {candidate:c,check}=await rebuild(level,sources,saved.session.indices,saved.session.wet!.rules,encodeTimeoutHistory(saved.session.wet!.history),control);
+ check();if(!equal(c,saved))fail('complete source/history/outcome mismatch');check();return serializeOwnedTimeout(c);
 }
-export async function importTimeout(level:LevelData,sources:TrainingSources,input:unknown):Promise<TrainingCandidate>{
+export async function importTimeout(level:LevelData,sources:TrainingSources,input:unknown,control?:TimeoutRecoveryControl):Promise<TrainingCandidate>{
  const s=wetSnapshot(input) as ReturnType<typeof JSON.parse>;
  if(!s||Object.keys(s).sort().join(',')!=='checkpoint,format,history,indices,rules,scenario,sources,version'||s.format!=='hired-guns-training-session'||s.version!==19||s.scenario!==TIMEOUT_SCENARIO)fail('wrapper fields');
- const c=await rebuild(level,sources,s.indices,s.rules,s.history);if(!equal(JSON.parse(serializeOwnedTimeout(c)),s))fail('source/history/full checkpoint comparison');return c;
+ const {candidate:c,check}=await rebuild(level,sources,s.indices,s.rules,s.history,control);check();if(!equal(JSON.parse(serializeOwnedTimeout(c)),s))fail('source/history/full checkpoint comparison');check();return c;
 }

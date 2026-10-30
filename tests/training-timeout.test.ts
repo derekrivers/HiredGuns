@@ -1,6 +1,6 @@
 import {expect,it} from 'vitest';
 import {readFile,writeFile} from 'node:fs/promises';
-import {encodeTimeoutHistory,decodeTimeoutHistory,TIMEOUT_LIMITS,activateTimeout,exportTimeout,importTimeout,stepTimeout,replayTimeout,serializeTimeout,hasTimeoutProfile} from '../src/sim/training-timeout';
+import {encodeTimeoutHistory,decodeTimeoutHistory,TIMEOUT_LIMITS,activateTimeout,exportTimeout,importTimeout,stepTimeout,replayTimeout,serializeTimeout,hasTimeoutProfile,replayTimeoutAsync} from '../src/sim/training-timeout';
 import {WET_LIMITS,wetSnapshot} from '../src/sim/training-wet';
 import {encodePartyHistory,decodePartyHistory,activateWetParty} from '../src/sim/training-wet-party';
 import {sourceClockAtTick,sourcePartyDecision,resolveSelectedPartyMission,SOURCE_CLOCK_PERIOD} from '../src/sim/mission';
@@ -76,6 +76,7 @@ it.skipIf(!inputs)('private full original99 chronology, independent dry body/cou
  const {raw,level,base,races,c:initial}=await actual();expect(races).toEqual([0,0,3,4]);expect(initial.world.mission.rules.timeLimit).toBe(99);
  for(const p of initial.world.mercenaries)expect(level.layers[0][cellIndex(level,p)]!&4).toBe(0);
  const start=performance.now(),before=replayTimeout(level,base.session,races,initial.world.mission.rules,[[59498,0]]),replayMs=performance.now()-start;
+ const chunkedBefore=await replayTimeoutAsync(level,base.session,races,initial.world.mission.rules,[[59498,0]]);expect(chunkedBefore).toEqual(before);expect(serializeTimeout(chunkedBefore)).toBe(serializeTimeout(before));
  expect(before.world.mission).toMatchObject({outcome:'active',clock:{tens:0,units:1,subticks:0}});expect(before.session.wet!.drownCounter).toBe(48);expect(before.session.wet!.fallCounter).toBe(2);
  const terminal=stepTimeout(level,before.session,before.world,[]);expect(terminal.world.tick).toBe(59499);expect(terminal.world.mission).toMatchObject({outcome:'failed',reason:'time-expired',clock:{tens:0,units:0,subticks:600}});
  for(let id=0;id<4;id++){
@@ -83,6 +84,7 @@ it.skipIf(!inputs)('private full original99 chronology, independent dry body/cou
   for(let n=0;n<1189;n++){const r=transitionImmersion({actor:body,cellLong:level.layers[0][cellIndex(level,initial.world.mercenaries[id]!)]!,items:initial.session.items});body=r.candidate;if(r.inventoryStatus==='processed')processed++;}
   expect(terminal.session.wet!.actors[id]!.body).toEqual(body);expect(terminal.session.wet!.actors[id]!.itemPasses).toBe(processed);expect(processed).toBe(0);
  }
+ const chunkedTerminal=await replayTimeoutAsync(level,base.session,races,initial.world.mission.rules,[[59499,0]]);expect(chunkedTerminal).toEqual({session:terminal.session,world:terminal.world});expect(serializeTimeout(chunkedTerminal)).toBe(serializeTimeout(terminal));expect(stepTimeout(level,chunkedBefore.session,chunkedBefore.world,[]).events).toEqual(terminal.events);
  const frozen=structuredClone(terminal);expect(stepTimeout(level,terminal.session,terminal.world,[{mercenaryId:0,action:'forward'}])).toMatchObject({session:frozen.session,world:frozen.world,events:[]});
  const exportStart=performance.now(),json=await exportTrainingSession(level,terminal.world,terminal.session,raw),exportMs=performance.now()-exportStart;
  expect(Buffer.byteLength(json)).toBeLessThan(24576);const importStart=performance.now();expect(await importTrainingSession(level,raw,json)).toEqual({session:terminal.session,world:terminal.world});const importMs=performance.now()-importStart;
@@ -90,7 +92,9 @@ it.skipIf(!inputs)('private full original99 chronology, independent dry body/cou
  expect(()=>replayTimeout(level,base.session,races,initial.world.mission.rules,[[59500,0]])).toThrow();
  const tamper=JSON.parse(json);tamper.checkpoint.state.actors[0].body.fitness--;await expect(importTrainingSession(level,raw,JSON.stringify(tamper))).rejects.toThrow();
  if(process.env.HIRED_GUNS_TIMEOUT_EVIDENCE){await writeFile(process.env.HIRED_GUNS_TIMEOUT_EVIDENCE,JSON.stringify({replayMs,exportMs,importMs,bytes:Buffer.byteLength(json),cells:level.layers[0].length,terminal:JSON.parse(json)},null,2));await writeFile(process.env.HIRED_GUNS_TIMEOUT_EVIDENCE+'.before.json',serializeTimeout(before));await writeFile(process.env.HIRED_GUNS_TIMEOUT_EVIDENCE+'.terminal.json',json);}
-},600000);
+// Six full source intervals now include both asynchronous reference comparisons.
+// Preserve the prior per-interval allowance: 600s * 6/4 = 900s.
+},900000);
 it.skipIf(!inputs)('private baseline/active ownership, call-time source capture, malformed data and complete v18 compatibility',async()=>{
  const {raw,level,base,c}=await actual(),moved=stepTimeout(level,c.session,c.world,[{mercenaryId:0,action:'turn-right'}]),json=await exportTimeout(level,raw,moved.session,moved.world);
  expect(await importTimeout(level,raw,JSON.parse(json))).toEqual({session:moved.session,world:moved.world});
@@ -111,4 +115,24 @@ it.skipIf(!inputs)('private baseline/active ownership, call-time source capture,
  const prior=structuredClone(c);prior.world.tick=59499;expect(()=>stepTimeout(level,prior.session,prior.world,[])).toThrow('future tick');expect(prior.world.tick).toBe(59499);expect(c.world.tick).toBe(0);
  const custom=Object.create({version:19});await expect(importTimeout(level,raw,custom)).rejects.toThrow();
  expect(resetTrainingInventory(base.session,level).indices).toEqual([1,3,0,5]);
+},60000);
+
+it.skipIf(!inputs)('cooperative replay owns inputs before callbacks and yields; cancellation stops within a chunk',async()=>{
+ const {level,base,races,c}=await actual(),rules=c.world.mission.rules;
+ const expected=replayTimeout(level,base.session,races,rules,[[32,0]]),map=structuredClone(level),baseline=structuredClone(base.session),rs=[...races],r=structuredClone(rules),history=[[32,0]];
+ const pending=replayTimeoutAsync(map,baseline,rs,r,history,{isCurrent:()=>true,onProgress:()=>{map.layers[0].fill(0);Object.assign(baseline,{indices:[0,0,0,0]});rs.fill(99);r.timeLimit=1;history[0]![0]=59500;}});
+ expect(await pending).toEqual(expected);
+
+ const canaryControl={get isCurrent():()=>boolean{throw Error('LEGACY_CONTROL_READ');}};const legacy=await exportTrainingSession(level,base.world,base.session,(await actual()).raw,canaryControl);expect(await importTrainingSession(level,(await actual()).raw,legacy,canaryControl)).toEqual(base);
+ const canonical=serializeTimeout(expected);
+ for(const entry of ['direct-export','public-export','direct-import','public-import'] as const){
+  const bytes=structuredClone((await actual()).raw),suppliedLevel=structuredClone(level),caller=structuredClone(expected),wrapper=JSON.parse(canonical);let yielded=false;
+  const control={isCurrent:()=>true,onProgress:(p:{phase:string;processed:number})=>{if(p.phase==='replaying'&&p.processed>0){yielded=true;for(const k of ['map','roster','items'] as const)bytes[k].fill(0);suppliedLevel.layers[0].fill(0);caller.world.tick=59500;caller.session.wet!.actors[0]!.body.fitness=0;wrapper.checkpoint.world.tick=59500;}}};
+  const result=entry==='direct-export'?await exportTimeout(suppliedLevel,bytes,caller.session,caller.world,control):entry==='public-export'?await exportTrainingSession(suppliedLevel,caller.world,caller.session,bytes,control):entry==='direct-import'?await importTimeout(suppliedLevel,bytes,wrapper,control):await importTrainingSession(suppliedLevel,bytes,canonical,control);
+  expect(yielded).toBe(true);if(typeof result==='string')expect(result).toBe(canonical);else expect(result).toEqual(expected);
+ }
+ let current=true,processed=0,timerRan=false;
+ const cancelled=replayTimeoutAsync(level,base.session,races,rules,[[59499,0]],{isCurrent:()=>current,onProgress:p=>{processed=p.processed;if(p.processed>0)setTimeout(()=>{timerRan=true;current=false;},0);}});
+ await expect(cancelled).rejects.toThrow('cancelled');expect(timerRan).toBe(true);expect(processed).toBeGreaterThan(0);expect(processed).toBeLessThanOrEqual(16);
+ let reports=0;await expect(replayTimeoutAsync(level,base.session,races,rules,[[59499,0]],{isCurrent:()=>false,onProgress:()=>reports++})).rejects.toThrow('cancelled');expect(reports).toBe(0);
 },60000);

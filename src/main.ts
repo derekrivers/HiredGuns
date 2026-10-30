@@ -1,4 +1,4 @@
-import {activateTimeout,stepTimeout,hasTimeoutProfile} from './sim/training-timeout';
+import {activateTimeout,stepTimeout,hasTimeoutProfile,type TimeoutRecoveryControl} from './sim/training-timeout';
 import {installTrainingTimeoutPanel} from './training-timeout-panel';
 import { activateWetParty, stepWetParty } from './sim/training-wet-party';
 import { hasOwnWetParty, installTrainingWetPartyPanel } from './training-wet-party-panel';
@@ -89,6 +89,18 @@ let level = createDemoLevel(), world = createWorld(level);
 let renderer: FourViews | null = null;
 let graphicsLost = false;
 let paused = true, loading = false, loadGeneration = 0;
+let timeoutRecoveryGeneration:number|null=null;
+function timeoutRecoveryControl(generation:number):TimeoutRecoveryControl{
+ return {isCurrent:()=>generation===loadGeneration,onProgress:progress=>{
+  if(generation!==loadGeneration)return;
+  const began=timeoutRecoveryGeneration!==generation;
+  timeoutRecoveryGeneration=generation;
+  get('recovery-status').textContent=progress.phase==='verifying'
+   ? 'Verifying all recovery sources. Start, Save and Load are unavailable. Retry, change rules or clear sources to cancel.'
+   : `Reconstructing checkpoint: ${progress.processed} / ${progress.total} ticks processed. Start, Save and Load are unavailable. Retry, change rules or clear sources to cancel.`;
+  if(began)updateMissionHud();
+ }};
+}
 let latestPresetGeneration = 0;
 let session: TrainingSession | null = null;
 let importedMapBytes: Uint8Array | undefined;
@@ -176,11 +188,11 @@ const partyPanel=installTrainingWetPartyPanel(partyHost,()=>({session,world,paus
  }catch(error){return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
 });
 const timeoutHost=document.createElement('section');timeoutHost.id='training-timeout';wetHost.before(timeoutHost);
-const timeoutPanel=installTrainingTimeoutPanel(timeoutHost,()=>({session,world,paused,loading,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
+const timeoutPanel=installTrainingTimeoutPanel(timeoutHost,()=>({session,world,paused,loading,recovering:loading&&timeoutRecoveryGeneration===loadGeneration,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
  let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
  try{if(loading||!session)throw Error('Load the fresh selected Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
- const candidate=await activateTimeout(level,raw,session,world,paused);if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);return {status:'installed',isCurrent};
- }catch(error){return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
+ const candidate=await activateTimeout(level,raw,session,world,paused,timeoutRecoveryControl(generation));if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);get('recovery-status').textContent='Original 99-unit timeout enabled, PAUSED.';return {status:'installed',isCurrent};
+ }catch(error){if(isCurrent())get('recovery-status').textContent='Timeout setup failed; current team retained. Review the error and retry.';return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
 });
 const lifecyclePanel=installTrainingWetLifecyclePanel(lifecycleHost,()=>({session,world,paused,loading,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
  let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
@@ -437,7 +449,10 @@ function updateMissionHud(): void {
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
   const play = get<HTMLButtonElement>('play');
-  play.disabled = !renderer || graphicsLost || terminal;
+  const recoveringTimeout=loading&&timeoutRecoveryGeneration===loadGeneration;
+  play.disabled = !renderer || graphicsLost || terminal || recoveringTimeout;
+  get<HTMLButtonElement>('save-checkpoint').disabled=recoveringTimeout;
+  get<HTMLInputElement>('checkpoint-file').disabled=recoveringTimeout;
   play.textContent = terminal ? allDead ? 'Drill finished' : 'Mission finished' : paused ? active ? 'Start mission' : fallDrill ? 'Start drill' : 'Start navigation' : 'Pause';
   const runState = terminal ? 'FINISHED' : paused ? 'PAUSED' : 'RUNNING';
   if (get('run-state').textContent !== runState) get('run-state').textContent = runState;
@@ -624,18 +639,19 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
   try {
     const sources = sessionSources();
     if (session && !sources) throw new Error('Reopen the matching roster and items before saving this session.');
-    const json = session ? await exportTrainingSession(level, world, session, sources!) : await exportCheckpoint(level, world);
+    const json = session ? await exportTrainingSession(level, world, session, sources!,timeoutRecoveryControl(generation)) : await exportCheckpoint(level, world);
     if (generation !== loadGeneration) return;
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `hired-guns-checkpoint-${world.tick}.json`;
     link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     get('recovery-status').textContent = `Checkpoint exported at tick ${world.tick}. ${session ? 'Keep the same local map, roster and items for session recovery.' : 'Keep the same source map for recovery.'}`;
-  } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not saved: ${errorText(error)}`; }
+  } catch (error) { if (generation === loadGeneration) {get('error').textContent = `Checkpoint not saved: ${errorText(error)}`;if(timeoutRecoveryGeneration===generation)get('recovery-status').textContent='Checkpoint save failed; current state retained. Review the error and retry.';} }
   finally { if (generation === loadGeneration) { loading = false; updateMissionHud(); rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); } }
 });
 get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event => {
   const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; input.value = '';
   if (!file) return;
+  if(loading&&timeoutRecoveryGeneration===loadGeneration)return;
   const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
   try {
     if (file.size >= MAX_SESSION_BYTES) throw new Error('Session save must be smaller than 24 KiB.');
@@ -646,7 +662,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     if (isTrainingSessionSave(json)) {
       const sources = sessionSources();
       if (!sources) throw new Error('Open the matching verified OCS roster and item table before restoring a session.');
-      const candidate = await importTrainingSession(level, sources, json);
+      const candidate = await importTrainingSession(level, sources, json,timeoutRecoveryControl(generation));
       restoredSession = candidate.session; restored = candidate.world;
     } else {
       if (session) throw new Error('An active selected team requires a Training43 session save. Clear the session by opening a map before loading a legacy checkpoint.');
@@ -657,7 +673,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     const restoredLevel = patrolMissionLevel(level) && restored.levelId === createTrainingGateLevel().id ? createTrainingGateLevel() : level;
     replaceGateRenderer(restoredSession,restoredLevel); level = restoredLevel; session = restoredSession; world = restored; showSession(); updateLevelInfo(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
-  } catch (error) { if (generation === loadGeneration) get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`; }
+  } catch (error) { if (generation === loadGeneration) {get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`;if(timeoutRecoveryGeneration===generation)get('recovery-status').textContent='Checkpoint load failed; current state retained. Review the error and retry.';} }
   finally { if (generation === loadGeneration) { loading = false; updateMissionHud(); rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); } }
 });
 

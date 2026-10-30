@@ -1,5 +1,5 @@
 import { exportWetParty, importWetParty, initialWetParty, ownedPartyProfile, type TrainingWetParty } from './training-wet-party';
-import {hasTimeoutProfile,exportTimeout,importTimeout,resetTimeout} from './training-timeout';
+import {hasTimeoutProfile,exportTimeout,importTimeout,resetTimeout,type TimeoutRecoveryControl} from './training-timeout';
 import { exportWet, importWet, initialWet, type TrainingWet } from './training-wet';
 import { exportWetRegion, importWetRegion, initialWetRegion, type TrainingWetRegion } from './training-wet-region';
 import { exportWetLifecycle, importWetLifecycle, initialWetLifecycle, type TrainingWetLifecycle } from './training-wet-lifecycle';
@@ -167,10 +167,10 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 }
 
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
-export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
+export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources, timeoutControl?:TimeoutRecoveryControl): Promise<string> {
   // Inspect the new extension without evaluating caller accessors before its snapshot.
   if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
-  if(hasTimeoutProfile(session))return exportTimeout(level,sources,session,world);
+  if(hasTimeoutProfile(session))return exportTimeout(level,sources,session,world,timeoutControl);
   const party = Object.getOwnPropertyDescriptor(session, 'wetParty');
   if (party && (!party.enumerable || !('value' in party))) throw new Error('Training43 session data descriptors required.');
   if (ownedPartyProfile(session)) return exportWetParty(level,sources,session,world);
@@ -207,13 +207,13 @@ export function isTrainingSessionSave(json: string): boolean {
   } catch { return false; } // Let the ordinary checkpoint path retain its size/JSON errors.
 }
 /** No mutation: callers install both results together only if their generation is still current. */
-export async function importTrainingSession(level: LevelData, sources: TrainingSources, json: string): Promise<TrainingCandidate> {
+export async function importTrainingSession(level: LevelData, sources: TrainingSources, json: string, timeoutControl?:TimeoutRecoveryControl): Promise<TrainingCandidate> {
   if (typeof json !== 'string' || json.length >= MAX_SESSION_BYTES || new TextEncoder().encode(json).length >= MAX_SESSION_BYTES) throw new Error('Training43 session must be smaller than 24 KiB.');
   const parsed: unknown = JSON.parse(json);
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const versionDescriptor=Object.getOwnPropertyDescriptor(parsed,'version');
   const version=versionDescriptor&&Object.hasOwn(versionDescriptor,'value')?versionDescriptor.value:undefined;
-  if(version===19)return importTimeout(level,sources,parsed);
+  if(version===19)return importTimeout(level,sources,parsed,timeoutControl);
   if(version===18)return importWetParty(level,sources,parsed);
   if(version===17)return importWetRegion(level,sources,parsed);
   if(version===16)return importWetLifecycle(level,sources,parsed);
