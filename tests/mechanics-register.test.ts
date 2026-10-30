@@ -78,6 +78,66 @@ test('generated HTML escapes prose and cannot terminate its embedded JSON script
   expect(html).toContain('\\u003c/script>');
 });
 
+test('JSON metadata rejects invalid enums and identifiers at the maintenance boundary', async () => {
+  const original = await load();
+  const hostile = 'x"><img src=x onerror="window.__registerInjected=1">';
+  for (const value of ['', hostile, 'toString', 'unknown', 42, null]) {
+    for (const field of ['kind', 'group'] as const) {
+      const data = structuredClone(original);
+      if (field === 'kind') Object.assign(data.scenarios[0]!, { kind: value });
+      else Object.assign(data.levels[1]!, { group: value });
+      await expect(validateRegister(data)).rejects.toThrow(field === 'kind' ? 'scenario kind' : 'level group');
+    }
+  }
+  for (const value of ['', hostile, 'has space', 'a#fragment', '../escape', 'a%22b', 42, null]) {
+    for (const field of ['scenario', 'level', 'acceptance'] as const) {
+      const data = structuredClone(original);
+      const record = field === 'scenario' ? data.scenarios[0]! : field === 'level' ? data.levels[1]! : data.acceptanceChecks[0]!;
+      Object.assign(record, { id: value });
+      await expect(validateRegister(data)).rejects.toThrow(`Invalid ${field} ID`);
+    }
+  }
+});
+
+test('IDs cannot alias another record or an element from a different register domain', async () => {
+  const original = await load();
+  for (const field of ['scenarios', 'levels', 'acceptanceChecks'] as const) {
+    const data = structuredClone(original);
+    data[field][1]!.id = data[field][0]!.id;
+    await expect(validateRegister(data)).rejects.toThrow('Duplicate');
+  }
+  const collision = structuredClone(original);
+  collision.acceptanceChecks[0]!.id = collision.mechanics[0]!.id;
+  await expect(validateRegister(collision)).rejects.toThrow('Duplicate rendered document ID');
+});
+
+test('hostile prose remains valid data while HTML encodes text, attributes and JSON separately', async () => {
+  const data = await load();
+  const prose = '" \' & <img src=x onerror="window.__registerInjected=1"> </script><script>window.__registerInjected=2</script>';
+  data.mechanics[0]!.family = prose;
+  data.mechanics[0]!.original = prose;
+  data.scenarios[0]!.instructions = prose;
+  data.levels[1]!.audit = prose;
+  data.acceptanceChecks[0]!.requirement = prose;
+  await expect(validateRegister(data)).resolves.toMatchObject({ mechanics: 86, levels: 47 });
+  const html = renderHtml(data);
+  expect(html).not.toContain('<img');
+  expect(html).toContain('data-family="&quot; &#39; &amp; &lt;img');
+  const embedded = html.match(/<script id="register-data" type="application\/json">([^]*?)<\/script>/)![1]!;
+  expect(JSON.parse(embedded)).toEqual(data);
+  expect(html.match(/<script(?:\s|>)/g)).toHaveLength(2);
+});
+
+test('HTML escaping does not relax evidence path, receipt or generated freshness gates', async () => {
+  const original = await load();
+  for (const path of ['../README.md', 'docs/../README.md', 'https://example.com/a.md', 'docs/%2e%2e/x.md', 'docs/.local/x.md', 'docs/x.html" onclick="bad', 'C:/secret.md']) {
+    const data = structuredClone(original); data.mechanics[0]!.evidence[0]!.path = path;
+    await expect(validateRegister(data)).rejects.toThrow('Unsafe evidence path');
+  }
+  const changed = structuredClone(original); changed.mechanics[0]!.title += ' changed';
+  expect(renderHtml(changed)).not.toBe((await readFile(new URL('../docs/mechanics/index.html', import.meta.url), 'utf8')).replaceAll('\r\n', '\n'));
+});
+
 function completionRow(state: State) {
   return { stages: Object.fromEntries(STAGES.map(stage => [stage, state])) as MechanicsRegister['mechanics'][number]['stages'] };
 }

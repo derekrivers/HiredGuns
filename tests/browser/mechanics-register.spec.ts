@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { STAGES, type MechanicsRegister } from '../../tools/mechanics-types';
+import { renderHtml, validateRegister } from '../../tools/build-mechanics-register';
 
 async function expectedCompletion() {
   const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
@@ -142,4 +143,70 @@ for (const width of [390, 1440]) test(`register completion placement and accessi
   await expect(page.getByRole('progressbar')).toHaveAccessibleName('Register completion');
   await expect(page.getByRole('progressbar')).toHaveAccessibleDescription(/covered checkpoints.*all registered evidence checkpoints/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+for (const field of ['scenario-id', 'scenario-kind', 'level-id', 'level-group', 'acceptance-id']) test(`offline HTML contains refused ${field} metadata without executing it`, async ({ page }, testInfo) => {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const payload = 'x"><img src=x onerror="window.__registerInjected=1">';
+  if (field === 'scenario-id') {
+    const old = data.scenarios[0]!.id; data.scenarios[0]!.id = payload;
+    for (const m of data.mechanics) m.scenarios = m.scenarios.map(id => id === old ? payload : id);
+  }
+  if (field === 'scenario-kind') Object.assign(data.scenarios[0]!, { kind: payload });
+  if (field === 'level-id') data.levels.find(l => !l.firstAcceptance)!.id = payload;
+  if (field === 'level-group') Object.assign(data.levels.find(l => !l.firstAcceptance)!, { group: payload });
+  if (field === 'acceptance-id') data.acceptanceChecks[0]!.id = payload;
+  await expect(validateRegister(data)).rejects.toThrow('Invalid');
+  // Exercise escaping independently of validation: callers may render a preview
+  // before validating. The old renderer executed these exact five payloads.
+  const file = testInfo.outputPath('refused-metadata.html');
+  await writeFile(file, renderHtml(data));
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto(pathToFileURL(file).href);
+  expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  await expect(page.locator('img, [onerror]')).toHaveCount(0);
+  await expect(page.locator('script')).toHaveCount(2);
+  const record = field.startsWith('scenario') ? page.locator('.scenario').first() : field.startsWith('level') ? page.locator('.level').first() : page.locator('.check').first();
+  if (field.endsWith('-id')) await expect(record).toHaveAttribute('id', field === 'scenario-id' ? `scenario-${payload}` : payload);
+  if (field === 'level-group') await expect(record).toHaveAttribute('data-group', payload);
+  if (field === 'scenario-kind') await expect(record.locator('.kind')).toHaveText(payload);
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+
+test('accepted hostile prose survives offline text, attribute, search and JSON export round trips', async ({ page }, testInfo) => {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const prose = '" \' & <img src=x onerror="window.__registerInjected=1"> </script><script>window.__registerInjected=2</script>';
+  const m = data.mechanics[0]!;
+  m.family = prose; m.title = prose; m.original = prose; m.mappingScope = prose;
+  m.source = prose; m.next = prose; m.gaps = [prose];
+  m.evidence[0]!.label = prose; m.evidence[0]!.scope = prose;
+  data.baseline.label = prose; data.baseline.description = prose; data.scope = prose;
+  data.scenarios[0]!.title = prose; data.scenarios[0]!.instructions = prose; data.scenarios[0]!.scope = prose;
+  const l = data.levels[0]!; l.title = prose; l.audit = prose; l.revision = prose; l.archivePath = prose; l.blockers = [prose]; l.interactions[0]!.basis = prose;
+  data.acceptanceChecks[0]!.title = prose; data.acceptanceChecks[0]!.requirement = prose;
+  data.commands[0] = { label: prose, command: prose, scope: prose }; data.limitations = [prose];
+  await validateRegister(data);
+  const file = testInfo.outputPath('accepted-prose.html'); await writeFile(file, renderHtml(data));
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto(`${pathToFileURL(file).href}#${m.id}`);
+  const card = page.locator(`#${m.id}`);
+  await expect(card).toHaveAttribute('data-family', prose);
+  await expect(card.locator('.original')).toHaveText(prose);
+  await expect(card.locator('.identity strong')).toHaveText(prose);
+  await expect(page.locator('.scenario h3').first()).toHaveText(prose);
+  await expect(page.locator('.check p').first()).toHaveText(prose);
+  await expect(page.locator('.level .card-body > p').first()).toHaveText(prose);
+  await expect(page.locator('img, [onerror], [onfocus], [autofocus]')).toHaveCount(0);
+  await expect(page.locator('script')).toHaveCount(2);
+  await page.getByRole('searchbox').fill('<img'); await expect(card).toBeVisible();
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
+  expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
+  expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
 });

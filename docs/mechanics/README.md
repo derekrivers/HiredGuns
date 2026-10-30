@@ -29,6 +29,8 @@ npx tsx tools/build-mechanics-register.ts --check
 
 The builder verifies IDs, stages, level/scenario references and existence of every evidence link. It generates `index.html` and `CHECKLIST.md`; their freshness is checked in the automated suite. There is no automatic polling or automatic upgrade from source presence or passing CI. Links to tests are not test-run receipts.
 
+Runtime validation also enforces scenario kinds (`original`, `authored`, `diagnostic`), level groups (`training`, `campaign`, `action`) and stable IDs: lowercase hyphen-separated scenario names, `map-` plus a positive decimal level number, uppercase mechanic prefixes plus two digits, and uppercase alphanumeric acceptance prefixes plus two digits. IDs must be unique within each collection and across the rendered document, including fixed controls. TypeScript types alone do not validate edited JSON. Prose may contain quotes or markup-like text: the HTML renderer encodes all dynamic text and quoted attributes, and separately encodes embedded JSON so it cannot end its script element. Public offline browser canaries exercise both refused metadata and accepted prose. These checks protect this static maintenance/rendering boundary; they add no gameplay acceptance or live JSON-import feature. Markdown remains a generated engineering document; review prose and links before publishing through any other renderer.
+
 Run `npm run check` and `npx playwright test tests/browser/mechanics-register.spec.ts` after changes. The tests validate the traceability graph, stale generated output, misleading coverage claims, synthetic static inventory predicates and actual browser navigation/search/export. No originals are needed for those tests.
 
 ## Original-level inventory
