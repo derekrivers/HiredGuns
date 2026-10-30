@@ -163,9 +163,9 @@ PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 rema
 
 Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-Lineage: [T43-05](index.html#T43-05), [T43-06](index.html#T43-06). [Entry and controls](index.html#scenario-wet). [proof-116](index.html#proof-116)
+Lineage: [T43-05](index.html#T43-05), [T43-06](index.html#T43-06). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
 
-- [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): T43-05/06 remain open despite accepted entry/return subrecords.
+- [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): T43-05/06 remain partial with accepted entry/return and bounded lifecycle subrecords; wider wet and whole-level outcomes remain open.
 - [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
 ### t43-fatal — Bounded wet injury, fatal continuation and survivor recovery: playable

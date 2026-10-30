@@ -247,6 +247,55 @@ test('descriptor boundary refuses getters/prototypes/hidden/symbol/sparse/cycles
   expect(reads).toBe(0);
 });
 
+for (const throwing of [true, false]) test(`missing dashboard fields reject before inherited getters (${throwing ? 'throwing' : 'side effect'})`, async () => {
+  const original = await load();
+  // Includes the review's exact three missing fields, plus every nested record
+  // field: a nonthrowing hook must not supply substitute data to a preview.
+  const records = [
+    (d: MechanicsRegister) => d,
+    (d: MechanicsRegister) => d.dashboards[0]!,
+    (d: MechanicsRegister) => d.dashboards[0]!.milestones[0]!,
+    (d: MechanicsRegister) => d.dashboards[0]!.milestones[0]!.evidence[0]!,
+    (d: MechanicsRegister) => d.acceptedProofs[0]!,
+  ];
+  for (const [index, record] of records.entries()) {
+    const keys = index === 0 ? ['dashboards','acceptedProofs'] : Object.keys(record(original));
+    for (const field of keys) for (const api of [validateRegister, renderHtml, renderMarkdown]) {
+      const data = structuredClone(original), target = record(data);
+      const saved = Object.getOwnPropertyDescriptor(target, field)!;
+      Reflect.deleteProperty(target, field);
+      const previous = Object.getOwnPropertyDescriptor(Object.prototype, field);
+      let reads = 0, error: unknown;
+      try {
+        Object.defineProperty(Object.prototype, field, { configurable: true, get() {
+          reads++;
+          if (throwing) throw new Error('INHERITED_REVIEW117_HOOK');
+          return saved.value;
+        } });
+        try { await api(data); } catch (caught) { error = caught; }
+      } finally {
+        if (previous) Object.defineProperty(Object.prototype, field, previous);
+        else Reflect.deleteProperty(Object.prototype, field);
+      }
+      expect(reads, `${index}.${field} ${api.name}`).toBe(0);
+      expect(error, `${index}.${field} ${api.name}`).toBeInstanceOf(Error);
+      expect((error as Error).message).not.toBe('INHERITED_REVIEW117_HOOK');
+    }
+  }
+});
+
+test('lifecycle milestone selects accepted v16 controls and retains partial gates', async () => {
+  const data = await load();
+  const milestone = data.dashboards[1]!.milestones.find(m => m.id === 't43-lifecycle')!;
+  expect(milestone.scenario).toBe('wet-lifecycle');
+  expect(milestone.status).toBe('partial');
+  expect(milestone.evidence[0]!.scope).toContain('T43-05/06 remain partial');
+  expect(data.dashboards[1]!.milestones.find(m => m.id === 't43-entry')!.scenario).toBe('wet');
+  const session = await readFile(new URL('../docs/training-session.md', import.meta.url), 'utf8');
+  expect(session).toContain('Accepted bounded original-map wet extension (v15, PR115)');
+  expect(session).toContain('every non-null requested hit, including zero');
+});
+
 test('all new rendered prose survives validation and stays inert in HTML, JSON and checklist', async () => {
   const data = await load(), hostile = '<img src=x onerror="window.__registerInjected=1"> </script><script>bad()</script> [link](javascript:bad) & \' "';
   for (const d of data.dashboards) {

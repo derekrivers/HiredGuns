@@ -228,6 +228,31 @@ test('separate capability and original-level summaries retain scope, lineage and
   expect(new URL(page.url()).pathname).toBe('/docs/training43-wet-traversal.md');
 });
 
+for (const width of [390,1440]) test(`offline lifecycle controls select accepted v16 at ${width}px`, async ({ page }, testInfo) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  const file = new URL('../../docs/mechanics/index.html', import.meta.url);
+  await page.goto(`${file.href}#t43-lifecycle`);
+  await expect(page.locator('#t43-lifecycle h4 .badge')).toHaveText('partial');
+  await expect(page.locator('#t43-lifecycle .evidence-list')).toContainText('T43-05/06 remain partial');
+  await page.locator('#t43-lifecycle').getByRole('link', { name: 'Runnable entry / controls' }).focus();
+  await page.keyboard.press('Enter');
+  expect(new URL(page.url()).hash).toBe('#scenario-wet-lifecycle');
+  const controls = page.locator('#scenario-wet-lifecycle');
+  await expect(controls).toBeVisible();
+  await expect(controls).toContainText('Enable wet damage and lifecycle');
+  await expect(controls).toContainText('v16 paused chronological recovery');
+  await expect(controls).not.toContainText('Enable Training43 wet traversal');
+  await expect(controls).not.toContainText('Stops before every non-null requested hit');
+  await expect(controls.getByRole('link', { name: 'Instructions & limitations →' })).toHaveAttribute('href', '../../docs/training43-wet-lifecycle.md');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath(`lifecycle-controls-${width}.png`) });
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+
 for (const width of [390,1440]) test(`offline accepted dashboard prose stays inert with working canaries at ${width}px`, async ({ page }, testInfo) => {
   const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
   const prose = '" \' & <img src=x onerror="window.__registerInjected=1"> </script><script>window.__registerInjected=2</script> [link](javascript:bad)';

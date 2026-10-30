@@ -297,7 +297,11 @@ chronological tick/item/use replay preserves historical fall weights; legacy
 v1–v13 are unchanged. Medical64 remains explicitly unsupported.
 
 
-## Unreviewed original-map wet extension (v15)
+## Accepted bounded original-map wet extension (v15, PR115)
+
+PR115 accepted this bounded entry/return and paused recovery mode. It refuses
+every non-null requested hit, including zero, before installing a candidate;
+use the separate PR116 v16 lifecycle mode for accepted wet injury/death outcomes.
 
 The guided **Enable Training43 wet traversal** action requires the ready team
 `[11,3,0,5]`, exact imported editor map and fresh tick-zero inventory. It retains
@@ -313,4 +317,5 @@ is paused, generation checked and atomic. V1–v14 validators/semantics are unch
 Inventory controls are disabled in this bounded wet mode; its visible current
 inventory and weight come from the same candidate as breath and world movement.
 Retry and rule changes reconstruct all mutable wet fields from the source baseline.
-This candidate is not independent acceptance or original runtime timing parity.
+Acceptance covers the bounded PR115 mode; wider wet-region/whole-level outcomes
+and original runtime timing parity remain open.

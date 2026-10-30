@@ -28,6 +28,7 @@ function completionMethod(data: MechanicsRegister) {
 
 export async function validateRegister(data: MechanicsRegister, root = ROOT) {
   assertPlainData(data);
+  assertDashboardShape(data);
   if (data.schemaVersion !== 1 || !Number.isSafeInteger(data.acceptedThrough) || data.acceptedThrough < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(data.assessedOn) || !/^[a-f0-9]{40}$/.test(data.reviewedHead)) throw new Error('Invalid register identity');
   uniq(data.mechanics.map(m => m.id), 'mechanic ID');
   uniq(data.scenarios.map(s => s.id), 'scenario ID');
@@ -108,6 +109,7 @@ function mechanicCard(m: Mechanic, data: MechanicsRegister) {
 
 export function renderHtml(data: MechanicsRegister) {
   assertPlainData(data);
+  assertDashboardShape(data);
   const completion = registerCompletion(data.mechanics);
   const partialCells = data.mechanics.reduce((n, m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0);
   const mapped = data.mechanics.filter(m => m.stages.mapping === 'covered').length;
@@ -160,6 +162,7 @@ window.addEventListener('hashchange',route);filterLevels();route();
 
 export function renderMarkdown(data: MechanicsRegister) {
   assertPlainData(data);
+  assertDashboardShape(data);
   const completion = registerCompletion(data.mechanics);
   return `# Master Mechanics Register — Whole-game evidence coverage: ${completion.display}\n\n${completionMethod(data)}\n\nAssessed ${data.assessedOn}; accepted main through PR${data.acceptedThrough}: \`${data.reviewedHead}\`.\n\n[Open the interactive HTML index](index.html) · [Canonical JSON](register.json)\n\n${data.scope}\n\nBaseline: **${data.baseline.label}**. ${data.baseline.description}\n\nCovered means only the stated slice. Linked files are not fresh run receipts. No whole-game completion percentage or complete original-level pass is claimed.\n\n${dashboardMarkdown(data)}\n\n## Training43: first original-level acceptance\n\n${data.acceptanceChecks.map(c=>`- [${c.state==='covered'?'x':' '}] **${c.id} ${c.title}** — ${states[c.state]}. ${c.requirement}`).join('\n')}\n\n## Mechanics\n\n| ID | Mechanic | Mapping | Reference | Rules | Playable | Integration | Recovery | Original level | Physical |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${data.mechanics.map(m=>`| [${m.id}](index.html#${m.id}) | ${m.title} | ${STAGES.map(s=>states[m.stages[s]]).join(' | ')} |`).join('\n')}\n\n${data.mechanics.map(m=>`### ${m.id} — ${m.title}\n\n**Original:** ${m.original}\n\n**Source:** ${m.source}; baseline ${m.baseline}.\n\n**Mapped scope:** ${m.mappingScope}\n\n**Evidence:** ${m.evidence.map(e=>`[${e.label}](../../${e.path})`).join(', ')||'Open'}\n\n**Tests:** ${m.tests.map(e=>`[${e.label}](../../${e.path})`).join(', ')||'Open'}\n\n**Scenarios:** ${m.scenarios.join(', ')||'None linked'}\n\n**Gaps:** ${m.gaps.join(' ')}\n\n**Next:** ${m.next}\n`).join('\n')}\n## Original-level relationships\n\nFlags/sentinels are static observations. Only Training43 has the existing detailed approach/route audit. Other map requirements and reachability remain unverified.\n\n${data.levels.map(l=>`### ${l.title}\n\n${l.archivePath}; SHA-256 \`${l.sha256}\`. ${l.revision}.\n\n${l.interactions.filter(i=>i.classification!=='inactive').map(i=>`- [${i.mechanic}](index.html#${i.mechanic}): **${i.classification}** — ${i.basis}`).join('\n')}\n`).join('\n')}\n## Maintenance\n\nEdit register.json, reconcile accepted main and evidence, then run \`npx tsx tools/build-mechanics-register.ts\`. Use \`--check\` to verify generated files and links. Original inputs remain private. See the HTML method section for acceptance receipt requirements.\n`;
 }
@@ -196,6 +199,39 @@ function assertPlainData(value: unknown, ancestors = new Set<object>(), depth = 
     assertPlainData(descriptor.value, ancestors, depth + 1, budget);
   }
   ancestors.delete(value);
+}
+
+// Plain-data validation checks fields that exist. Require every dashboard field
+// through its own data descriptor before validation or preview code reads it:
+// missing fields must never fall through to an Object.prototype accessor.
+function assertDashboardShape(data: MechanicsRegister) {
+  const own = (record: unknown, key: string): unknown => {
+    if (!record || typeof record !== 'object' || Array.isArray(record)) throw new Error('Invalid dashboard record shape');
+    const descriptor = Object.getOwnPropertyDescriptor(record, key);
+    if (!descriptor || !Object.hasOwn(descriptor, 'value') || !descriptor.enumerable) throw new Error('Missing own dashboard data field');
+    return descriptor.value;
+  };
+  const exact = (record: unknown, keys: string[]) => {
+    for (const key of keys) own(record, key);
+    if (Object.keys(record as object).length !== keys.length) throw new Error('Invalid dashboard record shape');
+  };
+  const list = (record: unknown, key: string): unknown[] => {
+    const value = own(record, key);
+    if (!Array.isArray(value)) throw new Error('Invalid dashboard list');
+    return value;
+  };
+  for (const proof of list(data, 'acceptedProofs')) {
+    exact(proof, ['id','pr','merge','head','reviewSha256','ci','automatic','receipt']);
+    list(proof, 'ci');
+  }
+  for (const dashboard of list(data, 'dashboards')) {
+    exact(dashboard, ['id','title','scope','milestones']);
+    for (const milestone of list(dashboard, 'milestones')) {
+      exact(milestone, ['id','title','status','scope','lineage','scenario','evidence','missing','proofs']);
+      list(milestone, 'lineage'); list(milestone, 'proofs');
+      for (const evidence of list(milestone, 'evidence')) exact(evidence, ['path','label','scope']);
+    }
+  }
 }
 
 function validateDashboards(data: MechanicsRegister) {

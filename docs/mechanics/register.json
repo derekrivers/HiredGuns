@@ -10826,12 +10826,12 @@
             "T43-05",
             "T43-06"
           ],
-          "scenario": "wet",
+          "scenario": "wet-lifecycle",
           "evidence": [
             {
               "path": "docs/training43-wet-traversal.md",
               "label": "training43-wet-traversal.md",
-              "scope": "T43-05/06 remain open despite accepted entry/return subrecords."
+              "scope": "T43-05/06 remain partial with accepted entry/return and bounded lifecycle subrecords; wider wet and whole-level outcomes remain open."
             },
             {
               "path": "docs/training43-wet-lifecycle.md",
