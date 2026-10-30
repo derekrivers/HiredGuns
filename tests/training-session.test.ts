@@ -383,3 +383,35 @@ it.skipIf(!privateInputs)('patrol v10 replays source-bound chronological gate, N
   await expect(createPatrolTrainingSession(map,sources,c.session,c.world,true)).rejects.toThrow('tick zero');
   await expect(createPatrolTrainingSession(map,sources,gate.session,gate.world,false)).rejects.toThrow();
 });
+
+it.skipIf(!privateInputs)('v11 source snapshots and replay bind unlocked exit, partial and terminal retirement, fixed clock, inventory and prior v10',async()=>{
+ const {createPatrolMissionLevel}=await import('../src/world/training-gate');const {createPatrolMissionSession,createPatrolTrainingSession,commandPatrolEncounter}=await import('../src/sim/training-session');
+ const {sources}=await local(),map=createPatrolMissionLevel(),base=await createTrainingSession(createTrainingGateLevel(),sources,order);
+ const expected=await createPatrolMissionSession(sources,base.session),caller=structuredClone(base.session),raw=structuredClone(sources);
+ const pending=createPatrolMissionSession(raw,caller);raw.roster.fill(0);raw.items.fill(0);(caller.indices as number[]).reverse();expect(await pending).toEqual(expected);
+ let c=expected;
+ const roundtrip=async()=>{const saved=await exportTrainingSession(map,c.world,c.session,sources);expect(JSON.parse(saved).version).toBe(11);expect(await importTrainingSession(map,sources,saved)).toEqual({session:c.session,world:c.world});return saved;};
+ await roundtrip();c=advanceGateTrainingSession(map,c.session,c.world,[],0);await roundtrip();
+ c=await equipTrainingSession(map,sources,c.session,0,0,true,c.world);
+ for(let i=0;i<6&&c.session.encounter!.fitness>0;i++){c={...c,session:commandPatrolEncounter(map,c.session,c.world,'fire',false)};for(let t=0;t<40;t++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);}
+ expect(c.session.encounter!.fitness).toBe(0);await roundtrip();
+ const paths=[['strafe-right','forward','forward','forward','forward'],['strafe-left','backward','backward'],['forward','strafe-right','forward','strafe-right','strafe-right','strafe-right','strafe-right'],['forward','forward','strafe-right']] as const;
+ for(let id=0;id<4;id++){
+  for(const action of paths[id]!)c=advanceGateTrainingSession(map,c.session,c.world,[{mercenaryId:id,action}],null);
+  expect(c.world.mission.exited[id]).toBe(true);await roundtrip();
+ }
+ expect(c.world.mission.outcome).toBe('complete');expect(resetTrainingInventory(c.session,map)).toEqual(expected.session);
+ const saved=await roundtrip(),call=structuredClone(c),r=structuredClone(sources),m=structuredClone(map),snapshot=structuredClone({session:c.session,world:c.world});
+ const saving=exportTrainingSession(m,call.world,call.session,r);r.items.fill(0);r.roster.fill(0);m.layers[0][0]=0;call.world.mission.exited[0]=false;call.world.mission.outcome='failed';call.world.tick++;(call.session.indices as number[]).reverse();call.session.patrol!.history.length=0;
+ expect(await importTrainingSession(map,sources,await saving)).toEqual(snapshot);
+ const bad=JSON.parse(saved);for(const mutate of [(s:typeof bad)=>{s.version=10;},(s:typeof bad)=>{s.scenario='fake';},(s:typeof bad)=>{s.sources.map='fake';},(s:typeof bad)=>{s.encounter.fitness=1;},(s:typeof bad)=>{s.patrol.history.push({kind:'target'});},(s:typeof bad)=>{const w=JSON.parse(s.checkpoint);w.world.mission.clock.subticks--;s.checkpoint=JSON.stringify(w);}]){const b=structuredClone(bad);mutate(b);await expect(importTrainingSession(map,sources,JSON.stringify(b))).rejects.toThrow();}
+ c=expected;for(let t=0;t<6010;t++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);expect(c.world.mission.outcome).toBe('failed');expect(c.world.mission.clock).toEqual({tens:0,units:0,subticks:600});await roundtrip();
+ const practice=await createPatrolTrainingSession(createTrainingGateLevel(),sources,base.session,base.world,true),v10=await exportTrainingSession(createTrainingGateLevel(),practice.world,practice.session,sources);
+ expect(await importTrainingSession(map,sources,v10)).toEqual(practice);
+},120000);
+
+it.skipIf(!privateInputs).each([['equip',equipTrainingSession],['exchange',exchangeTrainingSession],['return',returnTrainingSession]] as const)('v11 %s snapshots all canonical caller inputs before awaiting',async(kind,change)=>{
+ const {createPatrolMissionLevel}=await import('../src/world/training-gate');const {createPatrolMissionSession}=await import('../src/sim/training-session');const {sources}=await local(),map=createPatrolMissionLevel();const b=await createTrainingSession(map,sources,order);let c=await createPatrolMissionSession(sources,b.session);if(kind!=='equip')c=await equipTrainingSession(map,sources,c.session,0,0,true,c.world);
+ const expected=await change(map,sources,c.session,0,0,true,c.world),call=structuredClone(c),raw=structuredClone(sources),m=structuredClone(map);const pending=change(m,raw,call.session,0,0,true,call.world);
+ raw.roster.fill(0);raw.items.fill(0);m.layers[0][0]=0;call.world.tick++;call.world.mission.outcome='failed';call.session.patrol!.history.push({kind:'target'});(call.session.indices as number[]).reverse();let reads=0;Object.defineProperty(raw,'items',{get(){reads++;throw Error('late read');}});Object.defineProperty(call.session,'indices',{get(){reads++;throw Error('late indices');}});expect(await pending).toEqual(expected);expect(reads).toBe(0);
+});
