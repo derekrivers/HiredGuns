@@ -67,6 +67,11 @@ function heads(level:LevelData,state:TrainingWet,world:WorldState,previous?:Worl
 }
 export function initialWet(level:LevelData,session:TrainingSession,races:number[],rules:MissionRules):TrainingCandidate{
  if(races.length!==4||session.indices.join(',')!=='11,3,0,5')fail('ready team [11,3,0,5] required');
+ return initialSelectedWet(level,session,races,rules);
+}
+/** Shared bounded initializer; admission belongs to each versioned caller. */
+export function initialSelectedWet(level:LevelData,session:TrainingSession,races:number[],rules:MissionRules):TrainingCandidate{
+ if(races.length!==4||session.team.actors.length!==4)fail('four initialized actors required');
  const world=createWorld(level,undefined,rules);
  const actors=session.team.actors.map((a,i)=>{const {totalWeight,quotient,tooHeavy,usingGrenade}=a.weight;return {body:{statsDeadWord:0,windowType:0,controlMethod:1,race:races[i]!,physique:a.stats.physique,fitness:a.stats.fitness,spellWater:0,spellWings:0,underwaterCount:0,drowningIndicator:0,inventory:structuredClone(a.inventory),weight:{totalWeight,quotient,tooHeavy,usingGrenade}},runtimeDeadWord:0,old:cellIndex(level,world.mercenaries[i]!),current:cellIndex(level,world.mercenaries[i]!),delay:0,pending:0,entries:0,itemPasses:0,lastInventoryStatus:'not-visited'};});
  const wet:TrainingWet={history:[],actors,overlays:[],drownCounter:0,fallCounter:0,leader:0,corpses:[],pads:[],rules:structuredClone(rules)};heads(level,wet,world);

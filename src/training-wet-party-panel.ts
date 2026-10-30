@@ -1,0 +1,15 @@
+import type {TrainingSession} from './sim/training-session';
+import type {WorldState} from './contracts';
+import type {ConsumableOperationResult} from './training-consumable-panel';
+/** UI discriminator only; public API boundaries validate the complete session. */
+export function hasOwnWetParty(session:TrainingSession|null):session is TrainingSession & {wetParty:NonNullable<TrainingSession['wetParty']>} {
+ const descriptor=session===null?undefined:Object.getOwnPropertyDescriptor(session,'wetParty');
+ return !!(descriptor?.enumerable&&Object.hasOwn(descriptor,'value')&&descriptor.value);
+}
+export function installTrainingWetPartyPanel(host:HTMLElement,state:()=>{session:TrainingSession|null;world:WorldState;paused:boolean;loading:boolean;canSetup:boolean},start:()=>Promise<ConsumableOperationResult>){
+ host.innerHTML='<h3>Training43 · selected team wet lifecycle</h3><p>Choose four different characters in Local character roster / team preparation and Apply team. At fresh PAUSED tick zero, enable this mode, then Start mission. 1–4 selects; W/S moves, A/D strafes, Q/E turns, Esc pauses. Source race 1 is breath immune; other admitted races can drown. Inventory processes before immunity. Each corpse needs its own source-supported place. Select survivors explicitly. All four dead ends the mission before timeout or exit. Cooperative extraction still requires all four exits. Selected-team adaptation; original level incomplete.</p><button id="wet-party-enable">Enable selected-team wet lifecycle</button><p id="wet-party-feedback" role="status"></p><p id="wet-party-state" role="status"></p>';
+ const button=host.querySelector<HTMLButtonElement>('button')!,feedback=host.querySelector<HTMLElement>('#wet-party-feedback')!,display=host.querySelector<HTMLElement>('#wet-party-state')!;
+ button.addEventListener('click',async()=>{const r=await start();if(r.isCurrent()){if(r.status==='installed')feedback.textContent='Selected-team wet lifecycle enabled, PAUSED. Start mission.';if(r.status==='failed')feedback.textContent=r.error instanceof Error?r.error.message:String(r.error);}refresh();});
+ function refresh(){const s=state();button.disabled=s.loading||!s.canSetup;display.textContent=hasOwnWetParty(s.session)?`${s.paused?'PAUSED':'RUNNING'} · tick ${s.world.tick} · ${s.session.wet!.actors.map((a,i)=>`slot ${i+1}: race ${a.body.race}, ${a.runtimeDeadWord?'DEAD':'ALIVE'}`).join(' · ')} · v18 complete recovery · 256 command tuples / 45000 ticks / <24 KiB`:'Inactive; Apply your four choices at tick zero.';}
+ return {refresh};
+}

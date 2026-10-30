@@ -35,9 +35,9 @@ export function nextRandom(seed: number): number {
   return x >>> 0;
 }
 
-export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[], wetAdmission?: (p: Position) => void, sourceCorpses = false): { world: WorldState; events: SimulationEvent[] } {
+export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[], wetAdmission?: (p: Position) => void, sourceCorpses = false, missionResolver?: (world:WorldState,events:SimulationEvent[])=>void): { world: WorldState; events: SimulationEvent[] } {
   if (previous.levelId !== level.id) throw new Error('World/level mismatch');
-  if (previous.mission.outcome !== 'active' || teamDead(previous)) return {world:structuredClone(previous),events:[]};
+  if (previous.mission.outcome !== 'active' || (teamDead(previous) && !missionResolver)) return {world:structuredClone(previous),events:[]};
   if (!Number.isSafeInteger(previous.tick) || previous.tick < 0 || previous.tick >= MAX_WORLD_TICK) {
     throw new Error('Simulation time limit reached. Reset positions or load an earlier checkpoint.');
   }
@@ -76,6 +76,6 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
     if (reason) events.push({ ...event, kind: 'blocked', reason });
     else { Object.assign(actor, target); events.push({ ...event, kind: 'moved' }); }
   }
-  resolveMission(world,events);
+  (missionResolver ?? resolveMission)(world,events);
   return { world, events };
 }
