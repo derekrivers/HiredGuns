@@ -1,12 +1,12 @@
-# Training43 keyboard wet traversal — unreviewed candidate
+# Training43 keyboard wet traversal - accepted bounded PR115
 
 30 October 2026. Accepted base PR112/113/114:
 `b211895b0bf4600bc7c8fa830814284c46293c97`, tree
 `ebc8187cc7386d790cc686cabe6e4b13bb642df2`.
-**T43-04 remains partial, T43-05 open, original level/test bed incomplete.**
+**PR115 bounded entry/return and v15 recovery accepted at merge e2b2d5ff4090c5c39006abea147a24450ca5c17b. T43-04 remains partial, T43-05 open; original level/test bed incomplete.**
 The accepted [interaction CASE](training43-wet-acceptance.md) supplies the exact
 private approach/oracle. Its 22 hypothetical wet graph candidates are not receipts
-for a complete wet playthrough. New play requires independent exact-head review.
+for a complete wet playthrough. The separate [damage/lifecycle extension](training43-wet-lifecycle.md) remains UNREVIEWED.
 
 ## Play in the existing app
 
@@ -115,7 +115,7 @@ continuation, Retry, tamper and stale successful/failed loads. Additional bounda
 and exit results are recorded in the ignored final handoff. No original assets,
 private coordinates, routes, screenshots or traces enter Git or CI. Exact source
 helper/CPU receipts are reused within their accepted scope; no broad source or
-archive studies are repeated. All new consumer evidence remains UNREVIEWED.
+archive studies are repeated. PR115 consumer evidence is accepted at merge e2b2d5ff4090c5c39006abea147a24450ca5c17b, after fresh independent HIGH review, current CI and completed automatic review.
 
 Commands: `npm run check`; `npx tsx tools/build-mechanics-register.ts --check`;
 `npx vitest run tests/training-wet.test.ts` (private manifest opt-in via
@@ -123,5 +123,5 @@ Commands: `npm run check`; `npx tsx tools/build-mechanics-register.ts --check`;
 config/provider. Every attempt and final result remains in `.local/t43-wet`.
 Bounded PR115 repair evidence is separate in `.local/repair115`; it covers
 retired-head ownership, scheduled dry delay, exact object/array collection caps,
-and the accepted baseline label through PR114. It grants no new wet acceptance.
+and the accepted baseline label through PR114. It grants bounded entry/return/recovery acceptance only; no damage or level acceptance.
 Model requested: gpt-6.1-sol medium. Token usage unavailable. No delegation.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-30",
-  "reviewedHead": "b211895b0bf4600bc7c8fa830814284c46293c97",
+  "reviewedHead": "e2b2d5ff4090c5c39006abea147a24450ca5c17b",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,7 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Accepted main through PR112 food/repair, PR113 register, and PR114 bounded interaction CASE. New keyboard wet consumer is UNREVIEWED; no level, hardware or T43-05 acceptance is inferred.",
+    "Accepted main through PR115: bounded original-editor keyboard wet entry/return, full four-actor head ownership, scheduled wet delay and v15 paused recovery. New wet damage/lifecycle v16 candidate is UNREVIEWED. No complete level, hardware or T43-05/06 pass is inferred.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
     "Static editor observations do not prove runtime activation, target validity, reachability, required puzzle roles or completed gameplay.",
@@ -1202,14 +1202,14 @@
       "baseline": "ocs-3926",
       "original": "Evaluate water depth, stairs, movement, immersion and actor-specific immunity without bypassing inventory/lifecycle effects.",
       "source": "Main.s drowning/player_fall; Controls&Movement.s movement",
-      "mappingScope": "Bounded immersion caller exists disconnected from original wet traversal.",
+      "mappingScope": "Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -1232,7 +1232,12 @@
         {
           "path": "docs/training43-wet-acceptance.md",
           "label": "Accepted PR114 bounded CASE",
-          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
+          "scope": "Bounded source-ready dry approach/entry/reverse case; actual bounded keyboard entry/return subsequently accepted in PR115."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 bounded keyboard consumer",
+          "scope": "Actual immutable original-editor wet entry/return, inventory before immunity, scheduled delay, four actor heads and paused v15 chronological recovery. Damage requests including zero refuse; wider region/lifecycle remains open."
         }
       ],
       "tests": [
@@ -1253,7 +1258,7 @@
       "gaps": [
         "Training43 wet region remains unknown beyond audited entry."
       ],
-      "next": "Integrate one source-bound wet entry with complete damage/lifecycle/recovery before widening routes."
+      "next": "Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region."
     },
     {
       "id": "ENV-09",
@@ -2336,14 +2341,14 @@
       "baseline": "ocs-3926",
       "original": "Evaluate guards/depth/immunity, increment/reset breath and apply threshold damage in original integer order.",
       "source": "Main.s drowning; pinned OCS wet-entry CPU observations",
-      "mappingScope": "Bounded decision and immersion caller, not live wet traversal/drowning.",
+      "mappingScope": "Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -2366,7 +2371,12 @@
         {
           "path": "docs/training43-wet-acceptance.md",
           "label": "Accepted PR114 bounded CASE",
-          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
+          "scope": "Bounded source-ready dry approach/entry/reverse case; actual bounded keyboard entry/return subsequently accepted in PR115."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 bounded keyboard consumer",
+          "scope": "Actual immutable original-editor wet entry/return, inventory before immunity, scheduled delay, four actor heads and paused v15 chronological recovery. Damage requests including zero refuse; wider region/lifecycle remains open."
         }
       ],
       "tests": [
@@ -2395,9 +2405,9 @@
       ],
       "scenarios": [],
       "gaps": [
-        "Actual drowning injury/death and full wet-route recovery are unintegrated."
+        "PR115 accepts bounded breath/item entry-return and v15 recovery. Injury/death and full wet-region recovery remain unaccepted; the separate lifecycle candidate is UNREVIEWED."
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "next": "Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region."
     },
     {
       "id": "LIFE-04",
@@ -2406,14 +2416,14 @@
       "baseline": "ocs-3926",
       "original": "Process equipped/carried entries and weight before breath immunity, retaining spell-specific bypass behaviour.",
       "source": "Main.s immersion inventory ordering; water inventory helper",
-      "mappingScope": "Selected original inventory cases and pure caller remain disconnected.",
+      "mappingScope": "Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -2431,7 +2441,12 @@
         {
           "path": "docs/training43-wet-acceptance.md",
           "label": "Accepted PR114 bounded CASE",
-          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
+          "scope": "Bounded source-ready dry approach/entry/reverse case; actual bounded keyboard entry/return subsequently accepted in PR115."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 bounded keyboard consumer",
+          "scope": "Actual immutable original-editor wet entry/return, inventory before immunity, scheduled delay, four actor heads and paused v15 chronological recovery. Damage requests including zero refuse; wider region/lifecycle remains open."
         }
       ],
       "tests": [
@@ -2450,9 +2465,9 @@
       ],
       "scenarios": [],
       "gaps": [
-        "No original wet inventory mutations installed in the running world."
+        "PR115 accepts bounded live water inventory/weight mutation. Wider inventories, branches and wet-region outcomes remain partial."
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "next": "Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region."
     },
     {
       "id": "LIFE-05",
@@ -9374,7 +9389,7 @@
       "sha256": "646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c",
       "revision": "Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body",
       "firstAcceptance": true,
-      "audit": "Existing exact-digest Training43 audit: full-team dry exit replay plus source-only wet approach. New static inventory agrees; original CPU whole-level playthrough absent.",
+      "audit": "Accepted bounded original-editor dry extraction and PR115 actual wet entry/return, four-actor heads, scheduled delay and v15 recovery. Wider wet region, damage/lifecycle and complete original level remain unaccepted.",
       "acceptance": "open",
       "interactions": [
         {
@@ -9385,7 +9400,7 @@
         {
           "mechanic": "MOV-03",
           "classification": "reachable-optional",
-          "basis": "Existing source-derived dry approach reaches the upper wet-stair entry. Supported static route bypasses it; live wet traversal is blocked."
+          "basis": "Accepted PR115 actual keyboard approach, supported wet-stair entry/reverse and v15 recovery; wider wet traversal remains unknown."
         },
         {
           "mechanic": "ENV-01",
@@ -9415,7 +9430,7 @@
         {
           "mechanic": "ENV-08",
           "classification": "unknown",
-          "basis": "Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough."
+          "basis": "Accepted PR115 bounded wet entry/return, breath/inventory and paused recovery. Wider water outcomes and new lifecycle candidate remain unaccepted."
         },
         {
           "mechanic": "ENV-09",
@@ -9425,7 +9440,7 @@
         {
           "mechanic": "LIFE-03",
           "classification": "unknown",
-          "basis": "Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough."
+          "basis": "Accepted PR115 bounded wet entry/return, breath/inventory and paused recovery. Wider water outcomes and new lifecycle candidate remain unaccepted."
         },
         {
           "mechanic": "INV-04",
@@ -9509,7 +9524,7 @@
         }
       ],
       "blockers": [
-        "Reachable optional wet stairs are blocked; wider wet-region outcomes unknown.",
+        "Bounded wet entry/return is accepted in PR115; damage/lifecycle candidate is unreviewed and wider wet-region outcomes remain unknown.",
         "Original live death, corpse/pad/control and all-dead outcome are not integrated.",
         "Recovery must cover every newly installed state and environmental interaction.",
         "DEFERRED separate human acceptance: a complete four-player physical-controller/TV level run has not been accepted; this does not block keyboard software work."
@@ -10070,9 +10085,10 @@
       "state": "open",
       "evidence": [
         "docs/wet-entry-observation.md",
-        "docs/immersion-caller-contract.md"
+        "docs/immersion-caller-contract.md",
+        "docs/training43-wet-traversal.md"
       ],
-      "requirement": "Play reachable wet stairs with breath, item effects, damage and supported exit/return behaviour."
+      "requirement": "Accepted PR115 proves bounded wet entry/return, breath/item effects and v15 recovery. Injury/death candidate remains UNREVIEWED; broader wet traversal and outcomes remain open."
     },
     {
       "id": "T43-06",
@@ -10150,5 +10166,5 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 114
+  "acceptedThrough": 115
 }

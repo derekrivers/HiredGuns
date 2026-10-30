@@ -60,6 +60,6 @@ T43-01–10 remain partial/open. Controller/TV assignments and the four-person p
 
 The original register tooling added no runtime execution, mechanics, source redistribution, hosting or scheduled work. Token usage unavailable.
 
-PR112 adds accepted bounded equipped food/repair with v14 authored dry-fall replay. PR113 accepts this register tool and PR114 accepts the bounded Training43 interaction CASE. New wet keyboard play is UNREVIEWED and is not credited as a level, hardware or T43-05 pass. Food/repair row stages remain partial for its wider original scope. The covered-stage numerator is unchanged.
+PR112 adds accepted bounded equipped food/repair with v14 authored dry-fall replay. PR113 accepts this register tool and PR114 accepts the bounded Training43 interaction CASE. PR115 accepts bounded keyboard wet entry/return, full-team heads, scheduled delay and v15 recovery. The new v16 wet damage/lifecycle candidate is UNREVIEWED. Neither grants a complete level, hardware or T43-05/06 pass. Food/repair row stages remain partial for its wider original scope. The covered-stage numerator is unchanged.
 
 Accepted proof packets: [PR112 food/repair](https://github.com/derekrivers/HiredGuns/pull/112), [PR113 register](https://github.com/derekrivers/HiredGuns/pull/113), [PR114 bounded CASE](https://github.com/derekrivers/HiredGuns/pull/114). Normal merge union is the assessed head above. These links are accepted scopes, not new wet-play receipts.

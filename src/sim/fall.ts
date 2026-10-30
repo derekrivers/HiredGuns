@@ -19,7 +19,7 @@ export function dryFallEnabled(level: LevelData): boolean {
   return (level.source.kind === 'synthetic' && level.id === 'synthetic-fall-v1') || selectedFallLevel(level);
 }
 export type FallProfile = [FallActor, FallActor, FallActor, FallActor];
-export function initialPhysics(level: LevelData, profile?: FallProfile): PhysicsState {
+export function initialPhysics(level: LevelData, profile?: FallProfile): Exclude<PhysicsState,{mode:'source-wet'}> {
   if (!dryFallEnabled(level)) return {mode:'static'};
   if (selectedFallLevel(level)) {
     if (!profile || profile.length !== 4) throw new Error('Selected dry fall requires a rebound team profile.');
@@ -46,9 +46,11 @@ export function fallObstruction(level: LevelData, p: Position): string | null {
   }
 }
 export function isDead(world: WorldState, id: number): boolean {
+  if(world.physics.mode==='source-wet')return world.physics.deadWords[id]!==0;
   return world.physics.mode === 'dry-fall' && world.physics.actors[id]?.dead === true;
 }
 export function teamDead(world: WorldState): boolean {
+  if(world.physics.mode==='source-wet')return world.physics.deadWords.every(word=>word!==0);
   return world.physics.mode === 'dry-fall' && world.physics.actors.every(actor=>actor.dead);
 }
 const sameCell = (a: Position,b: Position) => a.x===b.x&&a.y===b.y&&a.z===b.z;

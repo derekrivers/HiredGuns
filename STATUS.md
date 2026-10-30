@@ -1,6 +1,6 @@
 # Status — 30 October 2026
 
-New UNREVIEWED candidate: [Training43 keyboard wet traversal](docs/training43-wet-traversal.md). Same original editor geometry/four views; explicit enable, actual keyboard entry/reverse and chronological v15 recovery. Damage/search/corpse/control boundaries pause before the whole candidate tick commits. T43-04 partial, T43-05 open, original level incomplete. Accepted union PR112/113/114 is `b211895b0bf4600bc7c8fa830814284c46293c97`; new play is not credited as accepted level/hardware evidence.
+Accepted PR115 at `e2b2d5ff4090c5c39006abea147a24450ca5c17b`: [bounded keyboard wet entry/return and v15 recovery](docs/training43-wet-traversal.md), including retired-head and scheduled-delay fixes. New UNREVIEWED candidate: [same-app wet damage/lifecycle v16](docs/training43-wet-lifecycle.md), with source arithmetic, bounded north corpse search, full-party atomic state and explicit survivor selection. T43-04 remains partial; T43-05/06 remain open; original Training43/test bed incomplete. No whole-region, all-dead or hardware acceptance. Register global evidence remains 68/688, independent of game completion.
 
 Accepted gameplay: PR112 merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`
 (tree `6a329bd1463b02e5e5de7ec4e9bef5547df81155`), including accepted PR111.

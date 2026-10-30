@@ -36,7 +36,7 @@ export interface FallActor {
   dead: boolean;
   fallDamage: number;
 }
-export type PhysicsState = { mode: 'static' } | {
+export type PhysicsState = { mode: 'static' } | { mode:'source-wet'; deadWords:[number,number,number,number] } | {
   mode: 'dry-fall';
   profileId: 'synthetic-empty-v1' | 'selected-team-v1';
   fallCounter: number;

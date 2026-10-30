@@ -2,7 +2,7 @@
 
 68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Register evidence completion, not game completion, parity, effort or test-pass percentage. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
 
-Assessed 2026-10-30; accepted main through PR114: `b211895b0bf4600bc7c8fa830814284c46293c97`.
+Assessed 2026-10-30; accepted main through PR115: `e2b2d5ff4090c5c39006abea147a24450ca5c17b`.
 
 [Open the interactive HTML index](index.html) · [Canonical JSON](register.json)
 
@@ -18,7 +18,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 - [ ] **T43-02 Initialize and control four selected actors** — Partial. Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work.
 - [ ] **T43-03 Complete required dry traversal and exit** — Partial. Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance.
 - [ ] **T43-04 Classify every reachable interaction** — Partial. Accepted PR114 classifies 23 water cells (22 hypothetical movement candidates, one solid support), signs and inactive trigger sentinel; bounded source entry/reverse case. Live outcomes and level review remain open.
-- [ ] **T43-05 Wet stairs and environmental outcomes** — Open. Play reachable wet stairs with breath, item effects, damage and supported exit/return behaviour.
+- [ ] **T43-05 Wet stairs and environmental outcomes** — Open. Accepted PR115 proves bounded wet entry/return, breath/item effects and v15 recovery. Injury/death candidate remains UNREVIEWED; broader wet traversal and outcomes remain open.
 - [ ] **T43-06 Death, control, occupancy and corpses** — Open. Exercise reachable lethal/all-dead cases with correct references, corpse state, control and retry.
 - [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Save before/during/after wet/lifecycle interactions; restore paused and continue with no duplicated effects.
 - [ ] **T43-08 Outcome, timeout and fresh retry** — Partial. Original first-exit and labelled cooperative variant, terminal ties, failure and complete fresh retry.
@@ -48,7 +48,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 | [ENV-05](index.html#ENV-05) | Door motion and reversal | Partial | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
 | [ENV-06](index.html#ENV-06) | Door keys, locks and eligibility | Partial | Partial | Partial | Partial | Partial | Partial | Open | Open |
 | [ENV-07](index.html#ENV-07) | Lifts and moving support | Open | Open | Open | Open | Open | Open | Open | Open |
-| [ENV-08](index.html#ENV-08) | Water entry and wet traversal | Partial | Partial | Covered slice | Open | Open | Open | Open | Open |
+| [ENV-08](index.html#ENV-08) | Water entry and wet traversal | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [ENV-09](index.html#ENV-09) | Water level changes | Open | Open | Open | Open | Open | Open | Open | Open |
 | [ENV-10](index.html#ENV-10) | Teleport fields | Open | Open | Open | Open | Open | Open | Open | Open |
 | [ENV-11](index.html#ENV-11) | Repulsion and other field dispatch | Open | Open | Open | Open | Open | Open | Open | Open |
@@ -72,8 +72,8 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 | [AI-04](index.html#AI-04) | Enemy falling, water and teleport | Open | Open | Open | Open | Open | Open | Open | Open |
 | [LIFE-01](index.html#LIFE-01) | Fitness, armour and damage modifiers | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [LIFE-02](index.html#LIFE-02) | Death, corpses and control transfer | Partial | Partial | Covered slice | Partial | Open | Partial | Open | Open |
-| [LIFE-03](index.html#LIFE-03) | Breath and drowning | Partial | Partial | Covered slice | Open | Open | Open | Open | Open |
-| [LIFE-04](index.html#LIFE-04) | Water inventory damage | Partial | Partial | Covered slice | Open | Open | Open | Open | Open |
+| [LIFE-03](index.html#LIFE-03) | Breath and drowning | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
+| [LIFE-04](index.html#LIFE-04) | Water inventory damage | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [LIFE-05](index.html#LIFE-05) | Poison and timed statuses | Open | Open | Open | Open | Open | Open | Open | Open |
 | [LIFE-06](index.html#LIFE-06) | Healing, fitness fields and progression | Open | Open | Open | Open | Open | Open | Open | Open |
 | [PSI-01](index.html#PSI-01) | Psi dispatch, charges and effect lifetime | Open | Open | Open | Open | Open | Open | Open | Open |
@@ -464,9 +464,9 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s drowning/player_fall; Controls&Movement.s movement; baseline ocs-3926.
 
-**Mapped scope:** Bounded immersion caller exists disconnected from original wet traversal.
+**Mapped scope:** Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.
 
-**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md)
+**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 bounded keyboard consumer](../../docs/training43-wet-traversal.md)
 
 **Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
 
@@ -474,7 +474,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Gaps:** Training43 wet region remains unknown beyond audited entry.
 
-**Next:** Integrate one source-bound wet entry with complete damage/lifecycle/recovery before widening routes.
+**Next:** Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region.
 
 ### ENV-09 — Water level changes
 
@@ -896,17 +896,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s drowning; pinned OCS wet-entry CPU observations; baseline ocs-3926.
 
-**Mapped scope:** Bounded decision and immersion caller, not live wet traversal/drowning.
+**Mapped scope:** Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.
 
-**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md)
+**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 bounded keyboard consumer](../../docs/training43-wet-traversal.md)
 
 **Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
 
 **Scenarios:** None linked
 
-**Gaps:** Actual drowning injury/death and full wet-route recovery are unintegrated.
+**Gaps:** PR115 accepts bounded breath/item entry-return and v15 recovery. Injury/death and full wet-region recovery remain unaccepted; the separate lifecycle candidate is UNREVIEWED.
 
-**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+**Next:** Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region.
 
 ### LIFE-04 — Water inventory damage
 
@@ -914,17 +914,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s immersion inventory ordering; water inventory helper; baseline ocs-3926.
 
-**Mapped scope:** Selected original inventory cases and pure caller remain disconnected.
+**Mapped scope:** Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.
 
-**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md)
+**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 bounded keyboard consumer](../../docs/training43-wet-traversal.md)
 
 **Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts)
 
 **Scenarios:** None linked
 
-**Gaps:** No original wet inventory mutations installed in the running world.
+**Gaps:** PR115 accepts bounded live water inventory/weight mutation. Wider inventories, branches and wet-region outcomes remain partial.
 
-**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+**Next:** Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region.
 
 ### LIFE-05 — Poison and timed statuses
 
@@ -2551,9 +2551,9 @@ Maps/Game/Map42_4pl/42.map; SHA-256 `5118cf81c05a79f3dbbc5d8e6679f55102d09848825
 Maps/Game/Map43_Training/43.map; SHA-256 `646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
 
 - [MOV-01](index.html#MOV-01): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
-- [MOV-03](index.html#MOV-03): **reachable-optional** — Existing source-derived dry approach reaches the upper wet-stair entry. Supported static route bypasses it; live wet traversal is blocked.
-- [ENV-08](index.html#ENV-08): **unknown** — Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough.
-- [LIFE-03](index.html#LIFE-03): **unknown** — Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough.
+- [MOV-03](index.html#MOV-03): **reachable-optional** — Accepted PR115 actual keyboard approach, supported wet-stair entry/reverse and v15 recovery; wider wet traversal remains unknown.
+- [ENV-08](index.html#ENV-08): **unknown** — Accepted PR115 bounded wet entry/return, breath/inventory and paused recovery. Wider water outcomes and new lifecycle candidate remain unaccepted.
+- [LIFE-03](index.html#LIFE-03): **unknown** — Accepted PR115 bounded wet entry/return, breath/inventory and paused recovery. Wider water outcomes and new lifecycle candidate remain unaccepted.
 - [WORLD-02](index.html#WORLD-02): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
 - [WORLD-03](index.html#WORLD-03): **unknown** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
 - [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
