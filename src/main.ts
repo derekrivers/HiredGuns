@@ -1,3 +1,6 @@
+import { installTrainingConsumablePanel } from './training-consumable-panel';
+import { createConsumableSession, changeConsumableSession } from './sim/training-session';
+import { stepConsumables } from './sim/training-consumables';
 import { installTrainingDoorPanel, type DoorSetupResult } from './training-door-panel';
 import { createMovingDoorSession, createPressurePadSession } from './sim/training-session';
 import { createMovingDoorLevel, createPressurePadLevel } from './world/training-gate';
@@ -108,17 +111,39 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
     const transfer = kind === 'equip' ? equipTrainingSession : kind === 'exchange' ? exchangeTrainingSession : returnTrainingSession;
     const candidate = await transfer(level, sources, session, actor, slot, paused, world);
     if (generation !== loadGeneration) return;
-    // Inventory commands reconstruct only the overlay; retain the current navigation world.
-    session = candidate.session; showSession();
+    // Install the verified inventory and world together (v14 also binds live health/weight).
+    session = candidate.session; world = candidate.world; showSession();
     get('recovery-status').textContent = kind === 'exchange' ? `Exchanged equipment with carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : kind === 'equip' ? `Equipped carried slot ${slot + 1} for team slot ${actor + 1}. Session remains paused.` : `Returned equipment to backpack position ${slot + 1} for team slot ${actor + 1}. Session remains paused.`;
   } finally {
     if (generation === loadGeneration) { loading = false; inventoryPanel.refresh(); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); rosterPanel.refresh(); }
   }
 });
+const consumableHost=document.createElement('section');consumableHost.id='training-consumables';consumableHost.style.gridColumn='1 / -1';
+live.querySelector('h2')!.after(consumableHost);
+const consumablePanel=installTrainingConsumablePanel(consumableHost,()=>({session,world,paused,loading,canSetup:!!session&&selectedFallLevel(level)&&!session.consumables&&!session.inventory.commands.length&&!session.gate&&!session.ground}),async()=>{
+ if(loading||!session)throw Error('Selected-team practice is not ready.');
+ const sources=rosterPanel.sources();if(!sources)throw Error('Open matching roster and items first.');
+ const generation=++loadGeneration;loading=true;setPaused(true);
+ try{
+  const candidate=await createConsumableSession(level,sources,session);
+  if(generation!==loadGeneration)throw Error('Consumable setup cancelled by a newer operation; current state retained.');
+  session=candidate.session;world=candidate.world;showSession();setPaused(true);get('recovery-status').textContent='Consumable extension installed, PAUSED.';
+ }finally{if(generation===loadGeneration){loading=false;setPaused(true);rosterPanel.refresh();}}
+},async actor=>{
+ if(loading||!session?.consumables)throw Error('Start the consumable extension first.');
+ const sources=rosterPanel.sources();if(!sources)throw Error('Open matching roster and items first.');
+ if(!paused)throw Error('PAUSED required: Esc before using an equipped item.');
+ const generation=++loadGeneration;loading=true;setPaused(true);
+ try{
+  const candidate=await changeConsumableSession(level,sources,session,world,{kind:'use',actor},paused);
+  if(generation!==loadGeneration)throw Error('Item use cancelled by a newer operation; current state retained.');
+  session=candidate.session;world=candidate.world;showSession();setPaused(true);
+ }finally{if(generation===loadGeneration){loading=false;setPaused(true);rosterPanel.refresh();}}
+});
 const encounterHost = document.createElement('section'); encounterHost.id = 'training-encounter';
 live.querySelector('h2')!.after(encounterHost);
 const display = document.createElement('div'); display.className = 'test-display';
-for (const child of [...live.children]) if (child !== encounterHost && child.tagName !== 'H2') display.append(child);
+for (const child of [...live.children]) if (child !== encounterHost && child !== consumableHost && child.tagName !== 'H2') display.append(child);
 live.append(display);
 const encounterPanel = installTrainingEncounterPanel(encounterHost, () => session, () => paused,
   () => !loading && !!session && world.mission.outcome === 'active' && !!renderer && !graphicsLost,
@@ -128,7 +153,9 @@ const encounterPanel = installTrainingEncounterPanel(encounterHost, () => sessio
 encounterHost.addEventListener('click', refreshEncounterPanel);
 function refreshEncounterPanel(): void {
   encounterPanel.refresh();
+  encounterHost.hidden=!!session?.consumables;
   const patrolActive = !!session?.patrol;
+  if(session?.consumables) for(const control of encounterHost.querySelectorAll<HTMLButtonElement|HTMLSelectElement>('button,select'))control.disabled=true;
   for (const kind of ['arm','reset']) if (patrolActive) encounterHost.querySelector<HTMLButtonElement>(`[data-command="${kind}"]`)!.disabled = true;
   encounterHost.querySelector('h3')!.textContent = patrolActive ? 'Combat test · designated patrol target' : 'Combat test · isolated authored gun encounter';
   encounterHost.querySelector<HTMLElement>('#encounter-help')!.textContent = patrolActive ? 'F: designate the patrol target once per press while running. T: deliberate miss toggle. Esc: pause. Retry resets the entire scenario.' : 'F: fire once per press while running. T: change target while running or paused. R: reset this authored loadout while paused. Esc: pause.';
@@ -143,7 +170,7 @@ function refreshEncounterPanel(): void {
   scope.textContent = patrolActive ? 'Source-derived gun/ammo/damage arithmetic. F designates the patrol target regardless of position; T chooses miss. Authored saturating health zero defeats this target and releases its occupancy. Accuracy is retained source state, not a hit probability. Cooldown uses accepted world ticks. Retry resets the whole scenario.' : 'Source-derived gun/ammo/damage arithmetic; dummy/miss selection and saturating dummy health are authored policy. Zero dummy health has no actor death or occupancy effect. Accuracy is retained source state, not a hit probability. Cooldown decreases one unit per accepted 50 Hz tick; pause freezes it. Retry resets the authored baseline and team inventory replay.';
 }
 function encounterCommand(action: EncounterCommand): void {
-  if (loading || !session || world.mission.outcome !== 'active' || !renderer || graphicsLost) return;
+  if (session?.consumables || loading || !session || world.mission.outcome !== 'active' || !renderer || graphicsLost) return;
   const state = session.encounter;
   if (action.kind === 'arm' ? !paused : !state || (action.kind === 'reset' ? !paused : action.kind === 'fire' && paused)) return;
   try {
@@ -265,7 +292,7 @@ function showSession(): void {
   groundHost.style.display = session?.gate ? 'none' : '';
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
+  label.textContent = session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   refreshEncounterPanel(); patrolPanel.refresh(); doorPanel.refresh();
@@ -355,6 +382,8 @@ function updateMissionHud(): void {
   const gateRun = get('gate-status').firstElementChild;
   if (challenge && gateRun) gateRun.textContent = world.mission.outcome !== 'active' ? 'FINISHED · Y Retry' : paused ? 'PAUSED · Start mission for C' : 'RUNNING';
   challengeButton.disabled = loading || !session || !renderer || graphicsLost;
+  get<HTMLSelectElement>('mission-mode').disabled=!!session?.consumables;
+  consumablePanel.refresh();
   selectedFallButton.disabled = loading || !session || !!session.ground || !!session.gate || selectedFallLevel(level);
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
@@ -367,9 +396,9 @@ function updateMissionHud(): void {
   get<HTMLButtonElement>('reset').textContent = active ? 'Retry mission' : fallDrill ? 'Retry drill' : 'Reset positions';
   get('mission-mode-label').hidden = extractionProfile(level) === null || patrolMissionLevel(level);
   get<HTMLSelectElement>('mission-mode').value = mission.rules.mode;
-  get('mission-objective').textContent = session?.gate?.pad ? 'D steps onto P (4,5); wait for WALK THROUGH, W crosses door, W vacates. Release requests close. F defeats target; extract all four at E. C remains a manual alternative. 1–4 select WASD; Esc pauses.' : session?.gate?.moving ? 'C opens/closes timed door at the panel; WAIT for WALK THROUGH. F defeats target; extract all four at E (8,5). Lock/unlock: Tab to door buttons, Enter. 1–4 select WASD; Esc pauses.' : patrolMissionLevel(level) ? '1. C opens gate · 2. F defeats designated target (T: miss) · 3. Extract all four at E (8,5). 1–4 select WASD; Q/E turn; Esc pause; Y Retry after outcome. Limit: 10 source counts × 601 ticks.' : session?.patrol ? 'Authored patrol: C opens gate; F designates patrol target or T chooses miss. Health zero stops and releases it. Esc pauses; Retry resets the scenario.' : session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
+  get('mission-objective').textContent = session?.consumables ? 'Authored consumable practice: land injured, Esc pause, equip source-owned food/repair in Inventory & equipment, then H. 1–4 selects actor; Retry resets the complete practice.' : session?.gate?.pad ? 'D steps onto P (4,5); wait for WALK THROUGH, W crosses door, W vacates. Release requests close. F defeats target; extract all four at E. C remains a manual alternative. 1–4 select WASD; Esc pauses.' : session?.gate?.moving ? 'C opens/closes timed door at the panel; WAIT for WALK THROUGH. F defeats target; extract all four at E (8,5). Lock/unlock: Tab to door buttons, Enter. 1–4 select WASD; Esc pauses.' : patrolMissionLevel(level) ? '1. C opens gate · 2. F defeats designated target (T: miss) · 3. Extract all four at E (8,5). 1–4 select WASD; Q/E turn; Esc pause; Y Retry after outcome. Limit: 10 source counts × 601 ticks.' : session?.patrol ? 'Authored patrol: C opens gate; F designates patrol target or T chooses miss. Health zero stops and releases it. Esc pauses; Retry resets the scenario.' : session?.gate ? 'Authored gate: C at the front-cell panel; D then W walks toward gate. Slot 2 can test occupied closure. Esc pauses.' : !active ? fallDrill ? selectedFallLevel(level) ? 'Authored practice: step forward off the ledge. Real selected stats and inventory weight affect landing injury. Lane 4 is a long fall. Retry resets team and inventory.' : 'Step forward off the ledge. Longer falls hurt more; lane 4 is lethal. Synthetic characters / empty inventories.' : level.id === 'synthetic-stairs-v1' ? 'Amber lanes: move forward to climb, backward to descend. Watch Z change from 01 to 02.' : 'Explore the grid. Try the extraction drill for a timed team objective.' : mission.rules.mode === 'cooperative-extraction' ? 'Get all four mercenaries to the glowing exit.' : 'Original training race: the first mercenary to escape wins.';
   get('mission-progress').textContent = active ? `${escaped} / 4 extracted${terminal ? mission.outcome === 'complete' ? ' · COMPLETE' : ' · FAILED' : ''}` : fallDrill ? allDead ? 'PRACTICE EXHAUSTED · Retry or restore' : `${world.physics.mode === 'dry-fall' ? world.physics.actors.filter(a=>a.dead).length : 0} / 4 incapacitated` : '';
-  get('prototype-label').textContent = session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
+  get('prototype-label').textContent = session?.consumables ? 'AUTHORED CONSUMABLE / DRY-FALL PRACTICE' : session?.gate?.moving ? 'AUTHORED TIMED DOOR / PATROL EXTRACTION' : patrolMissionLevel(level) ? 'AUTHORED COOPERATIVE PATROL EXTRACTION' : session?.patrol ? 'AUTHORED GATE PATROL / VERIFIED TEAM' : session?.gate ? 'AUTHORED STATIC GATE / VERIFIED TEAM' : selectedFallLevel(level) ? 'AUTHORED PRACTICE / VERIFIED TEAM' : session ? 'STANDALONE IMPORTED SESSION' : active ? 'EXTRACTION PROTOTYPE' : fallDrill ? 'DRY FALL PROTOTYPE' : 'STATIC NAVIGATION PROTOTYPE';
   let time = '';
   if (mission.clock) {
     const units = mission.clock.tens * 10 + mission.clock.units;
@@ -599,13 +628,16 @@ window.addEventListener('keydown', event => {
     }
     return;
   }
+  if(event.code==='KeyH'){event.preventDefault();if(!event.repeat)consumablePanel.keyboard();return;}
   if (['KeyG','KeyB','KeyV'].includes(event.code)) { event.preventDefault(); if (!event.repeat) groundPanel.keyboard(event.code); return; }
   if (['KeyF', 'KeyT', 'KeyR'].includes(event.code)) {
+    if(session?.consumables){event.preventDefault();return;}
     event.preventDefault();
     if (!event.repeat) encounterCommand({ kind: event.code === 'KeyF' ? 'fire' : event.code === 'KeyT' ? 'target' : 'reset' });
     return;
   }
   if (/^Digit[1-4]$/.test(event.code)) {
+    consumablePanel.select(Number(event.code.slice(-1)) - 1);
     groundPanel.select(Number(event.code.slice(-1)) - 1);
     gatePanel.select(Number(event.code.slice(-1)) - 1); pendingGateActor = null;
     router.assign(Number(event.code.slice(-1)) - 1, { kind: 'keyboard', index: 0 }); keys.clear(); refreshAssignments(readPads(), true); event.preventDefault(); return;
@@ -626,8 +658,9 @@ function frame(now: number): void {
       const commands = router.commands(world.tick, keys, pads);
       const activation = pendingGateActor, action = pendingDoorAction; pendingGateActor = null; pendingDoorAction = 16;
       const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation,action) : null;
-      const result = gateResult ?? stepWorld(level,world,commands);
-      const nextSession = gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
+      const consumableResult=session?.consumables?stepConsumables(level,session,world,commands):null;
+      const result = consumableResult ?? gateResult ?? stepWorld(level,world,commands);
+      const nextSession = consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
       replaceGateRenderer(nextSession);
       world = result.world; session = nextSession;
       if (gateResult?.feedback) {gatePanel.feedback(gateResult.feedback); doorPanel.feedback(gateResult.feedback);}

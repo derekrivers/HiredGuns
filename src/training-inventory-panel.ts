@@ -11,7 +11,7 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
   function refresh() {
     for (const { actor, select, button, position, returnButton, exchangeButton } of controls) {
       const state = current?.inventory.actors[actor];
-      const exhausted = !current || (current.ground ? current.ground.history.length >= MAX_GROUND_HISTORY : current.inventory.commands.length >= MAX_INVENTORY_COMMANDS);
+      const exhausted = !current || (current.consumables ? current.consumables.history.length >= MAX_INVENTORY_COMMANDS : current.ground ? current.ground.history.length >= MAX_GROUND_HISTORY : current.inventory.commands.length >= MAX_INVENTORY_COMMANDS);
       select.disabled = !available() || exhausted;
       button.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId !== 0 || select.value === '';
       exchangeButton.disabled = !available() || exhausted || !state || state.inventory.equipped.itemId === 0 || select.value === '';
@@ -25,7 +25,7 @@ export function installTrainingInventoryPanel(host: HTMLElement, available: () =
     const title = document.createElement('p');
     title.textContent = 'Carried inventory — pause, choose a slot, then Equip. Choose an insertion position and Return to backpack. When equipped, select another occupied carried slot and Exchange equipment. These are standalone source-deduced adapters. Retry, rule changes or Apply a new team reset the operation budget.';
     const budget = document.createElement('p'); budget.id = 'inventory-budget';
-    const remaining = session.ground ? MAX_GROUND_HISTORY - session.ground.history.length : MAX_INVENTORY_COMMANDS - session.inventory.commands.length;
+    const remaining = session.consumables ? MAX_INVENTORY_COMMANDS-session.consumables.history.length : session.ground ? MAX_GROUND_HISTORY - session.ground.history.length : MAX_INVENTORY_COMMANDS - session.inventory.commands.length;
     budget.textContent = `${session.ground ? 'Shared movement/item replay events' : 'Inventory operations'} remaining: ${remaining} / ${MAX_INVENTORY_COMMANDS}.${remaining === 0 ? ' Budget exhausted. Retry or Apply a new team to reset.' : ''}`;
     host.append(title, budget);
     session.inventory.actors.forEach((actor, i) => {

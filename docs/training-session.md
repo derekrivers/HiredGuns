@@ -271,3 +271,11 @@ canonical replay, alongside every prior world/door/NPC/gun/inventory/mission fie
 No pad event is appended separately from movement. All source ownership,
 generation cancellation, prospective budgets and paused atomic recovery rules
 above apply. Exact v1–v12 field sets and scenarios stay unchanged.
+
+## Consumable extension candidate (v14)
+
+See [authored consumables](training-consumables.md). A fresh selected-team dry-fall
+practice can activate a separately replayed source-bound food/repair extension.
+H uses equipped food/repair only while paused, alive and settled. Its full
+chronological tick/item/use replay preserves historical fall weights; legacy
+v1–v13 are unchanged. Medical64 remains explicitly unsupported.
