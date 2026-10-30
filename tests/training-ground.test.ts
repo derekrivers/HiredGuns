@@ -37,6 +37,7 @@ describe('authored source-owned chronological ground replay',()=>{
   expect(()=>replayTrainingGround(level,team,items,{...envelope,history:[{...pickup,actor:1}]})).toThrow('Move');
   expect(()=>replayTrainingGround(level,team,items,{...envelope,history:[{...pickup,groundId:'cache-9-9'}]})).toThrow('Move');
   for(const value of [{...envelope,fixture:'other'},{...envelope,slots:[]},{...envelope,history:Array(129).fill(pickup)},{...envelope,history:[{...pickup,extra:1}]}])expect(()=>groundEnvelope(value)).toThrow();
+  let reads=0;expect(()=>groundHistory([{get kind(){reads++;return 'wait';},ticks:1}])).toThrow();expect(reads).toBe(0);
   expect(()=>groundHistory([undefined])).toThrow();expect(()=>groundHistory(new Array(1))).toThrow();
   expect(()=>replayTrainingGround(createSelectedFallLevel(),team,items,envelope)).toThrow();
   const events:GroundEvent[]=[{kind:'step',commands:[{mercenaryId:0,action:'turn-right'}]},{kind:'wait',ticks:20},pickup];

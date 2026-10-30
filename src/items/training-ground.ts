@@ -27,7 +27,8 @@ function integer(n: unknown, max: number): asserts n is number { if (!Number.isI
 export function groundHistory(value: unknown): GroundEvent[] {
   dense(value, MAX_GROUND_HISTORY);
   return Array.from(value, event => {
-    if (!event || typeof event !== 'object') throw new Error('Invalid ground replay event.');
+    if (!event || typeof event !== 'object' || ![Object.prototype, null].includes(Object.getPrototypeOf(event)) ||
+        !Object.getOwnPropertyDescriptor(event, 'kind')?.enumerable || !Object.hasOwn(Object.getOwnPropertyDescriptor(event, 'kind')!, 'value')) throw new Error('Invalid ground replay event.');
     const kind = (event as { kind: unknown }).kind;
     if (kind === 'wait') { fields(event, ['kind', 'ticks']); integer(event.ticks, MAX_GROUND_TICKS); if (!event.ticks) throw new Error('Empty ground wait.'); return { kind, ticks: event.ticks }; }
     if (kind === 'step') {
