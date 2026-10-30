@@ -26,6 +26,8 @@ export interface MissionState {
   exited: [boolean, boolean, boolean, boolean];
   clock: MissionClock | null;
   winner: number | null;
+  /** Present only in the selected-team v18 profile. */
+  reason?: 'all-dead' | 'time-expired';
 }
 /** Dry practice runtime; normalized incapacitation, not original lifecycle storage. */
 export interface FallActor {

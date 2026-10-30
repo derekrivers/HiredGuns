@@ -5,6 +5,34 @@ import { resolveTraversal } from './traversal';
 /** Source resets a counter to 600 after it decrements past zero: 601 steps. */
 export const SOURCE_CLOCK_PERIOD = 601;
 
+/** Main.s check_exit: dead_flag2 OR control_method=0 counts in BOTH d0/d1;
+ * window7 counts only in d0. Four dead precedes action timeout, then exit.
+ * Pure source decision only; the live selected-party adapter admits control1.
+ */
+export function sourcePartyDecision(actors:readonly {deadWord:number;control:number;window:number}[], action:boolean, timeUp:boolean): 'all-dead'|'time-expired'|'exit'|null {
+  if(actors.length!==4)throw Error('Four source slots required');
+  let dead=0,inside=0;
+  for(const a of actors){if(a.deadWord!==0||a.control===0){dead++;inside++;}else if(a.window===7)inside++;}
+  if(dead===4)return 'all-dead';
+  if(action&&timeUp)return 'time-expired';
+  return (action?inside>dead:inside===4)?'exit':null;
+}
+/** V18 only. First-exit is the source multi-player action decision; cooperative
+ * extraction remains the explicitly labelled all-four-exited adaptation. */
+export function resolveSelectedPartyMission(world:WorldState,events:SimulationEvent[]):void {
+  if(world.physics.mode!=='source-wet')throw Error('Selected party physics required');
+  const m=world.mission,action=m.rules.mode!=='navigation';
+  m.clock=action?sourceClockAtTick(m.rules.timeLimit!,world.tick):null;
+  const decision=sourcePartyDecision(world.physics.deadWords.map((deadWord,id)=>({deadWord,control:1,window:m.exited[id]?7:0})),action,!!m.clock&&m.clock.tens===0&&m.clock.units===0);
+  if(decision==='all-dead'||decision==='time-expired'){
+    m.outcome='failed';m.reason=decision;m.winner=null;
+    events.push({tick:world.tick,mercenaryId:0,kind:'failed',reason:decision==='all-dead'?'all controlled mercenaries dead':'time expired'});return;
+  }
+  if(!action||decision!=='exit'||(m.rules.mode==='cooperative-extraction'&&!m.exited.every(Boolean)))return;
+  m.outcome='complete';m.winner=m.rules.mode==='first-exit'?m.exited.findIndex(Boolean):null;
+  events.push({tick:world.tick,mercenaryId:m.winner??events.filter(e=>e.kind==='exited').at(-1)!.mercenaryId,kind:'complete'});
+}
+
 export function validatedMissionRules(level: LevelData, rules: MissionRules): MissionRules {
   if (!rules || Reflect.ownKeys(rules).length !== 2 || !Object.hasOwn(rules,'mode') || !Object.hasOwn(rules,'timeLimit')) throw new Error('Invalid mission rules fields');
   const allowed = missionRulesForLevel(level, rules.mode);

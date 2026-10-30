@@ -1,11 +1,11 @@
-import { cellIndex, inBounds, type Position, type LevelData, type MissionRules, type PlayerCommand, type WorldState } from '../contracts';
+import { cellIndex, inBounds, type Position, type LevelData, type MissionRules, type PlayerCommand, type WorldState, type SimulationEvent } from '../contracts';
 import { computeNormalDamage } from '../character/damage-arithmetic';
 import { sourceDeathSearch, type DeathSearch } from '../character/source-death-search';
 import { transitionImmersion } from '../character/immersion-caller';
 import { importEditorMap } from '../import/editor-map';
 import { importCharacters } from '../import/characters';
 import { createTrainingSession, type TrainingSession, type TrainingSources, type TrainingCandidate } from './training-session';
-import { initialWet, admitWet, wetSnapshot, rawSnapshot, wetHistory, WET_LIMITS, type WetEvent } from './training-wet';
+import { initialWet, initialSelectedWet, admitWet, wetSnapshot, rawSnapshot, wetHistory, WET_LIMITS, type WetEvent } from './training-wet';
 import { equalConsumableState as equal } from './training-consumables';
 import { TRAINING_43_SHA256 } from './mission-profile';
 import { stepWorld } from './world';
@@ -50,9 +50,16 @@ export function decodeLifecycleHistory(input:unknown):WetEvent[]{
  * No claim about original sound/display/interrupt cadence follows from these fields.
  */
 export function initialWetLifecycle(level:LevelData,baseline:TrainingSession,races:number[],rules:MissionRules):TrainingCandidate {
+ return initialLifecycle(level,baseline,races,rules,false);
+}
+/** New selected-team admission reuses every existing lifecycle initializer field. */
+export function initialSelectedLifecycle(level:LevelData,baseline:TrainingSession,races:number[],rules:MissionRules):TrainingCandidate {
+ return initialLifecycle(level,baseline,races,rules,true);
+}
+function initialLifecycle(level:LevelData,baseline:TrainingSession,races:number[],rules:MissionRules,selected:boolean):TrainingCandidate {
  if(level.layers[0].some(w=>((w&32)!==0&&(w>>>28)===7)||((w&2)!==0&&((w>>>11)&63)>=32&&((w>>>11)&63)<=47)))fail('preexisting source corpse/person outside initialized party');
  const {wet:_wet,wetLifecycle:_life,...fresh}=baseline;void _wet;void _life;
- const c=initialWet(level,fresh,races,rules);
+ const c=(selected?initialSelectedWet:initialWet)(level,fresh,races,rules);
  c.session={...c.session,wetLifecycle:{actors:races.map(()=>({spellShield:0,cheatMode2:0,cheatMode3:0,fireWhite:0,fitnessFlashDuration:0,gruntCount:0,requests:0,lastHit:null,lastDamage:null,death:null})),second:[],leader2:0,redraw:0,expandedAudioMemory:0}};
  c.world.physics={mode:'source-wet',deadWords:[0,0,0,0]};
  return c;
@@ -154,7 +161,7 @@ function heads(level:LevelData,session:TrainingSession,world:WorldState,previous
  wet.overlays=[...overlay].sort((a,b)=>a[0]-b[0]).map(([i,[w,c]])=>[i,w,c]);
 }
 /** One indivisible full-party candidate. Drown -> falling (dead guard) -> controls. */
-export function stepWetLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record=true){
+export function stepWetLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record=true,missionResolver?: (world:WorldState,events:SimulationEvent[])=>void){
  validate(level,session,previous);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
  if(previous.tick>=WET_LIMITS.ticks)fail('future tick budget');
  const next={...session,wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
@@ -176,7 +183,7 @@ export function stepWetLifecycle(level:LevelData,session:TrainingSession,previou
  // Corpse aux7 is non-solid in source move; its inert presence does not replace stair geometry.
  const geometry=wet.corpses.length?wetLifecycleMap(level,next):level;
  if(geometry!==level)for(let id=0;id<4;id++)if(active(next,prospective,id)){const i=wet.actors[id]!.current;geometry.layers[0][i]=(geometry.layers[0][i]!&MASK)>>>0;}
- const result=stepWorld(geometry,prospective,commands,p=>admitLifecycle(geometry,next,p),true);
+ const result=stepWorld(geometry,prospective,commands,p=>admitLifecycle(geometry,next,p),true,missionResolver);
  for(let id=0;id<4;id++){const a=wet.actors[id]!,i=cellIndex(level,result.world.mercenaries[id]!);if(!(level.layers[0][a.current]!&4)&&(level.layers[0][i]!&4)&&result.events.some(e=>e.mercenaryId===id&&e.kind==='moved'))a.entries++;}
  heads(level,next,result.world,previous,session);
  const inventory:TrainingSession['inventory']={commands:[],actors:wet.actors.map(a=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:0}))};
