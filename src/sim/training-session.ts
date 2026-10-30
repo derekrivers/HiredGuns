@@ -1,4 +1,5 @@
 import { exportWet, importWet, initialWet, type TrainingWet } from './training-wet';
+import { exportWetRegion, importWetRegion, initialWetRegion, type TrainingWetRegion } from './training-wet-region';
 import { exportWetLifecycle, importWetLifecycle, initialWetLifecycle, type TrainingWetLifecycle } from './training-wet-lifecycle';
 import { CONSUMABLE_FIXTURE, serializeConsumables as consumableJSON, replayConsumables, consumableHistory, appendConsumableEvent, equalConsumableState, type TrainingConsumables, type ConsumableEvent } from './training-consumables';
 import { PRESSURE_PAD_FIXTURE, pressurePadLevel } from '../world/training-pressure-pad';
@@ -24,6 +25,7 @@ import { selectedFallLevel, type FallProfile } from './fall';
 export const MAX_SESSION_BYTES = 24 * 1024;
 export interface TrainingSources { roster: Uint8Array; items: Uint8Array; map?: Uint8Array }
 export interface TrainingSession {
+  readonly wetRegion?: TrainingWetRegion;
   readonly wetLifecycle?: TrainingWetLifecycle;
   readonly wet?: TrainingWet;
   readonly consumables?: TrainingConsumables;
@@ -147,6 +149,7 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
+  if(session.wetRegion)return initialWetRegion(level!,session,session.wet!.actors.map(a=>a.body.race),rules??session.wet!.rules).session;
   if(session.wetLifecycle)return initialWetLifecycle(level!,session,session.wet!.actors.map(a=>a.body.race),rules??session.wet!.rules).session;
   if (session.wet) return initialWet(level!,session,session.wet.actors.map(a=>a.body.race),rules??session.wet.rules).session;
   if (session.consumables) return freeze(replayConsumables(level!,{...session,inventory:replayTrainingInventory(session.team,session.items,[])},session.consumables.races,[]).session);
@@ -159,6 +162,9 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
   // Inspect the new extension without evaluating caller accessors before its snapshot.
   if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  const region = Object.getOwnPropertyDescriptor(session, 'wetRegion');
+  if (region && (!region.enumerable || !('value' in region))) throw new Error('Training43 session data descriptors required.');
+  if (region?.value) return exportWetRegion(level,sources,session,world);
   const lifecycle = Object.getOwnPropertyDescriptor(session, 'wetLifecycle');
   if (lifecycle && (!lifecycle.enumerable || !('value' in lifecycle))) throw new Error('Training43 session data descriptors required.');
   if (lifecycle?.value) return exportWetLifecycle(level,sources,session,world);
@@ -191,6 +197,7 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   const parsed: unknown = JSON.parse(json);
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const version = (parsed as { version?: unknown }).version;
+  if(version===17)return importWetRegion(level,sources,parsed);
   if(version===16)return importWetLifecycle(level,sources,parsed);
   if (version === 15) return importWet(level,sources,parsed);
   if (version === 14) return importConsumableSession(level,sources,parsed);

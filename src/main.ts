@@ -1,4 +1,6 @@
 import { activateWetLifecycle, stepWetLifecycle } from './sim/training-wet-lifecycle';
+import { activateWetRegion, stepWetRegion } from './sim/training-wet-region';
+import { installTrainingWetRegionPanel } from './training-wet-region-panel';
 import { installTrainingWetLifecyclePanel } from './training-wet-lifecycle-panel';
 import { activateWet, stepWet } from './sim/training-wet';
 import { installTrainingWetPanel } from './training-wet-panel';
@@ -155,6 +157,13 @@ const wetPanel=installTrainingWetPanel(wetHost,()=>({session,world,paused,loadin
  }catch(error){return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
 });
 const lifecycleHost=document.createElement('section');lifecycleHost.id='training-wet-lifecycle';wetHost.after(lifecycleHost);
+const regionHost=document.createElement('section');regionHost.id='training-wet-region';wetHost.before(regionHost);
+const regionPanel=installTrainingWetRegionPanel(regionHost,()=>({session,world,paused,loading,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
+ let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
+ try{if(loading||!session)throw Error('Load the fresh ready-to-play Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
+ const candidate=await activateWetRegion(level,raw,session,world,paused);if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);return {status:'installed',isCurrent};
+ }catch(error){return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
+});
 const lifecyclePanel=installTrainingWetLifecyclePanel(lifecycleHost,()=>({session,world,paused,loading,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
  let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
  try{if(loading||!session)throw Error('Load the fresh ready-to-play Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
@@ -313,7 +322,7 @@ function showSession(): void {
   groundHost.style.display = session?.gate ? 'none' : '';
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = session?.wetLifecycle ? 'Training43 wet damage/lifecycle: source-derived injury, death and bounded corpse search; v16 chronological recovery. Explicit survivor selection; retained display feedback adapter, original level incomplete.' : session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
+  label.textContent = session?.wetRegion ? 'Training43 wet-region exploration: actual visited cells, full lifecycle and source-bound v17 recovery; explicit survivor selection, original level incomplete.' : session?.wetLifecycle ? 'Training43 wet damage/lifecycle: source-derived injury, death and bounded corpse search; v16 chronological recovery. Explicit survivor selection; retained display feedback adapter, original level incomplete.' : session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   refreshEncounterPanel(); patrolPanel.refresh(); doorPanel.refresh();
@@ -405,7 +414,7 @@ function updateMissionHud(): void {
   if (challenge && gateRun) gateRun.textContent = world.mission.outcome !== 'active' ? 'FINISHED · Y Retry' : paused ? 'PAUSED · Start mission for C' : 'RUNNING';
   challengeButton.disabled = loading || !session || !renderer || graphicsLost;
   get<HTMLSelectElement>('mission-mode').disabled=!!session?.consumables;
-  consumablePanel.refresh(); wetPanel.refresh(); lifecyclePanel.refresh();wetHost.hidden=!!session?.wetLifecycle;
+  consumablePanel.refresh(); wetPanel.refresh(); lifecyclePanel.refresh(); regionPanel.refresh();wetHost.hidden=!!session?.wetLifecycle;
   selectedFallButton.disabled = !!session?.wet || loading || !session || !!session.ground || !!session.gate || selectedFallLevel(level);
   const mission = world.mission, active = mission.rules.mode !== 'navigation', fallDrill = world.physics.mode === 'dry-fall', allDead = teamDead(world), terminal = mission.outcome !== 'active' || allDead;
   const escaped = mission.exited.filter(Boolean).length;
@@ -687,7 +696,7 @@ function frame(now: number): void {
       const activation = pendingGateActor, action = pendingDoorAction; pendingGateActor = null; pendingDoorAction = 16;
       const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation,action) : null;
       const consumableResult=session?.consumables?stepConsumables(level,session,world,commands):null;
-      const wetResult=session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
+      const wetResult=session?.wetRegion?stepWetRegion(level,session,world,commands):session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
       const result = wetResult ?? consumableResult ?? gateResult ?? stepWorld(level,world,commands);
       const nextSession = wetResult ? wetResult.session : consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
       replaceGateRenderer(nextSession);
@@ -700,7 +709,7 @@ function frame(now: number): void {
     if (world.mission.outcome !== 'active' || teamDead(world)) setPaused(true);
   }
   inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
-  wetPanel.refresh(); lifecyclePanel.refresh();
+  wetPanel.refresh(); lifecyclePanel.refresh(); regionPanel.refresh();
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }
