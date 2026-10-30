@@ -172,21 +172,21 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });
 
-test('accepted115 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+test('accepted116 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
   const data = await load();
-  expect(data.acceptedThrough).toBe(115);
-  expect(data.reviewedHead).toBe('e2b2d5ff4090c5c39006abea147a24450ca5c17b');
-  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115]);
+  expect(data.acceptedThrough).toBe(116);
+  expect(data.reviewedHead).toBe('db5d2930eb07ef98ddda1d09bb1968efed0f57d3');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116]);
   const before = registerCompletion(data.mechanics);
   expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
-  expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(122);
+  expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(129);
   expect(data.mechanics.filter(m => m.id.startsWith('PSI-') && m.id !== 'PSI-01').length * STAGES.length).toBe(232);
   expect(data.mechanics.length * 2).toBe(172);
   const extended = structuredClone(data);
   extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
   await validateRegister(extended);
   expect(registerCompletion(extended.mechanics)).toEqual(before);
-  expect(renderHtml(extended)).toContain('8 listed milestones');
+  expect(renderHtml(extended)).toContain('9 listed milestones');
   const food = data.mechanics.find(m => m.id === 'INV-06')!;
   expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
   expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
@@ -196,7 +196,7 @@ test('accepted115 dashboard separates capability lineage, proof and broad eviden
     expect(row.scenarios).toContain('wet'); expect(row.stages.playable).toBe('partial');
     expect(row.tests.some(t => t.path === 'tests/browser/training-wet.spec.ts')).toBe(true);
   }
-  expect(data.acceptanceChecks.find(c => c.id === 'T43-05')!.state).toBe('open');
+  expect(data.acceptanceChecks.find(c => c.id === 'T43-05')!.state).toBe('partial');
   expect(renderMarkdown(data)).toContain('No complete original level accepted.'); // retained explicit source limits
 });
 
@@ -214,8 +214,8 @@ test('dashboard schema rejects unsafe enums, IDs, references, paths and receipt 
   await mutate(d => { d.dashboards[0]!.milestones[0]!.id = d.dashboards[1]!.milestones[0]!.id; });
   await mutate(d => { d.dashboards[0]!.milestones[0]!.lineage = ['NO-99']; });
   await mutate(d => { d.dashboards[0]!.milestones[0]!.scenario = 'missing-scenario'; });
-  await mutate(d => { d.dashboards[0]!.milestones[0]!.proofs = ['proof-116']; });
-  await mutate(d => { d.acceptedProofs[0]!.pr = 116; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.proofs = ['proof-117']; });
+  await mutate(d => { d.acceptedProofs[0]!.pr = 117; });
   await mutate(d => { d.acceptedProofs[0]!.merge = 'invalid'; });
   await mutate(d => { d.acceptedProofs[0]!.reviewSha256 = 'invalid'; });
   await mutate(d => { d.acceptedProofs[0]!.automatic = 'javascript:bad'; });

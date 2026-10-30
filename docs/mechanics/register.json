@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-30",
-  "reviewedHead": "e2b2d5ff4090c5c39006abea147a24450ca5c17b",
+  "reviewedHead": "db5d2930eb07ef98ddda1d09bb1968efed0f57d3",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,7 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Accepted through PR115 only: PR112 food/repair, PR114 source CASE, PR115 actual supported original-editor wet entry/return and v15 recovery. PR116 is an unaccepted candidate and earns no credit. No complete original level or hardware receipt exists.",
+    "Accepted through PR116: bounded source wet injury/death/north-search corpse/head ownership/dead input guard/manual survivor movement/first exit/v16 paused recovery and Retry. Wider wet region/all-dead/original99-count timeout beyond45000 ticks/general corpse items/doors-pads/whole43/testbed/hardware/runtime CPU parity remain open. Legacy v15 still refuses all non-null damage including zero.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
     "Static editor observations do not prove runtime activation, target validity, reachability, required puzzle roles or completed gameplay.",
@@ -165,6 +165,14 @@
       "path": "docs/training43-wet-traversal.md",
       "instructions": "Same app: ready Training43, Enable Training43 wet traversal at paused tick zero; Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause. Enter supported wet stair and reverse.",
       "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
+    },
+    {
+      "id": "wet-lifecycle",
+      "title": "Training43 bounded wet damage and lifecycle",
+      "kind": "original",
+      "path": "docs/training43-wet-lifecycle.md",
+      "instructions": "Same app: ready Training43 at paused tick zero, Enable wet damage and lifecycle, Start mission; select4 and use W/S A/D Q/E, Esc pause. After death controls guard; choose a living actor explicitly with1–4. Save/load paused; Retry fresh.",
+      "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Legacy v15 entry-return mode retains its damage refusal boundary."
     }
   ],
   "mechanics": [
@@ -653,7 +661,7 @@
       "baseline": "ocs-3926",
       "original": "Apply directional ascent/descent, paired stairs, target clearance and wet destination consequences.",
       "source": "Controls&Movement.s move and directional callers",
-      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
+      "mappingScope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
@@ -679,6 +687,11 @@
           "path": "docs/training43-wet-traversal.md",
           "label": "Accepted PR115 wet consumer",
           "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
+        },
+        {
+          "path": "docs/training43-wet-lifecycle.md",
+          "label": "training43-wet-lifecycle.md",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "tests": [
@@ -701,6 +714,16 @@
           "path": "tests/browser/training-wet.spec.ts",
           "label": "training-wet.spec.ts",
           "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet-lifecycle.test.ts",
+          "label": "training-wet-lifecycle.test.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/browser/training-wet-lifecycle.spec.ts",
+          "label": "training-wet-lifecycle.spec.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "implementation": [
@@ -713,17 +736,23 @@
           "path": "src/sim/training-wet.ts",
           "label": "training-wet.ts",
           "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
+        },
+        {
+          "path": "src/sim/training-wet-lifecycle.ts",
+          "label": "training-wet-lifecycle.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "scenarios": [
         "training43",
         "stairs",
-        "wet"
+        "wet",
+        "wet-lifecycle"
       ],
       "gaps": [
-        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
       ],
-      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
+      "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
     {
       "id": "MOV-04",
@@ -1239,7 +1268,7 @@
       "baseline": "ocs-3926",
       "original": "Evaluate water depth, stairs, movement, immersion and actor-specific immunity without bypassing inventory/lifecycle effects.",
       "source": "Main.s drowning/player_fall; Controls&Movement.s movement",
-      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
+      "mappingScope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
@@ -1275,6 +1304,11 @@
           "path": "docs/training43-wet-traversal.md",
           "label": "Accepted PR115 wet consumer",
           "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
+        },
+        {
+          "path": "docs/training43-wet-lifecycle.md",
+          "label": "training43-wet-lifecycle.md",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "tests": [
@@ -1292,6 +1326,16 @@
           "path": "tests/browser/training-wet.spec.ts",
           "label": "training-wet.spec.ts",
           "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet-lifecycle.test.ts",
+          "label": "training-wet-lifecycle.test.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/browser/training-wet-lifecycle.spec.ts",
+          "label": "training-wet-lifecycle.spec.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "implementation": [
@@ -1304,15 +1348,21 @@
           "path": "src/sim/training-wet.ts",
           "label": "training-wet.ts",
           "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
+        },
+        {
+          "path": "src/sim/training-wet-lifecycle.ts",
+          "label": "training-wet-lifecycle.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "scenarios": [
-        "wet"
+        "wet",
+        "wet-lifecycle"
       ],
       "gaps": [
-        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
       ],
-      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
+      "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
     {
       "id": "ENV-09",
@@ -2269,7 +2319,7 @@
       "baseline": "ocs-3926",
       "original": "Apply original integer fitness/physique/shield/modifier arithmetic and inventory damage under the correct caller guards.",
       "source": "Main.s damage_fitness; ItemUsage.s shooting path",
-      "mappingScope": "Selected pure arithmetic, ordinary-floor damage and bounded shooting arguments.",
+      "mappingScope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
@@ -2295,6 +2345,11 @@
           "path": "docs/shooting-argument-contract.md",
           "label": "shooting-argument-contract.md",
           "scope": "Selected pure arithmetic, ordinary-floor damage and bounded shooting arguments."
+        },
+        {
+          "path": "docs/training43-wet-lifecycle.md",
+          "label": "training43-wet-lifecycle.md",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "tests": [
@@ -2312,6 +2367,16 @@
           "path": "tests/shooting-argument.test.ts",
           "label": "shooting-argument.test.ts",
           "scope": "Selected pure arithmetic, ordinary-floor damage and bounded shooting arguments."
+        },
+        {
+          "path": "tests/training-wet-lifecycle.test.ts",
+          "label": "training-wet-lifecycle.test.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/browser/training-wet-lifecycle.spec.ts",
+          "label": "training-wet-lifecycle.spec.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "implementation": [
@@ -2324,16 +2389,22 @@
           "path": "src/character/damage-arithmetic.ts",
           "label": "damage-arithmetic.ts",
           "scope": "Selected pure arithmetic, ordinary-floor damage and bounded shooting arguments."
+        },
+        {
+          "path": "src/sim/training-wet-lifecycle.ts",
+          "label": "training-wet-lifecycle.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "scenarios": [
         "fall",
-        "encounter"
+        "encounter",
+        "wet-lifecycle"
       ],
       "gaps": [
-        "Real enemy hits, all modifiers and original equipment-damage callers remain incomplete."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
     {
       "id": "LIFE-02",
@@ -2342,13 +2413,13 @@
       "baseline": "ocs-3926",
       "original": "Mark death, remove occupancy, release pads, clear leaders and write corpse markers in original order; preserve original selection rules.",
       "source": "Main.s death transition; Controls&Movement.s actor/control gates",
-      "mappingScope": "Bounded disconnected original helper; dry practice uses authored incapacitation.",
+      "mappingScope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
         "playable": "partial",
-        "integration": "open",
+        "integration": "partial",
         "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
@@ -2357,40 +2428,61 @@
         {
           "path": "docs/death-transition-contract.md",
           "label": "death-transition-contract.md",
-          "scope": "Bounded disconnected original helper; dry practice uses authored incapacitation."
+          "scope": "Earlier bounded helper proof; PR116 separately accepts bounded wet fatal geometry and control integration. General original lifecycle/pad callers remain incomplete."
         },
         {
           "path": "docs/after-death-control-observation.md",
           "label": "after-death-control-observation.md",
-          "scope": "Bounded disconnected original helper; dry practice uses authored incapacitation."
+          "scope": "Earlier bounded helper proof; PR116 separately accepts bounded wet fatal geometry and control integration. General original lifecycle/pad callers remain incomplete."
         },
         {
           "path": "docs/initialized-postdeath-fixture-fit.md",
           "label": "initialized-postdeath-fixture-fit.md",
-          "scope": "Bounded disconnected original helper; dry practice uses authored incapacitation."
+          "scope": "Earlier bounded helper proof; PR116 separately accepts bounded wet fatal geometry and control integration. General original lifecycle/pad callers remain incomplete."
+        },
+        {
+          "path": "docs/training43-wet-lifecycle.md",
+          "label": "training43-wet-lifecycle.md",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "tests": [
         {
           "path": "tests/death-transition.test.ts",
           "label": "death-transition.test.ts",
-          "scope": "Bounded disconnected original helper; dry practice uses authored incapacitation."
+          "scope": "Earlier bounded helper proof; PR116 separately accepts bounded wet fatal geometry and control integration. General original lifecycle/pad callers remain incomplete."
+        },
+        {
+          "path": "tests/training-wet-lifecycle.test.ts",
+          "label": "training-wet-lifecycle.test.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/browser/training-wet-lifecycle.spec.ts",
+          "label": "training-wet-lifecycle.spec.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "implementation": [
         {
           "path": "src/character/death-transition.ts",
           "label": "death-transition.ts",
-          "scope": "Bounded disconnected original helper; dry practice uses authored incapacitation."
+          "scope": "Earlier bounded helper proof; PR116 separately accepts bounded wet fatal geometry and control integration. General original lifecycle/pad callers remain incomplete."
+        },
+        {
+          "path": "src/sim/training-wet-lifecycle.ts",
+          "label": "training-wet-lifecycle.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "scenarios": [
-        "fall"
+        "fall",
+        "wet-lifecycle"
       ],
       "gaps": [
-        "Original live death/pads/corpse/control composition remains absent."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
     {
       "id": "LIFE-03",
@@ -2399,7 +2491,7 @@
       "baseline": "ocs-3926",
       "original": "Evaluate guards/depth/immunity, increment/reset breath and apply threshold damage in original integer order.",
       "source": "Main.s drowning; pinned OCS wet-entry CPU observations",
-      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
+      "mappingScope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
@@ -2435,6 +2527,11 @@
           "path": "docs/training43-wet-traversal.md",
           "label": "Accepted PR115 wet consumer",
           "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
+        },
+        {
+          "path": "docs/training43-wet-lifecycle.md",
+          "label": "training43-wet-lifecycle.md",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "tests": [
@@ -2457,6 +2554,16 @@
           "path": "tests/browser/training-wet.spec.ts",
           "label": "training-wet.spec.ts",
           "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet-lifecycle.test.ts",
+          "label": "training-wet-lifecycle.test.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/browser/training-wet-lifecycle.spec.ts",
+          "label": "training-wet-lifecycle.spec.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "implementation": [
@@ -2474,15 +2581,21 @@
           "path": "src/sim/training-wet.ts",
           "label": "training-wet.ts",
           "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
+        },
+        {
+          "path": "src/sim/training-wet-lifecycle.ts",
+          "label": "training-wet-lifecycle.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "scenarios": [
-        "wet"
+        "wet",
+        "wet-lifecycle"
       ],
       "gaps": [
-        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
       ],
-      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
+      "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
     {
       "id": "LIFE-04",
@@ -2491,7 +2604,7 @@
       "baseline": "ocs-3926",
       "original": "Process equipped/carried entries and weight before breath immunity, retaining spell-specific bypass behaviour.",
       "source": "Main.s immersion inventory ordering; water inventory helper",
-      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
+      "mappingScope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
@@ -2522,6 +2635,11 @@
           "path": "docs/training43-wet-traversal.md",
           "label": "Accepted PR115 wet consumer",
           "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
+        },
+        {
+          "path": "docs/training43-wet-lifecycle.md",
+          "label": "training43-wet-lifecycle.md",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "tests": [
@@ -2539,6 +2657,16 @@
           "path": "tests/browser/training-wet.spec.ts",
           "label": "training-wet.spec.ts",
           "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet-lifecycle.test.ts",
+          "label": "training-wet-lifecycle.test.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+        },
+        {
+          "path": "tests/browser/training-wet-lifecycle.spec.ts",
+          "label": "training-wet-lifecycle.spec.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "implementation": [
@@ -2551,15 +2679,21 @@
           "path": "src/sim/training-wet.ts",
           "label": "training-wet.ts",
           "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
+        },
+        {
+          "path": "src/sim/training-wet-lifecycle.ts",
+          "label": "training-wet-lifecycle.ts",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
         }
       ],
       "scenarios": [
-        "wet"
+        "wet",
+        "wet-lifecycle"
       ],
       "gaps": [
-        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
       ],
-      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
+      "next": "Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof."
     },
     {
       "id": "LIFE-05",
@@ -2601,14 +2735,14 @@
       "baseline": "ocs-3926",
       "original": "Apply fitness-boost fields, healing, experience gains and resulting stat/cap changes as defined by original callers.",
       "source": "Equates.i field type 2; Main.s fitness; ItemUsage.s experience updates",
-      "mappingScope": "Initial stats inspection is implemented; live gains and healing unimplemented.",
+      "mappingScope": "PR112 bounded equipped FOOD/nonmedical64 and REPAIR restore actual authored dry-fall fitness with caps/ID clear/source weight/v14 replay. Fitness fields, experience and progression remain open; see narrower INV-06 milestone.",
       "stages": {
-        "mapping": "open",
-        "reference": "open",
-        "rules": "open",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "mapping": "partial",
+        "reference": "partial",
+        "rules": "partial",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -2617,15 +2751,39 @@
           "path": "docs/character-format.md",
           "label": "character-format.md",
           "scope": "Initial stats inspection is implemented; live gains and healing unimplemented."
+        },
+        {
+          "path": "docs/training-consumables.md",
+          "label": "Accepted PR112 food/repair scope",
+          "scope": "PR112 bounded equipped FOOD/nonmedical64 and REPAIR restore actual authored dry-fall fitness with caps/ID clear/source weight/v14 replay. Fitness fields, experience and progression remain open; see narrower INV-06 milestone."
         }
       ],
-      "tests": [],
-      "implementation": [],
-      "scenarios": [],
+      "tests": [
+        {
+          "path": "tests/training-consumables.test.ts",
+          "label": "training-consumables.test.ts",
+          "scope": "PR112 bounded equipped FOOD/nonmedical64 and REPAIR restore actual authored dry-fall fitness with caps/ID clear/source weight/v14 replay. Fitness fields, experience and progression remain open; see narrower INV-06 milestone."
+        },
+        {
+          "path": "tests/browser/training-consumables.spec.ts",
+          "label": "training-consumables.spec.ts",
+          "scope": "PR112 bounded equipped FOOD/nonmedical64 and REPAIR restore actual authored dry-fall fitness with caps/ID clear/source weight/v14 replay. Fitness fields, experience and progression remain open; see narrower INV-06 milestone."
+        }
+      ],
+      "implementation": [
+        {
+          "path": "src/items/consumable-use.ts",
+          "label": "consumable-use.ts",
+          "scope": "PR112 bounded equipped FOOD/nonmedical64 and REPAIR restore actual authored dry-fall fitness with caps/ID clear/source weight/v14 replay. Fitness fields, experience and progression remain open; see narrower INV-06 milestone."
+        }
+      ],
+      "scenarios": [
+        "consumables"
+      ],
       "gaps": [
         "Split progression/experience into separate rows when its full branch inventory is established."
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "next": "Map fields/progression/experience separately; no revival or general healing-family acceptance."
     },
     {
       "id": "PSI-01",
@@ -9481,7 +9639,7 @@
       "sha256": "646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c",
       "revision": "Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body",
       "firstAcceptance": true,
-      "audit": "Accepted PR114 source CASE and PR115 actual bounded original-editor dry approach/wet entry-return/four heads/v15 replay. Wider wet region/lifecycle and complete original level remain unaccepted.",
+      "audit": "Accepted PR114 CASE, PR115 supported wet entry/return and PR116 bounded wet injury/death/north-search corpse/manual survivor/first-exit/v16 recovery. Wider region and complete original level remain unaccepted.",
       "acceptance": "open",
       "interactions": [
         {
@@ -9492,7 +9650,7 @@
         {
           "mechanic": "MOV-03",
           "classification": "reachable-optional",
-          "basis": "PR115 actual supported wet-stair entry/return, breath/item/weight/fitness and recovery accepted. Wider water-region and injury/death outcomes remain unknown; original classification unchanged."
+          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged."
         },
         {
           "mechanic": "ENV-01",
@@ -9522,7 +9680,7 @@
         {
           "mechanic": "ENV-08",
           "classification": "unknown",
-          "basis": "PR115 actual supported wet-stair entry/return, breath/item/weight/fitness and recovery accepted. Wider water-region and injury/death outcomes remain unknown; original classification unchanged."
+          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged."
         },
         {
           "mechanic": "ENV-09",
@@ -9532,7 +9690,7 @@
         {
           "mechanic": "LIFE-03",
           "classification": "unknown",
-          "basis": "PR115 actual supported wet-stair entry/return, breath/item/weight/fitness and recovery accepted. Wider water-region and injury/death outcomes remain unknown; original classification unchanged."
+          "basis": "PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged."
         },
         {
           "mechanic": "INV-04",
@@ -9616,10 +9774,9 @@
         }
       ],
       "blockers": [
-        "Supported wet entry/return accepted PR115; wider water-region outcomes, injury/death/corpse/control and full-level replay remain open.",
-        "Original live death, corpse/pad/control and all-dead outcome are not integrated.",
-        "Recovery must cover every newly installed state and environmental interaction.",
-        "DEFERRED separate human acceptance: a complete four-player physical-controller/TV level run has not been accepted; this does not block keyboard software work."
+        "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+        "Every remaining required/reachable optional interaction needs a reviewed complete-level recovery/outcome receipt.",
+        "DEFERRED physical four-player/controller/TV run; does not block keyboard software."
       ]
     },
     {
@@ -10174,23 +10331,25 @@
     {
       "id": "T43-05",
       "title": "Wet stairs and environmental outcomes",
-      "state": "open",
+      "state": "partial",
       "evidence": [
         "docs/wet-entry-observation.md",
         "docs/immersion-caller-contract.md",
-        "docs/training43-wet-traversal.md"
+        "docs/training43-wet-traversal.md",
+        "docs/training43-wet-lifecycle.md"
       ],
-      "requirement": "PR115 accepts bounded wet entry/return, breath/item effects and v15 recovery. Injury/death and broader wet outcomes remain open; this compound gate has no reviewed whole-gate receipt."
+      "requirement": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
     },
     {
       "id": "T43-06",
       "title": "Death, control, occupancy and corpses",
-      "state": "open",
+      "state": "partial",
       "evidence": [
         "docs/death-transition-contract.md",
-        "docs/after-death-control-observation.md"
+        "docs/after-death-control-observation.md",
+        "docs/training43-wet-lifecycle.md"
       ],
-      "requirement": "Exercise reachable lethal/all-dead cases with correct references, corpse state, control and retry."
+      "requirement": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance."
     },
     {
       "id": "T43-07",
@@ -10198,9 +10357,10 @@
       "state": "partial",
       "evidence": [
         "docs/checkpoints.md",
-        "docs/training-session.md"
+        "docs/training-session.md",
+        "docs/training43-wet-lifecycle.md"
       ],
-      "requirement": "Save before/during/after wet/lifecycle interactions; restore paused and continue with no duplicated effects."
+      "requirement": "Accepted v15 supported wet entry-return and v16 bounded lifecycle chronology; paused restores before damage/after injury/death/survivor/terminal continue without duplicate effects. Complete original-level recovery remains open."
     },
     {
       "id": "T43-08",
@@ -10210,7 +10370,7 @@
         "docs/mission-rules.md",
         "tests/browser/extraction.spec.ts"
       ],
-      "requirement": "Original first-exit and labelled cooperative variant, terminal ties, failure and complete fresh retry."
+      "requirement": "Bounded original first exit, single cooperative retirement and fresh Retry accepted; authored timeout exists. Original all-dead and original99-count timeout beyond45000 replay ticks remain open."
     },
     {
       "id": "T43-09",
@@ -10258,7 +10418,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 115,
+  "acceptedThrough": 116,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10298,6 +10458,19 @@
       ],
       "automatic": "6520939225",
       "receipt": "6521769394"
+    },
+    {
+      "id": "proof-116",
+      "pr": 116,
+      "merge": "db5d2930eb07ef98ddda1d09bb1968efed0f57d3",
+      "head": "2c1178d68ad887c218f2bc3975bba7b6024d032f",
+      "reviewSha256": "0352332ec54bf4e29d70798a06c98ba43e2047f265d904a282b08e5cff0ec24a",
+      "ci": [
+        "41064673415",
+        "41064666632"
+      ],
+      "automatic": "6523347081",
+      "receipt": "6524247429"
     }
   ],
   "dashboards": [
@@ -10365,7 +10538,8 @@
           "status": "playable",
           "scope": "PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history.",
           "lineage": [
-            "INV-06"
+            "INV-06",
+            "LIFE-06"
           ],
           "scenario": "consumables",
           "evidence": [
@@ -10456,7 +10630,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Any non-null requested hit including zero refuses atomically; actual injury/death/corpse and wider wet region open.",
+          "missing": "Legacy v15 refuses every non-null requested hit including zero. Choose the separately accepted v16 lifecycle mode for bounded injury/death; wider wet region remains open.",
           "proofs": [
             "proof-115"
           ]
@@ -10477,8 +10651,44 @@
               "scope": "Accepted bounded slices do not constitute programme acceptance."
             }
           ],
-          "missing": "Lifecycle, remaining required/reachable interactions and full mutable-state regression acceptance.",
+          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.",
           "proofs": []
+        },
+        {
+          "id": "cap-lifecycle",
+          "title": "Bounded wet injury, fatal continuation and survivor recovery",
+          "status": "playable",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
+          "lineage": [
+            "LIFE-01",
+            "LIFE-02",
+            "LIFE-03",
+            "T43-05",
+            "T43-06",
+            "T43-07"
+          ],
+          "scenario": "wet-lifecycle",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-lifecycle.md",
+              "label": "training43-wet-lifecycle.md",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            },
+            {
+              "path": "tests/training-wet-lifecycle.test.ts",
+              "label": "training-wet-lifecycle.test.ts",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            },
+            {
+              "path": "tests/browser/training-wet-lifecycle.spec.ts",
+              "label": "training-wet-lifecycle.spec.ts",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            }
+          ],
+          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+          "proofs": [
+            "proof-116"
+          ]
         },
         {
           "id": "cap-hardware",
@@ -10575,7 +10785,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Broader wet traversal, any requested hit and lifecycle unsupported.",
+          "missing": "V15 refuses requested hits; separate accepted v16 mode handles bounded injury/death. Broader wet traversal remains open.",
           "proofs": [
             "proof-115"
           ]
@@ -10610,8 +10820,8 @@
         {
           "id": "t43-lifecycle",
           "title": "Complete wet and lifecycle outcomes",
-          "status": "open",
-          "scope": "T43-05/06 remain open despite accepted entry/return subrecords.",
+          "status": "partial",
+          "scope": "PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 remain partial.",
           "lineage": [
             "T43-05",
             "T43-06"
@@ -10622,10 +10832,53 @@
               "path": "docs/training43-wet-traversal.md",
               "label": "training43-wet-traversal.md",
               "scope": "T43-05/06 remain open despite accepted entry/return subrecords."
+            },
+            {
+              "path": "docs/training43-wet-lifecycle.md",
+              "label": "training43-wet-lifecycle.md",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Damage/death/find_floor/corpse/control, wider water region and all-dead.",
-          "proofs": []
+          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+          "proofs": [
+            "proof-116"
+          ]
+        },
+        {
+          "id": "t43-fatal",
+          "title": "Bounded wet injury, fatal continuation and survivor recovery",
+          "status": "playable",
+          "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.",
+          "lineage": [
+            "LIFE-01",
+            "LIFE-02",
+            "LIFE-03",
+            "T43-05",
+            "T43-06",
+            "T43-07"
+          ],
+          "scenario": "wet-lifecycle",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-lifecycle.md",
+              "label": "training43-wet-lifecycle.md",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            },
+            {
+              "path": "tests/training-wet-lifecycle.test.ts",
+              "label": "training-wet-lifecycle.test.ts",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            },
+            {
+              "path": "tests/browser/training-wet-lifecycle.spec.ts",
+              "label": "training-wet-lifecycle.spec.ts",
+              "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
+            }
+          ],
+          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.",
+          "proofs": [
+            "proof-116"
+          ]
         },
         {
           "id": "t43-accept",
@@ -10643,7 +10896,7 @@
               "scope": "No complete original level accepted."
             }
           ],
-          "missing": "Reviewed complete required/reachable-interaction run, timeout/retry and atomic replay.",
+          "missing": "Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.",
           "proofs": []
         }
       ]

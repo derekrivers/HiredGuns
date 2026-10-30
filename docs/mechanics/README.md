@@ -6,7 +6,7 @@ Training43 is the first complete original-level acceptance target, confirmed by 
 
 The register contains original behaviour and source locators, revision, mapping scope, eight separate evidence stages, implementation/test/document links, playable scenarios, remaining gaps and original-level relationships. It is an initial discovery inventory, not a certificate that every source branch has been found. Item categories, enemy-specific behaviours and interactions must be split into further stable IDs as their mapping advances. The 29 identified psi dispatch entries each have their own open row.
 
-The baseline is accepted main through PR115 (`e2b2d5ff4090c5c39006abea147a24450ca5c17b`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
+The baseline is accepted main through PR116 (`db5d2930eb07ef98ddda1d09bb1968efed0f57d3`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
@@ -56,13 +56,15 @@ Training43's dry exit route and PR115 accepted supported wet entry/return are in
 
 Each pass needs a reviewed receipt naming mechanic/level, exact original resource digests and revision, accepted build, scenario, expected/observed outcome, commands and pass/fail/skip counts, recovery continuation and reviewer. Physical acceptance additionally needs real hardware and human observations. No such complete original-level receipt exists in this register. Its validator deliberately refuses a new covered original-level/physical claim until receipt validation is designed and reviewed.
 
-T43-01–10 remain partial/open. Controller/TV assignments and the four-person physical run are DEFERRED to separate human acceptance; they do not block keyboard software work. PR112 food/repair is now included as bounded partial evidence; broader immunity/status branches remain open.
+T43-01–10 remain partial/open; T43-05/06 now partial for bounded PR116 proof. Controller/TV assignments and the four-person physical run are DEFERRED to separate human acceptance; they do not block keyboard software work. PR112 food/repair is now included as bounded partial evidence; broader immunity/status branches remain open.
 
 The original register tooling added no runtime execution, mechanics, source redistribution, hosting or scheduled work. Token usage unavailable.
 
 PR112 accepts bounded food/repair; PR114 accepts source CASE classifications;
-PR115 accepts supported wet entry/return and v15 recovery. No actual wet
-injury/death/corpse follows. PR116 remains unaccepted. The covered numerator is
+PR115 accepts supported wet entry/return and v15 recovery. PR116 separately accepts bounded wet injury/death/north corpse/head/control/manual
+survivor/first-exit/v16 recovery and Retry. Legacy v15 still refuses requested hits.
+Wider region/all-dead/original99-count timeout beyond45000 ticks/general corpse
+items/door-pad callers and whole-level acceptance remain open. The covered numerator is
 unchanged; newly supported broad wet rows remain partial.
 
 ## Milestone scopes and validation
@@ -78,7 +80,7 @@ Hardware is deferred separately and does not block keyboard software work.
 
 Each milestone has stable ID, strict status, scoped evidence, missing dependency,
 scenario/controls, lineage to existing mechanics/checklist and optional accepted
-registry proof references. PR112/114/115 receipts retain exact merge/implementation,
+registry proof references. PR112/114/115/116 receipts retain exact merge/implementation,
 independent review hash, CI and completed automatic IDs. Earlier accepted slices
 remain linked to their public proof documents. File presence is not a fresh run.
 

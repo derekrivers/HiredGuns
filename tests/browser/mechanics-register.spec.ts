@@ -26,7 +26,14 @@ test('register search, evidence navigation, level relationships and export work'
   await page.locator('#LIFE-03 a[href="#map-43"]').click();
   await expect(page.locator('#map-43')).toBeVisible();
   await expect(page.locator('#map-43')).toHaveAttribute('open', '');
-  await expect(page.locator('#map-43 .card-body')).toContainText('wider water-region');
+  await expect(page.locator('#map-43 .card-body')).toContainText('PR116 bounded wet injury/death');
+  await expect(page.locator('#map-43 .card-body')).toContainText('complete original level remain unaccepted');
+  await expect(page.locator('#map-43 .card-body')).toContainText('Wider water-region/full-level outcomes remain unknown');
+  await page.goto('/docs/mechanics/index.html#T43-05');
+  await expect(page.locator('#T43-05')).toContainText('Partial');
+  await expect(page.locator('#T43-06')).toContainText('Partial');
+  await expect(page.locator('#T43-05')).toContainText('original99-count timeout beyond45000');
+  await page.goto('/docs/mechanics/index.html#map-43');
   await page.locator('#map-43 .interaction-list a[href="#MOV-03"]').click();
   await expect(page.locator('#MOV-03')).toBeVisible();
   await expect(page.locator('#MOV-03')).toHaveAttribute('open', '');
@@ -54,7 +61,7 @@ test('deep links and training group retain explicit unverified classifications',
   await expect(page.locator('#map-45 .classification.required')).toHaveCount(0);
   await page.getByRole('link', { name: '03 · Training43 acceptance' }).click();
   await expect(page.locator('#acceptance .check')).toHaveCount(10);
-  await expect(page.locator('#T43-05')).toContainText('Open');
+  await expect(page.locator('#T43-05')).toContainText('Partial');
   await expect(page.locator('#acceptance input[type="checkbox"]')).toHaveCount(0);
 });
 for (const width of [390, 1440]) test(`register fits ${width}px and remains keyboard operable`, async ({ page }, testInfo) => {
@@ -204,14 +211,16 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
 test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#testbed-capability');
   await expect(page.locator('#testbed-capability')).toBeVisible();
-  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('7 listed milestones: 5 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('8 listed milestones: 6 playable · 0 partial · 1 open · 1 deferred');
   await expect(page.locator('#cap-food')).toContainText('medical64');
   await expect(page.locator('#cap-wet')).toContainText('including zero');
+  await expect(page.locator('#cap-lifecycle')).toContainText('Accepted PR116');
+  await expect(page.locator('#cap-lifecycle')).toContainText('v16 paused chronological recovery');
   await expect(page.locator('#cap-hardware')).toContainText('does not block keyboard software');
   await page.locator('#cap-food a[href="#INV-06"]').click();
   await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
   await page.goto('/docs/mechanics/index.html#training43-software');
-  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('6 listed milestones: 3 playable · 1 partial · 2 open · 0 deferred');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('7 listed milestones: 4 playable · 2 partial · 1 open · 0 deferred');
   await page.locator('#t43-entry a[href="#scenario-wet"]').click();
   await expect(page.locator('#scenario-wet')).toBeVisible();
   await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');

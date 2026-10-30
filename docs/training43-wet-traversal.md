@@ -3,7 +3,7 @@
 30 October 2026. Accepted merge `e2b2d5ff4090c5c39006abea147a24450ca5c17b`,
 reviewed implementation `4d3c8f1aaee8b5ce5911904e17d48f75c49896b9`, tree
 `22d0f06b34a4cf11be2a0f865d7acf2dde277003`.
-**T43-04 remains partial, T43-05/06 open; original level/test bed incomplete.**
+**T43-04 remains partial, T43-05/06 partial after PR116; original level/test bed incomplete.**
 PR114 accepts the [interaction CASE](training43-wet-acceptance.md): 23 water
 cells, 22 graph candidates plus one solid/nonstanding, both signs dry type0,
 and 50 inactive positionals. This is distinct from PR115 actual keyboard play.
@@ -12,7 +12,9 @@ breath/item/weight/fitness and race1 keyboard parking, all four head ownership,
 v15 paused replay before wet/after item/after return, Retry, original first exit
 and single cooperative retirement. **Every non-null requested hit, including
 zero, refuses atomically. No actual injury/death/corpse is accepted at PR115.**
-PR116 is an unaccepted candidate and is not credited here.
+PR116 is now separately accepted: [bounded wet damage/lifecycle/v16](training43-wet-lifecycle.md).
+This page documents the unchanged v15 mode and its refusal boundary; use the
+separate v16 enable control for accepted injury/death/corpse/manual-survivor play.
 
 ## Play in the existing app
 

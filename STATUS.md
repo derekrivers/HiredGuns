@@ -1,8 +1,8 @@
 # Status — 30 October 2026
 
-Accepted gameplay baseline: PR115 merge `e2b2d5ff4090c5c39006abea147a24450ca5c17b`,
-reviewed implementation `4d3c8f1aaee8b5ce5911904e17d48f75c49896b9`, tree
-`22d0f06b34a4cf11be2a0f865d7acf2dde277003`. PR116 remains unaccepted.
+Accepted gameplay baseline: PR116 merge `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`,
+reviewed implementation `2c1178d68ad887c218f2bc3975bba7b6024d032f`, tree
+`9fc72ab7680fed7105094b79be737b77b0348a34`.
 
 The [Master Mechanics Register](docs/mechanics/index.html) now separates whole-game
 evidence coverage, current playable testbed capabilities, and Training43 software
@@ -23,13 +23,16 @@ first exit and single cooperative retirement. [Wet controls and limits](docs/tra
 
 PR114 CASE classifies 23 water cells (22 graph candidates plus one solid/nonstanding),
 both dry type0 signs and 50 inactive positionals; graph candidates are not full
-wet playthroughs. At accepted PR115 **any non-null requested hit including zero
-refuses atomically**. Actual wet injury/death/find_floor/corpse/control, wider water,
-all-dead, whole-level timeout and complete environmental recovery remain open.
+wet playthroughs. Legacy v15 still refuses every non-null requested hit including zero.
+PR116 separately accepts [bounded wet lifecycle](docs/training43-wet-lifecycle.md):
+actual injury/death, north-search corpse, all-four head ownership, dead-input
+guards, explicit manual survivor selection, freed-body/corpse walk, first exit,
+v16 paused replay and Retry. Wider water/all-dead/original99-count timeout beyond
+45000 replay ticks/general corpse items/door-pad callers and full recovery remain open.
 FOOD/REPAIR does not imply medical64 poison cure, immunity or revival.
 
 Training43 (map43) remains the first original-level target: T43-04 partial,
-T43-05/06 open, zero complete original levels accepted. Editor/runtime/source
+T43-05/06 partial, zero complete original levels accepted. Editor/runtime/source
 and Locations CRC df31/5c21 limits remain; campaign expansion stays held.
 Physical four-person/controller/TV acceptance is DEFERRED separately and does
 not block keyboard software. Graphics/audio stay deferred. Original inputs and

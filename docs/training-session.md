@@ -1,6 +1,6 @@
 # Standalone selected-team Training43 session
 
-Current accepted scope through PR115 (`e2b2d5ff4090c5c39006abea147a24450ca5c17b`):
+Current accepted scope through PR116 (`db5d2930eb07ef98ddda1d09bb1968efed0f57d3`):
 same four-view app, selected-team startup/movement/extraction, bounded paused
 inventory and authored ground cache, designated-target combat/patrol/doors/pads,
 PR112 food/repair after authored dry-fall injury with v14 replay, and PR115
@@ -8,8 +8,11 @@ supported original-editor wet entry/return with v15 replay. These modes have
 separate labelled geometry and source boundaries; they do not prove a complete
 original level. See [current capability milestones](mechanics/index.html#testbed-capability)
 and [accepted wet controls/limits](training43-wet-traversal.md).
-Medical64 poison cure, revival, actual wet injury/death/corpse, wider wet region
-and complete-level acceptance remain open. PR116 is unaccepted. Older mode-specific
+PR116 additionally accepts [bounded wet lifecycle and v16 recovery](training43-wet-lifecycle.md):
+actual injury/death/north corpse/heads/dead-control guard/manual survivor/first exit
+and Retry. Medical64 poison cure, revival, wider wet region, all-dead, original99-count
+timeout beyond45000 replay ticks/general corpse items/door-pad callers and complete-level
+acceptance remain open. Legacy v15 still refuses non-null damage including zero. Older mode-specific
 statements below retain their narrower scope; source-bound weight now applies in
 the selected dry-fall, consumable and bounded wet extensions.
 

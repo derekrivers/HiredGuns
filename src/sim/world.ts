@@ -35,7 +35,7 @@ export function nextRandom(seed: number): number {
   return x >>> 0;
 }
 
-export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[], wetAdmission?: (p: Position) => void): { world: WorldState; events: SimulationEvent[] } {
+export function stepWorld(level: LevelData, previous: WorldState, commands: readonly PlayerCommand[], wetAdmission?: (p: Position) => void, sourceCorpses = false): { world: WorldState; events: SimulationEvent[] } {
   if (previous.levelId !== level.id) throw new Error('World/level mismatch');
   if (previous.mission.outcome !== 'active' || teamDead(previous)) return {world:structuredClone(previous),events:[]};
   if (!Number.isSafeInteger(previous.tick) || previous.tick < 0 || previous.tick >= MAX_WORLD_TICK) {
@@ -64,7 +64,7 @@ export function stepWorld(level: LevelData, previous: WorldState, commands: read
     const travelDirection = (actor.facing + offset) % 4 as Facing;
     const occupied = (p: Position) => previous.mercenaries.some(other => !previous.mission.exited[other.id] && !isDead(world,other.id) && other.id !== actor.id && sameCell(other,p)) || world.mercenaries.some(other => !world.mission.exited[other.id] && !isDead(world,other.id) && other.id !== actor.id && sameCell(other,p));
     const falling = dryFallEnabled(level) && world.physics.mode === 'dry-fall';
-    const traversal = resolveTraversal(level,actor,travelDirection,occupied,falling,!!wetAdmission);
+    const traversal = resolveTraversal(level,actor,travelDirection,occupied,falling,!!wetAdmission,sourceCorpses);
     if (wetAdmission) { wetAdmission(actor); wetAdmission(traversal.target); }
     const target = traversal.target;
     const reason = traversal.reason ?? (falling ? fallObstruction(level,actor) ?? fallObstruction(level,target) : null);
