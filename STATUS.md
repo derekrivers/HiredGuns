@@ -1,4 +1,25 @@
-# Status - 30 October 2026
+# Status — 30 October 2026
+
+Accepted gameplay: PR112 merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`
+(tree `6a329bd1463b02e5e5de7ec4e9bef5547df81155`), including accepted PR111.
+The same-app authored selected-team dry-fall extension now supports source-bound
+ordinary equipped food and repair use with H/button, integer fitness gain,
+equipment ID clearing and reduced source weight. Race restrictions, unsupported
+medical64 poison cure, other categories, empty/dead/pending/running refusals
+are explicit. Full chronological v14 recovery includes movement/falls/equipment/use,
+source rehashing, bounded history and atomic paused installation. Legacy v1–v13
+remain intact. [Scope and controls](docs/training-consumables.md).
+
+Implementation validation: npm check, public synthetic chronology/arithmetic,
+private verified-source session checks and actual application browser checks.
+Exact commands, all attempts and production-build evidence are retained in the
+ignored worker handoff. The coordinator verified exact-final HIGH review,
+current CI, completed automatic review and resolved findings before accepting PR112.
+Training43 / complete functional test bed are not accepted. General inventory
+transfer, poison/wet/death/corpse, original enemy/world machinery and lifts remain
+open. Graphics/audio/controller/TV work stays deferred. Token usage unavailable.
+
+## Mechanics register candidate — dated PR111 assessment
 
 Mechanics coverage is now indexed in the [Master Mechanics Register](docs/mechanics/index.html)
 and [text checklist](docs/mechanics/CHECKLIST.md): 86 scoped mechanic/effect rows,
@@ -12,7 +33,10 @@ Broader original pad callers and complete-level acceptance remain open.
 No gameplay, campaign, physical-hardware or complete-level coverage is added
 by the register. Regenerate with `npx tsx tools/build-mechanics-register.ts`.
 
-Current accepted gameplay scope follows. PR112 consumable work remains outside this pinned assessment.
+The register's canonical gameplay assessment remains pinned to PR111. PR112 is
+accepted gameplay above; merging that base does not upgrade canonical evidence
+states or acceptance. Register completion is 68/688 evidence checkpoints (9.9%),
+global across filters. The register candidate needs fresh exact-head review/CI.
 
 Accepted base: PR111 merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`
 (tree `1e460bd080a8017159f5b8061a0d831a592f657e`), including same-app
