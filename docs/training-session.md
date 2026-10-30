@@ -279,3 +279,22 @@ practice can activate a separately replayed source-bound food/repair extension.
 H uses equipped food/repair only while paused, alive and settled. Its full
 chronological tick/item/use replay preserves historical fall weights; legacy
 v1–v13 are unchanged. Medical64 remains explicitly unsupported.
+
+
+## Unreviewed original-map wet extension (v15)
+
+The guided **Enable Training43 wet traversal** action requires the ready team
+`[11,3,0,5]`, exact imported editor map and fresh tick-zero inventory. It retains
+the same four views and source geometry. It starts paused; Start mission and
+keyboard navigation remain explicit. No route is driven automatically.
+[Controls, authority and limits](training43-wet-traversal.md).
+
+Raw map bytes are retained locally by the importer. V15 rehashes/reparses those
+bytes, roster and items, reconstructs the baseline and replays the complete bounded
+chronology. Saved heads, counters, item bytes, body references, fitness, occupancy
+and mission state only compare against replay; none initializes live state. Restore
+is paused, generation checked and atomic. V1–v14 validators/semantics are unchanged.
+Inventory controls are disabled in this bounded wet mode; its visible current
+inventory and weight come from the same candidate as breath and world movement.
+Retry and rule changes reconstruct all mutable wet fields from the source baseline.
+This candidate is not independent acceptance or original runtime timing parity.

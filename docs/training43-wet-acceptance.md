@@ -178,7 +178,7 @@ Raw source buffers retain their existing synchronous snapshot/hash boundary.
 
 The pinned witness measures 226,892 pretty-printed UTF-8 bytes, 7,782 value
 visits, depth 9 (root depth 0), maximum collection 50, longest string/key 274
-UTF-16 units, and 53,960 total string/key units. Explicit headroom limits are
+UTF-16 units, and 55,311 total string/key units (including array-index keys). Explicit headroom limits are
 1,048,576 file bytes, depth 32, 32,768 value visits, 256 entries per collection,
 4,096 units per string/key and 262,144 total string/key units. Shared subtrees
 are copied per occurrence and charged each time; active cycles reject. Thus a
@@ -195,3 +195,5 @@ JavaScript proxies can run traps during reflection and cannot be sandboxed by
 this API. Ordinary property getters are never evaluated, including after await.
 These limits bound traversal/copy work for ordinary in-process data and file
 parsing bytes/nesting; they do not promise isolation from hostile proxy code.
+
+PR114 is now accepted as a bounded CASE. Its validator also accepts swapped built-in Object/Array prototypes before normalizing its returned canonical tree; consumers here use parsed JSON and ordinary data, with no prototype authority or sandbox claim. The case generator remains read-only. The new [keyboard consumer](training43-wet-traversal.md) remains UNREVIEWED; T43-04 partial and T43-05 open are unchanged.

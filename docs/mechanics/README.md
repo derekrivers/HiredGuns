@@ -6,7 +6,7 @@ Training43 is the first complete original-level acceptance target, confirmed by 
 
 The register contains original behaviour and source locators, revision, mapping scope, eight separate evidence stages, implementation/test/document links, playable scenarios, remaining gaps and original-level relationships. It is an initial discovery inventory, not a certificate that every source branch has been found. Item categories, enemy-specific behaviours and interactions must be split into further stable IDs as their mapping advances. The 29 identified psi dispatch entries each have their own open row.
 
-The baseline is accepted main through PR111 (`46dec166f0604b6cdcbe75c58f3736dc5fd19da9`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
+The baseline is accepted main through PR112/113/114 (`b211895b0bf4600bc7c8fa830814284c46293c97`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
@@ -56,6 +56,10 @@ Training43's dry exit route and source-derived wet approach are inherited from `
 
 Each pass needs a reviewed receipt naming mechanic/level, exact original resource digests and revision, accepted build, scenario, expected/observed outcome, commands and pass/fail/skip counts, recovery continuation and reviewer. Physical acceptance additionally needs real hardware and human observations. No such complete original-level receipt exists in this register. Its validator deliberately refuses a new covered original-level/physical claim until receipt validation is designed and reviewed.
 
-T43-01–10 remain partial/open. Controller/TV assignments and the four-person physical run are DEFERRED to separate human acceptance; they do not block keyboard software work. PR112 consumable work is not part of this accepted PR111 baseline.
+T43-01–10 remain partial/open. Controller/TV assignments and the four-person physical run are DEFERRED to separate human acceptance; they do not block keyboard software work. PR112 food/repair is now included as bounded partial evidence; broader immunity/status branches remain open.
 
-This initial work adds no original runtime execution, mechanics, source redistribution, hosting or scheduled work. Token usage unavailable.
+The original register tooling added no runtime execution, mechanics, source redistribution, hosting or scheduled work. Token usage unavailable.
+
+PR112 adds accepted bounded equipped food/repair with v14 authored dry-fall replay. PR113 accepts this register tool and PR114 accepts the bounded Training43 interaction CASE. New wet keyboard play is UNREVIEWED and is not credited as a level, hardware or T43-05 pass. Food/repair row stages remain partial for its wider original scope. The covered-stage numerator is unchanged.
+
+Accepted proof packets: [PR112 food/repair](https://github.com/derekrivers/HiredGuns/pull/112), [PR113 register](https://github.com/derekrivers/HiredGuns/pull/113), [PR114 bounded CASE](https://github.com/derekrivers/HiredGuns/pull/114). Normal merge union is the assessed head above. These links are accepted scopes, not new wet-play receipts.

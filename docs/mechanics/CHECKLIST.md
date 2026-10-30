@@ -2,7 +2,7 @@
 
 68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Register evidence completion, not game completion, parity, effort or test-pass percentage. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
 
-Assessed 2026-10-30; accepted main through PR111: `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`.
+Assessed 2026-10-30; accepted main through PR114: `b211895b0bf4600bc7c8fa830814284c46293c97`.
 
 [Open the interactive HTML index](index.html) · [Canonical JSON](register.json)
 
@@ -17,7 +17,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 - [ ] **T43-01 Pin level and source revision** — Partial. Use the exact editor digest; disclose runtime-body differences and north-facing adaptation. Identities are pinned; a reviewed whole-level acceptance receipt remains open.
 - [ ] **T43-02 Initialize and control four selected actors** — Partial. Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work.
 - [ ] **T43-03 Complete required dry traversal and exit** — Partial. Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance.
-- [ ] **T43-04 Classify every reachable interaction** — Partial. Resolve wider water reachability; classify required/reachable optional/inactive/unknown with evidence.
+- [ ] **T43-04 Classify every reachable interaction** — Partial. Accepted PR114 classifies 23 water cells (22 hypothetical movement candidates, one solid support), signs and inactive trigger sentinel; bounded source entry/reverse case. Live outcomes and level review remain open.
 - [ ] **T43-05 Wet stairs and environmental outcomes** — Open. Play reachable wet stairs with breath, item effects, damage and supported exit/return behaviour.
 - [ ] **T43-06 Death, control, occupancy and corpses** — Open. Exercise reachable lethal/all-dead cases with correct references, corpse state, control and retry.
 - [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Save before/during/after wet/lifecycle interactions; restore paused and continue with no duplicated effects.
@@ -57,7 +57,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 | [INV-03](index.html#INV-03) | Weight and movement encumbrance | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [INV-04](index.html#INV-04) | Original ground items and pickup/drop | Partial | Partial | Covered slice | Covered slice | Partial | Covered slice | Open | Open |
 | [INV-05](index.html#INV-05) | Reload and ammunition use | Open | Open | Open | Open | Open | Open | Open | Open |
-| [INV-06](index.html#INV-06) | Food, repair and immunity items | Open | Open | Open | Open | Open | Open | Open | Open |
+| [INV-06](index.html#INV-06) | Food, repair and immunity items | Partial | Partial | Partial | Partial | Partial | Partial | Open | Open |
 | [INV-07](index.html#INV-07) | Containers, corpse loot and transfer | Open | Open | Open | Open | Open | Open | Open | Open |
 | [INV-08](index.html#INV-08) | Other item dispatch and utility devices | Open | Open | Open | Open | Open | Open | Open | Open |
 | [COMBAT-01](index.html#COMBAT-01) | Normal gun arithmetic | Covered slice | Partial | Covered slice | Covered slice | Covered slice | Covered slice | Open | Open |
@@ -466,7 +466,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Mapped scope:** Bounded immersion caller exists disconnected from original wet traversal.
 
-**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md)
+**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md)
 
 **Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
 
@@ -626,9 +626,9 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** ItemUsage.s .use_food/.use_repair/.use_immu; baseline ocs-3926.
 
-**Mapped scope:** Named original item-use branches; no behavioural mapping or integration.
+**Mapped scope:** Accepted PR112: paused source-owned equipped food/repair in authored selected-team dry-fall practice, full v14 chronological recovery. Immunity items, poison/medical and original world callers remain open.
 
-**Evidence:** [item-format.md](../../docs/item-format.md)
+**Evidence:** [item-format.md](../../docs/item-format.md), [consumable-use.ts](../../src/items/consumable-use.ts), [training-consumables.ts](../../src/sim/training-consumables.ts), [training-consumables.test.ts](../../tests/training-consumables.test.ts), [training-consumables.spec.ts](../../tests/browser/training-consumables.spec.ts), [training-session.md](../../docs/training-session.md)
 
 **Tests:** Open
 
@@ -636,7 +636,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Gaps:** Each dispatch branch needs separate cases before this family can close.
 
-**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+**Next:** Compose additional original item/status callers separately; preserve accepted food/repair race guards and weight/health chronology.
 
 ### INV-07 — Containers, corpse loot and transfer
 
@@ -898,7 +898,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Mapped scope:** Bounded decision and immersion caller, not live wet traversal/drowning.
 
-**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md)
+**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md)
 
 **Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
 
@@ -916,7 +916,7 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Mapped scope:** Selected original inventory cases and pure caller remain disconnected.
 
-**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md)
+**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md)
 
 **Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts)
 
