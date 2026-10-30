@@ -1,7 +1,10 @@
 import type { TrainingSession } from './sim/training-session';
 import type { WorldState } from './contracts';
 import { MAX_CONSUMABLE_EVENTS } from './sim/training-consumables';
-export function installTrainingConsumablePanel(host:HTMLElement,state:()=>{session:TrainingSession|null;world:WorldState;paused:boolean;loading:boolean;canSetup:boolean},setup:()=>Promise<void>,use:(actor:number)=>Promise<void>){
+export type ConsumableOperationResult = { isCurrent: () => boolean } & (
+ { status: 'installed' | 'cancelled' } | { status: 'failed'; error: unknown }
+);
+export function installTrainingConsumablePanel(host:HTMLElement,state:()=>{session:TrainingSession|null;world:WorldState;paused:boolean;loading:boolean;canSetup:boolean},setup:()=>Promise<ConsumableOperationResult>,use:(actor:number)=>Promise<ConsumableOperationResult>){
  const title=document.createElement('h3');title.textContent='Consumables · authored dry-fall extension';
  const start=document.createElement('button');start.id='consumable-setup';start.textContent='Start consumable extension';
  const select=document.createElement('select');select.setAttribute('aria-label','Consumable actor');for(let i=0;i<4;i++)select.add(new Option(`Team slot ${i+1}`,String(i)));
@@ -13,8 +16,19 @@ export function installTrainingConsumablePanel(host:HTMLElement,state:()=>{sessi
  host.append(title,help,start,select,button,status,receipt,feedback);
  let feedbackGeneration=0;
  const report=(error:unknown)=>{feedback.textContent=error instanceof Error?error.message:String(error);};
- async function invoke(){const serial=++feedbackGeneration;try{await use(Number(select.value));if(serial===feedbackGeneration)feedback.textContent='Item used. Fitness, equipment and weight updated together.';}catch(e){if(serial===feedbackGeneration)report(e);}refresh();}
- start.addEventListener('click',async()=>{const serial=++feedbackGeneration;try{await setup();if(serial===feedbackGeneration)feedback.textContent='Consumable extension installed, PAUSED. Start drill to injure an actor.';}catch(e){if(serial===feedbackGeneration)report(e);}refresh();});
+ async function present(operation:()=>Promise<ConsumableOperationResult>,ready:string){
+  const serial=++feedbackGeneration;
+  const result=await operation();
+  // Main's generation also covers Retry, selection, source changes and other scenarios.
+  // Recheck here, after await, rather than only before installing the candidate.
+  if(serial===feedbackGeneration&&result.isCurrent()){
+   if(result.status==='installed')feedback.textContent=ready;
+   else if(result.status==='failed')report(result.error);
+  }
+  refresh();
+ }
+ const invoke=()=>present(()=>use(Number(select.value)),'Item used. Fitness, equipment and weight updated together.');
+ start.addEventListener('click',()=>void present(setup,'Consumable extension installed, PAUSED. Start drill to injure an actor.'));
  button.addEventListener('click',()=>void invoke());select.addEventListener('change',refresh);
  function refresh(){
   const {session,world,paused,loading,canSetup}=state(),active=!!session?.consumables,i=Number(select.value),a=session?.inventory.actors[i],health=world.physics.mode==='dry-fall'?world.physics.actors[i]:null;

@@ -1,4 +1,4 @@
-import { installTrainingConsumablePanel } from './training-consumable-panel';
+import { installTrainingConsumablePanel, type ConsumableOperationResult } from './training-consumable-panel';
 import { createConsumableSession, changeConsumableSession } from './sim/training-session';
 import { stepConsumables } from './sim/training-consumables';
 import { installTrainingDoorPanel, type DoorSetupResult } from './training-door-panel';
@@ -120,26 +120,27 @@ const inventoryPanel = installTrainingInventoryPanel(inventoryHost, () => paused
 });
 const consumableHost=document.createElement('section');consumableHost.id='training-consumables';consumableHost.style.gridColumn='1 / -1';
 live.querySelector('h2')!.after(consumableHost);
-const consumablePanel=installTrainingConsumablePanel(consumableHost,()=>({session,world,paused,loading,canSetup:!!session&&selectedFallLevel(level)&&!session.consumables&&!session.inventory.commands.length&&!session.gate&&!session.ground}),async()=>{
- if(loading||!session)throw Error('Selected-team practice is not ready.');
- const sources=rosterPanel.sources();if(!sources)throw Error('Open matching roster and items first.');
- const generation=++loadGeneration;loading=true;setPaused(true);
- try{
-  const candidate=await createConsumableSession(level,sources,session);
-  if(generation!==loadGeneration)throw Error('Consumable setup cancelled by a newer operation; current state retained.');
-  session=candidate.session;world=candidate.world;showSession();setPaused(true);get('recovery-status').textContent='Consumable extension installed, PAUSED.';
- }finally{if(generation===loadGeneration){loading=false;setPaused(true);rosterPanel.refresh();}}
-},async actor=>{
- if(loading||!session?.consumables)throw Error('Start the consumable extension first.');
- const sources=rosterPanel.sources();if(!sources)throw Error('Open matching roster and items first.');
- if(!paused)throw Error('PAUSED required: Esc before using an equipped item.');
- const generation=++loadGeneration;loading=true;setPaused(true);
- try{
-  const candidate=await changeConsumableSession(level,sources,session,world,{kind:'use',actor},paused);
-  if(generation!==loadGeneration)throw Error('Item use cancelled by a newer operation; current state retained.');
+const consumablePanel=installTrainingConsumablePanel(consumableHost,()=>({session,world,paused,loading,canSetup:!!session&&selectedFallLevel(level)&&!session.consumables&&!session.inventory.commands.length&&!session.gate&&!session.ground}),() => runConsumableOperation(), actor => runConsumableOperation(actor));
+async function runConsumableOperation(actor?: number): Promise<ConsumableOperationResult> {
+ let generation=loadGeneration;
+ let started=false;
+ const isCurrent=()=>generation===loadGeneration;
+ try {
+  if(loading||!session)throw Error('Selected-team practice is not ready.');
+  if(actor!==undefined&&!session.consumables)throw Error('Start the consumable extension first.');
+  const sources=rosterPanel.sources();if(!sources)throw Error('Open matching roster and items first.');
+  if(actor!==undefined&&!paused)throw Error('PAUSED required: Esc before using an equipped item.');
+  generation=++loadGeneration;started=true;loading=true;setPaused(true);
+  const candidate=actor===undefined?await createConsumableSession(level,sources,session):await changeConsumableSession(level,sources,session,world,{kind:'use',actor},paused);
+  if(!isCurrent())return {status:'cancelled',isCurrent};
   session=candidate.session;world=candidate.world;showSession();setPaused(true);
- }finally{if(generation===loadGeneration){loading=false;setPaused(true);rosterPanel.refresh();}}
-});
+  if(actor===undefined)get('recovery-status').textContent='Consumable extension installed, PAUSED.';
+  return {status:'installed',isCurrent};
+ }catch(error){
+  return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};
+ }finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
+}
+
 const encounterHost = document.createElement('section'); encounterHost.id = 'training-encounter';
 live.querySelector('h2')!.after(encounterHost);
 const display = document.createElement('div'); display.className = 'test-display';
