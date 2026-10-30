@@ -165,3 +165,39 @@ implementation does not approve or merge itself.
 
 
 Ground-enabled static sessions use the bounded [v8 authored cache replay](training-ground.md). Legacy v1–v7 remain supported. Ground inventory, weight, overlay and movement are reconstructed together from verified initial ownership; selected dry-fall ground actions are unavailable.
+
+
+## Authored static gate practice (v9)
+
+The [same-app keyboard gate](training-gate.md) starts from a verified selected team
+on Training43, preserves current inventory and the separate encounter, and moves
+the team to canonical authored geometry. Gate setup is paused. C activates once
+per physical press while running, at the controlled actor's front-cell panel.
+The four views and collision use the same complete accepted gate candidate.
+
+Exact version 9 adds `scenario: "authored-static-gate-v1"` and
+`gate: {version:1,fixture,history,panelWord,overlay}`. Its map identity is
+`authored:authored-static-gate-v1`. Unknown or extra fields refuse. The retained
+words are comparison receipts only: recovery reconstructs canonical geometry,
+rehashes the raw roster/items, replays bounded chronological movement, activation
+and item events, and compares every gate word and the complete nested checkpoint
+against that result. Inventory commands must also equal the item subsequence.
+No serialized geometry, action parameters, cached occupancy or arbitrary world
+positions grant authority. The checkpoint binds the final effective collision
+map, without changing schema 3. No replay effects touch the live world.
+
+The shared gate history allows 128 events and 45000 ticks (compressed waits).
+The outer <24 KiB and nested <16 KiB limits stay unchanged. Every live tick checks
+the prospective wrapper budget before install; exhaustion pauses without installing
+that tick. Retry resets canonical closed gate, history, positions, initial inventory
+and encounter. Open and closed saves restore paused. Generation guards cancel
+stale setup, item, save and load operations after reset/source changes/new Apply.
+Invalid saves leave the current session, inventory, gate, collision and views intact,
+apart from pausing. Legacy v1-v8 retain their exact existing fields and validation;
+they open with gate practice inactive and require their matching original mode.
+
+Ground-cache/v8 and selected-fall/v7 stay separate from gate/v9: reopen Training43
+and Apply a fresh team (or load the ready preset) to switch modes. Gate setup refuses
+an existing ground overlay or fall mode. No past fall is recalculated against new
+blocks or inventory weight. Gate item actions retain the independent encounter
+without refilling ammo; its existing validator remains the authority for that state.
