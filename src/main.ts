@@ -1,4 +1,4 @@
-import { installTrainingDoorPanel } from './training-door-panel';
+import { installTrainingDoorPanel, type DoorSetupResult } from './training-door-panel';
 import { createMovingDoorSession, createPressurePadSession } from './sim/training-session';
 import { createMovingDoorLevel, createPressurePadLevel } from './world/training-gate';
 import type { DoorAction } from './world/training-moving-door';
@@ -225,35 +225,32 @@ const patrolPanel = installTrainingPatrolPanel(patrolHost,() => session,() => wo
   });
 const doorHost = document.createElement('section'); doorHost.id = 'training-moving-door'; doorHost.style.gridColumn = '1 / -1'; gateHost.after(doorHost);
 const doorPanel = installTrainingDoorPanel(doorHost,() => session,() => world,
-  () => !loading && !!session && !!renderer && !graphicsLost,() => paused,async () => {
-    if (loading || !session) throw new Error('Apply a verified team first.');
-    const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw sources.');
-    const current = session, generation = ++loadGeneration; loading = true; setPaused(true);
-    try {
-      const candidate = await createMovingDoorSession(sources,current);
-      if (generation !== loadGeneration) return;
-      const nextLevel = createMovingDoorLevel(); replaceGateRenderer(candidate.session,nextLevel);
-      level = nextLevel; session = candidate.session; world = candidate.world; events.fill('READY');
-      showSession(); updateLevelInfo(); updateHud(readPads()); get('play').focus();
-    } finally {if (generation === loadGeneration) {loading = false; setPaused(true); rosterPanel.refresh();}}
-  }, action => {
+  () => !loading && !!session && !!renderer && !graphicsLost,() => paused,() => setupDoorScenario(false), action => {
     if (paused || loading || !session?.gate?.moving || world.mission.outcome !== 'active') return;
     const actor = router.assignments.findIndex(source => source?.kind === 'keyboard' && source.index === 0);
     if (actor < 0) {doorPanel.feedback('Assign WASD to a mercenary first.'); return;}
     if (pendingGateActor !== null) {doorPanel.feedback('An action is already queued for the next tick.'); return;}
     pendingGateActor = actor; pendingDoorAction = action;
-  }, async () => {
+  },() => setupDoorScenario(true));
+async function setupDoorScenario(pad: boolean): Promise<DoorSetupResult> {
+  let generation = loadGeneration;
+  let started = false;
+  const isCurrent = () => generation === loadGeneration;
+  try {
     if (loading || !session) throw new Error('Apply a verified team first.');
     const sources = rosterPanel.sources(); if (!sources) throw new Error('Open matching raw sources.');
-    const current = session, generation = ++loadGeneration; loading = true; setPaused(true);
-    try {
-      const candidate = await createPressurePadSession(sources,current);
-      if (generation !== loadGeneration) return;
-      const nextLevel = createPressurePadLevel(); replaceGateRenderer(candidate.session,nextLevel);
-      level = nextLevel; session = candidate.session; world = candidate.world; events.fill('READY');
-      showSession(); updateLevelInfo(); updateHud(readPads()); get('play').focus();
-    } finally {if (generation === loadGeneration) {loading = false; setPaused(true); rosterPanel.refresh();}}
-  });
+    const current = session;
+    generation = ++loadGeneration; started = true; loading = true; setPaused(true);
+    const candidate = await (pad ? createPressurePadSession(sources,current) : createMovingDoorSession(sources,current));
+    if (!isCurrent()) return {status:'cancelled',isCurrent};
+    const nextLevel = pad ? createPressurePadLevel() : createMovingDoorLevel(); replaceGateRenderer(candidate.session,nextLevel);
+    level = nextLevel; session = candidate.session; world = candidate.world; events.fill('READY');
+    showSession(); updateLevelInfo(); updateHud(readPads()); get('play').focus();
+    return {status:'installed',isCurrent};
+  } catch (error) {
+    return isCurrent() ? {status:'failed',error,isCurrent} : {status:'cancelled',isCurrent};
+  } finally {if (started && isCurrent()) {loading = false; setPaused(true); rosterPanel.refresh();}}
+}
 /** Prepare rendering before installing collision/session; renderer and collision use the same candidate. */
 function replaceGateRenderer(next: TrainingSession | null, base = level): void {
   if (base === level && session?.gate?.panelWord === next?.gate?.panelWord && session?.gate?.overlay.word === next?.gate?.overlay.word && (!patrolMissionLevel(base) || (session?.encounter?.fitness === 0) === (next?.encounter?.fitness === 0))) return;

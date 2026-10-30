@@ -86,3 +86,74 @@ test('production v13 timeout recovery and prospective pad event budget refusal f
  const terminal=await state(page),saved=await save(page);await key(page,'y');await restore(page,saved);expect(await state(page)).toEqual(terminal);await key(page,'y');
  for(let n=0;n<128;n++)await key(page,'t');const full=await state(page);expect(full.patrol.history).toHaveLength(128);await page.locator('#play').click();await page.keyboard.down('d');await page.clock.runFor(40);await page.keyboard.up('d');await expect(page.locator('#run-state')).toHaveText('PAUSED');expect(await state(page)).toEqual(full);await expect(page.locator('#error')).toContainText('history budget');
 });
+
+// Delay the actual application's first digest, then observe its completion refresh.
+// The clock is installed before navigation; production scheduling is unchanged.
+async function delaySetupDigest(page:Page) {
+ return page.evaluateHandle(()=>{
+  const original=SubtleCrypto.prototype.digest;
+  const gate={waiting:false,release:(fail:boolean):void=>{throw Error(`Digest not waiting (${fail})`);}};
+  SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){
+   SubtleCrypto.prototype.digest=original;gate.waiting=true;
+   await new Promise<void>((resolve,reject)=>{gate.release=fail=>fail?reject(Error('Delayed setup digest failed')):resolve();});
+   return original.call(this,...args);
+  };
+  return gate;
+ });
+}
+async function readyTeam(page:Page) {
+ await page.clock.install();await page.clock.pauseAt(new Date(Date.now()+1000));await page.goto('/');
+ await page.locator('#local-test-preset').click();await expect(page.locator('#local-test-status')).toContainText('Ready:');
+}
+async function finishDelayedSetup(gate:Awaited<ReturnType<typeof delaySetupDigest>>,fail=false) {
+ await gate.evaluate(async(g,reject)=>{
+  const refreshed=new Promise<void>(resolve=>{
+   const observer=new MutationObserver(()=>{observer.disconnect();resolve();});
+   observer.observe(document.querySelector('#door-snapshot')!,{childList:true});
+  });
+  g.release(reject);await refreshed;
+ },fail);
+}
+for(const scenario of ['pressure-pad','moving-door'] as const) {
+ for(const cancel of ['retry','selection','source-clear','new-mode','new-apply'] as const)test(`${scenario} delayed setup cancels accurately on ${cancel}`,async({page})=>{
+  test.skip(!enabled,'Explicit private originals required');await readyTeam(page);const gate=await delaySetupDigest(page);
+  await page.locator(`#author-${scenario}`).focus();await page.keyboard.press('Enter');
+  await expect.poll(()=>gate.evaluate(g=>g.waiting)).toBe(true);
+  await expect(page.locator('#author-pressure-pad')).toBeDisabled();await expect(page.locator('#author-moving-door')).toBeDisabled();
+  if(cancel==='retry')await page.locator('#reset').click();
+  if(cancel==='selection'){await page.locator('#roster-panel > summary').click();await page.getByLabel('Character for team slot 1').selectOption('1');}
+  if(cancel==='source-clear'){await page.locator('#roster-panel > summary').click();await page.locator('#items-clear').click();}
+  if(cancel==='new-mode')await page.locator('#mission-mode').evaluate((e:HTMLSelectElement)=>{e.value='navigation';e.dispatchEvent(new Event('change'));});
+  if(cancel==='new-apply'){await page.locator('#local-test-preset').click();await expect(page.locator('#local-test-status')).toContainText('Ready:');}
+  const retained=await state(page),feedback=await page.locator('#door-feedback').textContent();
+  await finishDelayedSetup(gate);expect(await state(page)).toEqual(retained);
+  expect((await state(page)).door).toBeNull();await expect(page.locator('#pad-status')).toBeEmpty();
+  await expect(page.locator('#door-feedback')).toHaveText(feedback!);await expect(page.locator('#door-feedback')).not.toContainText('ready');
+  await expect(page.locator('#run-state')).toHaveText('PAUSED');
+  if(cancel==='source-clear')await expect(page.locator('#training-moving-door')).toBeHidden();
+  else {await expect(page.locator('#author-pressure-pad')).toBeEnabled();await expect(page.locator('#author-moving-door')).toBeEnabled();}
+ });
+ for(const fail of [false,true])test(`${scenario} older ${fail?'failed':'cancelled'} setup cannot overwrite newer other challenge`,async({page})=>{
+  test.skip(!enabled,'Explicit private originals required');await readyTeam(page);const gate=await delaySetupDigest(page);
+  await page.locator(`#author-${scenario}`).click();await expect.poll(()=>gate.evaluate(g=>g.waiting)).toBe(true);
+  await page.locator('#reset').click();const next=scenario==='pressure-pad'?'moving-door':'pressure-pad';
+  await page.locator(`#author-${next}`).focus();await page.keyboard.press('Enter');
+  const label=next==='pressure-pad'?'Pressure pad':'Timed door';
+  await expect(page.locator('#door-feedback')).toContainText(`${label} ready, PAUSED.`);
+  await expect(page.locator('#play')).toBeFocused();await expect(page.locator('#author-pressure-pad')).toBeEnabled();await expect(page.locator('#author-moving-door')).toBeEnabled();
+  const installed=await state(page),feedback=await page.locator('#door-feedback').textContent();
+  expect(!!installed.gate.pad).toBe(next==='pressure-pad');expect(installed.door).not.toBeNull();
+  await finishDelayedSetup(gate,fail);expect(await state(page)).toEqual(installed);
+  await expect(page.locator('#door-feedback')).toHaveText(feedback!);await expect(page.locator('#play')).toBeFocused();await expect(page.locator('#run-state')).toHaveText('PAUSED');
+  await page.keyboard.press('Enter');await expect(page.locator('#run-state')).toHaveText('RUNNING');
+ });
+ test(`${scenario} current setup error retains state and permits successful keyboard retry`,async({page})=>{
+  test.skip(!enabled,'Explicit private originals required');await readyTeam(page);const baseline=await state(page),gate=await delaySetupDigest(page);
+  await page.locator(`#author-${scenario}`).focus();await page.keyboard.press('Enter');await expect.poll(()=>gate.evaluate(g=>g.waiting)).toBe(true);
+  await finishDelayedSetup(gate,true);await expect(page.locator('#door-feedback')).toHaveText('Delayed setup digest failed');expect(await state(page)).toEqual(baseline);
+  await expect(page.locator('#run-state')).toHaveText('PAUSED');await expect(page.locator(`#author-${scenario}`)).toBeEnabled();
+  await page.locator(`#author-${scenario}`).focus();await page.keyboard.press('Enter');
+  await expect(page.locator('#door-feedback')).toContainText(`${scenario==='pressure-pad'?'Pressure pad':'Timed door'} ready, PAUSED.`);
+  await expect(page.locator('#play')).toBeFocused();expect((await state(page)).door).not.toBeNull();
+ });
+}
