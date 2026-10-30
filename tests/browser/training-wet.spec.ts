@@ -5,7 +5,9 @@ import { resolveTraversal } from '../../src/sim/traversal';
 import { transitionImmersion } from '../../src/character/immersion-caller';
 import { exitRoute } from '../helpers/extraction-route';
 import { importItems } from '../../src/import/items';
-import type { Facing, Spawn } from '../../src/contracts';
+import { cellIndex, type Facing, type Spawn } from '../../src/contracts';
+import { createTrainingSession } from '../../src/sim/training-session';
+import { activateWet, stepWet, serializeWet } from '../../src/sim/training-wet';
 const manifestPath=process.env.HIRED_GUNS_T43_CASE_INPUTS;
 async function inputs(){const m=JSON.parse(await readFile(manifestPath!,'utf8'));return {m,w:JSON.parse(await readFile(m.casePath,'utf8'))};}
 async function key(page:Page,k:string){await page.locator('h1').click();await page.keyboard.press(k);}
@@ -13,6 +15,31 @@ async function open(page:Page){await page.clock.install();await page.clock.pause
 async function save(page:Page){const promise=page.waitForEvent('download');await page.locator('#save-checkpoint').click();const d=await promise;return JSON.parse(await readFile((await d.path())!,'utf8'));}
 async function restore(page:Page,value:unknown){await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'wet.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(value))});await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored');}
 async function move(page:Page,k:string){await page.keyboard.down(k);await page.clock.runFor(40);await page.keyboard.up(k);await page.clock.runFor(160);}
+async function untilTick(page:Page,tick:number){for(let n=0;n<1000;n++){if((await page.locator('#tick').textContent())?.includes(`tick ${tick} `))return;await page.clock.runFor(1);}throw Error(`Browser did not reach tick ${tick}`);}
+test('production keyboard lower-ID follows retired higher-ID with four valid heads and paused continuation',async({page})=>{
+ test.skip(!manifestPath,'Private pinned source manifest required');test.setTimeout(120000);await open(page);const {m}=await inputs(),{level}=await importEditorMap(new Uint8Array(await readFile(m.inputs.map)));
+ await page.getByLabel('Mission rules').selectOption('cooperative-extraction');await page.locator('#play').click();
+ const keys={forward:'w',backward:'s','strafe-left':'a','strafe-right':'d','turn-left':'q','turn-right':'e'};let saved;
+ for(const id of [3,0]){
+  await key(page,'Escape');saved=await save(page);const route=exitRoute(level,saved.checkpoint.world,id);await page.locator('#play').click();await key(page,String(id+1));
+  for(const s of route){await move(page,keys[s.action]);await key(page,'Escape');saved=await save(page);
+   const state=saved.checkpoint.state,world=saved.checkpoint.world;
+   for(let a=0;a<4;a++){const i=cellIndex(level,world.mercenaries[a]);expect(state.actors[a].current).toBe(i);const owner=world.mercenaries.findIndex((p:Spawn,j:number)=>!world.mission.exited[j]&&cellIndex(level,p)===i),head=state.overlays.find((x:number[])=>x[0]===i)[1];if(owner<0)expect(head&~0xf07e07fd).toBe(0);else expect(head&~0xf07e07fd).toBe((((32+owner*4+world.mercenaries[owner].facing)<<11)|(owner<<23)|2)&~0xf07e07fd);}
+   if(id===0&&!world.mission.exited[0]&&state.actors[0].current===state.actors[3].current){await page.setViewportSize({width:390,height:844});await page.screenshot({path:test.info().outputPath('retired-head-390.png'),fullPage:true});}
+   await restore(page,saved);expect(await save(page)).toEqual(saved);await page.locator('#play').click();
+  }
+ }
+ await key(page,'Escape');const final=await save(page);expect(final.checkpoint.world.mission.exited).toEqual([true,false,false,true]);await restore(page,final);await page.locator('#play').click();await page.clock.runFor(40);await key(page,'Escape');expect((await save(page)).checkpoint.world.tick).toBeGreaterThan(final.checkpoint.world.tick);
+});
+for(const reenter of [false,true])test(`production paused tick49 recovery, keyboard dry return retains scheduled delay; reentry=${reenter}`,async({page})=>{
+ test.skip(!manifestPath,'Private pinned source manifest required');test.setTimeout(120000);await open(page);const {m,w}=await inputs();
+ const raw={map:new Uint8Array(await readFile(m.inputs.map)),roster:new Uint8Array(await readFile(m.inputs.roster)),items:new Uint8Array(await readFile(m.inputs.items))};const {level}=await importEditorMap(raw.map),base=await createTrainingSession(level,raw,[11,3,0,5]);let c=await activateWet(level,raw,base.session,base.world,true);
+ for(const s of w.dryApproach)c=stepWet(level,c.session,c.world,[{mercenaryId:3,action:s.action}]);c=stepWet(level,c.session,c.world,[{mercenaryId:3,action:w.entry.action}]);while(c.world.tick<49)c=stepWet(level,c.session,c.world,[]);
+ await restore(page,JSON.parse(serializeWet(c)));await key(page,'4');await page.locator('#play').click();await page.locator('h1').click();await page.keyboard.down(w.minimumKeyboard.return.toLowerCase());await untilTick(page,50);await page.keyboard.up(w.minimumKeyboard.return.toLowerCase());await key(page,'Escape');const returned=await save(page);
+ expect(returned.checkpoint.world.tick).toBe(50);expect(returned.checkpoint.state.fallCounter).toBe(2);expect(returned.checkpoint.state.actors[3].delay).toBe(2);expect(returned.checkpoint.state.actors[3].body).toEqual(w.helperInvocations.first.candidate);await restore(page,returned);expect(await save(page)).toEqual(returned);
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:test.info().outputPath('dry-delay-390.png'),fullPage:true});
+ await page.locator('#play').click();await page.locator('h1').click();if(reenter)await page.keyboard.down(w.minimumKeyboard.enter.toLowerCase());await untilTick(page,51);if(reenter)await page.keyboard.up(w.minimumKeyboard.enter.toLowerCase());await untilTick(page,55);await key(page,'Escape');expect((await save(page)).checkpoint.state.actors[3].delay).toBe(reenter?1:0);
+});
 async function path(actor:number){
  const {m,w}=await inputs(),{level}=await importEditorMap(new Uint8Array(await readFile(m.inputs.map))),poses=structuredClone(level.starts);
  const key=(p:Spawn)=>`${p.x},${p.y},${p.z}`;

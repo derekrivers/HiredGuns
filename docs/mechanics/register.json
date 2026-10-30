@@ -10150,5 +10150,5 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 111
+  "acceptedThrough": 114
 }

@@ -45,7 +45,9 @@ Overlays retain immutable imported map identity and untouched second planes;
 head replacement preserves water/auxiliary with the source mask, and successful
 arrival clears only third-plane mine-marker bit29. Movement and overhead
 reservations use all four actors, including tick-start occupancy. Exited actors
-retire; their owned heads clear. No corpse or survivor selection is fabricated.
+retire; their owned heads clear on that transition, before current active heads
+are installed. Retained retired poses cannot erase a later occupant's head.
+No corpse or survivor selection is fabricated.
 
 One candidate tick adds one to the two unsigned scheduler words. Drowning uses
 signed >=50 and resets first; party-order inventory/immunity/breath processing
@@ -53,6 +55,9 @@ precedes stuff_falls. Falling uses unsigned >6, subtracts6 exactly once, and
 party-order wet delay0→2→1→0 with pending cleared and no vertical descent on inert
 support. Controls then move/turn/block; mission/clock resolution stays source
 ordered as in the accepted world adapter. Old refs capture the pre-control pose.
+Dry delay clears only in the scheduled falling pass before controls: returning
+between pulses retains the prior delay, and reentry before the next pulse uses
+that retained phase. A due drowning/item pass still precedes return movement.
 50 Hz and the one-increment-per-tick mapping are explicit fixed-step adaptations,
 not original CPU or wall-clock claims. No RNG is consumed by presentation.
 
@@ -116,4 +121,7 @@ Commands: `npm run check`; `npx tsx tools/build-mechanics-register.ts --check`;
 `npx vitest run tests/training-wet.test.ts` (private manifest opt-in via
 `HIRED_GUNS_T43_CASE_INPUTS`); production Playwright with the isolated private
 config/provider. Every attempt and final result remains in `.local/t43-wet`.
+Bounded PR115 repair evidence is separate in `.local/repair115`; it covers
+retired-head ownership, scheduled dry delay, exact object/array collection caps,
+and the accepted baseline label through PR114. It grants no new wet acceptance.
 Model requested: gpt-6.1-sol medium. Token usage unavailable. No delegation.

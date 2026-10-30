@@ -23,7 +23,7 @@ export function wetSnapshot<T>(input:T):T {
   if(v===null||typeof v==='boolean'||typeof v==='number'&&Number.isSafeInteger(v))return v;
   if(typeof v!=='object')return fail('ordinary JSON data required');
   const arr=Array.isArray(v);if(Object.getPrototypeOf(v)!==(arr?Array.prototype:Object.prototype)||active.has(v))fail('prototype/cycle');
-  const keys=Reflect.ownKeys(v);if(keys.length>WET_LIMITS.collection+1)fail('collection budget');
+  const keys=Reflect.ownKeys(v);if(keys.length>WET_LIMITS.collection+(arr?1:0))fail('collection budget');
   if(arr&&((v as unknown[]).length>WET_LIMITS.collection||keys.length!==(v as unknown[]).length+1))fail('dense array required');
   active.add(v);const out:Record<string,unknown>|unknown[]=arr?[]:{};
   for(const k of keys){if(arr&&k==='length')continue;if(typeof k!=='string')return fail('symbol');units+=k.length;if(units>WET_LIMITS.units||k.length>WET_LIMITS.string)fail('key budget');
@@ -49,9 +49,15 @@ export function admitWet(level:LevelData,p:Position):void{
 function heads(level:LevelData,state:TrainingWet,world:WorldState,previous?:WorldState){
  const overlays=new Map(state.overlays.map(([i,a,c])=>[i,[a,c] as [number,number]]));
  const at=(i:number)=>overlays.get(i)??[level.layers[0][i]!,level.layers[2][i]!] as [number,number];
+ // Release only this tick's departures, before installing any current heads.
+ // Retired actors retain their pose but no longer own that cell.
+ if(previous)for(let id=0;id<4;id++){
+  if(previous.mission.exited[id])continue;
+  const a=state.actors[id]!,i=cellIndex(level,world.mercenaries[id]!);
+  if(a.current!==i||world.mission.exited[id]){const [w,c]=at(a.current);overlays.set(a.current,[(w&0xf07e07fd)>>>0,c]);}
+ }
  for(let id=0;id<4;id++){
   const a=state.actors[id]!,p=world.mercenaries[id]!,i=cellIndex(level,p);const old=a.current;
-  if(previous&&(old!==i||world.mission.exited[id])){const [w,c]=at(old);overlays.set(old,[(w&0xf07e07fd)>>>0,c]);a.old=old;}
   a.current=i;
   if(world.mission.exited[id])continue;
   const [w,c]=at(i),person=(((32+id*4+p.facing)<<11)|(id<<23)|2)>>>0;
@@ -84,7 +90,6 @@ export function stepWet(level:LevelData,session:TrainingSession,previous:WorldSt
  for(const a of wet.actors)a.old=a.current;
  const result=stepWorld(level,previous,commands,p=>admitWet(level,p));
  for(let i=0;i<4;i++){const a=wet.actors[i]!,p=result.world.mercenaries[i]!;if(!(word(level,previous.mercenaries[i]!)&4)&&(word(level,p)&4)&&result.events.some(e=>e.mercenaryId===i&&e.kind==='moved'))a.entries++;
-  if(!(word(level,p)&4))a.delay=0;
  }
  heads(level,wet,result.world,previous);
  const inventory:TrainingSession['inventory']={commands:[],actors:wet.actors.map(a=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:0}))};

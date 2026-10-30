@@ -9,6 +9,7 @@ import { constructInitialTeam } from '../src/import/original-team';
 import { createDemoLevel } from '../src/demo';
 import { cellIndex, type PlayerCommand } from '../src/contracts';
 import { transitionImmersion } from '../src/character/immersion-caller';
+import { exitRoute } from './helpers/extraction-route';
 async function fixture(){
  const level=createDemoLevel(),items=await importItems(new Uint8Array(ITEM_FILE_BYTES)),roster=await importCharacters(new Uint8Array(CHARACTER_FILE_BYTES));
  for(const r of roster.records)Object.assign(r.stats,{physique:100,agility:100});
@@ -21,6 +22,45 @@ async function fixture(){
  const c=initialWet(level,baseline,[1,0,3,4],{mode:'navigation',timeLimit:null});return {level,baseline,c,target};
 }
 function advance(level:Parameters<typeof stepWet>[0],c:TrainingCandidate,n:number,commands:PlayerCommand[]=[]){for(let i=0;i<n;i++)c=stepWet(level,c.session,c.world,commands);return c;}
+function expectHeads(level:Parameters<typeof stepWet>[0],c:TrainingCandidate){
+ const wet=c.session.wet!,mask=0xf07e07fd;
+ for(let id=0;id<4;id++){
+  const p=c.world.mercenaries[id]!,a=wet.actors[id]!,i=cellIndex(level,p);expect(a.current).toBe(i);
+  const owner=c.world.mercenaries.findIndex((p,j)=>!c.world.mission.exited[j]&&cellIndex(level,p)===i);
+  const head=wet.overlays.find(x=>x[0]===i)![1];
+  if(owner<0)expect(head&~mask).toBe(0);
+  else{const p=c.world.mercenaries[owner]!;expect(head&~mask).toBe((((32+owner*4+p.facing)<<11)|(owner<<23)|2)&~mask);}
+ }
+}
+it.each([[3,0],[0,3],[2,1],[1,2]])('retirement order %j preserves all four heads on movement, turning and later ticks',async(retired,active)=>{
+ const {level,baseline}=await fixture();level.id='synthetic-extraction-v1';level.layers[0][cellIndex(level,level.exit)]=(3<<11)|2;
+ for(const x of [5,7])level.layers[0][cellIndex(level,{x,y:1,z:1})]=2;
+ level.layers[0]=level.layers[0].map(w=>(w|0x80000000)>>>0);level.layers[1].fill(0x12345678);level.layers[2].fill(0xffffffff);const immutable=structuredClone(level.layers);let reused=false;
+ let c=initialWet(level,baseline,[1,0,3,4],{mode:'cooperative-extraction',timeLimit:2});
+ for(const id of [retired,active])for(const s of exitRoute(level,c.world,id)){
+  const before=c;c=stepWet(level,c.session,c.world,[{mercenaryId:id,action:s.action}]);expectHeads(level,c);
+  if(id===active&&!c.world.mission.exited[active]&&c.session.wet!.actors[active]!.current===c.session.wet!.actors[retired]!.current)reused=true;
+  for(let a=0;a<4;a++)expect(c.session.wet!.actors[a]!.old).toBe(before.session.wet!.actors[a]!.current);
+  if(!s.exits){c=advance(level,c,1);expectHeads(level,c);c=stepWet(level,c.session,c.world,[{mercenaryId:id,action:'turn-right'}]);expectHeads(level,c);c=stepWet(level,c.session,c.world,[{mercenaryId:id,action:'turn-left'}]);expectHeads(level,c);}
+ }
+ expect(c.world.mission.exited[retired]).toBe(true);expect(c.world.mission.exited[active]).toBe(true);
+ expect(reused).toBe(true);expect(level.layers).toEqual(immutable);
+ expect(replayWet(level,baseline,[1,0,3,4],c.session.wet!.rules,c.session.wet!.history)).toEqual({world:c.world,session:c.session});
+ for(const [i,w] of c.session.wet!.overlays)expect((w&0xf07e07fd)>>>0).toBe((level.layers[0][i]!&0xf07e07fd)>>>0);
+});
+it.each([false,true])('scheduled dry delay survives return between pulses; reentry=%s',async(reenter)=>{
+ const {level,c:base}=await fixture();let c=advance(level,base,29);c=stepWet(level,c.session,c.world,[{mercenaryId:3,action:'forward'}]);c=advance(level,c,19);
+ expect(c.session.wet!.actors[3]!.delay).toBe(2);expect(c.session.wet!.fallCounter).toBe(1);
+ c=stepWet(level,c.session,c.world,[{mercenaryId:3,action:'backward'}]);expect(c.session.wet!.fallCounter).toBe(2);expect(c.session.wet!.actors[3]!.delay).toBe(2);expect(c.session.wet!.actors[3]!.itemPasses).toBe(1);
+ c=stepWet(level,c.session,c.world,reenter?[{mercenaryId:3,action:'forward'}]:[]);expect(c.session.wet!.actors[3]!.delay).toBe(2);
+ c=advance(level,c,3);expect(c.world.tick).toBe(54);expect(c.session.wet!.actors[3]!.delay).toBe(2);
+ c=advance(level,c,1);expect(c.session.wet!.actors[3]!.delay).toBe(reenter?1:0);
+});
+it('snapshot collection boundary is inclusive for objects and arrays without reading getters',()=>{
+ const object=Object.fromEntries(Array.from({length:32000},(_,i)=>['k'+i,0]));expect(Object.keys(wetSnapshot(object))).toHaveLength(32000);
+ expect(()=>wetSnapshot({...object,extra:0})).toThrow('collection budget');expect(wetSnapshot(Array(32000).fill(0))).toHaveLength(32000);expect(()=>wetSnapshot(Array(32001).fill(0))).toThrow('collection budget');
+ let reads=0;Object.defineProperty(object,'k0',{get(){reads++;return 0;},enumerable:true});expect(()=>wetSnapshot(object)).toThrow('descriptors');expect(reads).toBe(0);
+});
 it('live synthetic tick owns four heads, water flags, old/current refs, arrival markers, counters and no descent',async()=>{
  const {level,c:base,target}=await fixture();const i=cellIndex(level,target);level.layers[0][i]=((10<<28)|32|4|(2<<17))>>>0;level.layers[2][i]=0xffffffff;
  let c:TrainingCandidate=stepWet(level,base.session,base.world,[{mercenaryId:3,action:'forward'}]);expect(c.world.mercenaries[3]).toEqual({...target,id:3});expect(c.session.wet!.actors[3]!.entries).toBe(1);
@@ -54,6 +94,28 @@ it('snapshot rejects accessors without reads, swapped prototypes, sparse arrays,
  expect(()=>wetHistory([{count:WET_LIMITS.ticks+1,commands:[]}])).toThrow('budget');expect(()=>wetHistory(Array(129).fill({count:1,commands:[]}))).toThrow('budget');
 });
 const enabled=!!process.env.HIRED_GUNS_T43_CASE_INPUTS;
+it.skipIf(!enabled)('private original retirement ownership and scheduled return/reentry persist through v15 recovery',async()=>{
+ const manifest=JSON.parse(await readFile(process.env.HIRED_GUNS_T43_CASE_INPUTS!,'utf8')),w=JSON.parse(await readFile(manifest.casePath,'utf8'));
+ const raw={map:new Uint8Array(await readFile(manifest.inputs.map)),roster:new Uint8Array(await readFile(manifest.inputs.roster)),items:new Uint8Array(await readFile(manifest.inputs.items))};
+ const {level}=await importEditorMap(raw.map),base=await createTrainingSession(level,raw,[11,3,0,5]);
+ for(const order of [[3,0,1,2]]){
+  const start=structuredClone(base);start.world.mission.rules={mode:'cooperative-extraction',timeLimit:99};let c=await activateWet(level,raw,start.session,start.world,true);
+  for(const id of order)for(const s of exitRoute(level,c.world,id)){
+   c=stepWet(level,c.session,c.world,[{mercenaryId:id,action:s.action}]);expectHeads(level,c);
+   const json=await exportTrainingSession(level,c.world,c.session,raw);const restored=await importTrainingSession(level,raw,json);expect(restored).toEqual({world:c.world,session:c.session});
+   c=advance(level,restored,1);expectHeads(level,c);
+  }
+ }
+ let entered=await activateWet(level,raw,base.session,base.world,true);
+ for(const s of w.dryApproach)entered=stepWet(level,entered.session,entered.world,[{mercenaryId:3,action:s.action}]);
+ entered=stepWet(level,entered.session,entered.world,[{mercenaryId:3,action:w.entry.action}]);entered=advance(level,entered,19);
+ for(const reenter of [false,true]){
+  let c:TrainingCandidate=stepWet(level,entered.session,entered.world,[{mercenaryId:3,action:w.return.action}]);expect(c.world.tick).toBe(50);expect(c.session.wet!.actors[3]!.delay).toBe(2);expect(c.session.wet!.actors[3]!.body).toEqual(w.helperInvocations.first.candidate);
+  const json=await exportTrainingSession(level,c.world,c.session,raw);expect(JSON.parse(json).checkpoint.state.actors[3].delay).toBe(2);const restored=await importTrainingSession(level,raw,json);expect(restored).toEqual({world:c.world,session:c.session});
+  const commands:PlayerCommand[]=reenter?[{mercenaryId:3,action:w.entry.action}]:[];c=stepWet(level,restored.session,restored.world,commands);c=advance(level,c,4);expect(c.session.wet!.actors[3]!.delay).toBe(reenter?1:0);
+  const bad=JSON.parse(json);bad.checkpoint.state.actors[3].delay=0;await expect(importTrainingSession(level,raw,JSON.stringify(bad))).rejects.toThrow();
+ }
+},120000);
 it.skipIf(!enabled)('private pinned case helper oracle, chronological v15 recovery, tamper/source/late snapshot, Retry and boundary',async()=>{
  const manifest=JSON.parse(await readFile(process.env.HIRED_GUNS_T43_CASE_INPUTS!,'utf8'));
  const witness=JSON.parse(await readFile(manifest.casePath,'utf8'));
