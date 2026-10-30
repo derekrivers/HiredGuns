@@ -9,6 +9,7 @@ import { initialWet, initialSelectedWet, admitWet, wetSnapshot, rawSnapshot, wet
 import { equalConsumableState as equal } from './training-consumables';
 import { TRAINING_43_SHA256 } from './mission-profile';
 import { stepWorld } from './world';
+import { SOURCE_CLOCK_PERIOD, resolveSelectedPartyMission } from './mission';
 
 export const WET_LIFECYCLE_SCENARIO='training43-wet-lifecycle-v1';
 export interface WetHealth {
@@ -162,8 +163,20 @@ function heads(level:LevelData,session:TrainingSession,world:WorldState,previous
 }
 /** One indivisible full-party candidate. Drown -> falling (dead guard) -> controls. */
 export function stepWetLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record=true,missionResolver?: (world:WorldState,events:SimulationEvent[])=>void){
+ return stepLifecycle(level,session,previous,commands,record,missionResolver,WET_LIMITS.ticks);
+}
+/** Distinct v19 caller; legacy public stepping retains its exact 45000 gate. */
+export function stepTimeoutLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[]){
+ if(!session||Object.getPrototypeOf(session)!==Object.prototype)fail('timeout owner');
+ const d=Object.getOwnPropertyDescriptor(session,'wetParty');if(!d?.enumerable||!Object.hasOwn(d,'value')||Object.getOwnPropertyDescriptor(session,'wetRegion'))fail('timeout data owner');
+ for(const key of ['wet','wetLifecycle']){const field=Object.getOwnPropertyDescriptor(session,key);if(!field?.enumerable||!Object.hasOwn(field,'value')||!field.value||Object.getPrototypeOf(field.value)!==Object.prototype)fail('timeout lifecycle data owner');}
+ const s=wetSnapshot({party:d!.value,rules:previous.mission.rules});
+ if(!s.party||Object.keys(s.party).join(',')!=='profile'||s.party.profile!=='four-controlled-timeout-v1'||Object.keys(s.rules).sort().join(',')!=='mode,timeLimit'||s.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(s.rules.mode))fail('timeout profile/rules');
+ return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD);
+}
+function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number){
  validate(level,session,previous);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
- if(previous.tick>=WET_LIMITS.ticks)fail('future tick budget');
+ if(previous.tick>=tickLimit)fail('future tick budget');
  const next={...session,wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
  const wet=next.wet,prospective=structuredClone(previous);
  wet.drownCounter=(wet.drownCounter+1)&65535;wet.fallCounter=(wet.fallCounter+1)&65535;
