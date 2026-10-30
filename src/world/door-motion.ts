@@ -137,11 +137,8 @@ export function transitionDoorMotion(input: DoorMotionInput): DoorMotionResult {
         word = (word & ~VARIANT) >>> 0;
         emit('clear-open-variant');
       }
-      // These source branches skip the first variant write while on a lift.
-      if (changed) {
-        if (i.onLift) { diagnostics.add('lift-skipped-variant'); continue; }
-        emit('sound-request', 5);
-      }
+      // Source lift branches bypass sample5 only, then fall through to motion.
+      if (changed && !i.onLift) emit('sound-request', 5);
       if (record.direction === 1) word = ((word & ~VARIANT) | ((variant + 1) << 23)) >>> 0;
       else word = ((word & ~(VARIANT | BLOCK)) | ((blocking ? variant - 1 : 9) << 23) | record.storedType) >>> 0;
       emit('variant'); emit('redraw-request');

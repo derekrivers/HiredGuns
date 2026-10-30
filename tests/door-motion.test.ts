@@ -123,14 +123,61 @@ describe('trigger actions and motion', () => {
     expect(run(fixture({ direction: 1, trigger: 2 }, { target: at(doorWord(20, 5)) })).candidate.word).toBe(doorWord(20, 4));
     expect(run(fixture({ direction: 1, trigger: 1 })).effects.some(e => e.kind === 'sound-request')).toBe(false);
   });
-  it('lift flag skips first variant write, including source pre-clear on closure', () => {
-    const opening = run(fixture({ trigger: 1 }, { onLift: true }));
-    expect(opening.candidate.word).toBe(doorWord());
-    expect(opening.effects.some(e => e.kind === 'sound-request')).toBe(false);
-    const closing = run(fixture({ trigger: 2 }, { onLift: true, target: at(10 * 8388608 + 64) }));
-    expect(closing.candidate.word).toBe(64);
-    expect(closing.candidate.record.direction).toBe(2);
-    expect(run(fixture(closing.candidate.record, { onLift: true, target: at(64) })).candidate.word).toBe(doorWord(20, 9) + 64);
+  it.each([
+    { name: 'start opening', trigger: 1, direction: 0, word: 40962, next: 8429570 },
+    { name: 'close absent block', trigger: 2, direction: 0, word: 83886144, next: 75538498 },
+    { name: 'reverse to closing', trigger: 2, direction: 1, word: 41986050, next: 33595394 },
+    { name: 'reverse to opening', trigger: 1, direction: 2, word: 41986050, next: 50374658 },
+  ])('lift suppresses only start sound: $name', ({ trigger, direction, word, next }) => {
+    const input = fixture({ trigger, direction, key: 201, buttonOnly: 17 }, { target: at(word) });
+    const off = run(input), lift = run({ ...input, onLift: true });
+    expect(lift.candidate).toEqual({ record: { position: 4, trigger: 0, direction: trigger,
+      storedType: 40962, delay: 255, delayCount: 0, key: 201, buttonOnly: 17 }, word: next, counter: 1 });
+    expect(lift.steps).toBe(1);
+    expect(lift.diagnostics).toEqual([]);
+    expect(lift.candidate).toEqual(off.candidate);
+    expect(lift.effects).toEqual(off.effects.filter(e => e.kind !== 'sound-request'));
+    expect(off.effects.filter(e => e.kind === 'sound-request').map(e => [e.step, e.sample, e.state.word])).toEqual([
+      [1, 5, word === 83886144 ? 64 : word],
+    ]);
+    expect(lift.effects.map(e => [e.step, e.kind, e.sample, e.state.word])).toEqual([
+      [1, 'trigger', null, word],
+      ...(word === 83886144 ? [[1, 'clear-open-variant', null, 64]] : []),
+      [1, 'variant', null, next], [1, 'redraw-request', null, next],
+    ]);
+  });
+  it.each([
+    { name: 'opening completion then delay and auto-close', trigger: 1, word: 75538498,
+      delay: 2, count: 99, counter: 24, next: 75538498, direction: 2,
+      history: [[1, 'trigger', 75538498], [1, 'variant', 83927106], [1, 'redraw-request', 83927106],
+        [2, 'opened', 83886144], [3, 'delay-count', 83886144], [4, 'delay-count', 83886144],
+        [4, 'auto-close', 83886144], [4, 'trigger', 83886144], [4, 'clear-open-variant', 64],
+        [4, 'variant', 75538498], [4, 'redraw-request', 75538498]],
+      sounds: [[1, 5, 75538498], [2, 4, 83886144], [4, 5, 64]],
+      redraws: [[1, 83927106], [4, 75538498]],
+    },
+    { name: 'closing completion', trigger: 2, word: 16818242,
+      delay: 255, count: 17, counter: 18, next: 41026, direction: 0,
+      history: [[1, 'trigger', 16818242], [1, 'variant', 8429634], [1, 'redraw-request', 8429634],
+        [2, 'variant', 41026], [2, 'redraw-request', 41026], [3, 'closed', 41026]],
+      sounds: [[1, 5, 16818242], [3, 4, 41026]], redraws: [[1, 8429634], [2, 41026]],
+    },
+  ])('lift preserves multistep state and ordered effects: $name', ({ trigger, word, delay, count, counter, next, direction, history, sounds, redraws }) => {
+    const input = fixture({ trigger, delay, delayCount: count }, { target: at(word), counter });
+    const off = run(input), lift = run({ ...input, onLift: true });
+    expect(lift.candidate).toEqual({ record: { position: 4, trigger: 0, direction, storedType: 40962,
+      delay, delayCount: delay === 2 ? 0 : 17, key: 23, buttonOnly: 254 }, word: next, counter: 0 });
+    expect(lift.steps).toBe(counter / 6);
+    expect(lift.diagnostics).toEqual([]);
+    expect(lift.candidate).toEqual(off.candidate);
+    expect(lift.effects).toEqual(off.effects.filter(e => e.kind !== 'sound-request'));
+    expect(lift.effects.map(e => [e.step, e.kind, e.state.word])).toEqual(history);
+    expect(lift.effects.filter(e => e.kind === 'redraw-request').map(e => [e.step, e.state.word])).toEqual(redraws);
+    expect(off.effects.filter(e => e.kind === 'sound-request').map(e => [e.step, e.sample, e.state.word])).toEqual(sounds);
+    if (delay === 2) {
+      expect(lift.effects.filter(e => e.kind === 'delay-count').map(e => [e.step, e.state.record.delayCount])).toEqual([[3, 1], [4, 2]]);
+      expect(lift.effects.find(e => e.kind === 'opened')?.state.record).toMatchObject({ direction: 0, delayCount: 0 });
+    }
   });
   it('independent bit oracle preserves every bit outside block/variant during closure', () => {
     const mutableBits = new Set([1, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27]);

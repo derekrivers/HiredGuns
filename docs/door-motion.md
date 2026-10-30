@@ -11,7 +11,8 @@ The behavior is deduced from `Main.s` move_doors (2229–2426),
 (588–651), and `ColdStartup.s` timers/xcr_counters (764, 821).
 Reset clears door_count in `Controls&Movement.s` around 2797.
 No original CPU execution or complete original gameplay parity is claimed.
-Private source identities and reproducible evidence stay in `.local/handoff.md`.
+Private source identities and current repair evidence stay in `.local/repair109/handoff.md`;
+the preserved `.local/handoff.md` contains superseded lift claims.
 
 ## Contract
 
@@ -36,8 +37,8 @@ The input has exactly `record`, `target`, `counter`, `action`, `onLift`:
 - `action`: 0 or source button-table action14=open, 15=close, 16=toggle,
   17=lock, 18=unlock. The caller has already selected and authorized this record.
   The action writes the trigger before scheduler evaluation, even for position0.
-- `onLift`: explicit source on_a_lift predicate. It affects both sound requests
-  and the first variant write following a direction change.
+- `onLift`: explicit source on_a_lift predicate. It suppresses sample4/5 sound
+  requests only; state changes, variant writes and redraw ordering are unchanged.
 
 Refusal has `candidate: null`, no partial effects and no input writes. Success
 contains the complete frozen detached record/word/counter candidate, scheduler
@@ -74,11 +75,14 @@ resets delay count and stops. It preserves opacity, variant and every other bit.
 Closing an absent block clears its old variant first, then restores storedType
 and variant9. Subsequent steps reach0; the following step stops. Closure ORs
 storedType exactly and does not invent an opacity flag. Non-door blocking
-obstruction stops motion without changing the word. Source onLift branches
-skip the newly moving variant write; closure's prior variant clear still occurs.
-Full-open/full-closed completion requests sample4 without an extra redraw;
-variant writes request redraw, and changed direction requests sample5 unless
-onLift. No actor occupancy or original crush semantics are inferred.
+obstruction stops motion without changing the word. Source onLift branches at
+Main.s2350/2401 bypass sample5 and fall through to variant writes and redraw.
+Closure's prior variant clear and storedType/variant9 restoration occur in the
+SAME step, including onLift. Full-open/full-closed completion changes state
+before requesting sample4 without an extra redraw; onLift suppresses sample4
+without undoing completion. Variant writes request redraw, and changed direction
+requests sample5 unless onLift. No actor occupancy or original crush semantics
+are inferred.
 
 ## Immediate keyboard consumer
 
