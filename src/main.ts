@@ -153,7 +153,7 @@ const encounterPanel = installTrainingEncounterPanel(encounterHost, () => sessio
 encounterHost.addEventListener('click', refreshEncounterPanel);
 function refreshEncounterPanel(): void {
   encounterPanel.refresh();
-  encounterHost.hidden=!!session?.consumables;
+  encounterHost.hidden=!session || !!session.consumables;
   const patrolActive = !!session?.patrol;
   if(session?.consumables) for(const control of encounterHost.querySelectorAll<HTMLButtonElement|HTMLSelectElement>('button,select'))control.disabled=true;
   for (const kind of ['arm','reset']) if (patrolActive) encounterHost.querySelector<HTMLButtonElement>(`[data-command="${kind}"]`)!.disabled = true;
