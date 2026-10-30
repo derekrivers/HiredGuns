@@ -110,7 +110,7 @@ for(const operation of ['setup','use'] as const)test(`current ${operation} diges
 });
 
 for(const operation of ['setup','use'] as const)test(`cancel ${operation} between installation and presentation microtasks`,async({page})=>{
- test.skip(!enabled,'Private source inputs required');await open(page);if(operation==='setup'){await cancelConsumable(page,'new-apply');await page.locator('#selected-fall').click();}else await equip(page,0,66);
+ test.skip(!enabled,'Private source inputs required');await open(page);if(operation==='setup'){await cancelConsumable(page,'new-apply');await page.locator('#selected-fall').click();await key(page,'h');await expect(page.locator('#consumable-feedback')).toContainText('Start the consumable extension first');}else await equip(page,0,66);
  const feedback=await page.locator('#consumable-feedback').textContent();await page.evaluate(operation=>{
   const observer=new MutationObserver(()=>{
    const installed=operation==='setup'?document.querySelector('#recovery-status')!.textContent!.includes('Consumable extension installed'):document.querySelector('#consumable-receipt')!.textContent!.includes('consumed');
