@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-30",
-  "reviewedHead": "b211895b0bf4600bc7c8fa830814284c46293c97",
+  "reviewedHead": "e2b2d5ff4090c5c39006abea147a24450ca5c17b",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,7 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Accepted main through PR112 food/repair, PR113 register, and PR114 bounded interaction CASE. New keyboard wet consumer is UNREVIEWED; no level, hardware or T43-05 acceptance is inferred.",
+    "Accepted through PR115 only: PR112 food/repair, PR114 source CASE, PR115 actual supported original-editor wet entry/return and v15 recovery. PR116 is an unaccepted candidate and earns no credit. No complete original level or hardware receipt exists.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
     "Static editor observations do not prove runtime activation, target validity, reachability, required puzzle roles or completed gameplay.",
@@ -149,6 +149,22 @@
       "path": "docs/training-pressure-pad.md",
       "instructions": "Load ready team, start pressure pad / timed door challenge. Move onto P to open; step off requests close. Defeat target and extract all four.",
       "scope": "Accepted PR111. Source-derived player entry/release with authored geometry, clock and no-crush interlock; original Training43 machinery remains inactive."
+    },
+    {
+      "id": "consumables",
+      "title": "Equipped food and repair",
+      "kind": "authored",
+      "path": "docs/training-consumables.md",
+      "instructions": "Same app: ready team, selected-team dry-fall practice, pause, equip food/repair and H/use button after a dry-fall injury.",
+      "scope": "PR112 source FOOD (nonmedical64) / REPAIR fitness, ID-only clear and weight; v14 chronology. Medical64 poison cure, immunity and revival unsupported."
+    },
+    {
+      "id": "wet",
+      "title": "Training43 bounded wet entry and return",
+      "kind": "original",
+      "path": "docs/training43-wet-traversal.md",
+      "instructions": "Same app: ready Training43, Enable Training43 wet traversal at paused tick zero; Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause. Enter supported wet stair and reverse.",
+      "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
     }
   ],
   "mechanics": [
@@ -637,7 +653,7 @@
       "baseline": "ocs-3926",
       "original": "Apply directional ascent/descent, paired stairs, target clearance and wet destination consequences.",
       "source": "Controls&Movement.s move and directional callers",
-      "mappingScope": "Dry transforms demonstrated; reachable wet stair pair still blocked.",
+      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
@@ -652,41 +668,62 @@
         {
           "path": "docs/static-traversal.md",
           "label": "static-traversal.md",
-          "scope": "Dry transforms demonstrated; reachable wet stair pair still blocked."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/training43-completion.md",
           "label": "training43-completion.md",
-          "scope": "Dry transforms demonstrated; reachable wet stair pair still blocked."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 wet consumer",
+          "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
         }
       ],
       "tests": [
         {
           "path": "tests/traversal.test.ts",
           "label": "traversal.test.ts",
-          "scope": "Dry transforms demonstrated; reachable wet stair pair still blocked."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "tests/browser/stairs.spec.ts",
           "label": "stairs.spec.ts",
-          "scope": "Dry transforms demonstrated; reachable wet stair pair still blocked."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet.test.ts",
+          "label": "training-wet.test.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/browser/training-wet.spec.ts",
+          "label": "training-wet.spec.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
         }
       ],
       "implementation": [
         {
           "path": "src/sim/traversal.ts",
           "label": "traversal.ts",
-          "scope": "Dry transforms demonstrated; reachable wet stair pair still blocked."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "src/sim/training-wet.ts",
+          "label": "training-wet.ts",
+          "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
         }
       ],
       "scenarios": [
         "training43",
-        "stairs"
+        "stairs",
+        "wet"
       ],
       "gaps": [
-        "Training43 reachable optional wet stairs must work before level acceptance."
+        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
       ],
-      "next": "Combine wet entry, descent and recovery with the selected live team."
+      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
     },
     {
       "id": "MOV-04",
@@ -1202,14 +1239,14 @@
       "baseline": "ocs-3926",
       "original": "Evaluate water depth, stairs, movement, immersion and actor-specific immunity without bypassing inventory/lifecycle effects.",
       "source": "Main.s drowning/player_fall; Controls&Movement.s movement",
-      "mappingScope": "Bounded immersion caller exists disconnected from original wet traversal.",
+      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -1217,43 +1254,65 @@
         {
           "path": "docs/immersion-caller-contract.md",
           "label": "immersion-caller-contract.md",
-          "scope": "Bounded immersion caller exists disconnected from original wet traversal."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/wet-entry-observation.md",
           "label": "wet-entry-observation.md",
-          "scope": "Bounded immersion caller exists disconnected from original wet traversal."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/water-executable-evidence.md",
           "label": "water-executable-evidence.md",
-          "scope": "Bounded immersion caller exists disconnected from original wet traversal."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/training43-wet-acceptance.md",
           "label": "Accepted PR114 bounded CASE",
-          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
+          "scope": "PR114 source CASE: 23 water cells, 22 graph candidates and one solid/nonstanding; both signs dry type0 and 50 inactive positionals. Candidates are not wet playthrough proof."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 wet consumer",
+          "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
         }
       ],
       "tests": [
         {
           "path": "tests/immersion-caller.test.ts",
           "label": "immersion-caller.test.ts",
-          "scope": "Bounded immersion caller exists disconnected from original wet traversal."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet.test.ts",
+          "label": "training-wet.test.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/browser/training-wet.spec.ts",
+          "label": "training-wet.spec.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
         }
       ],
       "implementation": [
         {
           "path": "src/character/immersion-caller.ts",
           "label": "immersion-caller.ts",
-          "scope": "Bounded immersion caller exists disconnected from original wet traversal."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "src/sim/training-wet.ts",
+          "label": "training-wet.ts",
+          "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
         }
       ],
-      "scenarios": [],
-      "gaps": [
-        "Training43 wet region remains unknown beyond audited entry."
+      "scenarios": [
+        "wet"
       ],
-      "next": "Integrate one source-bound wet entry with complete damage/lifecycle/recovery before widening routes."
+      "gaps": [
+        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+      ],
+      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
     },
     {
       "id": "ENV-09",
@@ -1682,15 +1741,12 @@
           "scope": "Named original item-use branches; no behavioural mapping or integration."
         },
         {
-          "path": "src/items/consumable-use.ts",
-          "label": "consumable-use.ts",
+          "path": "docs/training-session.md",
+          "label": "training-session.md",
           "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
-        },
-        {
-          "path": "src/sim/training-consumables.ts",
-          "label": "training-consumables.ts",
-          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
-        },
+        }
+      ],
+      "tests": [
         {
           "path": "tests/training-consumables.test.ts",
           "label": "training-consumables.test.ts",
@@ -1700,16 +1756,23 @@
           "path": "tests/browser/training-consumables.spec.ts",
           "label": "training-consumables.spec.ts",
           "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
+        }
+      ],
+      "implementation": [
+        {
+          "path": "src/items/consumable-use.ts",
+          "label": "consumable-use.ts",
+          "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
         },
         {
-          "path": "docs/training-session.md",
-          "label": "training-session.md",
+          "path": "src/sim/training-consumables.ts",
+          "label": "training-consumables.ts",
           "scope": "Accepted PR112 bounded food/repair consumer; no immunity/medical/full original item-use acceptance."
         }
       ],
-      "tests": [],
-      "implementation": [],
-      "scenarios": [],
+      "scenarios": [
+        "consumables"
+      ],
       "gaps": [
         "Each dispatch branch needs separate cases before this family can close."
       ],
@@ -2336,14 +2399,14 @@
       "baseline": "ocs-3926",
       "original": "Evaluate guards/depth/immunity, increment/reset breath and apply threshold damage in original integer order.",
       "source": "Main.s drowning; pinned OCS wet-entry CPU observations",
-      "mappingScope": "Bounded decision and immersion caller, not live wet traversal/drowning.",
+      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -2351,53 +2414,75 @@
         {
           "path": "docs/wet-entry-observation.md",
           "label": "wet-entry-observation.md",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/drowning-decision-contract.md",
           "label": "drowning-decision-contract.md",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/immersion-caller-contract.md",
           "label": "immersion-caller-contract.md",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/training43-wet-acceptance.md",
           "label": "Accepted PR114 bounded CASE",
-          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
+          "scope": "PR114 source CASE: 23 water cells, 22 graph candidates and one solid/nonstanding; both signs dry type0 and 50 inactive positionals. Candidates are not wet playthrough proof."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 wet consumer",
+          "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
         }
       ],
       "tests": [
         {
           "path": "tests/drowning-decision.test.ts",
           "label": "drowning-decision.test.ts",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "tests/immersion-caller.test.ts",
           "label": "immersion-caller.test.ts",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet.test.ts",
+          "label": "training-wet.test.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/browser/training-wet.spec.ts",
+          "label": "training-wet.spec.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
         }
       ],
       "implementation": [
         {
           "path": "src/character/drowning-decision.ts",
           "label": "drowning-decision.ts",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "src/character/immersion-caller.ts",
           "label": "immersion-caller.ts",
-          "scope": "Bounded decision and immersion caller, not live wet traversal/drowning."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "src/sim/training-wet.ts",
+          "label": "training-wet.ts",
+          "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
         }
       ],
-      "scenarios": [],
-      "gaps": [
-        "Actual drowning injury/death and full wet-route recovery are unintegrated."
+      "scenarios": [
+        "wet"
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "gaps": [
+        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+      ],
+      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
     },
     {
       "id": "LIFE-04",
@@ -2406,14 +2491,14 @@
       "baseline": "ocs-3926",
       "original": "Process equipped/carried entries and weight before breath immunity, retaining spell-specific bypass behaviour.",
       "source": "Main.s immersion inventory ordering; water inventory helper",
-      "mappingScope": "Selected original inventory cases and pure caller remain disconnected.",
+      "mappingScope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation.",
       "stages": {
         "mapping": "partial",
         "reference": "partial",
         "rules": "covered",
-        "playable": "open",
-        "integration": "open",
-        "recovery": "open",
+        "playable": "partial",
+        "integration": "partial",
+        "recovery": "partial",
         "acceptance": "open",
         "hardware": "open"
       },
@@ -2421,38 +2506,60 @@
         {
           "path": "docs/water-inventory-contract.md",
           "label": "water-inventory-contract.md",
-          "scope": "Selected original inventory cases and pure caller remain disconnected."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/immersion-caller-contract.md",
           "label": "immersion-caller-contract.md",
-          "scope": "Selected original inventory cases and pure caller remain disconnected."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
         },
         {
           "path": "docs/training43-wet-acceptance.md",
           "label": "Accepted PR114 bounded CASE",
-          "scope": "Four-actor dry approach, source wet entry/reverse expectation and race4 nonimmunity CASE; live wet play remains unreviewed."
+          "scope": "PR114 source CASE: 23 water cells, 22 graph candidates and one solid/nonstanding; both signs dry type0 and 50 inactive positionals. Candidates are not wet playthrough proof."
+        },
+        {
+          "path": "docs/training43-wet-traversal.md",
+          "label": "Accepted PR115 wet consumer",
+          "scope": "Accepted PR115 supported original-editor wet entry/return, breath/inventory/weight/fitness, scheduled delay, all four heads and v15 chronological paused recovery. Broad original mechanic remains partial; non-null requested hit including zero refuses before installation."
         }
       ],
       "tests": [
         {
           "path": "tests/water-inventory.test.ts",
           "label": "water-inventory.test.ts",
-          "scope": "Selected original inventory cases and pure caller remain disconnected."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "tests/training-wet.test.ts",
+          "label": "training-wet.test.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
+        },
+        {
+          "path": "tests/browser/training-wet.spec.ts",
+          "label": "training-wet.spec.ts",
+          "scope": "Accepted PR115 bounded supported wet behavior/replay; no full wet-region or lifecycle acceptance."
         }
       ],
       "implementation": [
         {
           "path": "src/character/water-inventory.ts",
           "label": "water-inventory.ts",
-          "scope": "Selected original inventory cases and pure caller remain disconnected."
+          "scope": "Earlier bounded source/helper or dry-transform proof; PR115 separately accepts supported live wet entry/return. No whole wet/lifecycle acceptance."
+        },
+        {
+          "path": "src/sim/training-wet.ts",
+          "label": "training-wet.ts",
+          "scope": "Accepted PR115 source-bound wet adapter; source counter order and explicit fixed-step adaptation limits."
         }
       ],
-      "scenarios": [],
-      "gaps": [
-        "No original wet inventory mutations installed in the running world."
+      "scenarios": [
+        "wet"
       ],
-      "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
+      "gaps": [
+        "Wider wet region and actual injury/death/find_floor/corpse/control remain unaccepted at PR115. No complete original-level acceptance."
+      ],
+      "next": "Compose and independently accept lifecycle and wider wet outcomes before closing this broad row."
     },
     {
       "id": "LIFE-05",
@@ -9374,7 +9481,7 @@
       "sha256": "646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c",
       "revision": "Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body",
       "firstAcceptance": true,
-      "audit": "Existing exact-digest Training43 audit: full-team dry exit replay plus source-only wet approach. New static inventory agrees; original CPU whole-level playthrough absent.",
+      "audit": "Accepted PR114 source CASE and PR115 actual bounded original-editor dry approach/wet entry-return/four heads/v15 replay. Wider wet region/lifecycle and complete original level remain unaccepted.",
       "acceptance": "open",
       "interactions": [
         {
@@ -9385,7 +9492,7 @@
         {
           "mechanic": "MOV-03",
           "classification": "reachable-optional",
-          "basis": "Existing source-derived dry approach reaches the upper wet-stair entry. Supported static route bypasses it; live wet traversal is blocked."
+          "basis": "PR115 actual supported wet-stair entry/return, breath/item/weight/fitness and recovery accepted. Wider water-region and injury/death outcomes remain unknown; original classification unchanged."
         },
         {
           "mechanic": "ENV-01",
@@ -9415,7 +9522,7 @@
         {
           "mechanic": "ENV-08",
           "classification": "unknown",
-          "basis": "Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough."
+          "basis": "PR115 actual supported wet-stair entry/return, breath/item/weight/fitness and recovery accepted. Wider water-region and injury/death outcomes remain unknown; original classification unchanged."
         },
         {
           "mechanic": "ENV-09",
@@ -9425,7 +9532,7 @@
         {
           "mechanic": "LIFE-03",
           "classification": "unknown",
-          "basis": "Wet stair entry is reachable optional; wider water-region traversal/outcomes remain unknown. Isolated drowning helpers do not establish a whole wet playthrough."
+          "basis": "PR115 actual supported wet-stair entry/return, breath/item/weight/fitness and recovery accepted. Wider water-region and injury/death outcomes remain unknown; original classification unchanged."
         },
         {
           "mechanic": "INV-04",
@@ -9509,7 +9616,7 @@
         }
       ],
       "blockers": [
-        "Reachable optional wet stairs are blocked; wider wet-region outcomes unknown.",
+        "Supported wet entry/return accepted PR115; wider water-region outcomes, injury/death/corpse/control and full-level replay remain open.",
         "Original live death, corpse/pad/control and all-dead outcome are not integrated.",
         "Recovery must cover every newly installed state and environmental interaction.",
         "DEFERRED separate human acceptance: a complete four-player physical-controller/TV level run has not been accepted; this does not block keyboard software work."
@@ -10070,9 +10177,10 @@
       "state": "open",
       "evidence": [
         "docs/wet-entry-observation.md",
-        "docs/immersion-caller-contract.md"
+        "docs/immersion-caller-contract.md",
+        "docs/training43-wet-traversal.md"
       ],
-      "requirement": "Play reachable wet stairs with breath, item effects, damage and supported exit/return behaviour."
+      "requirement": "PR115 accepts bounded wet entry/return, breath/item effects and v15 recovery. Injury/death and broader wet outcomes remain open; this compound gate has no reviewed whole-gate receipt."
     },
     {
       "id": "T43-06",
@@ -10150,5 +10258,395 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 114
+  "acceptedThrough": 115,
+  "acceptedProofs": [
+    {
+      "id": "proof-112",
+      "pr": 112,
+      "merge": "c82f889eb3707ed8e8f88c32a8f97640739b3e84",
+      "head": "90fef3f83a8fe6e7eb5b0c54ed6789f5166ce06f",
+      "reviewSha256": "fd88fc085b4fc6f0fd12feef669d95d6125722de28960602bd342956f857bae0",
+      "ci": [
+        "41031464191",
+        "41031455459"
+      ],
+      "automatic": "6518416644",
+      "receipt": "6519283288"
+    },
+    {
+      "id": "proof-114",
+      "pr": 114,
+      "merge": "b211895b0bf4600bc7c8fa830814284c46293c97",
+      "head": "e6367e6f5e2489c40f5acbd00da7dc27d9b6169f",
+      "reviewSha256": "c94d256773bf2502f282352c242d71e5a7cc0d357b8af7b8f940d18815e004d0",
+      "ci": [
+        "41035558425",
+        "41035553248"
+      ],
+      "automatic": "6519462817",
+      "receipt": "6519933477"
+    },
+    {
+      "id": "proof-115",
+      "pr": 115,
+      "merge": "e2b2d5ff4090c5c39006abea147a24450ca5c17b",
+      "head": "4d3c8f1aaee8b5ce5911904e17d48f75c49896b9",
+      "reviewSha256": "20672779d17533e354a40847002ab5b8f8b4484636a61c0f03abc6863ce8e350",
+      "ci": [
+        "41049281097",
+        "41049271263"
+      ],
+      "automatic": "6520939225",
+      "receipt": "6521769394"
+    }
+  ],
+  "dashboards": [
+    {
+      "id": "testbed-capability",
+      "title": "Current playable testbed capability",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered.",
+      "milestones": [
+        {
+          "id": "cap-start",
+          "title": "Selected-team startup, movement and extraction",
+          "status": "playable",
+          "scope": "Verified team, selection/pause, dry static navigation and bounded extraction; original startup/runtime parity separate.",
+          "lineage": [
+            "MOV-01",
+            "T43-02",
+            "T43-03"
+          ],
+          "scenario": "training43",
+          "evidence": [
+            {
+              "path": "docs/training-session.md",
+              "label": "training-session.md",
+              "scope": "Verified team, selection/pause, dry static navigation and bounded extraction; original startup/runtime parity separate."
+            },
+            {
+              "path": "tests/browser/training-session.spec.ts",
+              "label": "training-session.spec.ts",
+              "scope": "Verified team, selection/pause, dry static navigation and bounded extraction; original startup/runtime parity separate."
+            }
+          ],
+          "missing": "Full original-level run and runtime startup parity.",
+          "proofs": []
+        },
+        {
+          "id": "cap-inventory",
+          "title": "Inventory pickup, drop, exchange, equip and return",
+          "status": "playable",
+          "scope": "Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "INV-04",
+            "INV-07"
+          ],
+          "scenario": "ground",
+          "evidence": [
+            {
+              "path": "docs/training-inventory.md",
+              "label": "training-inventory.md",
+              "scope": "Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller."
+            },
+            {
+              "path": "docs/training-ground.md",
+              "label": "training-ground.md",
+              "scope": "Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller."
+            }
+          ],
+          "missing": "Original map generators/corpse items, general carried/cross-actor callers and interleaved ground-fall.",
+          "proofs": []
+        },
+        {
+          "id": "cap-food",
+          "title": "Food and repair after authored dry-fall injury",
+          "status": "playable",
+          "scope": "PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history.",
+          "lineage": [
+            "INV-06"
+          ],
+          "scenario": "consumables",
+          "evidence": [
+            {
+              "path": "docs/training-consumables.md",
+              "label": "training-consumables.md",
+              "scope": "PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history."
+            },
+            {
+              "path": "tests/training-consumables.test.ts",
+              "label": "training-consumables.test.ts",
+              "scope": "PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history."
+            },
+            {
+              "path": "tests/browser/training-consumables.spec.ts",
+              "label": "training-consumables.spec.ts",
+              "scope": "PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history."
+            }
+          ],
+          "missing": "Medical64 poison cure, immunity and revival unsupported.",
+          "proofs": [
+            "proof-112"
+          ]
+        },
+        {
+          "id": "cap-combat",
+          "title": "Authored gun, patrol, doors and pressure pad",
+          "status": "playable",
+          "scope": "Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented.",
+          "lineage": [
+            "COMBAT-01",
+            "COMBAT-02",
+            "AI-01",
+            "ENV-01",
+            "ENV-02",
+            "ENV-05",
+            "T43-04"
+          ],
+          "scenario": "encounter",
+          "evidence": [
+            {
+              "path": "docs/training-encounter.md",
+              "label": "training-encounter.md",
+              "scope": "Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented."
+            },
+            {
+              "path": "docs/training-pressure-pad.md",
+              "label": "training-pressure-pad.md",
+              "scope": "Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented."
+            },
+            {
+              "path": "docs/training-patrol.md",
+              "label": "training-patrol.md",
+              "scope": "Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented."
+            }
+          ],
+          "missing": "Original spatial combat/AI/enemy attacks, lifts and broader world callers.",
+          "proofs": []
+        },
+        {
+          "id": "cap-wet",
+          "title": "Original-editor wet entry/return and recovery",
+          "status": "playable",
+          "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.",
+          "lineage": [
+            "MOV-03",
+            "ENV-08",
+            "LIFE-03",
+            "LIFE-04",
+            "T43-05",
+            "T43-07"
+          ],
+          "scenario": "wet",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-traversal.md",
+              "label": "training43-wet-traversal.md",
+              "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
+            },
+            {
+              "path": "tests/training-wet.test.ts",
+              "label": "training-wet.test.ts",
+              "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
+            },
+            {
+              "path": "tests/browser/training-wet.spec.ts",
+              "label": "training-wet.spec.ts",
+              "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
+            }
+          ],
+          "missing": "Any non-null requested hit including zero refuses atomically; actual injury/death/corpse and wider wet region open.",
+          "proofs": [
+            "proof-115"
+          ]
+        },
+        {
+          "id": "cap-end",
+          "title": "Complete coherent software testbed",
+          "status": "open",
+          "scope": "Accepted bounded slices do not constitute programme acceptance.",
+          "lineage": [
+            "T43-10"
+          ],
+          "scenario": "training43",
+          "evidence": [
+            {
+              "path": "docs/training43-completion.md",
+              "label": "training43-completion.md",
+              "scope": "Accepted bounded slices do not constitute programme acceptance."
+            }
+          ],
+          "missing": "Lifecycle, remaining required/reachable interactions and full mutable-state regression acceptance.",
+          "proofs": []
+        },
+        {
+          "id": "cap-hardware",
+          "title": "Four people, controllers and TV",
+          "status": "deferred",
+          "scope": "Separate physical acceptance; does not block keyboard software.",
+          "lineage": [
+            "T43-09"
+          ],
+          "scenario": "training43",
+          "evidence": [
+            {
+              "path": "docs/training43-completion.md",
+              "label": "training43-completion.md",
+              "scope": "Separate physical acceptance; does not block keyboard software."
+            }
+          ],
+          "missing": "Actual complete four-player hardware run and reviewed receipt.",
+          "proofs": []
+        }
+      ]
+    },
+    {
+      "id": "training43-software",
+      "title": "Training43 software acceptance",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution.",
+      "milestones": [
+        {
+          "id": "t43-dry",
+          "title": "Selected team and bounded dry route",
+          "status": "playable",
+          "scope": "Same-app selected-team dry movement, first-exit and cooperative route are accepted bounded adaptations.",
+          "lineage": [
+            "T43-01",
+            "T43-02",
+            "T43-03"
+          ],
+          "scenario": "training43",
+          "evidence": [
+            {
+              "path": "docs/training-session.md",
+              "label": "training-session.md",
+              "scope": "Same-app selected-team dry movement, first-exit and cooperative route are accepted bounded adaptations."
+            },
+            {
+              "path": "docs/training43-completion.md",
+              "label": "training43-completion.md",
+              "scope": "Same-app selected-team dry movement, first-exit and cooperative route are accepted bounded adaptations."
+            }
+          ],
+          "missing": "Complete original gameplay and runtime identity remain open.",
+          "proofs": []
+        },
+        {
+          "id": "t43-case",
+          "title": "Interaction CASE classification",
+          "status": "partial",
+          "scope": "PR114 classifies 23 water cells: 22 graph candidates and one solid/nonstanding; both signs dry type0, 50 inactive positionals.",
+          "lineage": [
+            "T43-04"
+          ],
+          "scenario": "wet",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-acceptance.md",
+              "label": "training43-wet-acceptance.md",
+              "scope": "PR114 classifies 23 water cells: 22 graph candidates and one solid/nonstanding; both signs dry type0, 50 inactive positionals."
+            }
+          ],
+          "missing": "Candidates do not establish complete wet playthrough or all reachable outcomes.",
+          "proofs": [
+            "proof-114"
+          ]
+        },
+        {
+          "id": "t43-entry",
+          "title": "Supported wet-stair entry and reverse",
+          "status": "playable",
+          "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.",
+          "lineage": [
+            "T43-04",
+            "T43-05"
+          ],
+          "scenario": "wet",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-traversal.md",
+              "label": "training43-wet-traversal.md",
+              "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
+            },
+            {
+              "path": "tests/browser/training-wet.spec.ts",
+              "label": "training-wet.spec.ts",
+              "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
+            }
+          ],
+          "missing": "Broader wet traversal, any requested hit and lifecycle unsupported.",
+          "proofs": [
+            "proof-115"
+          ]
+        },
+        {
+          "id": "t43-replay",
+          "title": "Paused wet chronology, Retry and bounded exits",
+          "status": "playable",
+          "scope": "PR115 v15 replay before wet/after item/after return; fresh Retry, original first exit and single cooperative retirement. Legacy v1-v14 retained.",
+          "lineage": [
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "wet",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-traversal.md",
+              "label": "training43-wet-traversal.md",
+              "scope": "PR115 v15 replay before wet/after item/after return; fresh Retry, original first exit and single cooperative retirement. Legacy v1-v14 retained."
+            },
+            {
+              "path": "tests/training-wet.test.ts",
+              "label": "training-wet.test.ts",
+              "scope": "PR115 v15 replay before wet/after item/after return; fresh Retry, original first exit and single cooperative retirement. Legacy v1-v14 retained."
+            }
+          ],
+          "missing": "Whole-level environmental recovery, all-dead and complete original timeout acceptance remain open.",
+          "proofs": [
+            "proof-115"
+          ]
+        },
+        {
+          "id": "t43-lifecycle",
+          "title": "Complete wet and lifecycle outcomes",
+          "status": "open",
+          "scope": "T43-05/06 remain open despite accepted entry/return subrecords.",
+          "lineage": [
+            "T43-05",
+            "T43-06"
+          ],
+          "scenario": "wet",
+          "evidence": [
+            {
+              "path": "docs/training43-wet-traversal.md",
+              "label": "training43-wet-traversal.md",
+              "scope": "T43-05/06 remain open despite accepted entry/return subrecords."
+            }
+          ],
+          "missing": "Damage/death/find_floor/corpse/control, wider water region and all-dead.",
+          "proofs": []
+        },
+        {
+          "id": "t43-accept",
+          "title": "Complete original-level software receipt",
+          "status": "open",
+          "scope": "No complete original level accepted.",
+          "lineage": [
+            "T43-10"
+          ],
+          "scenario": "training43",
+          "evidence": [
+            {
+              "path": "docs/training43-completion.md",
+              "label": "training43-completion.md",
+              "scope": "No complete original level accepted."
+            }
+          ],
+          "missing": "Reviewed complete required/reachable-interaction run, timeout/retry and atomic replay.",
+          "proofs": []
+        }
+      ]
+    }
+  ]
 }

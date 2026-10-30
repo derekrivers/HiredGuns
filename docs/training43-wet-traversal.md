@@ -1,12 +1,18 @@
-# Training43 keyboard wet traversal — unreviewed candidate
+# Training43 keyboard wet traversal — accepted PR115
 
-30 October 2026. Accepted base PR112/113/114:
-`b211895b0bf4600bc7c8fa830814284c46293c97`, tree
-`ebc8187cc7386d790cc686cabe6e4b13bb642df2`.
-**T43-04 remains partial, T43-05 open, original level/test bed incomplete.**
-The accepted [interaction CASE](training43-wet-acceptance.md) supplies the exact
-private approach/oracle. Its 22 hypothetical wet graph candidates are not receipts
-for a complete wet playthrough. New play requires independent exact-head review.
+30 October 2026. Accepted merge `e2b2d5ff4090c5c39006abea147a24450ca5c17b`,
+reviewed implementation `4d3c8f1aaee8b5ce5911904e17d48f75c49896b9`, tree
+`22d0f06b34a4cf11be2a0f865d7acf2dde277003`.
+**T43-04 remains partial, T43-05/06 open; original level/test bed incomplete.**
+PR114 accepts the [interaction CASE](training43-wet-acceptance.md): 23 water
+cells, 22 graph candidates plus one solid/nonstanding, both signs dry type0,
+and 50 inactive positionals. This is distinct from PR115 actual keyboard play.
+PR115 accepts the 29-command dry approach, wet-stair entry/reverse, race4
+breath/item/weight/fitness and race1 keyboard parking, all four head ownership,
+v15 paused replay before wet/after item/after return, Retry, original first exit
+and single cooperative retirement. **Every non-null requested hit, including
+zero, refuses atomically. No actual injury/death/corpse is accepted at PR115.**
+PR116 is an unaccepted candidate and is not credited here.
 
 ## Play in the existing app
 
@@ -115,7 +121,7 @@ continuation, Retry, tamper and stale successful/failed loads. Additional bounda
 and exit results are recorded in the ignored final handoff. No original assets,
 private coordinates, routes, screenshots or traces enter Git or CI. Exact source
 helper/CPU receipts are reused within their accepted scope; no broad source or
-archive studies are repeated. All new consumer evidence remains UNREVIEWED.
+archive studies are repeated. The exact PR115 consumer was independently accepted; this does not accept broader lifecycle or wet-region outcomes.
 
 Commands: `npm run check`; `npx tsx tools/build-mechanics-register.ts --check`;
 `npx vitest run tests/training-wet.test.ts` (private manifest opt-in via
@@ -123,5 +129,5 @@ Commands: `npm run check`; `npx tsx tools/build-mechanics-register.ts --check`;
 config/provider. Every attempt and final result remains in `.local/t43-wet`.
 Bounded PR115 repair evidence is separate in `.local/repair115`; it covers
 retired-head ownership, scheduled dry delay, exact object/array collection caps,
-and the accepted baseline label through PR114. It grants no new wet acceptance.
+and the then-current baseline label through PR114. The coordinator subsequently accepted the exact PR115 final head above.
 Model requested: gpt-6.1-sol medium. Token usage unavailable. No delegation.

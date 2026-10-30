@@ -1,16 +1,28 @@
 # Training43 completion boundary
 
-Accepted main is PR112/113/114 merge `b211895b0bf4600bc7c8fa830814284c46293c97`.
-PR112 accepts the bounded same-app equipped food/repair extension and v14 replay;
-PR113 accepts the mechanics register; PR114 accepts the [bounded wet interaction
-CASE](training43-wet-acceptance.md), including the four-actor dry approach,
-water/sign classification and source-only wet expectations. T43-04 stays partial.
+Accepted main through PR115: `e2b2d5ff4090c5c39006abea147a24450ca5c17b`
+(tree `22d0f06b34a4cf11be2a0f865d7acf2dde277003`). Training43 (map43) is the
+first original-level target. **The complete original level and functional
+software testbed remain unaccepted.** Hardware is deferred separately.
 
-The new [keyboard wet consumer](training43-wet-traversal.md) is **UNREVIEWED**.
-It adds actual supported entry/reverse, live four-actor state and v15 recovery
-in the original editor geometry. Unsupported damage/search/lifecycle transitions
-refuse atomically; original Training43, T43-05 and the functional test bed remain
-incomplete. Training44–47 remain register cases; hardware is deferred.
+PR112 accepts same-app nonmedical64 FOOD / REPAIR after authored dry-fall
+injury, ID-only equipment clear with three opaque bytes preserved, source weight
+and canonical v14 history. No medical64 poison cure, immunity or revival follows.
+PR114 accepts the source [interaction CASE](training43-wet-acceptance.md), not a
+whole wet playthrough. PR115 accepts [actual supported wet entry/return](training43-wet-traversal.md),
+breath/item/weight/fitness, four heads, source counter order, v15 paused replay,
+Retry, original first exit and single cooperative retirement. Every non-null
+requested hit including zero stops before installation; injury/death/corpse are
+not accepted. T43-04 remains partial; compound T43-05/06 remain open.
+
+The [dashboard](mechanics/index.html#training43-software) lists narrow accepted
+milestones with lineage to the unchanged broad gates. Its whole-game evidence
+percentage counts covered checkpoints, not software effort or playable scope.
+Complete wet-region outcomes, original lifecycle, all-dead, whole-level timeout
+and full environmental replay still need acceptance. Source/runtime/editor
+identity and Locations CRC df31 versus archived 5c21 limits remain explicit.
+PR116 is unaccepted and supplies no credit. The material below is historical;
+its candidate/blocked/current-main descriptions are dated snapshots, not current status.
 
 ## Historical PR111 candidate assessment (preserved)
 

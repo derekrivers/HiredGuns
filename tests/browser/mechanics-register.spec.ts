@@ -3,7 +3,6 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { STAGES, type MechanicsRegister } from '../../tools/mechanics-types';
 import { renderHtml, validateRegister } from '../../tools/build-mechanics-register';
-
 async function expectedCompletion() {
   const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
   const total = data.mechanics.length * STAGES.length;
@@ -11,7 +10,6 @@ async function expectedCompletion() {
   const percent = total === 0 ? 0 : covered === total ? 100 : Math.min(99.9, Math.round(covered / total * 1000) / 10);
   return { covered, total, percent };
 }
-
 
 test('register search, evidence navigation, level relationships and export work', async ({ page }, testInfo) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
@@ -48,7 +46,6 @@ test('register search, evidence navigation, level relationships and export work'
   expect(exported.mechanics).toHaveLength(86);
   expect(errors).toEqual([]);
 });
-
 test('deep links and training group retain explicit unverified classifications', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#map-45');
   await expect(page.locator('#map-45')).toBeVisible();
@@ -60,7 +57,6 @@ test('deep links and training group retain explicit unverified classifications',
   await expect(page.locator('#T43-05')).toContainText('Open');
   await expect(page.locator('#acceptance input[type="checkbox"]')).toHaveCount(0);
 });
-
 for (const width of [390, 1440]) test(`register fits ${width}px and remains keyboard operable`, async ({ page }, testInfo) => {
   await page.setViewportSize({ width, height: 1000 });
   await page.goto('/docs/mechanics/index.html#register');
@@ -72,7 +68,6 @@ for (const width of [390, 1440]) test(`register fits ${width}px and remains keyb
   await page.goto('/docs/mechanics/index.html#map-47');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
-
 test('standalone HTML works offline as a local file', async ({ page }) => {
   const remoteRequests: string[] = [];
   await page.context().setOffline(true);
@@ -82,7 +77,7 @@ test('standalone HTML works offline as a local file', async ({ page }) => {
   await expect(page.locator('#LIFE-03')).toBeVisible();
   await expect(page.locator('#LIFE-03')).toHaveAttribute('open', '');
   const completion = await expectedCompletion();
-  await expect(page.getByRole('progressbar', { name: 'Register completion' })).toHaveAttribute('value', String(completion.percent));
+  await expect(page.getByRole('progressbar', { name: 'Whole-game evidence coverage' })).toHaveAttribute('value', String(completion.percent));
   await page.locator('.completion-method > summary').focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('#completion-method')).toBeVisible();
@@ -97,11 +92,10 @@ test('standalone HTML works offline as a local file', async ({ page }) => {
   expect(exported).toEqual(JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')));
   expect(remoteRequests).toEqual([]);
 });
-
 test('global register completion stays stable under search, filters, level groups and deep links', async ({ page }) => {
   const { covered, total, percent } = await expectedCompletion();
   await page.goto('/docs/mechanics/index.html#register');
-  const progress = page.getByRole('progressbar', { name: 'Register completion' });
+  const progress = page.getByRole('progressbar', { name: 'Whole-game evidence coverage' });
   const verify = async () => {
     await expect(progress).toHaveAttribute('value', String(percent));
     await expect(progress).toHaveAttribute('max', '100');
@@ -121,7 +115,6 @@ test('global register completion stays stable under search, filters, level group
   await page.goto('/docs/mechanics/index.html#MOV-03');
   await expect(page.locator('#MOV-03')).toHaveAttribute('open', ''); await verify();
 });
-
 for (const width of [390, 1440]) test(`register completion placement and accessible method at ${width}px`, async ({ page }, testInfo) => {
   await page.setViewportSize({ width, height: 1000 });
   await page.goto('/docs/mechanics/index.html');
@@ -140,11 +133,10 @@ for (const width of [390, 1440]) test(`register completion placement and accessi
   await page.keyboard.press('Enter');
   await expect(page.locator('#completion-method')).toBeVisible();
   await expect(page.locator('#completion-method')).toContainText('partial/open earn zero');
-  await expect(page.getByRole('progressbar')).toHaveAccessibleName('Register completion');
+  await expect(page.getByRole('progressbar')).toHaveAccessibleName('Whole-game evidence coverage');
   await expect(page.getByRole('progressbar')).toHaveAccessibleDescription(/covered checkpoints.*all registered evidence checkpoints/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
-
 for (const field of ['scenario-id', 'scenario-kind', 'level-id', 'level-group', 'acceptance-id']) test(`offline HTML contains refused ${field} metadata without executing it`, async ({ page }, testInfo) => {
   const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
   const payload = 'x"><img src=x onerror="window.__registerInjected=1">';
@@ -175,7 +167,6 @@ for (const field of ['scenario-id', 'scenario-kind', 'level-id', 'level-group', 
   if (field === 'scenario-kind') await expect(record.locator('.kind')).toHaveText(payload);
   expect(requests).toEqual([]); expect(errors).toEqual([]);
 });
-
 test('accepted hostile prose survives offline text, attribute, search and JSON export round trips', async ({ page }, testInfo) => {
   const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
   const prose = '" \' & <img src=x onerror="window.__registerInjected=1"> </script><script>window.__registerInjected=2</script>';
@@ -205,6 +196,59 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
   await expect(page.locator('img, [onerror], [onfocus], [autofocus]')).toHaveCount(0);
   await expect(page.locator('script')).toHaveCount(2);
   await page.getByRole('searchbox').fill('<img'); await expect(card).toBeVisible();
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
+  expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
+  expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();
+  expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
+  await page.goto('/docs/mechanics/index.html#testbed-capability');
+  await expect(page.locator('#testbed-capability')).toBeVisible();
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('7 listed milestones: 5 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#cap-food')).toContainText('medical64');
+  await expect(page.locator('#cap-wet')).toContainText('including zero');
+  await expect(page.locator('#cap-hardware')).toContainText('does not block keyboard software');
+  await page.locator('#cap-food a[href="#INV-06"]').click();
+  await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
+  await page.goto('/docs/mechanics/index.html#training43-software');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('6 listed milestones: 3 playable · 1 partial · 2 open · 0 deferred');
+  await page.locator('#t43-entry a[href="#scenario-wet"]').click();
+  await expect(page.locator('#scenario-wet')).toBeVisible();
+  await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');
+  await page.locator('#scenario-wet a[href="../../docs/training43-wet-traversal.md"]').click();
+  expect(new URL(page.url()).pathname).toBe('/docs/training43-wet-traversal.md');
+});
+
+for (const width of [390,1440]) test(`offline accepted dashboard prose stays inert with working canaries at ${width}px`, async ({ page }, testInfo) => {
+  const data = JSON.parse(await readFile(new URL('../../docs/mechanics/register.json', import.meta.url), 'utf8')) as MechanicsRegister;
+  const prose = '" \' & <img src=x onerror="window.__registerInjected=1"> </script><script>window.__registerInjected=2</script> [link](javascript:bad)';
+  for (const d of data.dashboards) {
+    d.title = prose; d.scope = prose;
+    for (const m of d.milestones) {
+      m.title = prose; m.scope = prose; m.missing = prose;
+      m.evidence.forEach(e => { e.label = prose; e.scope = prose; });
+    }
+  }
+  await validateRegister(data);
+  const file = testInfo.outputPath('accepted-dashboard-prose.html'); await writeFile(file, renderHtml(data));
+  await page.setViewportSize({ width, height: 1000 });
+  await page.context().setOffline(true);
+  const requests: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/^https?:/.test(r.url())) requests.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto(`${pathToFileURL(file).href}#testbed-capability`);
+  await expect(page.locator('#testbed-capability > h3')).toHaveText(prose);
+  await expect(page.locator('#cap-food > p').first()).toHaveText(prose);
+  await expect(page.locator('#cap-food .evidence-list a').first()).toHaveText(prose);
+  await expect(page.locator('img, [onerror], [onclick], [onfocus], [autofocus]')).toHaveCount(0);
+  await expect(page.locator('script')).toHaveCount(2);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.locator('#cap-food a[href="#INV-06"]').focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
+  await page.getByRole('searchbox').fill('no-such-dashboard-canary');
+  await expect(page.locator('#no-results')).toBeVisible();
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(page.locator('#INV-06')).toBeVisible();
   const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
   expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
   expect(await page.evaluate(() => Reflect.get(window, '__registerInjected'))).toBeUndefined();

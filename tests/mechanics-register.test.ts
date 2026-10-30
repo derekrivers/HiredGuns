@@ -166,8 +166,101 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   const data = await load(), completion = registerCompletion(data.mechanics);
   expect(renderHtml(data)).toContain(`value="${completion.percent}"`);
   expect(renderHtml(data)).toContain(`${completion.covered} / ${completion.total} evidence checkpoints covered`);
-  expect(renderMarkdown(data)).toContain(`Register completion: ${completion.display}`);
+  expect(renderMarkdown(data)).toContain(`Whole-game evidence coverage: ${completion.display}`);
   expect(renderMarkdown(data)).toContain(`${completion.covered} / ${completion.total} covered checkpoints / all registered evidence checkpoints`);
   const claim = structuredClone(data); claim.mechanics[0]!.stages.acceptance = 'covered';
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
+});
+
+test('accepted115 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+  const data = await load();
+  expect(data.acceptedThrough).toBe(115);
+  expect(data.reviewedHead).toBe('e2b2d5ff4090c5c39006abea147a24450ca5c17b');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115]);
+  const before = registerCompletion(data.mechanics);
+  expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
+  expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(122);
+  expect(data.mechanics.filter(m => m.id.startsWith('PSI-') && m.id !== 'PSI-01').length * STAGES.length).toBe(232);
+  expect(data.mechanics.length * 2).toBe(172);
+  const extended = structuredClone(data);
+  extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
+  await validateRegister(extended);
+  expect(registerCompletion(extended.mechanics)).toEqual(before);
+  expect(renderHtml(extended)).toContain('8 listed milestones');
+  const food = data.mechanics.find(m => m.id === 'INV-06')!;
+  expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
+  expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
+  expect(food.implementation.some(t => t.path === 'src/items/consumable-use.ts')).toBe(true);
+  for (const id of ['MOV-03','ENV-08','LIFE-03','LIFE-04']) {
+    const row = data.mechanics.find(m => m.id === id)!;
+    expect(row.scenarios).toContain('wet'); expect(row.stages.playable).toBe('partial');
+    expect(row.tests.some(t => t.path === 'tests/browser/training-wet.spec.ts')).toBe(true);
+  }
+  expect(data.acceptanceChecks.find(c => c.id === 'T43-05')!.state).toBe('open');
+  expect(renderMarkdown(data)).toContain('No complete original level accepted.'); // retained explicit source limits
+});
+
+test('dashboard schema rejects unsafe enums, IDs, references, paths and receipt upgrades', async () => {
+  const original = await load();
+  const mutate = async (change: (data: MechanicsRegister) => void) => {
+    const data = structuredClone(original); change(data); await expect(validateRegister(data)).rejects.toThrow();
+  };
+  for (const value of ['covered','toString','x"><img src=x onerror="bad">',null,42]) {
+    await mutate(d => Object.assign(d.dashboards[0]!.milestones[0]!, { status: value }));
+    await mutate(d => Object.assign(d.dashboards[0]!.milestones[0]!, { id: value }));
+  }
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.id = 'overview'; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.id = 'scenario-wet'; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.id = d.dashboards[1]!.milestones[0]!.id; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.lineage = ['NO-99']; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.scenario = 'missing-scenario'; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.proofs = ['proof-116']; });
+  await mutate(d => { d.acceptedProofs[0]!.pr = 116; });
+  await mutate(d => { d.acceptedProofs[0]!.merge = 'invalid'; });
+  await mutate(d => { d.acceptedProofs[0]!.reviewSha256 = 'invalid'; });
+  await mutate(d => { d.acceptedProofs[0]!.automatic = 'javascript:bad'; });
+  await mutate(d => { d.acceptedProofs[0]!.ci = ['0']; });
+  for (const path of ['javascript:alert(1)','https://example.com/x.md','docs/../secret.md','docs/.local/a.md','docs/x.md" onclick="bad','docs/%2e%2e/x.md']) await mutate(d => { d.dashboards[0]!.milestones[0]!.evidence[0]!.path = path; });
+  await mutate(d => { d.dashboards[0]!.milestones[0]!.evidence[0]!.path = 'docs/absent-dashboard-proof.md'; });
+  await mutate(d => { Object.assign(d.dashboards[0]!.milestones[0]!, { extra: 'unsupported' }); });
+});
+
+test('descriptor boundary refuses getters/prototypes/hidden/symbol/sparse/cycles before reading', async () => {
+  const original = await load(); let reads = 0;
+  const attempts: ((d: MechanicsRegister) => void)[] = [
+    d => { Object.defineProperty(d, 'dashboards', { enumerable: true, get() { reads++; throw new Error('read'); } }); },
+    d => { Object.defineProperty(d.dashboards[0]!.milestones[0]!, 'title', { enumerable: true, get() { reads++; throw new Error('read'); } }); },
+    d => { Object.setPrototypeOf(d.dashboards[0]!, { inherited: true }); },
+    d => { Object.defineProperty(d.dashboards[0]!, 'hidden', { value: true }); },
+    d => { Object.assign(d.dashboards[0]!, { [Symbol('hidden')]: true }); },
+    d => { delete d.dashboards[0]!.milestones[0]; },
+    d => { Object.assign(d.dashboards[0]!.milestones, { extra: true }); },
+    d => { Object.assign(d.dashboards[0]!, { cycle: d }); },
+    d => { Object.defineProperty(d.dashboards[0]!, '__proto__', { enumerable: true, value: {} }); },
+  ];
+  for (const change of attempts) {
+    const data = structuredClone(original); change(data);
+    await expect(validateRegister(data)).rejects.toThrow();
+    expect(() => renderHtml(data)).toThrow();
+    expect(() => renderMarkdown(data)).toThrow();
+  }
+  expect(reads).toBe(0);
+});
+
+test('all new rendered prose survives validation and stays inert in HTML, JSON and checklist', async () => {
+  const data = await load(), hostile = '<img src=x onerror="window.__registerInjected=1"> </script><script>bad()</script> [link](javascript:bad) & \' "';
+  for (const d of data.dashboards) {
+    d.title = hostile; d.scope = hostile;
+    for (const m of d.milestones) {
+      m.title = hostile; m.scope = hostile; m.missing = hostile;
+      for (const e of m.evidence) { e.label = hostile; e.scope = hostile; }
+    }
+  }
+  await validateRegister(data);
+  expect(renderHtml(data)).not.toContain('<img');
+  expect(renderHtml(data)).toContain('\\u003c/script>');
+  const md = renderMarkdown(data);
+  expect(md).not.toContain('<img');
+  expect(md).not.toContain('[link](javascript:bad)');
+  expect(JSON.parse(renderHtml(data).match(/<script id="register-data" type="application\/json">([^]*?)<\/script>/)![1]!)).toEqual(data);
 });
