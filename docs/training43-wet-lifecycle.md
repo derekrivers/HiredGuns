@@ -1,12 +1,17 @@
-# Training43 wet damage and lifecycle extension
+# Training43 wet damage and lifecycle extension — accepted PR116
 
-**UNREVIEWED candidate.** Accepted baseline is PR115 merge
-`e2b2d5ff4090c5c39006abea147a24450ca5c17b`, tree
-`22d0f06b34a4cf11be2a0f865d7acf2dde277003`. PR115's bounded
-[entry/return and v15 recovery](training43-wet-traversal.md) remain accepted.
-This separate v16 mode requires NEW independent exact-head HIGH review, current
-CI, completed automatic review and coordinator acceptance. It does not complete
-T43-05/06, the original level or the test bed. T43-04/07/08 remain partial.
+Accepted merge `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`, reviewed implementation
+`2c1178d68ad887c218f2bc3975bba7b6024d032f`, tree
+`9fc72ab7680fed7105094b79be737b77b0348a34`. Exact final independent HIGH,
+current CI and completed automatic review were verified by the coordinator
+before normal expected-head merge. Bounded injury/death/north corpse/head
+ownership/dead input guard/explicit manual survivor/freed-body and corpse walk/
+first exit/v16 paused recovery and Retry are accepted. T43-04/05/06/07/08 remain
+partial; the original level and functional testbed are incomplete. Wider water,
+all-dead, original99-count timeout beyond45000 ticks/general corpse items and
+door/pad callers remain open; physical controller/TV acceptance stays deferred.
+Legacy [entry/return and v15 recovery](training43-wet-traversal.md) retain their
+separate non-null damage refusal boundary, including zero.
 
 ## Same-app controls
 
@@ -161,6 +166,7 @@ Exact fresh commands/results, failures and hashes are in `.local/handoff.md`.
 Required commands: `npm run check`,
 `npx tsx tools/build-mechanics-register.ts --check`, private opt-in relevant unit
 tests and production Playwright lifecycle plus accepted115 wet regressions.
-Register credit is **acceptedThrough115** only. Global evidence68/688 remains
+Register assessment is reconciled through **accepted PR116**, with narrow scope
+and broader families/whole-level gates still partial/open. Global evidence68/688 remains
 dynamic register evidence, not game/effort/test completion. Model requested:
 gpt-6.1-sol medium; tokens unavailable, no delegation or model escalation.

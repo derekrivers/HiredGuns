@@ -1,5 +1,21 @@
 # Standalone selected-team Training43 session
 
+Current accepted scope through PR116 (`db5d2930eb07ef98ddda1d09bb1968efed0f57d3`):
+same four-view app, selected-team startup/movement/extraction, bounded paused
+inventory and authored ground cache, designated-target combat/patrol/doors/pads,
+PR112 food/repair after authored dry-fall injury with v14 replay, and PR115
+supported original-editor wet entry/return with v15 replay. These modes have
+separate labelled geometry and source boundaries; they do not prove a complete
+original level. See [current capability milestones](mechanics/index.html#testbed-capability)
+and [accepted wet controls/limits](training43-wet-traversal.md).
+PR116 additionally accepts [bounded wet lifecycle and v16 recovery](training43-wet-lifecycle.md):
+actual injury/death/north corpse/heads/dead-control guard/manual survivor/first exit
+and Retry. Medical64 poison cure, revival, wider wet region, all-dead, original99-count
+timeout beyond45000 replay ticks/general corpse items/door-pad callers and complete-level
+acceptance remain open. Legacy v15 still refuses non-null damage including zero. Older mode-specific
+statements below retain their narrower scope; source-bound weight now applies in
+the selected dry-fall, consumable and bounded wet extensions.
+
 The browser can now apply four explicitly chosen characters to the exact locally
 imported Training43 map. Open the local map, open the verified OCS Characters
 and Items files, choose four different characters, then use **Apply team to
@@ -281,7 +297,11 @@ chronological tick/item/use replay preserves historical fall weights; legacy
 v1–v13 are unchanged. Medical64 remains explicitly unsupported.
 
 
-## Accepted bounded original-map wet extension (PR115 / v15)
+## Accepted bounded original-map wet extension (v15, PR115)
+
+PR115 accepted this bounded entry/return and paused recovery mode. It refuses
+every non-null requested hit, including zero, before installing a candidate;
+use the separate PR116 v16 lifecycle mode for accepted wet injury/death outcomes.
 
 The guided **Enable Training43 wet traversal** action requires the ready team
 `[11,3,0,5]`, exact imported editor map and fresh tick-zero inventory. It retains
@@ -297,18 +317,5 @@ is paused, generation checked and atomic. V1–v14 validators/semantics are unch
 Inventory controls are disabled in this bounded wet mode; its visible current
 inventory and weight come from the same candidate as breath and world movement.
 Retry and rule changes reconstruct all mutable wet fields from the source baseline.
-PR115 is accepted for this bounded slice; original runtime timing and complete-level parity remain unproven.
-
-
-## Unreviewed wet damage/lifecycle extension (v16)
-
-A separate fresh-paused enable action keeps the same original map and ready team.
-[Controls and exact source/adaptation limits](training43-wet-lifecycle.md).
-V16 composes live drowning injury and bounded fatal corpse search; both dead words,
-owned head removal, second-plane corpse owner, two leaders, body references,
-inventory, feedback and mission state commit together. Explicit keyboard survivor
-selection stays separate from source control/leader storage. Saves reconstruct all
-state from raw sources and bounded chronology; saved leaves only compare. Restore
-is PAUSED. Retry/rule changes reset every lifecycle field. V1-v15 keep their prior
-semantics and v15 still refuses all non-null damage requests. This v16 candidate
-needs NEW independent HIGH/current CI/actual automatic review and coordinator gates.
+Acceptance covers the bounded PR115 mode; wider wet-region/whole-level outcomes
+and original runtime timing parity remain open.

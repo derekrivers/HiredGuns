@@ -1,6 +1,6 @@
 # Hired Guns Revival
 
-**Mechanics coverage:** [Master Mechanics Register](docs/mechanics/index.html) · [text checklist](docs/mechanics/CHECKLIST.md). Tracks original behaviour/revision, mapping, evidence, tests, scenarios and level relationships. Training43 is the first complete original-level acceptance target; no complete original level is accepted yet.
+**Whole-game evidence coverage and playable milestones:** [Master Mechanics Register](docs/mechanics/index.html) · [text checklist](docs/mechanics/CHECKLIST.md). The percentage counts covered evidence checkpoints across broad rows and equal stages; partial/open earn zero. It is not an effort or playable-testbed percentage. The earlier roughly 60% was a subjective estimate of a smaller authored functional testbed. Separate capability and Training43 software milestones now show the accepted slices through PR116. Training43 is the first complete original-level acceptance target; no complete original level is accepted yet.
 
 Browser revival in progress. Four synchronized 3D views support independent local navigation and a bounded extraction mission flow. One complete original level is the birthday fallback; full campaign is a stretch target. No complete faithful original level is validated yet.
 
@@ -10,7 +10,7 @@ Browser revival in progress. Four synchronized 3D views support independent loca
 
 **Dry stairs:** choose **Dry stair drill**, then **Start navigation**. Move forward into an amber lane to climb from Z01 to Z02; move backward to descend. Each mercenary has a separate lane. Elevated positions support checkpoint recovery. Water and falling stay blocked; this drill does not validate the original wet staircase. See [static traversal](docs/static-traversal.md).
 
-Opening the exact verified `Maps/Game/Map43_Training/43.map` enables the same mission flow on that local original map. Cooperative extraction is an explicit variant of its original four-player first-exit rule. Only the supported static route is in scope: optional water, the wet staircase, bridges, lifts and the button remain blocked. Dry static stairs are supported separately. This is an extraction-route prototype, not a claim of a complete faithful original level. Other editor revisions stay navigation-only.
+Opening the exact verified `Maps/Game/Map43_Training/43.map` enables the same mission flow on that local original map. Cooperative extraction is an explicit variant of its original four-player first-exit rule. The bounded static route and PR115 opt-in supported wet-stair entry/return with v15 recovery are accepted. Legacy v15 refuses every non-null requested hit including zero; PR116 separately accepts [bounded injury/death/corpse/manual-survivor/v16 recovery](docs/training43-wet-lifecycle.md). Wider water, all-dead and whole-level outcomes remain open. See [wet controls and limits](docs/training43-wet-traversal.md). Dry static stairs are supported separately. This is an extraction-route prototype, not a claim of a complete faithful original level. Other editor revisions stay navigation-only.
 
 Requires Node 22.20+ and npm. Run `npm ci`, `npm run check`, then `npm run dev` and open http://127.0.0.1:5173. `npm run build` produces a static build in dist; `npm run preview` serves it. WebGL2 is required; dependencies are bundled at build time with no remote runtime service.
 

@@ -1,18 +1,31 @@
 # Training43 completion boundary
 
-Accepted main through PR115 is `e2b2d5ff4090c5c39006abea147a24450ca5c17b`.
-PR112 food/repair, PR113 register and PR114 bounded interaction CASE remain accepted.
-PR115 accepts the [bounded keyboard wet consumer](training43-wet-traversal.md):
-actual original-editor entry/return, full-team heads, scheduled delay and v15
-paused recovery, with an atomic refusal at every damage request including zero.
+Accepted main through PR116: `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`
+(tree `9fc72ab7680fed7105094b79be737b77b0348a34`). Training43 (map43) is the
+first original-level target. **The complete original level and functional
+software testbed remain unaccepted.** Hardware is deferred separately.
 
-The new [wet damage/lifecycle extension](training43-wet-lifecycle.md) is
-**UNREVIEWED**. It adds source arithmetic and the bounded wet-stair corpse search
-in the same four-view app, explicit survivor selection and v16 recovery.
-T43-04 remains partial; T43-05/06 remain open and T43-07/08 partial. Wider water,
-original all-dead outcomes and whole-level acceptance remain unproven; the ready
-team includes a breath-immune actor. No invented all-dead route is credited.
-Controllers/TV remain separately deferred. Training44-47 remain register cases.
+PR112 accepts same-app nonmedical64 FOOD / REPAIR after authored dry-fall
+injury, ID-only equipment clear with three opaque bytes preserved, source weight
+and canonical v14 history. No medical64 poison cure, immunity or revival follows.
+PR114 accepts the source [interaction CASE](training43-wet-acceptance.md), not a
+whole wet playthrough. PR115 accepts [actual supported wet entry/return](training43-wet-traversal.md),
+breath/item/weight/fitness, four heads, source counter order, v15 paused replay,
+Retry, original first exit and single cooperative retirement. Legacy v15 still stops before any non-null
+requested hit including zero. PR116 separately accepts [bounded wet lifecycle](training43-wet-lifecycle.md):
+injury/death/north-search corpse/owned heads/dead-input guard/explicit manual
+survivor/freed-body and corpse movement/first exit/v16 paused recovery and Retry.
+T43-04 and compound T43-05/06 remain partial.
+
+The [dashboard](mechanics/index.html#training43-software) lists narrow accepted
+milestones with lineage to the unchanged broad gates. Its whole-game evidence
+percentage counts covered checkpoints, not software effort or playable scope.
+Complete wet-region outcomes, broader lifecycle, all-dead, original99-count timeout
+beyond45000 replay ticks/general corpse items/door-pad callers
+and full environmental replay still need acceptance. Source/runtime/editor
+identity and Locations CRC df31 versus archived 5c21 limits remain explicit.
+PR116 receives only its bounded accepted scope. The material below is historical;
+its candidate/blocked/current-main descriptions are dated snapshots, not current status.
 
 ## Historical PR111 candidate assessment (preserved)
 

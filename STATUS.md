@@ -1,70 +1,39 @@
 # Status — 30 October 2026
 
-Accepted PR115 at `e2b2d5ff4090c5c39006abea147a24450ca5c17b`: [bounded keyboard wet entry/return and v15 recovery](docs/training43-wet-traversal.md), including retired-head and scheduled-delay fixes. New UNREVIEWED candidate: [same-app wet damage/lifecycle v16](docs/training43-wet-lifecycle.md), with source arithmetic, bounded north corpse search, full-party atomic state and explicit survivor selection. T43-04 remains partial; T43-05/06 remain open; original Training43/test bed incomplete. No whole-region, all-dead or hardware acceptance. Register global evidence remains 68/688, independent of game completion.
+Accepted gameplay baseline: PR116 merge `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`,
+reviewed implementation `2c1178d68ad887c218f2bc3975bba7b6024d032f`, tree
+`9fc72ab7680fed7105094b79be737b77b0348a34`.
 
-Accepted gameplay: PR112 merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`
-(tree `6a329bd1463b02e5e5de7ec4e9bef5547df81155`), including accepted PR111.
-The same-app authored selected-team dry-fall extension now supports source-bound
-ordinary equipped food and repair use with H/button, integer fitness gain,
-equipment ID clearing and reduced source weight. Race restrictions, unsupported
-medical64 poison cure, other categories, empty/dead/pending/running refusals
-are explicit. Full chronological v14 recovery includes movement/falls/equipment/use,
-source rehashing, bounded history and atomic paused installation. Legacy v1–v13
-remain intact. [Scope and controls](docs/training-consumables.md).
+The [Master Mechanics Register](docs/mechanics/index.html) now separates whole-game
+evidence coverage, current playable testbed capabilities, and Training43 software
+acceptance. The percentage is covered checkpoints / all row × stage checkpoints,
+with equal stage weights and zero partial/open credit. It measures neither effort,
+playable-testbed completion nor whole-game completion. The earlier roughly 60% was
+a subjective estimate of a smaller authored functional testbed. Counts come from
+canonical data; narrow milestone records add no whole-game denominator or credit.
+This dashboard reconciliation is an **UNREVIEWED candidate** until its own gates pass.
 
-Implementation validation: npm check, public synthetic chronology/arithmetic,
-private verified-source session checks and actual application browser checks.
-Exact commands, all attempts and production-build evidence are retained in the
-ignored worker handoff. The coordinator verified exact-final HIGH review,
-current CI, completed automatic review and resolved findings before accepting PR112.
-Training43 / complete functional test bed are not accepted. General inventory
-transfer, poison/wet/death/corpse, original enemy/world machinery and lifts remain
-open. Graphics/audio/controller/TV work stays deferred. Token usage unavailable.
+Accepted same-app slices include selected-team startup/movement/extraction,
+bounded inventory exchange/equip/return and authored cache pickup/drop,
+designated-target gun/patrol/doors/player pad, PR112 nonmedical64 FOOD/REPAIR
+use after authored dry-fall injury and v14 history, and PR115 supported original-editor
+wet approach/entry/reverse, race4 breath/item/weight/fitness, race1 parking,
+four-head ownership, source counter order, v15 paused replay, Retry, original
+first exit and single cooperative retirement. [Wet controls and limits](docs/training43-wet-traversal.md).
 
-## Accepted register and case — assessment reconciled through PR114
+PR114 CASE classifies 23 water cells (22 graph candidates plus one solid/nonstanding),
+both dry type0 signs and 50 inactive positionals; graph candidates are not full
+wet playthroughs. Legacy v15 still refuses every non-null requested hit including zero.
+PR116 separately accepts [bounded wet lifecycle](docs/training43-wet-lifecycle.md):
+actual injury/death, north-search corpse, all-four head ownership, dead-input
+guards, explicit manual survivor selection, freed-body/corpse walk, first exit,
+v16 paused replay and Retry. Wider water/all-dead/original99-count timeout beyond
+45000 replay ticks/general corpse items/door-pad callers and full recovery remain open.
+FOOD/REPAIR does not imply medical64 poison cure, immunity or revival.
 
-Mechanics coverage is now indexed in the [Master Mechanics Register](docs/mechanics/index.html)
-and [text checklist](docs/mechanics/CHECKLIST.md): 86 scoped mechanic/effect rows,
-eight independent evidence stages, 47 digest-checked editor-map inventories,
-Training43–47 relationships and ten first-level acceptance gates. Training43 is
-the user-confirmed first complete original-level target. Static presence never
-grants required-route or gameplay acceptance. The gameplay assessment is now pinned through accepted PR112/113/114
-`b211895b0bf4600bc7c8fa830814284c46293c97`;
-the timed door and player-only authored pad described below are accepted.
-Broader original pad callers and complete-level acceptance remain open.
-No gameplay, campaign, physical-hardware or complete-level coverage is added
-by the register. Regenerate with `npx tsx tools/build-mechanics-register.ts`.
-
-The canonical register now reconciles accepted PR112 food/repair and PR114 CASE
-proof, on the PR113 accepted builder/schema. Register completion remains 68/688
-evidence checkpoints (9.9%), global across filters. No new wet consumer, original
-level or hardware credit is awarded; this gameplay packet needs fresh exact-head review/CI.
-
-Accepted base: PR111 merge `46dec166f0604b6cdcbe75c58f3736dc5fd19da9`
-(tree `1e460bd080a8017159f5b8061a0d831a592f657e`), including same-app
-timed door/v12, patrol extraction/v11, static gate/v9, ground-cache/v8,
-selected-team fall/v7, inventory and designated source gun arithmetic.
-
-Accepted PR111 player-only authored scenario:
-[pressure pad / timed door extraction](docs/training-pressure-pad.md).
-One canonical player-only pad in the same arena drives the accepted timed door:
-step on opens, step off closes; stationary/turn/blocked moves never retrigger.
-Raw floor and preceding-plane descriptor bind the direct button IN/OUT actions.
-NPCs reserve space without activating. Existing closure interlocks, clock,
-gun/objective/exit rules and manual C/buttons remain. V13 rebuilds pad occupancy
-and bounded last-action receipts from movement together with all prior state.
-Legacy v1-v12 shapes and replay/byte budgets stay unchanged. Actual four-actor
-keyboard extraction without C, paused recovery and Y Retry are exercised.
-
-PR111 was accepted after exact-head independent HIGH review, current CI,
-completed automatic review and resolved findings; the coordinator retains
-its private receipts. This register candidate requires its own review and CI.
-
-Training43 and the functional test bed remain incomplete. Original signs and
-zero-position machinery stay inactive. Original enemy AI/combat/lifecycle,
-runtime door/pad selection, pushable/death/corpse/wet/fall pad calls, lifts,
-general item use and full-level acceptance remain open. No CPU timing or
-original runtime pad/animation parity is claimed. Graphics/audio integration
-and physical-controller/TV testing remain deferred. Separate human hardware
-acceptance does not block keyboard software work. T43-01–10 remain partial/open.
-Token usage unavailable (not measured).
+Training43 (map43) remains the first original-level target: T43-04 partial,
+T43-05/06 partial, zero complete original levels accepted. Editor/runtime/source
+and Locations CRC df31/5c21 limits remain; campaign expansion stays held.
+Physical four-person/controller/TV acceptance is DEFERRED separately and does
+not block keyboard software. Graphics/audio stay deferred. Original inputs and
+proof payloads remain private. Token usage unavailable.

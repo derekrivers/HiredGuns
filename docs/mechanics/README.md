@@ -6,13 +6,13 @@ Training43 is the first complete original-level acceptance target, confirmed by 
 
 The register contains original behaviour and source locators, revision, mapping scope, eight separate evidence stages, implementation/test/document links, playable scenarios, remaining gaps and original-level relationships. It is an initial discovery inventory, not a certificate that every source branch has been found. Item categories, enemy-specific behaviours and interactions must be split into further stable IDs as their mapping advances. The 29 identified psi dispatch entries each have their own open row.
 
-The baseline is accepted main through PR112/113/114 (`b211895b0bf4600bc7c8fa830814284c46293c97`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
+The baseline is accepted main through PR116 (`db5d2930eb07ef98ddda1d09bb1968efed0f57d3`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
-## Register completion
+## Whole-game evidence coverage
 
-The indicator beside the page title measures **register evidence completion**: covered checkpoints / all registered evidence checkpoints. The builder counts every mechanic row × the current eight STAGES (mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play). Only a covered state earns one point; partial/open earn zero, with no effort weighting. Exact counts and the calculation are available beside the indicator by keyboard or pointer, and in the generated text checklist.
+The indicator beside the page title measures **whole-game evidence coverage**: covered checkpoints / all registered evidence checkpoints. The builder counts every mechanic row × the current eight STAGES (mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play). Only a covered state earns one point; partial/open earn zero, with no effort weighting. Exact counts and the calculation are available beside the indicator by keyboard or pointer, and in the generated text checklist.
 
 The total is global: search, family, mapping and level filters only change visible lists. Empty registers display 0.0%; 100.0% requires every checkpoint covered. One-decimal rounding is capped at 99.9% until then. Adding rows or stages changes the denominator automatically. This measures neither game/parity completion, effort nor test-pass rates. The complete original-level acceptance count stays separate, and reviewed-receipt validation still gates original-level/physical claims.
 
@@ -50,16 +50,49 @@ The catalogue is the existing `research/evidence/campaign-catalogue.json`, outsi
 - **Inactive:** absent under the stated initial editor predicate; does not mean impossible after spawning/mutation.
 - **Unknown:** the inventory cannot settle the relationship.
 
-Training43's dry exit route and source-derived wet approach are inherited from `docs/training43-completion.md`. Its wider water region and sign reachability stay unknown. Training44–47 and other maps have not been promoted from static inventory to required-route proof. Runtime/editor differences remain explicit.
+Training43's dry exit route and PR115 accepted supported wet entry/return are inherited from `docs/training43-completion.md`. Its wider water region and sign reachability stay unknown. Training44–47 and other maps have not been promoted from static inventory to required-route proof. Runtime/editor differences remain explicit.
 
 ## Closing a gate
 
 Each pass needs a reviewed receipt naming mechanic/level, exact original resource digests and revision, accepted build, scenario, expected/observed outcome, commands and pass/fail/skip counts, recovery continuation and reviewer. Physical acceptance additionally needs real hardware and human observations. No such complete original-level receipt exists in this register. Its validator deliberately refuses a new covered original-level/physical claim until receipt validation is designed and reviewed.
 
-T43-01–10 remain partial/open. Controller/TV assignments and the four-person physical run are DEFERRED to separate human acceptance; they do not block keyboard software work. PR112 food/repair is now included as bounded partial evidence; broader immunity/status branches remain open.
+T43-01–10 remain partial/open; T43-05/06 now partial for bounded PR116 proof. Controller/TV assignments and the four-person physical run are DEFERRED to separate human acceptance; they do not block keyboard software work. PR112 food/repair is now included as bounded partial evidence; broader immunity/status branches remain open.
 
 The original register tooling added no runtime execution, mechanics, source redistribution, hosting or scheduled work. Token usage unavailable.
 
-PR112 adds accepted bounded equipped food/repair with v14 authored dry-fall replay. PR113 accepts this register tool and PR114 accepts the bounded Training43 interaction CASE. PR115 accepts bounded keyboard wet entry/return, full-team heads, scheduled delay and v15 recovery. The new v16 wet damage/lifecycle candidate is UNREVIEWED. Neither grants a complete level, hardware or T43-05/06 pass. Food/repair row stages remain partial for its wider original scope. The covered-stage numerator is unchanged.
+PR112 accepts bounded food/repair; PR114 accepts source CASE classifications;
+PR115 accepts supported wet entry/return and v15 recovery. PR116 separately accepts bounded wet injury/death/north corpse/head/control/manual
+survivor/first-exit/v16 recovery and Retry. Legacy v15 still refuses requested hits.
+Wider region/all-dead/original99-count timeout beyond45000 ticks/general corpse
+items/door-pad callers and whole-level acceptance remain open. The covered numerator is
+unchanged; newly supported broad wet rows remain partial.
 
-Accepted proof packets: [PR112 food/repair](https://github.com/derekrivers/HiredGuns/pull/112), [PR113 register](https://github.com/derekrivers/HiredGuns/pull/113), [PR114 bounded CASE](https://github.com/derekrivers/HiredGuns/pull/114). Normal merge union is the assessed head above. These links are accepted scopes, not new wet-play receipts.
+## Milestone scopes and validation
+
+Canonical `dashboards` contain separate current playable testbed and Training43
+software milestone lists. Counts/statuses describe only those explicit lists;
+there is no defensible fixed capability denominator or effort percentage.
+The earlier roughly 60% was a subjective estimate of a smaller authored testbed.
+The whole-game denominator stays the mechanics rows × stages; adding narrow
+milestones never changes it. Adding/splitting broad mechanic rows must explicitly
+explain the denominator change. Compound acceptance gates remain partial/open.
+Hardware is deferred separately and does not block keyboard software work.
+
+Each milestone has stable ID, strict status, scoped evidence, missing dependency,
+scenario/controls, lineage to existing mechanics/checklist and optional accepted
+registry proof references. PR112/114/115/116 receipts retain exact merge/implementation,
+independent review hash, CI and completed automatic IDs. Earlier accepted slices
+remain linked to their public proof documents. File presence is not a fresh run.
+
+Validation rejects unknown enum/ID/reference, duplicate/colliding IDs, unsafe paths,
+active descriptors, custom prototypes, hidden/symbol/sparse/extra collection fields
+and cycles before reading values. New HTML text/attributes use context escaping;
+embedded JSON escapes less-than; evidence links accept only existing repository
+paths. Synthetic hostile metadata and positive offline canaries exercise the
+runtime-accepted boundary. Prior PR113 injection repair remains covered.
+
+This candidate index is for review at port5341 only, clearly UNREVIEWED until
+independent review/current CI/automatic gates and coordinator acceptance. The
+older port5311/snapshot/root originals remain frozen. Serve docs with the Vite
+**development** server or open the canonical HTML file; production app fallback
+does not serve this engineering page.

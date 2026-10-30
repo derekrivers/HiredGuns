@@ -28,9 +28,23 @@ export interface AcceptanceCheck {
   id: string; title: string; state: State; evidence: string[]; requirement: string;
 }
 export interface MechanicsRegister {
+  dashboards: Dashboard[]; acceptedProofs: AcceptedProof[];
   schemaVersion: 1; assessedOn: string; reviewedHead: string; acceptedThrough: number; title: string;
   baseline: { id: string; label: string; description: string; evidence: string[]; sourcePins: { file: string; sha256: string }[] };
   scope: string; limitations: string[]; scenarios: Scenario[];
   mechanics: Mechanic[]; levels: LevelCase[]; acceptanceChecks: AcceptanceCheck[];
   commands: { label: string; command: string; scope: string }[];
+}
+
+export const MILESTONE_STATUSES = ['playable', 'partial', 'open', 'deferred'] as const;
+export interface AcceptedProof {
+  id: string; pr: number; merge: string; head: string; reviewSha256: string;
+  ci: string[]; automatic: string; receipt: string;
+}
+export interface Milestone {
+  id: string; title: string; status: typeof MILESTONE_STATUSES[number]; scope: string;
+  lineage: string[]; scenario: string; evidence: EvidenceLink[]; missing: string; proofs: string[];
+}
+export interface Dashboard {
+  id: 'testbed-capability' | 'training43-software'; title: string; scope: string; milestones: Milestone[];
 }

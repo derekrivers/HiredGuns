@@ -1,8 +1,8 @@
-# Master Mechanics Register — Register completion: 9.9%
+# Master Mechanics Register — Whole-game evidence coverage: 9.9%
 
-68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Register evidence completion, not game completion, parity, effort or test-pass percentage. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
+68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Whole-game evidence coverage: 68 covered, 129 partial, 491 open. All eight stages have equal weight; 172 cells are original-level acceptance plus hardware, and 232 cells are PSI effects. Broad aggregate rows measure evidence, not software effort, playable-testbed completion, source parity or overall game completion. New accepted playable slices can leave broad rows partial and the percentage unchanged. The earlier roughly 60% was a subjective estimate of a smaller authored functional testbed, not this measured denominator. No replacement effort percentage is calculated. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
 
-Assessed 2026-10-30; accepted main through PR115: `e2b2d5ff4090c5c39006abea147a24450ca5c17b`.
+Assessed 2026-10-30; accepted main through PR116: `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`.
 
 [Open the interactive HTML index](index.html) · [Canonical JSON](register.json)
 
@@ -12,16 +12,201 @@ Baseline: **OCS patched source 39.26 · explicit development-editor adaptation**
 
 Covered means only the stated slice. Linked files are not fresh run receipts. No whole-game completion percentage or complete original-level pass is claimed.
 
+## Current playable testbed capability
+
+Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered.
+
+8 listed milestones: 6 playable · 0 partial · 1 open · 1 deferred.
+
+### cap-start — Selected-team startup, movement and extraction: playable
+
+Verified team, selection/pause, dry static navigation and bounded extraction; original startup/runtime parity separate.
+
+Missing dependency / boundary: Full original-level run and runtime startup parity.
+
+Lineage: [MOV-01](index.html#MOV-01), [T43-02](index.html#T43-02), [T43-03](index.html#T43-03). [Entry and controls](index.html#scenario-training43).
+
+- [training-session.md](../../docs/training-session.md): Verified team, selection/pause, dry static navigation and bounded extraction; original startup/runtime parity separate.
+- [training-session.spec.ts](../../tests/browser/training-session.spec.ts): Verified team, selection/pause, dry static navigation and bounded extraction; original startup/runtime parity separate.
+
+### cap-inventory — Inventory pickup, drop, exchange, equip and return: playable
+
+Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller.
+
+Missing dependency / boundary: Original map generators/corpse items, general carried/cross-actor callers and interleaved ground-fall.
+
+Lineage: [INV-01](index.html#INV-01), [INV-02](index.html#INV-02), [INV-04](index.html#INV-04), [INV-07](index.html#INV-07). [Entry and controls](index.html#scenario-ground).
+
+- [training-inventory.md](../../docs/training-inventory.md): Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller.
+- [training-ground.md](../../docs/training-ground.md): Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller.
+
+### cap-food — Food and repair after authored dry-fall injury: playable
+
+PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history.
+
+Missing dependency / boundary: Medical64 poison cure, immunity and revival unsupported.
+
+Lineage: [INV-06](index.html#INV-06), [LIFE-06](index.html#LIFE-06). [Entry and controls](index.html#scenario-consumables). [proof-112](index.html#proof-112)
+
+- [training-consumables.md](../../docs/training-consumables.md): PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history.
+- [training-consumables.test.ts](../../tests/training-consumables.test.ts): PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history.
+- [training-consumables.spec.ts](../../tests/browser/training-consumables.spec.ts): PR112 FOOD excluding medical64 and REPAIR heal actual dry-fall injury; equipment ID clear preserves three opaque bytes, source weight and v14 history.
+
+### cap-combat — Authored gun, patrol, doors and pressure pad: playable
+
+Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented.
+
+Missing dependency / boundary: Original spatial combat/AI/enemy attacks, lifts and broader world callers.
+
+Lineage: [COMBAT-01](index.html#COMBAT-01), [COMBAT-02](index.html#COMBAT-02), [AI-01](index.html#AI-01), [ENV-01](index.html#ENV-01), [ENV-02](index.html#ENV-02), [ENV-05](index.html#ENV-05), [T43-04](index.html#T43-04). [Entry and controls](index.html#scenario-encounter).
+
+- [training-encounter.md](../../docs/training-encounter.md): Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented.
+- [training-pressure-pad.md](../../docs/training-pressure-pad.md): Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented.
+- [training-patrol.md](../../docs/training-patrol.md): Accepted designated hit/miss gun, authored enemy patrol/defeat, gate, timed door and player pad; keyboard F/T/R, C and movement as documented.
+
+### cap-wet — Original-editor wet entry/return and recovery: playable
+
+PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+
+Missing dependency / boundary: Legacy v15 refuses every non-null requested hit including zero. Choose the separately accepted v16 lifecycle mode for bounded injury/death; wider wet region remains open.
+
+Lineage: [MOV-03](index.html#MOV-03), [ENV-08](index.html#ENV-08), [LIFE-03](index.html#LIFE-03), [LIFE-04](index.html#LIFE-04), [T43-05](index.html#T43-05), [T43-07](index.html#T43-07). [Entry and controls](index.html#scenario-wet). [proof-115](index.html#proof-115)
+
+- [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+- [training-wet.test.ts](../../tests/training-wet.test.ts): PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+- [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts): PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+
+### cap-end — Complete coherent software testbed: open
+
+Accepted bounded slices do not constitute programme acceptance.
+
+Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.
+
+Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-training43).
+
+- [training43-completion.md](../../docs/training43-completion.md): Accepted bounded slices do not constitute programme acceptance.
+
+### cap-lifecycle — Bounded wet injury, fatal continuation and survivor recovery: playable
+
+Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+
+Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+
+Lineage: [LIFE-01](index.html#LIFE-01), [LIFE-02](index.html#LIFE-02), [LIFE-03](index.html#LIFE-03), [T43-05](index.html#T43-05), [T43-06](index.html#T43-06), [T43-07](index.html#T43-07). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
+
+- [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+- [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+- [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+
+### cap-hardware — Four people, controllers and TV: deferred
+
+Separate physical acceptance; does not block keyboard software.
+
+Missing dependency / boundary: Actual complete four-player hardware run and reviewed receipt.
+
+Lineage: [T43-09](index.html#T43-09). [Entry and controls](index.html#scenario-training43).
+
+- [training43-completion.md](../../docs/training43-completion.md): Separate physical acceptance; does not block keyboard software.
+
+## Training43 software acceptance
+
+First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution.
+
+7 listed milestones: 4 playable · 2 partial · 1 open · 0 deferred.
+
+### t43-dry — Selected team and bounded dry route: playable
+
+Same-app selected-team dry movement, first-exit and cooperative route are accepted bounded adaptations.
+
+Missing dependency / boundary: Complete original gameplay and runtime identity remain open.
+
+Lineage: [T43-01](index.html#T43-01), [T43-02](index.html#T43-02), [T43-03](index.html#T43-03). [Entry and controls](index.html#scenario-training43).
+
+- [training-session.md](../../docs/training-session.md): Same-app selected-team dry movement, first-exit and cooperative route are accepted bounded adaptations.
+- [training43-completion.md](../../docs/training43-completion.md): Same-app selected-team dry movement, first-exit and cooperative route are accepted bounded adaptations.
+
+### t43-case — Interaction CASE classification: partial
+
+PR114 classifies 23 water cells: 22 graph candidates and one solid/nonstanding; both signs dry type0, 50 inactive positionals.
+
+Missing dependency / boundary: Candidates do not establish complete wet playthrough or all reachable outcomes.
+
+Lineage: [T43-04](index.html#T43-04). [Entry and controls](index.html#scenario-wet). [proof-114](index.html#proof-114)
+
+- [training43-wet-acceptance.md](../../docs/training43-wet-acceptance.md): PR114 classifies 23 water cells: 22 graph candidates and one solid/nonstanding; both signs dry type0, 50 inactive positionals.
+
+### t43-entry — Supported wet-stair entry and reverse: playable
+
+PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+
+Missing dependency / boundary: V15 refuses requested hits; separate accepted v16 mode handles bounded injury/death. Broader wet traversal remains open.
+
+Lineage: [T43-04](index.html#T43-04), [T43-05](index.html#T43-05). [Entry and controls](index.html#scenario-wet). [proof-115](index.html#proof-115)
+
+- [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+- [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts): PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse.
+
+### t43-replay — Paused wet chronology, Retry and bounded exits: playable
+
+PR115 v15 replay before wet/after item/after return; fresh Retry, original first exit and single cooperative retirement. Legacy v1-v14 retained.
+
+Missing dependency / boundary: Whole-level environmental recovery, all-dead and complete original timeout acceptance remain open.
+
+Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08). [Entry and controls](index.html#scenario-wet). [proof-115](index.html#proof-115)
+
+- [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): PR115 v15 replay before wet/after item/after return; fresh Retry, original first exit and single cooperative retirement. Legacy v1-v14 retained.
+- [training-wet.test.ts](../../tests/training-wet.test.ts): PR115 v15 replay before wet/after item/after return; fresh Retry, original first exit and single cooperative retirement. Legacy v1-v14 retained.
+
+### t43-lifecycle — Complete wet and lifecycle outcomes: partial
+
+PR116 accepts the bounded fatal branch and v16 recovery; compound T43-05/06 remain partial.
+
+Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+
+Lineage: [T43-05](index.html#T43-05), [T43-06](index.html#T43-06). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
+
+- [training43-wet-traversal.md](../../docs/training43-wet-traversal.md): T43-05/06 remain partial with accepted entry/return and bounded lifecycle subrecords; wider wet and whole-level outcomes remain open.
+- [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+
+### t43-fatal — Bounded wet injury, fatal continuation and survivor recovery: playable
+
+Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+
+Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+
+Lineage: [LIFE-01](index.html#LIFE-01), [LIFE-02](index.html#LIFE-02), [LIFE-03](index.html#LIFE-03), [T43-05](index.html#T43-05), [T43-06](index.html#T43-06), [T43-07](index.html#T43-07). [Entry and controls](index.html#scenario-wet-lifecycle). [proof-116](index.html#proof-116)
+
+- [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+- [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+- [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts): Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
+
+### t43-accept — Complete original-level software receipt: open
+
+No complete original level accepted.
+
+Missing dependency / boundary: Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance. Remaining required/reachable interactions and reviewed complete software acceptance.
+
+Lineage: [T43-10](index.html#T43-10). [Entry and controls](index.html#scenario-training43).
+
+- [training43-completion.md](../../docs/training43-completion.md): No complete original level accepted.
+
+## Accepted proof receipts
+
+- PR112: merge `c82f889eb3707ed8e8f88c32a8f97640739b3e84`; implementation `90fef3f83a8fe6e7eb5b0c54ed6789f5166ce06f`; independent review SHA-256 `fd88fc085b4fc6f0fd12feef669d95d6125722de28960602bd342956f857bae0`; CI 41031464191, 41031455459; automatic 6518416644; receipt 6519283288.
+- PR114: merge `b211895b0bf4600bc7c8fa830814284c46293c97`; implementation `e6367e6f5e2489c40f5acbd00da7dc27d9b6169f`; independent review SHA-256 `c94d256773bf2502f282352c242d71e5a7cc0d357b8af7b8f940d18815e004d0`; CI 41035558425, 41035553248; automatic 6519462817; receipt 6519933477.
+- PR115: merge `e2b2d5ff4090c5c39006abea147a24450ca5c17b`; implementation `4d3c8f1aaee8b5ce5911904e17d48f75c49896b9`; independent review SHA-256 `20672779d17533e354a40847002ab5b8f8b4484636a61c0f03abc6863ce8e350`; CI 41049281097, 41049271263; automatic 6520939225; receipt 6521769394.
+- PR116: merge `db5d2930eb07ef98ddda1d09bb1968efed0f57d3`; implementation `2c1178d68ad887c218f2bc3975bba7b6024d032f`; independent review SHA-256 `0352332ec54bf4e29d70798a06c98ba43e2047f265d904a282b08e5cff0ec24a`; CI 41064673415, 41064666632; automatic 6523347081; receipt 6524247429.
+
 ## Training43: first original-level acceptance
 
 - [ ] **T43-01 Pin level and source revision** — Partial. Use the exact editor digest; disclose runtime-body differences and north-facing adaptation. Identities are pinned; a reviewed whole-level acceptance receipt remains open.
 - [ ] **T43-02 Initialize and control four selected actors** — Partial. Bind roster/items and actor state; exercise all four keyboard-controlled actors. Physical input assignments are DEFERRED to separate human controller/TV acceptance and do not block keyboard software work.
 - [ ] **T43-03 Complete required dry traversal and exit** — Partial. Retain demonstrated full-team dry route; include original dead/control outcome rules before whole-level acceptance.
 - [ ] **T43-04 Classify every reachable interaction** — Partial. Accepted PR114 classifies 23 water cells (22 hypothetical movement candidates, one solid support), signs and inactive trigger sentinel; bounded source entry/reverse case. Live outcomes and level review remain open.
-- [ ] **T43-05 Wet stairs and environmental outcomes** — Open. Accepted PR115 proves bounded wet entry/return, breath/item effects and v15 recovery. Injury/death candidate remains UNREVIEWED; broader wet traversal and outcomes remain open.
-- [ ] **T43-06 Death, control, occupancy and corpses** — Open. Exercise reachable lethal/all-dead cases with correct references, corpse state, control and retry.
-- [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Save before/during/after wet/lifecycle interactions; restore paused and continue with no duplicated effects.
-- [ ] **T43-08 Outcome, timeout and fresh retry** — Partial. Original first-exit and labelled cooperative variant, terminal ties, failure and complete fresh retry.
+- [ ] **T43-05 Wet stairs and environmental outcomes** — Partial. Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+- [ ] **T43-06 Death, control, occupancy and corpses** — Partial. Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial. Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
+- [ ] **T43-07 Atomic checkpoint around every interaction** — Partial. Accepted v15 supported wet entry-return and v16 bounded lifecycle chronology; paused restores before damage/after injury/death/survivor/terminal continue without duplicate effects. Complete original-level recovery remains open.
+- [ ] **T43-08 Outcome, timeout and fresh retry** — Partial. Bounded original first exit, single cooperative retirement and fresh Retry accepted; authored timeout exists. Original all-dead and original99-count timeout beyond45000 replay ticks remain open.
 - [ ] **T43-09 Physical four-player complete run** — Open. DEFERRED: separate human acceptance with four people on event PC/TV; verify disconnect recovery and usable inventory/interactions. This physical gate does not block keyboard software work.
 - [ ] **T43-10 Acceptance receipt and regression replay** — Open. Record exact build/source digests, modes, player/hardware observations and all open deviations; link reproducible tests.
 
@@ -71,11 +256,11 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 | [AI-03](index.html#AI-03) | Eggs and spawning | Open | Open | Open | Open | Open | Open | Open | Open |
 | [AI-04](index.html#AI-04) | Enemy falling, water and teleport | Open | Open | Open | Open | Open | Open | Open | Open |
 | [LIFE-01](index.html#LIFE-01) | Fitness, armour and damage modifiers | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
-| [LIFE-02](index.html#LIFE-02) | Death, corpses and control transfer | Partial | Partial | Covered slice | Partial | Open | Partial | Open | Open |
+| [LIFE-02](index.html#LIFE-02) | Death, corpses and control transfer | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [LIFE-03](index.html#LIFE-03) | Breath and drowning | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [LIFE-04](index.html#LIFE-04) | Water inventory damage | Partial | Partial | Covered slice | Partial | Partial | Partial | Open | Open |
 | [LIFE-05](index.html#LIFE-05) | Poison and timed statuses | Open | Open | Open | Open | Open | Open | Open | Open |
-| [LIFE-06](index.html#LIFE-06) | Healing, fitness fields and progression | Open | Open | Open | Open | Open | Open | Open | Open |
+| [LIFE-06](index.html#LIFE-06) | Healing, fitness fields and progression | Partial | Partial | Partial | Partial | Partial | Partial | Open | Open |
 | [PSI-01](index.html#PSI-01) | Psi dispatch, charges and effect lifetime | Open | Open | Open | Open | Open | Open | Open | Open |
 | [PSI-02](index.html#PSI-02) | Fireball | Open | Open | Open | Open | Open | Open | Open | Open |
 | [PSI-03](index.html#PSI-03) | Inferno | Open | Open | Open | Open | Open | Open | Open | Open |
@@ -266,17 +451,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Controls&Movement.s move and directional callers; baseline ocs-3926.
 
-**Mapped scope:** Dry transforms demonstrated; reachable wet stair pair still blocked.
+**Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [training43-completion.md](../../docs/training43-completion.md)
+**Evidence:** [static-traversal.md](../../docs/static-traversal.md), [training43-completion.md](../../docs/training43-completion.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
 
-**Tests:** [traversal.test.ts](../../tests/traversal.test.ts), [stairs.spec.ts](../../tests/browser/stairs.spec.ts)
+**Tests:** [traversal.test.ts](../../tests/traversal.test.ts), [stairs.spec.ts](../../tests/browser/stairs.spec.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
 
-**Scenarios:** training43, stairs
+**Scenarios:** training43, stairs, wet, wet-lifecycle
 
-**Gaps:** Training43 reachable optional wet stairs must work before level acceptance.
+**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-**Next:** Combine wet entry, descent and recovery with the selected live team.
+**Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
 ### MOV-04 — Player falling and landing
 
@@ -464,17 +649,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s drowning/player_fall; Controls&Movement.s movement; baseline ocs-3926.
 
-**Mapped scope:** Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.
+**Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 bounded keyboard consumer](../../docs/training43-wet-traversal.md)
+**Evidence:** [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [wet-entry-observation.md](../../docs/wet-entry-observation.md), [water-executable-evidence.md](../../docs/water-executable-evidence.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
 
-**Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
+**Tests:** [immersion-caller.test.ts](../../tests/immersion-caller.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
 
-**Scenarios:** None linked
+**Scenarios:** wet, wet-lifecycle
 
-**Gaps:** Training43 wet region remains unknown beyond audited entry.
+**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-**Next:** Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region.
+**Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
 ### ENV-09 — Water level changes
 
@@ -628,11 +813,11 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Mapped scope:** Accepted PR112: paused source-owned equipped food/repair in authored selected-team dry-fall practice, full v14 chronological recovery. Immunity items, poison/medical and original world callers remain open.
 
-**Evidence:** [item-format.md](../../docs/item-format.md), [consumable-use.ts](../../src/items/consumable-use.ts), [training-consumables.ts](../../src/sim/training-consumables.ts), [training-consumables.test.ts](../../tests/training-consumables.test.ts), [training-consumables.spec.ts](../../tests/browser/training-consumables.spec.ts), [training-session.md](../../docs/training-session.md)
+**Evidence:** [item-format.md](../../docs/item-format.md), [training-session.md](../../docs/training-session.md)
 
-**Tests:** Open
+**Tests:** [training-consumables.test.ts](../../tests/training-consumables.test.ts), [training-consumables.spec.ts](../../tests/browser/training-consumables.spec.ts)
 
-**Scenarios:** None linked
+**Scenarios:** consumables
 
 **Gaps:** Each dispatch branch needs separate cases before this family can close.
 
@@ -860,17 +1045,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s damage_fitness; ItemUsage.s shooting path; baseline ocs-3926.
 
-**Mapped scope:** Selected pure arithmetic, ordinary-floor damage and bounded shooting arguments.
+**Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [damage-fitness-evidence.md](../../docs/damage-fitness-evidence.md), [damage-death-contract.md](../../docs/damage-death-contract.md), [shooting-argument-contract.md](../../docs/shooting-argument-contract.md)
+**Evidence:** [damage-fitness-evidence.md](../../docs/damage-fitness-evidence.md), [damage-death-contract.md](../../docs/damage-death-contract.md), [shooting-argument-contract.md](../../docs/shooting-argument-contract.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
 
-**Tests:** [damage-fitness.test.ts](../../tests/damage-fitness.test.ts), [health.test.ts](../../tests/health.test.ts), [shooting-argument.test.ts](../../tests/shooting-argument.test.ts)
+**Tests:** [damage-fitness.test.ts](../../tests/damage-fitness.test.ts), [health.test.ts](../../tests/health.test.ts), [shooting-argument.test.ts](../../tests/shooting-argument.test.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
 
-**Scenarios:** fall, encounter
+**Scenarios:** fall, encounter, wet-lifecycle
 
-**Gaps:** Real enemy hits, all modifiers and original equipment-damage callers remain incomplete.
+**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+**Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
 ### LIFE-02 — Death, corpses and control transfer
 
@@ -878,17 +1063,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s death transition; Controls&Movement.s actor/control gates; baseline ocs-3926.
 
-**Mapped scope:** Bounded disconnected original helper; dry practice uses authored incapacitation.
+**Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [death-transition-contract.md](../../docs/death-transition-contract.md), [after-death-control-observation.md](../../docs/after-death-control-observation.md), [initialized-postdeath-fixture-fit.md](../../docs/initialized-postdeath-fixture-fit.md)
+**Evidence:** [death-transition-contract.md](../../docs/death-transition-contract.md), [after-death-control-observation.md](../../docs/after-death-control-observation.md), [initialized-postdeath-fixture-fit.md](../../docs/initialized-postdeath-fixture-fit.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
 
-**Tests:** [death-transition.test.ts](../../tests/death-transition.test.ts)
+**Tests:** [death-transition.test.ts](../../tests/death-transition.test.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
 
-**Scenarios:** fall
+**Scenarios:** fall, wet-lifecycle
 
-**Gaps:** Original live death/pads/corpse/control composition remains absent.
+**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+**Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
 ### LIFE-03 — Breath and drowning
 
@@ -896,17 +1081,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s drowning; pinned OCS wet-entry CPU observations; baseline ocs-3926.
 
-**Mapped scope:** Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.
+**Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 bounded keyboard consumer](../../docs/training43-wet-traversal.md)
+**Evidence:** [wet-entry-observation.md](../../docs/wet-entry-observation.md), [drowning-decision-contract.md](../../docs/drowning-decision-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
 
-**Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts)
+**Tests:** [drowning-decision.test.ts](../../tests/drowning-decision.test.ts), [immersion-caller.test.ts](../../tests/immersion-caller.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
 
-**Scenarios:** None linked
+**Scenarios:** wet, wet-lifecycle
 
-**Gaps:** PR115 accepts bounded breath/item entry-return and v15 recovery. Injury/death and full wet-region recovery remain unaccepted; the separate lifecycle candidate is UNREVIEWED.
+**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-**Next:** Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region.
+**Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
 ### LIFE-04 — Water inventory damage
 
@@ -914,17 +1099,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Main.s immersion inventory ordering; water inventory helper; baseline ocs-3926.
 
-**Mapped scope:** Accepted bounded original-editor keyboard wet entry/return and v15 recovery; wider source mechanic remains partial.
+**Mapped scope:** Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial.
 
-**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 bounded keyboard consumer](../../docs/training43-wet-traversal.md)
+**Evidence:** [water-inventory-contract.md](../../docs/water-inventory-contract.md), [immersion-caller-contract.md](../../docs/immersion-caller-contract.md), [Accepted PR114 bounded CASE](../../docs/training43-wet-acceptance.md), [Accepted PR115 wet consumer](../../docs/training43-wet-traversal.md), [training43-wet-lifecycle.md](../../docs/training43-wet-lifecycle.md)
 
-**Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts)
+**Tests:** [water-inventory.test.ts](../../tests/water-inventory.test.ts), [training-wet.test.ts](../../tests/training-wet.test.ts), [training-wet.spec.ts](../../tests/browser/training-wet.spec.ts), [training-wet-lifecycle.test.ts](../../tests/training-wet-lifecycle.test.ts), [training-wet-lifecycle.spec.ts](../../tests/browser/training-wet-lifecycle.spec.ts)
 
-**Scenarios:** None linked
+**Scenarios:** wet, wet-lifecycle
 
-**Gaps:** PR115 accepts bounded live water inventory/weight mutation. Wider inventories, branches and wet-region outcomes remain partial.
+**Gaps:** Wider wet region, all-dead, original99-count timeout beyond45000 replay ticks, general corpse items/replacement and door/pad/lift callers remain open; no whole43 or hardware acceptance.
 
-**Next:** Review the separate same-app wet damage/lifecycle candidate before crediting injury/death or extending the wet region.
+**Next:** Cover remaining original branches and compound whole-level gates with separate reviewed source-bound proof.
 
 ### LIFE-05 — Poison and timed statuses
 
@@ -950,17 +1135,17 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 **Source:** Equates.i field type 2; Main.s fitness; ItemUsage.s experience updates; baseline ocs-3926.
 
-**Mapped scope:** Initial stats inspection is implemented; live gains and healing unimplemented.
+**Mapped scope:** PR112 bounded equipped FOOD/nonmedical64 and REPAIR restore actual authored dry-fall fitness with caps/ID clear/source weight/v14 replay. Fitness fields, experience and progression remain open; see narrower INV-06 milestone.
 
-**Evidence:** [character-format.md](../../docs/character-format.md)
+**Evidence:** [character-format.md](../../docs/character-format.md), [Accepted PR112 food/repair scope](../../docs/training-consumables.md)
 
-**Tests:** Open
+**Tests:** [training-consumables.test.ts](../../tests/training-consumables.test.ts), [training-consumables.spec.ts](../../tests/browser/training-consumables.spec.ts)
 
-**Scenarios:** None linked
+**Scenarios:** consumables
 
 **Gaps:** Split progression/experience into separate rows when its full branch inventory is established.
 
-**Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
+**Next:** Map fields/progression/experience separately; no revival or general healing-family acceptance.
 
 ### PSI-01 — Psi dispatch, charges and effect lifetime
 
@@ -2551,9 +2736,9 @@ Maps/Game/Map42_4pl/42.map; SHA-256 `5118cf81c05a79f3dbbc5d8e6679f55102d09848825
 Maps/Game/Map43_Training/43.map; SHA-256 `646ce0f58ca9eca3e81be7e6090cb09a6bad538d397a2d81c78c311ce2fb9f8c`. Supplied development editor map; not asserted equivalent to OCS/CD32 runtime body.
 
 - [MOV-01](index.html#MOV-01): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
-- [MOV-03](index.html#MOV-03): **reachable-optional** — Accepted PR115 actual keyboard approach, supported wet-stair entry/reverse and v15 recovery; wider wet traversal remains unknown.
-- [ENV-08](index.html#ENV-08): **unknown** — Accepted PR115 bounded wet entry/return, breath/inventory and paused recovery. Wider water outcomes and new lifecycle candidate remain unaccepted.
-- [LIFE-03](index.html#LIFE-03): **unknown** — Accepted PR115 bounded wet entry/return, breath/inventory and paused recovery. Wider water outcomes and new lifecycle candidate remain unaccepted.
+- [MOV-03](index.html#MOV-03): **reachable-optional** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged.
+- [ENV-08](index.html#ENV-08): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged.
+- [LIFE-03](index.html#LIFE-03): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Wider water-region/full-level outcomes remain unknown. Classification unchanged.
 - [WORLD-02](index.html#WORLD-02): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
 - [WORLD-03](index.html#WORLD-03): **unknown** — Nonzero text-trigger position observed; message dispatch, one-shot and language conditions unverified.
 - [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
