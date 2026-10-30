@@ -238,3 +238,23 @@ All asynchronous replay inputs are owned before hashing. The same 128-event,
 45000-tick, <24 KiB outer and <16 KiB nested limits apply prospectively and atomically.
 Matching v9/v10 restores leave challenge mode and recover the navigation arena.
 Original Training43/ground/fall workflows and prior save shapes remain unchanged.
+
+
+## Authored moving door extraction (v12)
+
+The [timed-door challenge](training-moving-door.md) versions the existing arena
+with one canonical synthetic normal-door record/cell. It consumes the accepted
+source helper unchanged, using an explicitly authored accepted-tick WORD adapter
+and complete actor/NPC current/destination closure interlock. V12 extends the gate
+receipt with all raw door bytes, target word, counter, adapter/interlock identities,
+pending action and deferral, and ordered door-action events alongside the complete
+world/NPC/encounter/inventory chronology. Rebuild from canonical starts and exact
+rehash/reparse of raw sources; compare every receipt and checkpoint before atomic
+paused restore. Saved occupancy flags, words and labels have no independent authority.
+
+All rebuild phases own raw bytes/map/indices/history/session/world before the
+first await. Retry/selection/source clear/new Apply/mode changes invalidate pending
+installation. Limits remain128 events,45000 ticks, <24KiB outer/<16KiB nested,
+checked prospectively before all mutations. Legacy v1–v11 keep their existing
+fields/behavior. Timed mode requires its matching canonical fixture; existing
+static gate, patrol and extraction setup remain available.

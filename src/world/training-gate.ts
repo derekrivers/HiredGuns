@@ -1,3 +1,4 @@
+import { advanceMovingDoor, initialMovingDoor, MOVING_DOOR_FIXTURE, type DoorAction, type TrainingMovingDoor } from './training-moving-door';
 import { cellIndex, inBounds, type LevelData, type PlayerCommand, type WorldState } from '../contracts';
 import { groundHistory, MAX_GROUND_TICKS } from '../items/training-ground';
 import type { ItemCatalog } from '../import/items';
@@ -8,7 +9,8 @@ import { transitionButtonBlock, type StaticBlockingOverlay } from './button-door
 
 export const PATROL_MISSION_FIXTURE = 'authored-patrol-extraction-v1';
 export const PATROL_EXIT = Object.freeze({x:8,y:5,z:1});
-export const patrolMissionLevel = (level: LevelData) => level.id === PATROL_MISSION_FIXTURE;
+export const movingDoorLevel = (level: LevelData) => level.id === MOVING_DOOR_FIXTURE;
+export const patrolMissionLevel = (level: LevelData) => level.id === PATROL_MISSION_FIXTURE || movingDoorLevel(level);
 export const GATE_FIXTURE = 'authored-static-gate-v1';
 export const MAX_GATE_HISTORY = 128;
 export const GATE_PANEL = { x: 5, y: 4, z: 1 };
@@ -16,9 +18,9 @@ export const GATE_TARGET = { x: 5, y: 5, z: 1 };
 const index = (p: typeof GATE_PANEL) => (p.z * 23 + p.y) * 23 + p.x;
 const button = { index: 0, fields: { used: 0, actionIn: 4, actionOut: 5, dataIn: 27936 + 4 * index(GATE_TARGET), dataOut: 27936 + 4 * index(GATE_TARGET) } };
 export type GateEvent = { kind: 'step'; commands: PlayerCommand[] } | { kind: 'wait'; ticks: number } |
-  InventoryCommand | { kind: 'activate'; actor: number; commands: PlayerCommand[] };
+  InventoryCommand | { kind: 'activate'; actor: number; commands: PlayerCommand[] } | {kind:'door'; actor:number; action:DoorAction; commands:PlayerCommand[]};
 export interface TrainingGate {
-  version: 1; fixture: typeof GATE_FIXTURE; history: GateEvent[];
+  version: 1; fixture: typeof GATE_FIXTURE; history: GateEvent[]; moving?: TrainingMovingDoor;
   panelWord: number; overlay: StaticBlockingOverlay;
 }
 const initialWords = () => ({ panelWord: 0x8008004b, overlay: { targetIndex: index(GATE_TARGET), word: 0x80000043, discoveryWord: 0x80000000, nextPlaneDiscoveryWord: 1 } });
@@ -41,8 +43,14 @@ export function createPatrolMissionLevel(): LevelData {
   level.exit = {...PATROL_EXIT}; level.layers[0][index(PATROL_EXIT)] = 67;
   return level;
 }
+export function createMovingDoorLevel(): LevelData {
+  const level = createPatrolMissionLevel(); level.id = MOVING_DOOR_FIXTURE; level.name = 'Authored timed door / patrol extraction';
+  level.layers[0][index(GATE_TARGET)] = initialMovingDoor().word;
+  level.unsupportedMechanics = ['Authored tick timing and conservative occupancy interlock; no original runtime door selection, key eligibility, crush, audio or CPU timing parity.'];
+  return level;
+}
 export const gateLevel = (level: LevelData) => level.id === GATE_FIXTURE || patrolMissionLevel(level);
-export function initialTrainingGate(): TrainingGate { return { version: 1, fixture: GATE_FIXTURE, history: [], ...initialWords() }; }
+export function initialTrainingGate(moving = false): TrainingGate { const gate: TrainingGate = { version: 1, fixture: GATE_FIXTURE, history: [], ...initialWords() }; if (moving) {gate.moving = initialMovingDoor(); gate.overlay = {...gate.overlay,word:gate.moving.word};} return gate; }
 export function effectiveGateLevel(base: LevelData, gate: TrainingGate | null): LevelData {
   if (!gate) return base;
   const level = structuredClone(base);
@@ -63,17 +71,18 @@ export function gateHistory(value: unknown): GateEvent[] {
   return Array.from(value, e => {
     const kind = Object.getOwnPropertyDescriptor(e ?? {}, 'kind');
     if (!kind || !Object.hasOwn(kind, 'value')) throw new Error('Malformed gate event.');
-    if (kind.value !== 'activate') {
+    if (kind.value !== 'activate' && kind.value !== 'door') {
       const event = groundHistory([e])[0]!;
       if (event.kind === 'ground') throw new Error('Ground and gate practice require separate fresh Apply.');
       return event;
     }
-    fields(e, ['kind', 'actor', 'commands']);
+    fields(e, kind.value === 'door' ? ['kind','actor','action','commands'] : ['kind', 'actor', 'commands']);
+    if (kind.value === 'door' && ![14,15,16,17,18].includes(e.action as number)) throw new Error('Invalid door action.');
     if (!Number.isInteger(e.actor) || (e.actor as number) < 0 || (e.actor as number) > 3) throw new Error('Invalid gate actor.');
     const commands = Array.isArray(e.commands) && Object.getPrototypeOf(e.commands) === Array.prototype && e.commands.length === 0 ? [] : (groundHistory([{ kind: 'step', commands: e.commands }])[0] as { commands: PlayerCommand[] }).commands;
     // Also reject empty arrays with extra properties or sparse storage.
     if (!commands.length && Reflect.ownKeys(e.commands as object).length !== 1) throw new Error('Invalid gate commands.');
-    return { kind: 'activate', actor: e.actor as number, commands };
+    return kind.value === 'door' ? {kind:'door',actor:e.actor as number,action:e.action as DoorAction,commands} : { kind: 'activate', actor: e.actor as number, commands };
   });
 }
 export function gateEnvelope(value: unknown): TrainingGate {
@@ -86,7 +95,8 @@ export function gateEnvelope(value: unknown): TrainingGate {
 
 /** Static actors have one cell footprint and no persistent interpolation reservation.
  * Prospective successful destinations in this same tick are reservations too. */
-function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, snapshot: LevelData, reservations: readonly typeof GATE_TARGET[] = []) {
+function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, snapshot: LevelData, reservations: readonly typeof GATE_TARGET[] = [], action: DoorAction = 16) {
+  if (gate.moving) return stepMovingGate(base,world,gate,commands,actor,snapshot,reservations,action);
   let nextGate = gate, feedback = '';
   if (actor !== null && world.mission.exited[actor]) {actor = null; feedback = 'Refused: extracted actor is retired.';}
   if (actor !== null) {
@@ -109,8 +119,8 @@ function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate
   if (result.world.tick > MAX_GROUND_TICKS) throw new Error('Gate replay tick budget exhausted. Retry or restore.');
   return { ...result, gate: nextGate, feedback, effective };
 }
-export function stepTrainingGate(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, reservations: readonly typeof GATE_TARGET[] = [], snapshot = effectiveGateLevel(base,gate)) {
-  return stepGateSnapshot(base,world,gate,commands,actor,snapshot,reservations);
+export function stepTrainingGate(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, reservations: readonly typeof GATE_TARGET[] = [], snapshot = effectiveGateLevel(base,gate), action: DoorAction = 16) {
+  return stepGateSnapshot(base,world,gate,commands,actor,snapshot,reservations,action);
 }
 export function appendGateEvent(gate: TrainingGate, event: GateEvent): TrainingGate {
   const history = structuredClone(gate.history), last = history.at(-1);
@@ -123,6 +133,7 @@ export function replayTrainingGate(base: LevelData, team: OriginalTeam, items: I
   const commands: InventoryCommand[] = [];
   let effective = effectiveGateLevel(base,gate);
   for (const event of gateHistory(history)) {
+    if (event.kind === 'door') throw new Error('Timed door requires v12 patrol fixture.');
     if (event.kind === 'equip' || event.kind === 'return' || event.kind === 'exchange') {
       commands.push(event); inventory = replayTrainingInventory(team, items, commands);
     } else if (event.kind === 'step' || event.kind === 'wait' || event.kind === 'activate') {
@@ -136,4 +147,29 @@ export function replayTrainingGate(base: LevelData, team: OriginalTeam, items: I
     gate = appendGateEvent(gate, event);
   }
   return { gate, world, inventory };
+}
+
+/** Probe movement on the current snapshot before considering closure. Vacating
+ * actors still reserve their start. NPC current/destination reserve both cells. */
+function stepMovingGate(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, snapshot: LevelData, reservations: readonly typeof GATE_TARGET[], action: DoorAction) {
+  const collision = reservations.length ? {...snapshot,layers:[snapshot.layers[0].slice(),snapshot.layers[1],snapshot.layers[2]] as LevelData['layers']} : snapshot;
+  for (const p of reservations) collision.layers[0][cellIndex(collision,p)] = 66;
+  const probe = stepWorld(collision,world,commands);
+  if (probe.world.tick === world.tick) return {...probe,gate,feedback:'',effective:snapshot};
+  if (probe.world.tick > MAX_GROUND_TICKS) throw new Error('Door tick budget exhausted.');
+  let requested: DoorAction = 0, feedback = '';
+  if (actor !== null) {
+    const pose = world.mercenaries[actor];
+    if (!pose || world.mission.exited[actor]) feedback = 'Refused: unavailable actor.';
+    else {const d = DIRECTIONS[pose.facing];
+      if (pose.x+d.x === GATE_PANEL.x && pose.y+d.y === GATE_PANEL.y && pose.z === GATE_PANEL.z) requested = action;
+      else feedback = 'Refused: face the panel at 5,4,1.';
+    }
+  }
+  const moving = advanceMovingDoor(gate.moving!,requested,[...world.mercenaries,...probe.world.mercenaries,...reservations]);
+  const nextGate = {...gate,moving,overlay:{...gate.overlay,word:moving.word}};
+  const effective = moving.word === gate.moving!.word ? snapshot : effectiveGateLevel(base,nextGate);
+  // Current-snapshot movement priority: opening becomes traversable next tick.
+  // Closure cannot overlap any accepted destination, checked above.
+  return {...probe,gate:nextGate,effective,feedback:feedback || (requested ? `Door action ${requested} accepted; wait for source scheduler.` : '')};
 }

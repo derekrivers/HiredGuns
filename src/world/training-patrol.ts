@@ -1,3 +1,5 @@
+import { MOVING_DOOR_FIXTURE, type DoorAction } from './training-moving-door';
+import { movingDoorLevel } from './training-gate';
 import type { LevelData, PlayerCommand, Position, WorldState } from '../contracts';
 import { createTrainingEncounter, fireTrainingEncounter, targetTrainingEncounter, tickTrainingEncounter, type TrainingEncounter } from '../combat/training-encounter';
 import type { GunWeapon } from '../combat/weapon-transition';
@@ -16,11 +18,11 @@ export const PATROL_CADENCE = 16;
 export const PATROL_ROUTE: readonly Readonly<Position>[] = Object.freeze([3,4,5,6,7].map(x => Object.freeze({x,y:5,z:1})));
 export type PatrolEvent = GateEvent | {kind:'fire'} | {kind:'target'};
 export interface TrainingPatrol {
-  version: 1; fixture: typeof PATROL_FIXTURE | typeof PATROL_MISSION_FIXTURE; history: PatrolEvent[];
+  version: 1; fixture: typeof PATROL_FIXTURE | typeof PATROL_MISSION_FIXTURE | typeof MOVING_DOOR_FIXTURE; history: PatrolEvent[];
   routeIndex: number; direction: 1 | -1; counter: number;
   blocked: 'clear' | 'gate-or-wall' | 'player';
 }
-export const initialTrainingPatrol = (mission = false): TrainingPatrol => ({version:1,fixture:mission ? PATROL_MISSION_FIXTURE : PATROL_FIXTURE,history:[],routeIndex:0,direction:1,counter:0,blocked:'clear'});
+export const initialTrainingPatrol = (mission = false, moving = false): TrainingPatrol => ({version:1,fixture:moving ? MOVING_DOOR_FIXTURE : mission ? PATROL_MISSION_FIXTURE : PATROL_FIXTURE,history:[],routeIndex:0,direction:1,counter:0,blocked:'clear'});
 export const patrolPosition = (patrol: TrainingPatrol) => PATROL_ROUTE[patrol.routeIndex]!;
 export function patrolHistory(value: unknown): PatrolEvent[] {
   if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype || value.length > MAX_GATE_HISTORY || Reflect.ownKeys(value).length !== value.length+1) throw new Error('Patrol history budget or storage invalid.');
@@ -47,7 +49,7 @@ const same = (a: Position,b: Position) => a.x === b.x && a.y === b.y && a.z === 
 /** AUTHORED priority: reserve NPC current/destination first, then stable-ID players.
  * Blocked route attempts reverse and wait a full cadence. No swaps or following
  * into cells occupied at tick start. Closed gate and players use the same policy. */
-export function stepTrainingPatrol(level: LevelData, world: WorldState, gate: TrainingGate, patrol: TrainingPatrol, encounter: TrainingEncounter, commands: PlayerCommand[], actor: number | null, snapshot = effectivePatrolLevel(level,gate,encounter)) {
+export function stepTrainingPatrol(level: LevelData, world: WorldState, gate: TrainingGate, patrol: TrainingPatrol, encounter: TrainingEncounter, commands: PlayerCommand[], actor: number | null, snapshot = effectivePatrolLevel(level,gate,encounter), action: DoorAction = 16) {
   if (world.mission.outcome !== 'active') return {world,gate,patrol,encounter,events:[],feedback:'',effective:snapshot};
   let next = {...patrol}, destination: Position | null = null;
   const active = encounter.fitness > 0;
@@ -64,22 +66,23 @@ export function stepTrainingPatrol(level: LevelData, world: WorldState, gate: Tr
     }
   }
   const reservations = active ? [patrolPosition(patrol),...(destination ? [destination] : [])] : [];
-  const result = stepTrainingGate(snapshot,world,gate,commands,actor,reservations,snapshot);
+  const result = stepTrainingGate(snapshot,world,gate,commands,actor,reservations,snapshot,action);
   if (result.world.tick === world.tick) return {...result,patrol,encounter};
   // Closure interlock reserved this destination; opening takes effect next cadence.
   if (destination) next = {...next,routeIndex:PATROL_ROUTE.indexOf(destination)};
   return {...result,patrol:next,encounter:tickTrainingEncounter(encounter)};
 }
 export function replayTrainingPatrol(level: LevelData, team: OriginalTeam, items: ItemCatalog, gun: GunWeapon, history: unknown) {
-  let world = createWorld(level), gate = initialTrainingGate(), patrol = initialTrainingPatrol(patrolMissionLevel(level));
+  let world = createWorld(level), gate = initialTrainingGate(movingDoorLevel(level)), patrol = initialTrainingPatrol(patrolMissionLevel(level),movingDoorLevel(level));
   let encounter = createTrainingEncounter(gun,team.actors.map(a => a.canonicalIndex),0,'full');
   let inventory = replayTrainingInventory(team,items,[]);
   const inventoryCommands: InventoryCommand[] = [];
   let effective = effectiveGateLevel(level,gate);
   const events = patrolHistory(history);
-  const ticks = events.reduce((sum,event) => sum + (event.kind === 'wait' ? event.ticks : event.kind === 'step' || event.kind === 'activate' ? 1 : 0),0);
+  const ticks = events.reduce((sum,event) => sum + (event.kind === 'wait' ? event.ticks : event.kind === 'step' || event.kind === 'activate' || event.kind === 'door' ? 1 : 0),0);
   if (ticks > MAX_GROUND_TICKS) throw new Error('Patrol tick budget exceeded.');
   for (const event of events) {
+    if (event.kind === 'door' && !movingDoorLevel(level)) throw new Error('Door actions require v12 fixture.');
     if (patrolMissionLevel(level) && world.mission.outcome !== 'active') throw new Error('Patrol history continues after outcome.');
     if (patrolMissionLevel(level) && (event.kind === 'fire' || event.kind === 'target') && world.mission.exited[encounter.actor]) throw new Error('Extracted gun actor is retired.');
     if (event.kind === 'fire') {encounter = fireTrainingEncounter(encounter,gun); effective = effectivePatrolLevel(level,gate,encounter);}
@@ -88,11 +91,11 @@ export function replayTrainingPatrol(level: LevelData, team: OriginalTeam, items
       if (patrolMissionLevel(level) && world.mission.exited[event.actor]) throw new Error('Extracted inventory actor is retired.');
       inventoryCommands.push(event); inventory = replayTrainingInventory(team,items,inventoryCommands);
       gate = appendGateEvent(gate,event);
-    } else if (event.kind === 'step' || event.kind === 'wait' || event.kind === 'activate') {
+    } else if (event.kind === 'step' || event.kind === 'wait' || event.kind === 'activate' || event.kind === 'door') {
       const ticks = event.kind === 'wait' ? event.ticks : 1;
       for (let t=0;t<ticks;t++) {
         if (patrolMissionLevel(level) && world.mission.outcome !== 'active') throw new Error('Patrol history continues after outcome.');
-        const result = stepTrainingPatrol(level,world,gate,patrol,encounter,event.kind === 'wait' ? [] : event.commands,event.kind === 'activate' ? event.actor : null,effective);
+        const result = stepTrainingPatrol(level,world,gate,patrol,encounter,event.kind === 'wait' ? [] : event.commands,event.kind === 'activate' || event.kind === 'door' ? event.actor : null,effective,event.kind === 'door' ? event.action : 16);
         world = result.world; effective = result.effective; gate = result.gate; patrol = result.patrol; encounter = result.encounter;
       }
       gate = appendGateEvent(gate,event);
