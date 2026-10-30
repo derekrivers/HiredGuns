@@ -1,33 +1,31 @@
 # Training43 completion boundary
 
-Accepted gameplay through PR105 at `a130fb75a4e676464205164bd10c39e0ca2925aa`
-(tree `d3afbdb1cf8c68b9184b78df61d43ac593c3fc2e`). Same-app verified team,
-paused inventory/exchange, isolated gun encounter, one-click setup, selected-team
-authored dry fall, guided controls and authored ground cache have accepted packets.
-PR100 supplies the accepted immutable button/block transition.
+Accepted gameplay through PR106 at `da41c93cac5e7fa9f42fec698864622d96ce7fa3`
+(tree `97cbd3a845a4147baf660c7c9494a3f84ca1f727`). Verified team, paused inventory,
+isolated gun encounter, one-click setup, selected-team authored dry fall, guided
+controls, ground cache and keyboard static gate have accepted packets.
 
-Candidate: [keyboard button/static gate practice](training-gate.md), using a
-canonical authored arena and the current verified selected team. C reverses a
-front-cell panel via PR100; closed gates block movement, open gates admit actual
-walkthrough, and authored occupancy/reservation protection refuses closure.
-Source-bound v9 replay preserves interleaved inventory and independently validated
-encounter state. Ground-cache and dry-fall modes stay separate; reopen Training43
-and Apply a fresh team to switch. This packet awaits independent HIGH/current CI/
-completed automatic review and normal coordinator integration.
+Candidate: [authored gate patrol](training-patrol.md), one deterministic target
+within the existing gate arena. Current/next-cell reservations prevent overlap and
+closure into the NPC. F retains the accepted designated-target dummy policy and
+source gun arithmetic; zero health stops this authored target and releases occupancy.
+V10 replays complete world/gate/NPC/inventory/encounter chronology from canonical
+starts and freshly verified sources. This awaits independent HIGH/current CI/
+completed automatic review, resolved findings and coordinator integration.
 
 | Capability | Current scope and remaining boundary |
 | --- | --- |
-| Startup / movement / selection / pause | Same guided app; four views, verified local OCS team and keyboard control. Original startup and hardware-controller parity remain separate. |
-| Inventory / ground | Accepted paused equip/exchange/return and authored relocated-cache pickup/drop with v8 recovery. Gate v9 supports interleaved inventory. No original world item placement or general use. |
-| Weapons / encounters | Accepted isolated authored dummy/miss and source-derived gun arithmetic. Separate authored ammo; no world enemies. |
-| Buttons / gates | Candidate same-app authored static panel/gate, shared collision/display candidate and closure interlock. Original Training43 signs and inactive door slots remain inactive; moving doors, pads and lifts unavailable. |
-| Falling / water / death | Accepted selected-team authored dry fall with v7 recovery. No gate/ground mixed fall replay; no changed-block recalculation of old injuries. Wet outcomes and original lifecycle remain unavailable. |
-| Mission / retry / recovery | Accepted bounded Training43 extraction/timeouts. Candidate gate retry resets words/history/inventory/encounter; complete paused v9 recovery verifies canonical fixture and chronological world. Schema 3 and size bounds unchanged. |
+| Startup / movement / selection / pause | Same guided app; four views, verified OCS team and keyboard control. Original startup and hardware-controller parity remain separate. |
+| Inventory / ground | Accepted paused equip/exchange/return and authored cache pickup/drop/v8. Patrol v10 supports interleaved inventory. No original world item placement or general use. |
+| Weapons / encounters | Accepted authored dummy/miss and source gun arithmetic. Candidate designates that target as the patrol NPC, with defeat/occupancy release. No spatial aim, range, line of sight, enemy attacks or player damage. |
+| Buttons / gates / patrol | Accepted static panel/gate/v9 and closure interlock. Candidate fixed authored route/cadence through that gate with wall/player reversals and occupancy reservations. Original AI, moving doors, pads and lifts remain unavailable. |
+| Falling / water / death | Accepted selected-team dry fall/v7. No gate/ground mixed fall replay or old-fall recalculation. Wet outcomes and original lifecycle remain unavailable. |
+| Mission / retry / recovery | Accepted bounded extraction/timeouts and gate/v9 replay. Candidate v10 compares all encounter/NPC receipts against ordered replay; Retry resets the entire scenario, recovery pauses and stale asynchronous work cancels. Schema 3 and size bounds unchanged. |
 
-Training43 and the complete functional test bed remain incomplete. No original-map
-runtime parity, full level, enemy, wet, moving-door, campaign, graphics or audio
-completion is claimed. Public tests use synthetic fixtures; private originals and
-browser evidence stay ignored. Physical controllers/TV remain deferred.
+Training43 and the functional test bed remain incomplete. No original-map runtime
+parity, complete original enemy behavior, full level, wet, moving-door, campaign,
+graphics or audio completion is claimed. Public tests use synthetic fixtures;
+private originals and browser evidence stay ignored. Controllers/TV remain deferred.
 
 The original assessment below is historical; its unchanged-browser/recovery statements predate the accepted session/inventory work.
 
@@ -601,4 +599,4 @@ object-key-order-sensitive checkpoint comparison; no failed repair cycle or
 recursive delegation. Token usage unavailable.
 
 
-Pending review: the [authored ground cache consumer](training-ground.md) adds same-app keyboard equipment/carried pickup and equipment drop, physical 30-slot capacity, source-bound ownership/weight and chronological static-world v8 recovery. It relocates initial team carried entries into a labelled authored overlay. Original map-item placement, general use, direct carried drop, ground swaps, corpses and weight-dependent interleaved dry-fall remain outside this candidate. Existing ground-core acceptance is distinct from this consumer’s pending independent HIGH/CI/automatic gates.
+Pending review: the [authored ground cache consumer](training-ground.md) adds same-app keyboard equipment/carried pickup and equipment drop, physical 30-slot capacity, source-bound ownership/weight and chronological static-world v8 recovery. It relocates initial team carried entries into a labelled authored overlay. Original map-item placement, general use, direct carried drop, ground swaps, corpses and weight-dependent interleaved dry-fall remain outside this candidate. Existing ground-core acceptance is distinct from this consumerâ€™s pending independent HIGH/CI/automatic gates.

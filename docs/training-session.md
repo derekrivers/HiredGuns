@@ -164,7 +164,7 @@ automatic review/findings resolution and relevant CI are coordinator gates; this
 implementation does not approve or merge itself.
 
 
-Ground-enabled static sessions use the bounded [v8 authored cache replay](training-ground.md). Legacy v1–v7 remain supported. Ground inventory, weight, overlay and movement are reconstructed together from verified initial ownership; selected dry-fall ground actions are unavailable.
+Ground-enabled static sessions use the bounded [v8 authored cache replay](training-ground.md). Legacy v1â€“v7 remain supported. Ground inventory, weight, overlay and movement are reconstructed together from verified initial ownership; selected dry-fall ground actions are unavailable.
 
 
 ## Authored static gate practice (v9)
@@ -201,3 +201,27 @@ and Apply a fresh team (or load the ready preset) to switch modes. Gate setup re
 an existing ground overlay or fall mode. No past fall is recalculated against new
 blocks or inventory weight. Gate item actions retain the independent encounter
 without refilling ammo; its existing validator remains the authority for that state.
+
+## Authored gate patrol (v10)
+
+The optional [same-app patrol target](training-patrol.md) extends fresh gate
+practice at paused tick zero. Setup explicitly starts canonical gate/team/inventory
+and a full authored slot-1 loadout. F uses the accepted nonspatial designated-target
+policy and source gun helper; T misses. Zero dummy health stops this authored NPC
+and releases occupancy. Arm/R is unavailable; Retry resets the whole scenario.
+
+Exact v10 adds `scenario: "authored-gate-patrol-v1"` and a `patrol` receipt with
+exact fields `{version:1,fixture,history,routeIndex,direction,counter,blocked}`.
+The map binding stays canonical authored gate geometry. Restore rehashes both raw
+sources and chronologically replays accepted ticks, player commands, activations,
+item operations and F/T events. Complete patrol, encounter, gate, inventory and
+world must match. Route/coordinates and serialized health grant no authority.
+Legacy v1-v9 fields and validation stay unchanged; loading v9 removes patrol.
+
+Histories retain all events within 128 records and 45000 ticks, with lossless
+adjacent waits. Prospective ticks/F/T events check complete UTF-8 <24 KiB outer
+and <16 KiB nested candidates before install. Invalid/budget-refused work mutates
+nothing. Save and paused item work reverify the full chronology. Generation guards
+cancel stale setup/save/restore/item work after Retry, source clear, new Apply or
+mode switch. Open/closed and active/defeated saves restore paused. Ground/fall still
+require a fresh Apply; no old fall is recalculated.

@@ -1,9 +1,10 @@
+import { PATROL_FIXTURE, initialTrainingPatrol, appendPatrolEvent, replayTrainingPatrol, stepTrainingPatrol, type TrainingPatrol, type PatrolEvent } from '../world/training-patrol';
 import { appendGateEvent, createTrainingGateLevel, effectiveGateLevel, gateEnvelope, gateLevel, initialTrainingGate, replayTrainingGate, stepTrainingGate, type GateEvent, type TrainingGate } from '../world/training-gate';
 import { GROUND_FIXTURE, groundEnvelope, groundHistory, replayTrainingGround, type GroundEvent, type TrainingGround } from '../items/training-ground';
 import type { GroundTransferCommand } from '../items/ground-transfer';
 import type { MissionRules, PlayerCommand } from '../contracts';
 import { bindVerifiedEncounterGun, type GunWeapon } from '../combat/weapon-transition';
-import { resetTrainingEncounter, validateTrainingEncounter, type TrainingEncounter } from '../combat/training-encounter';
+import { createTrainingEncounter, fireTrainingEncounter, targetTrainingEncounter, resetTrainingEncounter, validateTrainingEncounter, type TrainingEncounter } from '../combat/training-encounter';
 import type { LevelData, WorldState } from '../contracts';
 import { importItems, type ItemCatalog } from '../import/items';
 import { equipCommands, inventoryCommands, replayTrainingInventory, type TrainingInventory } from './training-inventory';
@@ -24,6 +25,7 @@ export interface TrainingSession {
   readonly inventory: TrainingInventory;
   readonly ground: TrainingGround | null;
   readonly gate: TrainingGate | null;
+  readonly patrol?: TrainingPatrol | null;
   readonly encounterGun: GunWeapon;
   readonly encounter: TrainingEncounter | null;
 }
@@ -65,7 +67,7 @@ export async function createTrainingSession(level: LevelData, sources: TrainingS
   const roster = new Uint8Array(sources.roster), items = new Uint8Array(sources.items);
   const teamPromise = initializeOriginalTeam(roster, items, indices);
   const [team, catalog, table, encounterGun] = await Promise.all([teamPromise, importCharacters(roster), importItems(items), bindVerifiedEncounterGun(items)]);
-  const session = freeze({ gate: gateLevel(map) ? {...initialTrainingGate(),history:replay} : null, ground: null, encounterGun, encounter: null, indices: team.actors.map(a => a.canonicalIndex),
+  const session = freeze({ patrol: null, gate: gateLevel(map) ? {...initialTrainingGate(),history:replay} : null, ground: null, encounterGun, encounter: null, indices: team.actors.map(a => a.canonicalIndex),
     names: team.actors.map(a => catalog.records[a.canonicalIndex]!.text.gameName || catalog.records[a.canonicalIndex]!.text.selectionName || `Character ${a.canonicalIndex + 1}`), team, items: table, inventory: replayTrainingInventory(team, table, replay) });
   const profile = selectedFallLevel(map) ? selectedFallProfile(session) : undefined;
   const world = createWorld(map, undefined, undefined, profile);
@@ -78,6 +80,11 @@ export async function createTrainingSession(level: LevelData, sources: TrainingS
 /** Reverify and validate a complete prospective save before exposing a command candidate. */
 async function changeInventory(level: LevelData, sources: TrainingSources, session: TrainingSession, actor: number, slot: number, paused: boolean, kind: 'equip' | 'return' | 'exchange', currentWorld?: WorldState): Promise<TrainingCandidate> {
   if (!paused) throw new Error('Pause before changing equipment.');
+  if (session.patrol) {
+    if (!currentWorld) throw new Error('Patrol inventory requires current world.');
+    const prior = await verifyPatrolSession(level,sources,session,currentWorld);
+    return rebuildPatrolSession(level,sources,session.indices,appendPatrolEvent(prior.session.patrol!,{kind,actor,slot}));
+  }
   if (session.gate) {
     if (!currentWorld) throw new Error('Gate inventory requires its current world.');
     const saved = structuredClone(currentWorld), gate = structuredClone(session.gate), inventory = structuredClone(session.inventory), encounter = structuredClone(session.encounter);
@@ -114,8 +121,8 @@ export async function exchangeTrainingSession(level: LevelData, sources: Trainin
 }
 
 function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall = false): string {
-  const json = JSON.stringify({ format: 'hired-guns-training-session', version: session.gate ? 9 : session.ground ? 8 : selectedFall ? 7 : session.encounter === null ? 5 : 6,
-    ...(session.gate ? {scenario:'authored-static-gate-v1', gate:session.gate} : selectedFall ? { scenario: 'selected-dry-fall-v1' } : {}),
+  const json = JSON.stringify({ format: 'hired-guns-training-session', version: session.patrol ? 10 : session.gate ? 9 : session.ground ? 8 : selectedFall ? 7 : session.encounter === null ? 5 : 6,
+    ...(session.patrol ? {scenario:PATROL_FIXTURE,gate:session.gate,patrol:session.patrol} : session.gate ? {scenario:'authored-static-gate-v1', gate:session.gate} : selectedFall ? { scenario: 'selected-dry-fall-v1' } : {}),
     ...(session.encounter === null ? {} : { encounter: validateTrainingEncounter(session.encounter, session.encounterGun, session.indices) }),
     sources: { map: session.gate ? 'authored:authored-static-gate-v1' : selectedFall ? 'authored:selected-dry-fall-v1' : TRAINING_43_SHA256, ...session.team.sources },
     indices: session.indices, ...(session.ground ? { ground: { version: 1, fixture: session.ground.fixture, rules: session.ground.rules, history: session.ground.history } } : { commands: session.inventory.commands }), checkpoint });
@@ -126,12 +133,16 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
   const baseline = session.ground ? replayTrainingGround(level ?? (() => { throw new Error('Ground retry requires its level.'); })(), session.team, session.items, { version: 1, fixture: GROUND_FIXTURE, rules: rules ?? session.ground.rules, history: [] }) : null;
-  return freeze({ ...session, gate: session.gate ? initialTrainingGate() : null, ground: baseline?.ground ?? null, inventory: baseline?.inventory ?? replayTrainingInventory(session.team, session.items, []),
-    encounter: session.encounter === null ? null : resetTrainingEncounter(session.encounter, session.encounterGun, session.indices) });
+  return freeze({ ...session, patrol: session.patrol ? initialTrainingPatrol() : null, gate: session.gate ? initialTrainingGate() : null, ground: baseline?.ground ?? null, inventory: baseline?.inventory ?? replayTrainingInventory(session.team, session.items, []),
+    encounter: session.patrol ? createTrainingEncounter(session.encounterGun,session.indices,0,'full') : session.encounter === null ? null : resetTrainingEncounter(session.encounter, session.encounterGun, session.indices) });
 }
 
 /** Save bounded replay commands, never unchecked arbitrary inventory storage. */
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources): Promise<string> {
+  if (session.patrol) {
+    const candidate = await verifyPatrolSession(level,sources,session,world);
+    return sessionJSON(candidate.session,await exportCheckpoint(effectiveGateLevel(level,candidate.session.gate),candidate.world));
+  }
   const map = trainingLevel(level);
   const savedWorld = structuredClone(world), encounterState = structuredClone(session.encounter), gateState = structuredClone(session.gate);
   const candidate = gateState ? await rebuildGateSession(map, sources, session.indices, gateState) : session.ground ? await rebuildGroundSession(map, sources, session.indices, { version: 1, fixture: session.ground.fixture, rules: session.ground.rules, history: session.ground.history }) : await createTrainingSession(map, sources, session.indices, session.inventory.commands);
@@ -152,17 +163,18 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   const parsed: unknown = JSON.parse(json);
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const version = (parsed as { version?: unknown }).version;
-  const selected = version === 7, grounded = version === 8, gated = version === 9;
+  const selected = version === 7, grounded = version === 8, patrolling = version === 10, gated = version === 9 || patrolling;
   const hasEncounter = (selected || grounded || gated) && Object.hasOwn(parsed, 'encounter');
-  exact(parsed, gated ? ['format','version','sources','indices','commands','checkpoint','scenario','gate', ...(hasEncounter ? ['encounter'] : [])] : grounded ? ['format','version','sources','indices','ground','checkpoint', ...(hasEncounter ? ['encounter'] : [])] : selected ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'scenario', ...(hasEncounter ? ['encounter'] : [])] : version === 6 ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'encounter'] : version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
-  if (parsed.format !== 'hired-guns-training-session' || ![1,2,3,4,5,6,7,8,9].includes(version as number) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
+  exact(parsed, gated ? ['format','version','sources','indices','commands','checkpoint','scenario','gate', ...(patrolling ? ['patrol'] : []), ...(hasEncounter ? ['encounter'] : [])] : grounded ? ['format','version','sources','indices','ground','checkpoint', ...(hasEncounter ? ['encounter'] : [])] : selected ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'scenario', ...(hasEncounter ? ['encounter'] : [])] : version === 6 ? ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint', 'encounter'] : version === 1 ? ['format', 'version', 'sources', 'indices', 'checkpoint'] : ['format', 'version', 'sources', 'indices', 'commands', 'checkpoint']);
+  if (parsed.format !== 'hired-guns-training-session' || ![1,2,3,4,5,6,7,8,9,10].includes(version as number) || typeof parsed.checkpoint !== 'string') throw new Error('Unsupported Training43 session format/version.');
   exact(parsed.sources, ['map', 'roster', 'items']);
   const expected = structuredClone(parsed.sources);
   const map = trainingLevel(level);
-  if (gated !== gateLevel(map) || (gated && parsed.scenario !== 'authored-static-gate-v1')) throw new Error('Session scenario mismatch. Open matching practice first.');
+  if (gated !== gateLevel(map) || (gated && parsed.scenario !== (patrolling ? PATROL_FIXTURE : 'authored-static-gate-v1'))) throw new Error('Session scenario mismatch. Open matching practice first.');
   if (selected !== selectedFallLevel(map) || (selected && parsed.scenario !== 'selected-dry-fall-v1')) throw new Error('Session scenario mismatch. Open the matching practice mode first.');
   const commands = grounded || version === 1 ? [] : version === 2 ? equipCommands(parsed.commands).map(command => ({ kind: 'equip' as const, ...command })) : inventoryCommands(parsed.commands, version === 3, version === 5 || version === 6 || selected || gated);
-  const candidate = gated ? await rebuildGateSession(map,sources,parsed.indices as number[],parsed.gate) : grounded ? await rebuildGroundSession(map, sources, parsed.indices as number[], parsed.ground) : await createTrainingSession(map, sources, parsed.indices as number[], commands);
+  const candidate = patrolling ? await rebuildPatrolSession(map,sources,parsed.indices as number[],parsed.patrol) : gated ? await rebuildGateSession(map,sources,parsed.indices as number[],parsed.gate) : grounded ? await rebuildGroundSession(map, sources, parsed.indices as number[], parsed.ground) : await createTrainingSession(map, sources, parsed.indices as number[], commands);
+  if (patrolling && (canonical(parsed.gate) !== canonical(candidate.session.gate) || canonical(parsed.encounter) !== canonical(candidate.session.encounter))) throw new Error('Patrol gate/encounter history mismatch.');
   if (gated && canonical(commands) !== canonical(candidate.session.inventory.commands)) throw new Error('Gate inventory history mismatch.');
   const world = await importCheckpoint(effectiveGateLevel(map,candidate.session.gate), parsed.checkpoint, selected ? selectedFallProfile(candidate.session) : undefined);
   if ((grounded || gated) && canonical(candidate.world) !== canonical(world)) throw new Error('Ground history/world mismatch.');
@@ -249,9 +261,58 @@ export async function createGateTrainingSession(sources: TrainingSources, sessio
 /** Tick, activation, collision and replay budget are prepared before one synchronous install. */
 export function advanceGateTrainingSession(level: LevelData, session: TrainingSession, world: WorldState, commands: PlayerCommand[], actor: number | null) {
   if (!session.gate) throw new Error('Author gate practice first.');
+  if (session.patrol) return advancePatrolSession(level,session,world,commands,actor);
   const result = stepTrainingGate(level,world,session.gate,commands,actor);
   const event: GateEvent = actor !== null ? {kind:'activate',actor,commands:structuredClone(commands)} : commands.length ? {kind:'step',commands:structuredClone(commands)} : {kind:'wait',ticks:1};
   const next = freeze({...session,gate:appendGateEvent(result.gate,event)});
   sessionJSON(next,JSON.stringify({format:'hired-guns-save',version:3,levelHash:'0'.repeat(64),world:result.world}));
   return {...result,session:next};
+}
+
+/** V10 rebuilds every mutable receipt from canonical starts and chronological events. */
+async function rebuildPatrolSession(level: LevelData, sources: TrainingSources, indices: readonly number[], input: unknown): Promise<TrainingCandidate> {
+  const map = trainingLevel(level);
+  if (!gateLevel(map)) throw new Error('Patrol requires gate practice.');
+  exact(input,['version','fixture','history','routeIndex','direction','counter','blocked']);
+  if (input.version !== 1 || input.fixture !== PATROL_FIXTURE) throw new Error('Unknown patrol fixture.');
+  const baseline = await createTrainingSession(map,sources,indices);
+  const result = replayTrainingPatrol(map,baseline.session.team,baseline.session.items,baseline.session.encounterGun,input.history);
+  if (canonical(input) !== canonical(result.patrol)) throw new Error('Patrol position/counter/history mismatch.');
+  const session = freeze({...baseline.session,gate:result.gate,patrol:result.patrol,encounter:result.encounter,inventory:result.inventory});
+  sessionJSON(session,await exportCheckpoint(effectiveGateLevel(map,session.gate),result.world));
+  return {session,world:result.world};
+}
+async function verifyPatrolSession(level: LevelData, sources: TrainingSources, session: TrainingSession, world: WorldState) {
+  const saved = structuredClone({session,world}), raw = {roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)};
+  const candidate = await rebuildPatrolSession(level,raw,saved.session.indices,saved.session.patrol);
+  if (canonical(candidate) !== canonical(saved)) throw new Error('Patrol world/session history mismatch.');
+  return candidate;
+}
+/** Explicit setup resets gate/world/inventory/gun to one canonical authored baseline. */
+export async function createPatrolTrainingSession(level: LevelData, sources: TrainingSources, session: TrainingSession, world: WorldState, paused: boolean): Promise<TrainingCandidate> {
+  if (!paused || !session.gate || session.patrol || world.tick !== 0 || session.gate.history.length) throw new Error('Retry gate practice, pause at tick zero, then add patrol.');
+  return rebuildPatrolSession(level,sources,session.indices,initialTrainingPatrol());
+}
+function patrolBudget(level: LevelData, session: TrainingSession, world: WorldState) {
+  const checkpoint = JSON.stringify({format:'hired-guns-save',version:3,levelHash:'0'.repeat(64),world});
+  if (new TextEncoder().encode(checkpoint).length >= 16*1024) throw new Error('Patrol checkpoint budget exhausted.');
+  sessionJSON(session,checkpoint);
+  // Geometry is checked during setup/recovery; synchronous ticks never rehash private inputs.
+  if (!gateLevel(level)) throw new Error('Patrol scenario mismatch.');
+}
+function advancePatrolSession(level: LevelData, session: TrainingSession, world: WorldState, commands: PlayerCommand[], actor: number | null) {
+  const result = stepTrainingPatrol(level,world,session.gate!,session.patrol!,session.encounter!,commands,actor);
+  if (result.world.tick === world.tick) return {...result,session};
+  const event: GateEvent = actor !== null ? {kind:'activate',actor,commands:structuredClone(commands)} : commands.length ? {kind:'step',commands:structuredClone(commands)} : {kind:'wait',ticks:1};
+  const next = freeze({...session,gate:appendGateEvent(result.gate,event),patrol:appendPatrolEvent(result.patrol,event),encounter:result.encounter});
+  patrolBudget(level,next,result.world);
+  return {...result,session:next};
+}
+export function commandPatrolEncounter(level: LevelData, session: TrainingSession, world: WorldState, kind: 'fire' | 'target', paused: boolean): TrainingSession {
+  if (!session.patrol || !session.encounter || world.mission.outcome !== 'active' || (kind === 'fire' && paused)) throw new Error('Patrol firing unavailable.');
+  const event: PatrolEvent = {kind};
+  const encounter = kind === 'fire' ? fireTrainingEncounter(session.encounter,session.encounterGun) : targetTrainingEncounter(session.encounter);
+  const next = freeze({...session,encounter,patrol:appendPatrolEvent(session.patrol,event)});
+  patrolBudget(level,next,world);
+  return next;
 }

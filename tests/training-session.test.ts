@@ -287,3 +287,59 @@ it.skipIf(!privateInputs)('gate snapshots sources/world/envelope before asynchro
   const saving=JSON.parse(saved);saving.gate.history=Array(129).fill({kind:'wait',ticks:1});
   await expect(importTrainingSession(map,sources,JSON.stringify(saving))).rejects.toThrow();
 });
+
+it.skipIf(!privateInputs)('patrol v10 replays source-bound chronological gate, NPC, full encounter, inventory and checkpoint receipts atomically',async()=>{
+  const {createPatrolTrainingSession,commandPatrolEncounter}=await import('../src/sim/training-session');
+  const {patrolPosition}=await import('../src/world/training-patrol');
+  const {sources,level}=await local(), map=createTrainingGateLevel();
+  const original=await createTrainingSession(level,sources,order), gate=await createGateTrainingSession(sources,original.session,level);
+  let c=await createPatrolTrainingSession(map,sources,gate.session,gate.world,true);
+  const baseline=structuredClone(c), closed=await exportTrainingSession(map,c.world,c.session,sources);
+  expect(JSON.parse(closed).version).toBe(10);expect(await importTrainingSession(map,sources,closed)).toEqual(c);
+  for(let i=0;i<32;i++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);
+  expect(c.session.patrol).toMatchObject({routeIndex:1,direction:-1,blocked:'gate-or-wall'});
+  c=advanceGateTrainingSession(map,c.session,c.world,[],0);
+  for(let i=0;i<66;i++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);
+  c={...c,session:commandPatrolEncounter(map,c.session,c.world,'target',true)};
+  const health=c.session.encounter!.fitness;
+  c={...c,session:commandPatrolEncounter(map,c.session,c.world,'fire',false)};
+  expect(c.session.encounter!.fitness).toBe(health);expect(c.session.encounter!.equipped.ammo).toBeLessThan(baseline.session.encounter!.equipped.ammo);
+  for(let i=0;i<20;i++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);
+  c={...c,session:commandPatrolEncounter(map,c.session,c.world,'target',true)};
+  c=await equipTrainingSession(map,sources,c.session,0,0,true,c.world);
+  c=await exchangeTrainingSession(map,sources,c.session,0,0,true,c.world);
+  c=await returnTrainingSession(map,sources,c.session,0,0,true,c.world);
+  const patrolling=await exportTrainingSession(map,c.world,c.session,sources);expect(await importTrainingSession(map,sources,patrolling)).toEqual({session:c.session,world:c.world});
+  const beforeShot=c.session.encounter!, {fireTrainingEncounter}=await import('../src/combat/training-encounter');
+  c={...c,session:commandPatrolEncounter(map,c.session,c.world,'fire',false)};
+  expect(c.session.encounter).toEqual(fireTrainingEncounter(beforeShot,c.session.encounterGun));
+  for(let attempt=0;c.session.encounter!.fitness>0 && attempt<8;attempt++) {
+    for(let i=0;i<40;i++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);
+    c={...c,session:commandPatrolEncounter(map,c.session,c.world,'fire',false)};
+  }
+  expect(c.session.encounter!.fitness).toBe(0);
+  const position=patrolPosition(c.session.patrol!), counter=c.session.patrol!.counter;
+  for(let i=0;i<20;i++)c=advanceGateTrainingSession(map,c.session,c.world,[],null);
+  expect(patrolPosition(c.session.patrol!)).toEqual(position);expect(c.session.patrol!.counter).toBe(counter);
+  const saved=await exportTrainingSession(map,c.world,c.session,sources), e=JSON.parse(saved), snapshot=structuredClone({session:c.session,world:c.world});
+  type PatrolEnvelope = typeof e;
+  expect(await importTrainingSession(map,sources,saved)).toEqual(snapshot);
+  expect(resetTrainingInventory(c.session,map)).toEqual(baseline.session);
+  for(const mutate of [
+    (e:PatrolEnvelope)=>{e.patrol.routeIndex++;},(e:PatrolEnvelope)=>{e.patrol.direction=0;},(e:PatrolEnvelope)=>{e.patrol.counter++;},
+    (e:PatrolEnvelope)=>{e.patrol.fixture='bad';},(e:PatrolEnvelope)=>{e.patrol.position={x:3,y:5,z:1};},(e:PatrolEnvelope)=>{e.patrol.route=[1,2];},
+    (e:PatrolEnvelope)=>{e.patrol.history=e.patrol.history.filter((v:{kind:string})=>v.kind!=='fire');},
+    (e:PatrolEnvelope)=>{e.encounter.fitness++;},(e:PatrolEnvelope)=>{e.encounter.equipped.ammo++;},(e:PatrolEnvelope)=>{e.encounter.fireDuration++;},
+    (e:PatrolEnvelope)=>{e.gate.overlay.word++;},(e:PatrolEnvelope)=>{e.commands=[];},(e:PatrolEnvelope)=>{e.sources.items.sha256='0'.repeat(64);},
+    (e:PatrolEnvelope)=>{e.patrol.history=Array(129).fill({kind:'target'});},(e:PatrolEnvelope)=>{e.patrol.history=[{kind:'wait',ticks:45000},{kind:'wait',ticks:1}];},
+    (e:PatrolEnvelope)=>{const w=JSON.parse(e.checkpoint);w.world.mercenaries[0].x++;e.checkpoint=JSON.stringify(w);},
+    (e:PatrolEnvelope)=>{e.checkpoint=' '.repeat(16384);},(e:PatrolEnvelope)=>{e.version=9;},(e:PatrolEnvelope)=>{e.scenario='authored-static-gate-v1';}
+  ]) {const bad=structuredClone(e);mutate(bad);await expect(importTrainingSession(map,sources,JSON.stringify(bad))).rejects.toThrow();expect({session:c.session,world:c.world}).toEqual(snapshot);}
+  await expect(importTrainingSession(map,sources,' '.repeat(24576))).rejects.toThrow('24 KiB');
+  const raw={roster:new Uint8Array(sources.roster),items:new Uint8Array(sources.items)}, worldSnapshot=structuredClone(c.world);
+  const pending=exportTrainingSession(map,c.world,c.session,raw);raw.items.fill(0);c.world.rng=123;
+  expect((await importTrainingSession(map,sources,await pending)).world).toEqual(worldSnapshot);
+  await expect(importTrainingSession(map,raw,saved)).rejects.toThrow();
+  await expect(createPatrolTrainingSession(map,sources,c.session,c.world,true)).rejects.toThrow('tick zero');
+  await expect(createPatrolTrainingSession(map,sources,gate.session,gate.world,false)).rejects.toThrow();
+});

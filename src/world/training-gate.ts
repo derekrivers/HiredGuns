@@ -77,7 +77,7 @@ export function gateEnvelope(value: unknown): TrainingGate {
 
 /** Static actors have one cell footprint and no persistent interpolation reservation.
  * Prospective successful destinations in this same tick are reservations too. */
-function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, snapshot: LevelData) {
+function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, snapshot: LevelData, reservations: readonly typeof GATE_TARGET[] = []) {
   let nextGate = gate, feedback = '';
   if (actor !== null) {
     if (!Number.isInteger(actor) || actor < 0 || actor > 3 || world.physics.mode !== 'static' || world.mission.outcome !== 'active') throw new Error('Gate activation unavailable.');
@@ -85,7 +85,7 @@ function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate
     if (!inBounds(snapshot, front) || cellIndex(snapshot, front) !== index(GATE_PANEL)) feedback = 'Refused: face the panel at 5,4,1 from 4,4 (east) or 6,4 (west).';
     else {
       const reserved = stepWorld(snapshot, world, commands).world;
-      const targetOccupied = [...world.mercenaries, ...reserved.mercenaries].some(p => cellIndex(snapshot, p) === index(GATE_TARGET));
+      const targetOccupied = [...world.mercenaries, ...reserved.mercenaries, ...reservations].some(p => cellIndex(snapshot, p) === index(GATE_TARGET));
       const result = transitionButtonBlock({ panelIndex: index(GATE_PANEL), panelWord: snapshot.layers[0][index(GATE_PANEL)]!, button,
         overlay: { targetIndex: index(GATE_TARGET), word: snapshot.layers[0][index(GATE_TARGET)]!, discoveryWord: snapshot.layers[1][index(GATE_TARGET)]!, nextPlaneDiscoveryWord: snapshot.layers[1][index(GATE_TARGET) + 529]! }, targetOccupied });
       if (result.status === 'refused') feedback = `Refused: ${result.reason}. Panel and gate unchanged.`;
@@ -93,12 +93,14 @@ function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate
     }
   }
   const effective = nextGate === gate ? snapshot : effectiveGateLevel(base,nextGate);
-  const result = stepWorld(effective, world, commands);
+  const collision: LevelData = reservations.length ? {...effective,layers:[effective.layers[0].slice(),effective.layers[1],effective.layers[2]]} : effective;
+  for (const p of reservations) collision.layers[0][cellIndex(collision,p)] = 66;
+  const result = stepWorld(collision, world, commands);
   if (result.world.tick > MAX_GROUND_TICKS) throw new Error('Gate replay tick budget exhausted. Retry or restore.');
   return { ...result, gate: nextGate, feedback, effective };
 }
-export function stepTrainingGate(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null) {
-  return stepGateSnapshot(base,world,gate,commands,actor,effectiveGateLevel(base,gate));
+export function stepTrainingGate(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, reservations: readonly typeof GATE_TARGET[] = [], snapshot = effectiveGateLevel(base,gate)) {
+  return stepGateSnapshot(base,world,gate,commands,actor,snapshot,reservations);
 }
 export function appendGateEvent(gate: TrainingGate, event: GateEvent): TrainingGate {
   const history = structuredClone(gate.history), last = history.at(-1);
