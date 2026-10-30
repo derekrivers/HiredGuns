@@ -1,26 +1,28 @@
 # Training43 completion boundary
 
-Accepted gameplay through PR106 at `da41c93cac5e7fa9f42fec698864622d96ce7fa3`
-(tree `97cbd3a845a4147baf660c7c9494a3f84ca1f727`). Verified team, paused inventory,
-isolated gun encounter, one-click setup, selected-team authored dry fall, guided
-controls, ground cache and keyboard static gate have accepted packets.
+Accepted gameplay through PR107 at `011cb17e7f5d1683b4a5949fe01d22b8e2798f5f`
+(tree `4711a2b2b5d8522e6f697a65fda95a2a1bf410a3`). Verified team, inventory,
+isolated gun, ready preset, selected-team dry fall, guided controls, ground cache,
+keyboard static gate and deterministic authored gate patrol have accepted packets.
 
-Candidate: [authored gate patrol](training-patrol.md), one deterministic target
-within the existing gate arena. Current/next-cell reservations prevent overlap and
-closure into the NPC. F retains the accepted designated-target dummy policy and
-source gun arithmetic; zero health stops this authored target and releases occupancy.
-V10 replays complete world/gate/NPC/inventory/encounter chronology from canonical
-starts and freshly verified sources. This awaits independent HIGH/current CI/
-completed automatic review, resolved findings and coordinator integration.
+Candidate: [authored cooperative patrol extraction](training-patrol-mission.md),
+one same-app finishable objective: open gate, defeat designated F/T patrol target,
+then extract all four through a marked exit unlocked by target defeat. Fixed ten
+601-tick source counts, existing cooperative retirement and timeout-before-success
+policy, visible progress/controls and terminal Y Retry. V11 canonical replay binds
+complete world/gate/NPC/inventory/encounter/clock/outcome receipts to verified raw
+sources. Checkpoint 3 and existing size/history bounds are unchanged. This awaits
+independent exact-final HIGH/current CI/completed automatic review and coordinator
+integration; it is not Training43 or functional-test-bed acceptance.
 
 | Capability | Current scope and remaining boundary |
 | --- | --- |
 | Startup / movement / selection / pause | Same guided app; four views, verified OCS team and keyboard control. Original startup and hardware-controller parity remain separate. |
-| Inventory / ground | Accepted paused equip/exchange/return and authored cache pickup/drop/v8. Patrol v10 supports interleaved inventory. No original world item placement or general use. |
-| Weapons / encounters | Accepted authored dummy/miss and source gun arithmetic. Candidate designates that target as the patrol NPC, with defeat/occupancy release. No spatial aim, range, line of sight, enemy attacks or player damage. |
-| Buttons / gates / patrol | Accepted static panel/gate/v9 and closure interlock. Candidate fixed authored route/cadence through that gate with wall/player reversals and occupancy reservations. Original AI, moving doors, pads and lifts remain unavailable. |
-| Falling / water / death | Accepted selected-team dry fall/v7. No gate/ground mixed fall replay or old-fall recalculation. Wet outcomes and original lifecycle remain unavailable. |
-| Mission / retry / recovery | Accepted bounded extraction/timeouts and gate/v9 replay. Candidate v10 compares all encounter/NPC receipts against ordered replay; Retry resets the entire scenario, recovery pauses and stale asynchronous work cancels. Schema 3 and size bounds unchanged. |
+| Inventory / ground | Accepted paused equip/exchange/return and authored cache pickup/drop/v8. Patrol supports interleaved inventory. No original item placement or general use. |
+| Weapons / encounters | Accepted designated-target F/T and source gun arithmetic. Zero target health releases authored patrol occupancy. No spatial aim/range/LOS, enemy attacks or player damage. |
+| Buttons / gates / patrol | Accepted static gate/v9 and deterministic route/v10 with closure interlock/reservations. Candidate adds an explicitly authored objective lock/exit. Original AI, moving doors, pads and lifts remain unavailable. |
+| Falling / water / death | Accepted selected-team dry fall/v7. No mixed gate/ground fall replay or old-fall recalculation. Wet outcomes and original lifecycle remain unavailable. |
+| Mission / retry / recovery | Existing extraction, timeout and retirement rules compose with patrol in candidate v11; full replay, paused recovery and atomic Retry. Existing practice modes retain navigation. |
 
 Training43 and the functional test bed remain incomplete. No original-map runtime
 parity, complete original enemy behavior, full level, wet, moving-door, campaign,

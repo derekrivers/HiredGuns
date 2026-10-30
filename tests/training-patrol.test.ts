@@ -70,3 +70,18 @@ it('rejects sparse, accessor, extra-field, unbounded and unknown histories witho
   let reads=0;expect(()=>patrolHistory([{get kind(){reads++;return 'fire';}}])).toThrow();expect(reads).toBe(0);
   for(const history of [new Array(1),Array(129).fill({kind:'fire'}),[{kind:'fire',extra:1}],[{kind:'arm'}],[{kind:'wait',ticks:45001}],[{kind:'step',commands:[{mercenaryId:4,action:'forward'}]}]])expect(()=>patrolHistory(history)).toThrow();
 });
+
+it('authored mission locks the exit until target defeat and retains all-four retirement and deadline ties',async()=>{
+ const {createPatrolMissionLevel}=await import('../src/world/training-gate');
+ const {effectivePatrolLevel}=await import('../src/world/training-patrol');
+ const {sourceClockAtTick}=await import('../src/sim/mission');
+ const map=createPatrolMissionLevel(),h=harness(255),initial=h.state();let world=createWorld(map),gate=initial.gate,patrol={...initial.patrol,fixture:'authored-patrol-extraction-v1' as const},encounter=initial.encounter;
+ const step=(commands:PlayerCommand[]=[],actor:number|null=null)=>{const r=stepTrainingPatrol(map,world,gate,patrol,encounter,commands,actor);world=r.world;gate=r.gate;patrol=r.patrol as typeof patrol;encounter=r.encounter;return r;};
+ // Independent exit position/approach oracle; source exit blocks retain approach pose.
+ world.mercenaries[3]={...world.mercenaries[3]!,x:7,y:5,facing:1};expect(step([{mercenaryId:3,action:'forward'}]).events[0]?.kind).toBe('blocked');expect(world.mission.exited[3]).toBe(false);
+ encounter=fireTrainingEncounter(encounter,h.gun);expect(encounter.fitness).toBe(0);expect(effectivePatrolLevel(map,gate,encounter).layers[0][(1*23+5)*23+8]).toBe(6146);
+ step([{mercenaryId:3,action:'forward'}]);expect(world.mission.exited).toEqual([false,false,false,true]);expect(world.mission.outcome).toBe('active');const retired={...world.mercenaries[3]!};step([{mercenaryId:3,action:'backward'}]);expect(world.mercenaries[3]).toEqual(retired);
+ for(const id of [0,1,2]){world.mercenaries[id]={...world.mercenaries[id]!,x:7,y:5,facing:1};step([{mercenaryId:id,action:'forward'}]);}expect(world.mission.outcome).toBe('complete');const terminal=structuredClone({world,gate,patrol,encounter});step([{mercenaryId:0,action:'backward'}],0);expect({world,gate,patrol,encounter}).toEqual(terminal);
+ // Explicit same-tick fourth extraction at the accepted source deadline still fails.
+ world={...world,tick:6009,mission:{...world.mission,outcome:'active',exited:[true,true,true,false],clock:sourceClockAtTick(10,6009)}};step([{mercenaryId:3,action:'forward'}]);expect(world.tick).toBe(6010);expect(world.mission.exited.every(Boolean)).toBe(true);expect(world.mission.outcome).toBe('failed');
+});

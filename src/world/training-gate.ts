@@ -6,6 +6,9 @@ import { replayTrainingInventory, type InventoryCommand } from '../sim/training-
 import { createWorld, DIRECTIONS, stepWorld } from '../sim/world';
 import { transitionButtonBlock, type StaticBlockingOverlay } from './button-door-transition';
 
+export const PATROL_MISSION_FIXTURE = 'authored-patrol-extraction-v1';
+export const PATROL_EXIT = Object.freeze({x:8,y:5,z:1});
+export const patrolMissionLevel = (level: LevelData) => level.id === PATROL_MISSION_FIXTURE;
 export const GATE_FIXTURE = 'authored-static-gate-v1';
 export const MAX_GATE_HISTORY = 128;
 export const GATE_PANEL = { x: 5, y: 4, z: 1 };
@@ -32,7 +35,13 @@ export function createTrainingGateLevel(): LevelData {
     starts: [{ x: 4, y: 4, z: 1, facing: 1 }, { x: 6, y: 4, z: 1, facing: 3 }, { x: 3, y: 7, z: 1, facing: 0 }, { x: 7, y: 7, z: 1, facing: 0 }],
     exit: { x: 1, y: 1, z: 1 }, unsupportedMechanics: ['Authored static gate only; no original-map runtime parity, moving doors, pads, lifts, wet outcomes or item use.'] };
 }
-export const gateLevel = (level: LevelData) => level.id === GATE_FIXTURE;
+export function createPatrolMissionLevel(): LevelData {
+  const level = createTrainingGateLevel();
+  level.id = PATROL_MISSION_FIXTURE; level.name = 'Authored cooperative patrol extraction';
+  level.exit = {...PATROL_EXIT}; level.layers[0][index(PATROL_EXIT)] = 67;
+  return level;
+}
+export const gateLevel = (level: LevelData) => level.id === GATE_FIXTURE || patrolMissionLevel(level);
 export function initialTrainingGate(): TrainingGate { return { version: 1, fixture: GATE_FIXTURE, history: [], ...initialWords() }; }
 export function effectiveGateLevel(base: LevelData, gate: TrainingGate | null): LevelData {
   if (!gate) return base;
@@ -79,13 +88,14 @@ export function gateEnvelope(value: unknown): TrainingGate {
  * Prospective successful destinations in this same tick are reservations too. */
 function stepGateSnapshot(base: LevelData, world: WorldState, gate: TrainingGate, commands: PlayerCommand[], actor: number | null, snapshot: LevelData, reservations: readonly typeof GATE_TARGET[] = []) {
   let nextGate = gate, feedback = '';
+  if (actor !== null && world.mission.exited[actor]) {actor = null; feedback = 'Refused: extracted actor is retired.';}
   if (actor !== null) {
     if (!Number.isInteger(actor) || actor < 0 || actor > 3 || world.physics.mode !== 'static' || world.mission.outcome !== 'active') throw new Error('Gate activation unavailable.');
     const pose = world.mercenaries[actor]!, direction = DIRECTIONS[pose.facing], front = { x: pose.x + direction.x, y: pose.y + direction.y, z: pose.z };
     if (!inBounds(snapshot, front) || cellIndex(snapshot, front) !== index(GATE_PANEL)) feedback = 'Refused: face the panel at 5,4,1 from 4,4 (east) or 6,4 (west).';
     else {
       const reserved = stepWorld(snapshot, world, commands).world;
-      const targetOccupied = [...world.mercenaries, ...reserved.mercenaries, ...reservations].some(p => cellIndex(snapshot, p) === index(GATE_TARGET));
+      const targetOccupied = [...world.mercenaries.filter(m=>!world.mission.exited[m.id]), ...reserved.mercenaries.filter(m=>!reserved.mission.exited[m.id]), ...reservations].some(p => cellIndex(snapshot, p) === index(GATE_TARGET));
       const result = transitionButtonBlock({ panelIndex: index(GATE_PANEL), panelWord: snapshot.layers[0][index(GATE_PANEL)]!, button,
         overlay: { targetIndex: index(GATE_TARGET), word: snapshot.layers[0][index(GATE_TARGET)]!, discoveryWord: snapshot.layers[1][index(GATE_TARGET)]!, nextPlaneDiscoveryWord: snapshot.layers[1][index(GATE_TARGET) + 529]! }, targetOccupied });
       if (result.status === 'refused') feedback = `Refused: ${result.reason}. Panel and gate unchanged.`;

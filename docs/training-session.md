@@ -225,3 +225,16 @@ nothing. Save and paused item work reverify the full chronology. Generation guar
 cancel stale setup/save/restore/item work after Retry, source clear, new Apply or
 mode switch. Open/closed and active/defeated saves restore paused. Ground/fall still
 require a fresh Apply; no old fall is recalculated.
+
+## Authored cooperative patrol extraction (v11)
+
+The opt-in [patrol extraction challenge](training-patrol-mission.md) uses a distinct
+canonical `authored-patrol-extraction-v1` fixture and the v10 field set. Its fixed
+cooperative profile has ten 601-tick source counts. Target defeat derives the exit
+unlock; replay binds all gate/NPC/gun/inventory events, exit retirement, outcome and
+clock against the nested checkpoint. There is no serialized lock/rule/geometry
+shortcut. Restores pause; Y retries terminal outcomes with held/repeat/form guards.
+All asynchronous replay inputs are owned before hashing. The same 128-event,
+45000-tick, <24 KiB outer and <16 KiB nested limits apply prospectively and atomically.
+Matching v9/v10 restores leave challenge mode and recover the navigation arena.
+Original Training43/ground/fall workflows and prior save shapes remain unchanged.
