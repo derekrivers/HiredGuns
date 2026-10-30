@@ -1,10 +1,10 @@
 # Training43 selected-team wet lifecycle (v18)
 
-Candidate implementation; independent review and integration remain pending.
+Accepted PR120 at merge`9c11a985d79b28ef6c4e167966f1863647af5ba8`, union tree`574c5a954aa390883d79906bff80a803f2eb4009`. Source`79b3335571addf96c46464b25bb460ca28e9804d`, reviewed tree`fdb34eb8a0f7229d46482e5319bd483961b04653`, source-proof base accepted118`decf689b2803772034bcae150544d1820395dcd5`; accepted119 contributes disjoint metadata only. See [current required/reachable register](training43-completion.md#requiredreachable-training43-software-register).
 
 This optional mode runs in the existing four-view application on the verified
 Training43 editor geometry. Load the local test, open **Local character roster /
-team preparation**, choose four different characters, and **Apply team**. At
+team preparation**, choose four different characters, and **Apply team to Training43**. At
 fresh PAUSED tick zero choose **Enable selected-team wet lifecycle**, then Start
 mission. Use 1–4 to select, W/S to move, A/D to strafe, Q/E to turn, and Esc to
 pause. Save and load checkpoints while paused; Retry reconstructs the same
@@ -78,7 +78,7 @@ existing training documentation and the canonical mechanics register are unchang
 Public tests use synthetic fixtures. Private original inputs, route planning,
 checkpoints, source spans, real character names and browser screenshots remain
 ignored. The new production evidence and exact commands are recorded privately
-in the worker handoff; acceptance requires separate current-head review and CI.
+in the worker handoff; accepted source gates are recorded below; this metadata reconciliation still requires its own gates.
 
 Uncomposed source branches, broader level mechanics, general corpse inventory,
 original CPU/audio/interrupt cadence, physical controllers/TV and whole Training43
@@ -95,9 +95,20 @@ was 18498 UTF8 bytes with 206 command tuples. Paused checkpoints before deaths
 and after terminal recovery, explicit selection/dead input guards, tamper
 rejection, frozen terminal input and a fresh selected-team Retry passed.
 
-Fresh verification includes 1065 public tests (54 optional skips), 119 opt-in
+Historical initial implementation verification includes 1065 public tests (54 optional skips), 119 opt-in
 targeted cases, 25 final new browser definitions covered across documented runs,
 30 legacy browser definitions in one clean run, and 17 legacy API version
 comparisons. Only one new browser definition is the original four-death keyboard
 playthrough; setup, generation, resource, API and synthetic cases are separate
 evidence categories. The private handoff preserves exact runs and diagnostics.
+
+## Final accepted proof120
+
+PR120 final HIGH report SHA256`6153ae4bb86305701f2111eca59b6e67b5dd382a74ef5c48b2c64946e0ffce68`,257-file manifest`31161cfdf3e932125b01f381c57e69594e0878a47a2655273f63b69d66e9f1fc`; final worker handoff`ef3ff490a24c949a90c868afca2430d3218669fc66fe0e492e93c80e02c2c6d1`,360-file manifest`c1748cced4b0fd965d621e7900ad5a563d7e73792cc5f84ed054be22c2f3b7f2`. The final independent review freshly tested the union1079public/57optional skips and current source34, source/API/legacy/canonical categories separately. Its12 production definitions ran as TWO clean6-definition runs (6current recovery +4old positive controls +2current observer diagnostics); they are not12fresh full playthroughs. Original full four-death route and unchanged helper/source oracles are reused only for unchanged blobs. Historical initial HIGH25new definitions includes ONE clean16-minute four-death route;30legacy definitions ONE clean8.9-minute run. Current evidence does not make those historical runs fresh.
+
+Accepted external gates: currentCI41110437096+41110429681, actual automatic6527929680 COMPLETED exact79b/no findings, separate actual receipt6531111769/request6531072138 (once),0unresolved threads. Read-only rules check: main unprotected,25871733 disabled,no CODEOWNERS. Normal expected-head merge API/fetched tree and parents verified: a48cd8e1c51492c4f881bbd37128773012e32450 +79b3335571addf96c46464b25bb460ca28e9804d → union574c5a954aa390883d79906bff80a803f2eb4009. These are accepted120 receipts; this metadata candidate needs separate independent review/CI/actual automatic/normal merge before publication.
+
+
+Final HIGH separates34source units,64nonempty/80empty API operations,32bad-own and26own-shape refusals,17legacy versions,26legacy hooks,25public obligations,12canonical differentials and8UI-helper cases. These are separate categories, not sums or completion percentages. F1/F2/F3/F4 are resolved only in their stated constructor/pre-call/ordinary-restart/nonempty-replay domains. Legacy wetRegion HUD/panel reads after API completion remain outside the full-API zero-hook proof. V18 keeps all prior caps and source semantics.
+
+Actor-order terminal fitness is[1235,5035,2435,4535]; all values positive, both dead words0xff00, no exited actor, winnernull, positive clock82. Public documentation contains indices and bounded summary outcomes; private names/routes/raw data/screenshots remain ignored. Original99 timeout beyond45000ticks and other unresolved required/reachable dependencies remain OPEN. Assets and hardware are separately deferred.

@@ -32,7 +32,7 @@ test('register search, evidence navigation, level relationships and export work'
   await page.goto('/docs/mechanics/index.html#T43-05');
   await expect(page.locator('#T43-05')).toContainText('Partial');
   await expect(page.locator('#T43-06')).toContainText('Partial');
-  await expect(page.locator('#T43-05')).toContainText('original99-count timeout beyond45000');
+  await expect(page.locator('#T43-05')).toContainText('Original99-count timeout beyond45000');
   await page.goto('/docs/mechanics/index.html#map-43');
   await page.locator('#map-43 .interaction-list a[href="#MOV-03"]').click();
   await expect(page.locator('#MOV-03')).toBeVisible();
@@ -211,7 +211,7 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
 test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#testbed-capability');
   await expect(page.locator('#testbed-capability')).toBeVisible();
-  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('9 listed milestones: 7 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('10 listed milestones: 8 playable · 0 partial · 1 open · 1 deferred');
   await expect(page.locator('#cap-food')).toContainText('medical64');
   await expect(page.locator('#cap-wet')).toContainText('including zero');
   await expect(page.locator('#cap-lifecycle')).toContainText('Accepted PR116');
@@ -220,7 +220,7 @@ test('separate capability and original-level summaries retain scope, lineage and
   await page.locator('#cap-food a[href="#INV-06"]').click();
   await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
   await page.goto('/docs/mechanics/index.html#training43-software');
-  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('8 listed milestones: 5 playable · 2 partial · 1 open · 0 deferred');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('9 listed milestones: 6 playable · 2 partial · 1 open · 0 deferred');
   await page.locator('#t43-entry a[href="#scenario-wet"]').click();
   await expect(page.locator('#scenario-wet')).toBeVisible();
   await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');
@@ -335,4 +335,35 @@ test('invalid new proof-field previews stay inert offline and export exact data'
   const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export register JSON' }).click();
   expect(JSON.parse(await readFile((await (await download).path())!, 'utf8'))).toEqual(data);
   expect(requests).toEqual([]); expect(errors).toEqual([]);
+});
+
+for (const width of [390,1440]) test(`accepted120 selected-team controls match actual app semantics at ${width}px`,async({page},testInfo)=>{
+ await page.setViewportSize({width,height:1000});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/docs/mechanics/index.html#t43-selected-all-dead');
+ await expect(page.locator('#t43-selected-all-dead .badge')).toHaveText('playable');
+ await page.locator('#t43-selected-all-dead').getByRole('link',{name:'Runnable entry / controls'}).focus();await page.keyboard.press('Enter');
+ const entry=page.locator('#scenario-wet-party');await expect(entry).toBeVisible();
+ for(const text of ['Apply team to Training43','Enable selected-team wet lifecycle','fresh PAUSED tick zero','Start mission','[1,3,0,5]','[0,0,3,4]','manual','V18'])await expect(entry).toContainText(text);
+ await expect(entry).not.toContainText('Enable wet-region exploration');await expect(entry).not.toContainText('Enable wet damage and lifecycle');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await entry.screenshot({path:testInfo.outputPath(`selected-controls-${width}.png`)});
+ await entry.getByRole('link',{name:'Instructions & limitations →'}).focus();await page.keyboard.press('Enter');await expect(page).toHaveURL(/\/docs\/training43-selected-team-all-dead\.md$/);
+ await expect(page.locator('body')).toContainText('Accepted PR120');await expect(page.locator('body')).toContainText('Apply team to Training43');
+ await page.goto('/docs/mechanics/index.html#proof-120');const proof=page.locator('#proof-120');
+ for(const text of ['574c5a954aa390883d79906bff80a803f2eb4009','fdb34eb8a0f7229d46482e5319bd483961b04653','source-proof base (PR118)','6531111769','separate-receipt-comment'])await expect(proof).toContainText(text);
+ // Resolve the documented entry to real semantic controls and admission messaging.
+ await page.goto('/');await expect(page.getByRole('button',{name:'Enable selected-team wet lifecycle',exact:true})).toBeDisabled();
+ await expect(page.locator('#training-wet-party')).toContainText('Choose four different characters');await expect(page.locator('#training-wet-party')).toContainText('At fresh PAUSED tick zero');
+ await expect(page.locator('#training-wet-party')).toContainText('All four dead ends the mission before timeout or exit');
+ await page.locator('#roster-panel > summary').focus();await page.keyboard.press('Enter');await expect(page.getByRole('button',{name:'Apply team to Training43',exact:true})).toBeDisabled();
+ await expect(page.locator('#play')).toHaveText(/Start/);expect(errors).toEqual([]);
+});
+
+for(const width of [390,1440])test(`accepted120 offline proof fields stay inert at ${width}px`,async({page},testInfo)=>{
+ const data=JSON.parse(await readFile(new URL('../../docs/mechanics/register.json',import.meta.url),'utf8')) as MechanicsRegister;
+ const payload='" \' & </script><img src=x onerror="window.__registerInjected=1"> [link](javascript:bad)';
+ Object.assign(data.acceptedProofs.find(p=>p.pr===120)!,{tree:payload,reviewedTree:payload,sourceProofBase:payload,receiptKind:payload});await expect(validateRegister(data)).rejects.toThrow();
+ const file=testInfo.outputPath('refused120.html');await writeFile(file,renderHtml(data));await page.context().setOffline(true);await page.setViewportSize({width,height:1000});
+ await page.goto(`${pathToFileURL(file).href}#proof-120`);await expect(page.locator('#proof-120')).toContainText(payload);await expect(page.locator('img,[onerror]')).toHaveCount(0);await expect(page.locator('script')).toHaveCount(2);expect(await page.evaluate(()=>Reflect.get(window,'__registerInjected'))).toBeUndefined();
+ const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).click();expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
 });

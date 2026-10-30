@@ -172,11 +172,11 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });
 
-test('accepted118 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+test('accepted120 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
   const data = await load();
-  expect(data.acceptedThrough).toBe(118);
-  expect(data.reviewedHead).toBe('decf689b2803772034bcae150544d1820395dcd5');
-  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118]);
+  expect(data.acceptedThrough).toBe(120);
+  expect(data.reviewedHead).toBe('9c11a985d79b28ef6c4e167966f1863647af5ba8');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120]);
   const before = registerCompletion(data.mechanics);
   expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
   expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(129);
@@ -186,7 +186,7 @@ test('accepted118 dashboard separates capability lineage, proof and broad eviden
   extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
   await validateRegister(extended);
   expect(registerCompletion(extended.mechanics)).toEqual(before);
-  expect(renderHtml(extended)).toContain('10 listed milestones');
+  expect(renderHtml(extended)).toContain('11 listed milestones');
   const food = data.mechanics.find(m => m.id === 'INV-06')!;
   expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
   expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
@@ -342,17 +342,19 @@ test('accepted118 records actual summary receipt and distinct accepted/source id
   }
 });
 
-test('every118 proof field rejects inherited replacement and accessors before all API reads', async () => {
+for (const pr of [118,120]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
   const original = await load();
-  for (const field of Object.keys(original.acceptedProofs.find(p => p.pr === 118)!)) {
+  for (const field of Object.keys(original.acceptedProofs.find(p => p.pr === pr)!)) {
     for (const api of [validateRegister, renderHtml, renderMarkdown]) for (const throwing of [false,true]) {
-      const data = structuredClone(original), target = data.acceptedProofs.find(p => p.pr === 118)!;
+      const data = structuredClone(original), target = data.acceptedProofs.find(p => p.pr === pr)!;
       const saved = Object.getOwnPropertyDescriptor(target, field)!;
       Reflect.deleteProperty(target, field);
       const previous = Object.getOwnPropertyDescriptor(Object.prototype, field);
       let reads = 0, error: unknown;
       try {
         Object.defineProperty(Object.prototype, field, { configurable: true, get() { reads++; if (throwing) throw new Error('HOOK118'); return saved.value; } });
+        try { Reflect.get({}, field); } catch { /* positive inherited canary */ }
+        if (reads !== 1) throw new Error('Inactive proof canary'); reads = 0;
         try { await api(data); } catch (caught) { error = caught; }
       } finally {
         if (previous) Object.defineProperty(Object.prototype, field, previous); else Reflect.deleteProperty(Object.prototype, field);
@@ -361,7 +363,7 @@ test('every118 proof field rejects inherited replacement and accessors before al
       expect((error as Error).message).toContain('Missing own dashboard data field');
     }
     const data = structuredClone(original); let reads = 0;
-    Object.defineProperty(data.acceptedProofs.find(p => p.pr === 118)!, field, { enumerable: true, get() { reads++; return ''; } });
+    Object.defineProperty(data.acceptedProofs.find(p => p.pr === pr)!, field, { enumerable: true, get() { reads++; return ''; } });
     await expect(validateRegister(data)).rejects.toThrow();
     expect(() => renderHtml(data)).toThrow(); expect(() => renderMarkdown(data)).toThrow(); expect(reads).toBe(0);
   }
@@ -375,4 +377,28 @@ test('new proof fields escape invalid preview prose independently of semantic re
   expect(renderHtml(data)).not.toContain('<img');
   expect(renderMarkdown(data)).not.toContain('<img');
   expect(renderMarkdown(data)).not.toContain('[link](javascript:bad)');
+});
+
+test('accepted120 retains distinct union/source/base, separate receipt and unchanged broad credit', async () => {
+  const data = await load(), p = data.acceptedProofs.find(p => p.pr === 120)!;
+  expect(p).toMatchObject({merge:'9c11a985d79b28ef6c4e167966f1863647af5ba8',head:'79b3335571addf96c46464b25bb460ca28e9804d',tree:'574c5a954aa390883d79906bff80a803f2eb4009',reviewedTree:'fdb34eb8a0f7229d46482e5319bd483961b04653',sourceProofBase:'decf689b2803772034bcae150544d1820395dcd5',automatic:'6527929680',receipt:'6531111769',receiptKind:'separate-receipt-comment'});
+  expect(p.tree).not.toBe(p.reviewedTree);
+  for (const change of [{receipt:p.automatic},{receiptKind:'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed'},{tree:'bad'},{reviewedTree:null},{sourceProofBase:42}]) {
+    const bad=structuredClone(data);Object.assign(bad.acceptedProofs.find(p=>p.pr===120)!,change);await expect(validateRegister(bad)).rejects.toThrow();
+  }
+  // Tree/base extensions are conditional, not accepted arbitrarily on older records.
+  const bad=structuredClone(data);Object.assign(bad.acceptedProofs[0]!,{tree:p.tree,reviewedTree:p.reviewedTree,sourceProofBase:p.sourceProofBase});await expect(validateRegister(bad)).rejects.toThrow();
+  for(const board of data.dashboards){const m=board.milestones.find(m=>m.id.endsWith('-selected-all-dead'))!;expect(m.proofs).toEqual(['proof-120']);expect(m.scenario).toBe('wet-party');expect(m.status).toBe('playable');expect(m.missing).toContain('UNREVIEWED');}
+  expect(registerCompletion(data.mechanics)).toMatchObject({covered:68,total:688,display:'9.9%'});
+  expect(data.mechanics.reduce((n,m)=>n+STAGES.filter(s=>m.stages[s]==='partial').length,0)).toBe(129);
+  for(const c of data.acceptanceChecks)expect(c.state).not.toBe('covered');
+  const text=await readFile(new URL('../docs/training43-completion.md',import.meta.url),'utf8');
+  for(const claim of ['T43-R06 original99 timeout','59499','T43-R08 both signs/text','UNKNOWN/OPEN','source-evidenced inactive','not software gates'])expect(text).toContain(claim);
+});
+
+test('accepted120 invalid preview fields escape all contexts without weakening refusal',async()=>{
+ const data=await load(),p=data.acceptedProofs.find(p=>p.pr===120)!;
+ const hostile='</script><img src=x onerror="bad()"> [link](javascript:bad)';
+ Object.assign(p,{tree:hostile,reviewedTree:hostile,sourceProofBase:hostile,receiptKind:hostile});
+ await expect(validateRegister(data)).rejects.toThrow();expect(renderHtml(data)).not.toContain('<img');expect(renderHtml(data)).toContain('\\u003c/script>');expect(renderMarkdown(data)).not.toContain('[link](javascript:bad)');
 });

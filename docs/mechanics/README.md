@@ -6,7 +6,7 @@ Training43 is the first complete original-level acceptance target, confirmed by 
 
 The register contains original behaviour and source locators, revision, mapping scope, eight separate evidence stages, implementation/test/document links, playable scenarios, remaining gaps and original-level relationships. It is an initial discovery inventory, not a certificate that every source branch has been found. Item categories, enemy-specific behaviours and interactions must be split into further stable IDs as their mapping advances. The 29 identified psi dispatch entries each have their own open row.
 
-The baseline is accepted main through PR118 (`decf689b2803772034bcae150544d1820395dcd5`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
+The baseline is accepted main through PR120 (`9c11a985d79b28ef6c4e167966f1863647af5ba8`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
@@ -63,7 +63,7 @@ The original register tooling added no runtime execution, mechanics, source redi
 PR112 accepts bounded food/repair; PR114 accepts source CASE classifications;
 PR115 accepts supported wet entry/return and v15 recovery. PR116 separately accepts bounded wet injury/death/north corpse/head/control/manual
 survivor/first-exit/v16 recovery and Retry. Legacy v15 still refuses requested hits.
-Unsupported wet branches/all-dead/original99-count timeout beyond45000 ticks/general corpse
+Unsupported wet branches/original99-count timeout beyond45000 ticks/general corpse
 items/door-pad callers and whole-level acceptance remain open. The covered numerator is
 unchanged; newly supported broad wet rows remain partial.
 
@@ -80,7 +80,7 @@ Hardware is deferred separately and does not block keyboard software work.
 
 Each milestone has stable ID, strict status, scoped evidence, missing dependency,
 scenario/controls, lineage to existing mechanics/checklist and optional accepted
-registry proof references. PR112/114/115/116/118 receipts retain exact merge/implementation,
+registry proof references. PR112/114/115/116/118/120 receipts retain exact merge/implementation,
 independent review hash, CI and completed automatic IDs. Earlier accepted slices
 remain linked to their public proof documents. File presence is not a fresh run.
 
@@ -91,16 +91,16 @@ embedded JSON escapes less-than; evidence links accept only existing repository
 paths. Synthetic hostile metadata and positive offline canaries exercise the
 runtime-accepted boundary. Prior PR113 injection repair remains covered.
 
-This candidate index is for review at port5361 only, clearly UNREVIEWED until
-independent review/current CI/automatic gates and coordinator acceptance. The
-accepted port5341, older port5311/snapshot/root originals remain frozen. Serve docs with the Vite
-**development** server or open the canonical HTML file; production app fallback
-does not serve this engineering page.
+This metadata candidate remains UNREVIEWED until its own independent HIGH/current CI/actual automatic/findings/normal-merge gates. Port5385 is reserved for candidate verification, not publication. Accepted5361 remains frozen and assesses118. No new index is published or opened by this worker. Serve docs with the Vite development server or open the canonical HTML file.
 
 PR118 accepts [standing wet-region exploration](../training43-wet-region.md): actual keyboard visits to all **22 standing wet CASE cells**, by nonimmune race4 and source-immune race1, four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. The 23rd water cell is solid/nonstanding. Visits are replay-derived observations, not movement authority, hypothetical BFS proof or a whole-level percentage. The new corridor same-cell corpse/manual-survivor witness is distinct from PR116 stair aux10 NORTH corpse proof.
 
 Select **Enable wet-region exploration** at fresh PAUSED tick0 in the ready Training43 setup, choose rules, then Start mission; 1–4 select, W/S A/D move, Q/E turn, Esc pause, save/load paused and Retry fresh. V15 entry/return still refuses every non-null requested hit including zero; v16 remains the separate wet damage/lifecycle control. Exact versions1–16 remain supported.
 
-The current wet factory hardcodes ready indices `[11,3,0,5]`, including immune race1. Selected-team wet support and source all-dead remain open; the parallel selected-team/all-dead candidate is UNREVIEWED and receives no credit. General corpse items/replacement, unsupported source geometry/search branches, doors/pads/lifts/enemy AI, original99-count timeout beyond45000 ticks, full43/testbed and source CPU/runtime timing remain open. Physical controller/TV acceptance is separately DEFERRED. Broad T43-04/05/07/08 gates remain partial.
+Accepted PR120 selected raw team [1,3,0,5], races [0,0,3,4], real keyboard four distinct wet deaths at ticks2050/4850/8050/10550, source all-dead before timeout/exit with positive clock82, both dead words0xff00, retained positive fitness, explicit manual selection, full v18 paused recovery and Retry. No auto-selection or forged ready team.
+
+Original99-count timeout beyond45000 replay ticks remains OPEN; next source-timeout/recovery pilot is UNREVIEWED and receives no credit. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Broad T43-04/05/07/08 gates remain partial.
 
 PR118 receiptKind explicitly identifies the SAME completed automatic summary-state6525460623; no separate receipt comment was observed. Earlier separate receipt IDs remain unchanged. Required own DATA shapes precede all new API reads, including receiptKind and the118 union/reviewed tree/source-proof base fields.
+
+PR120 requires own tree/reviewedTree/sourceProofBase data fields before all three APIs read them; PR118 retains its summary-state receipt rule, while PR120 has a separate actual receipt6531111769. No receipt kind is relaxed. The [required/reachable function and behavior register](../training43-completion.md#requiredreachable-training43-software-register) controls Training43 software dependencies.
