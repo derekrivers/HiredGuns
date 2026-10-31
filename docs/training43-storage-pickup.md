@@ -1,0 +1,15 @@
+# Training43 storage pickup
+
+Enable **storage pickup (original99)** after applying a fresh selected team at paused tick zero. Start the mission, select a living teammate with 1–4, walk onto another teammate’s source-owned corpse and press **B**, or use **Pick up into storage · B**. The profile permits one attempt across its entire history. Retry or changing mission rules restores the complete source-selected baseline.
+
+The original keyboard pickup dispatches native action22 `pick_up_into_inven`. B is the browser binding adapter. The existing G equipment profile remains separate, with its unchanged v20 format. This profile supports window0, fixed Position1, empty equipment, canonical storage with space, an empty source equipment slot and a nonempty first stored source item. Both recalculated bodies must remain nonheavy. Wider native branches are recorded as unsupported here; no general inventory completion is claimed.
+
+Insertion shifts full four-byte entries, including empty tails. It copies item ID, damage and ammunition into storage slot0 and sets its outline byte to FF. Equipment and the ten separate action entries remain unchanged. Removal shifts the source’s occupied prefix and clears only the final item ID. Weight is recalculated from the mutable corpse inventory before the recipient. Visible item counts are derived; native count_items is not fabricated. Outlines persist through pause, redraw and recovery. Native window changes that clear outlines and native noRoom/heavy feedback interrupt timers remain outside this profile.
+
+The four lastPosition words are explicit adapter zeros at initialization, not observed native RAM. Native insertion writes the recipient’s fixed selection even when its value stays zero. These words are reconstructed, saved, compared and reset.
+
+Version21, scenario `training43-storage-pickup-v1`, preserves the complete chronology and compares all saved state against reconstruction from the three raw sources. Navigation codes0–23 and one count1 storage code24–27 belong only to this profile. Caps remain 59,499 ticks, 256 packed tuples, 513 expanded segments and strictly less than 24,576 UTF-8 bytes. Legacy formats1–20 retain their meanings and caps. Saved bodies, weights, owners, counters and last positions never supply replay authority.
+
+Drowning and supported fall cadence precede pickup; controls and mission resolution follow once. A fatal queued hazard commits ordinary death and mission state and records caller-guard. Unsupported corpse replacement or fall geometry refuses the whole candidate. Every tick retains its ordinary physics and prospective save checks. Reconstruction yields to real browser tasks after sixteen ticks or an eight millisecond target; this is not a universal latency guarantee. Retry, rules, source clear and setup replacement cancel obsolete work without installing it or downloading a stale save.
+
+Graphics, sound, physical controllers and campaign expansion are deferred. Whole Training43, R08, general inventory and original CPU parity remain incomplete. Exact final checks, independent review and coordinator acceptance are required before release.
