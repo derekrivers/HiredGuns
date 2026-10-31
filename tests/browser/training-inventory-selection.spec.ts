@@ -12,7 +12,7 @@ async function save(page:Page,name?:string){const p=page.waitForEvent('download'
 async function restore(page:Page,json:string){await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'checkpoint.json',mimeType:'application/json',buffer:Buffer.from(json)});await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored');}
 async function key(page:Page,key:string){await page.locator('h1').click();await page.keyboard.press(key);}
 test('storage pickup is opt-in and has a readable adapted binding',async({page})=>{
- await page.goto('/');await expect(page.locator('#inventory-selection-storage')).toBeDisabled();await expect(page.locator('#training-inventory-selection')).toContainText('browser keyboard adaptations');await expect(page.locator('#inventory-selection-enable')).toBeDisabled();
+ await page.goto('/');await expect(page.getByRole('button',{name:'Transfer to selection storage · B',exact:true})).toBeDisabled();await expect(page.getByRole('button',{name:'Open / close selection · N',exact:true})).toBeDisabled();await expect(page.locator('#inventory-selection-storage')).toBeDisabled();await expect(page.locator('#training-inventory-selection')).toContainText('browser keyboard adaptations');await expect(page.locator('#inventory-selection-enable')).toBeDisabled();
  await key(page,'b');await expect(page.locator('#inventory-selection-state')).toContainText('Inactive');
 });
 test('actual selected setup, one refusal attempt, paused recovery and both rules Retry',async({page})=>{
