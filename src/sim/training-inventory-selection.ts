@@ -10,15 +10,7 @@ import {stepInventorySelectionLifecycle} from './training-wet-lifecycle';
 import {TRAINING_43_SHA256} from './mission-profile';
 import {wetSnapshot,rawSnapshot} from './training-wet';
 import {createWorld} from './world';
-
-// Captured ordinary JSON only. Visit every field; compare key sets without
-// allocating two complete canonical JSON strings for each static authority check.
-function equal(a:unknown,b:unknown):boolean{
- if(a===null||b===null||typeof a!=='object'||typeof b!=='object')return a===b;
- if(Array.isArray(a)!==Array.isArray(b))return false;
- const x=a as Record<string,unknown>,y=b as Record<string,unknown>,keys=Object.keys(x);
- return keys.length===Object.keys(y).length&&keys.every(k=>Object.hasOwn(y,k)&&equal(x[k],y[k]));
-}
+import {equalInventorySelectionData as equal} from './inventory-selection-equality';
 
 /** Raw-evidence SHA256 for internal authored fixtures. Original-source public
  * pairs use the complete raw3 baseline and full replay below. No physics cache. */
