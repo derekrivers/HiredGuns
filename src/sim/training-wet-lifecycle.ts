@@ -1,3 +1,5 @@
+import {transitionInventoryWindow} from '../items/inventory-window';
+import type {InventoryWindowOperation} from './training-inventory-window';
 import {pickupCorpseStorage} from '../items/corpse-storage-pickup';
 import { cellIndex, inBounds, type Position, type LevelData, type MissionRules, type PlayerCommand, type WorldState, type SimulationEvent } from '../contracts';
 import { computeNormalDamage } from '../character/damage-arithmetic';
@@ -84,7 +86,7 @@ function admitLifecycle(level:LevelData,session:TrainingSession,p:Position):void
  // Neither inventory transfer nor corpse replacement is composed here.
  if(((w>>>17)&3)!==2||(w&(2|64|16|256))||((w&1)&&((w>>>9)&3)!==0)||(!(w&1)&&(below&0x1f802)!==2))fail('unsupported corpse support/descent');
 }
-function validate(level:LevelData,session:TrainingSession,world:WorldState):void {
+function validate(level:LevelData,session:TrainingSession,world:WorldState,windowDomain=false):void {
  const wet=session.wet!,life=session.wetLifecycle!;
  if(!wet||!life||wet.actors.length!==4||life.actors.length!==4||world.physics.mode!=='source-wet'||wet.pads.length||life.expandedAudioMemory!==0)return fail('owner/physics/pads/audio');
  if(![wet.leader,life.leader2].every(n=>uint(n,4)))fail('leader');
@@ -92,7 +94,7 @@ function validate(level:LevelData,session:TrainingSession,world:WorldState):void
  for(let id=0;id<4;id++){
   const a=wet.actors[id]!,h=life.actors[id]!,p=world.mercenaries[id]!,i=cellIndex(level,p);
   if(a.current!==i||![0,0xff00].includes(a.runtimeDeadWord)||a.runtimeDeadWord!==a.body.statsDeadWord||world.physics.deadWords[id]!==a.runtimeDeadWord)fail('body/dead correspondence');
-  if(a.body.windowType!==0||a.body.controlMethod!==1||a.body.spellWater||a.body.spellWings||a.pending)fail('uncomposed control/spell/pending');
+  if((a.body.windowType!==0&&!(windowDomain&&a.body.windowType===1))||a.body.controlMethod!==1||a.body.spellWater||a.body.spellWings||a.pending)fail('uncomposed control/spell/pending');
   if(h.cheatMode2||h.cheatMode3||h.gruntCount!==0||!uint(h.spellShield,65535)||!uint(h.fireWhite,255)||!uint(h.fitnessFlashDuration,255))fail('damage storage/cheat/audio');
   if(active(session,world,id)){
    if(cells.has(i))fail('living body alias');cells.add(i);
@@ -116,8 +118,8 @@ function validate(level:LevelData,session:TrainingSession,world:WorldState):void
 /** Same numerical core as damageOrdinaryFloorFitness, with separate full-map authority.
  * Never passes a fabricated ordinary floor to that conservative validator.
  */
-function applyWetDamage(level:LevelData,session:TrainingSession,world:WorldState,id:number,hit:number):void {
- validate(level,session,world);const wet=session.wet!,life=session.wetLifecycle!,a=wet.actors[id]!,h=life.actors[id]!;
+function applyWetDamage(level:LevelData,session:TrainingSession,world:WorldState,id:number,hit:number,windowDomain=false):void {
+ validate(level,session,world,windowDomain);const wet=session.wet!,life=session.wetLifecycle!,a=wet.actors[id]!,h=life.actors[id]!;
  if(!active(session,world,id))fail('damage caller must be live');
  const {damage}=computeNormalDamage(hit,a.body.physique,h.spellShield),before=a.body.fitness;
  // Determine every fatal map effect before any local health writes.
@@ -176,6 +178,13 @@ export function stepTimeoutLifecycle(level:LevelData,session:TrainingSession,pre
  if(!s.party||Object.keys(s.party).join(',')!=='profile'||s.party.profile!=='four-controlled-timeout-v1'||Object.keys(s.rules).sort().join(',')!=='mode,timeLimit'||s.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(s.rules.mode))fail('timeout profile/rules');
  return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD);
 }
+/** Dedicated typed control phase, after hazards and before world/mission once. */
+export function stepInventoryWindowLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],operation:InventoryWindowOperation|null){
+ if(session.inventoryWindow?.profile!=='one-native-inventory-window-cycle-v1'||session.wetParty?.profile!=='four-controlled-timeout-v1'||previous.mission.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(previous.mission.rules.mode))fail('inventory window owner/rules');
+ if(operation&&(!uint(operation.actor,3)||commands.length))fail('sole inventory operation');
+ if(session.wet!.actors.some(a=>a.body.windowType===1)&&(commands.length||operation&&operation.kind!=='close'))fail('unsupported open-window controls');
+ return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD,null,'equipment',{operation});
+}
 /** New-profile domain command only. No arbitrary mutable control callback. */
 export function stepStoragePickupLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],actor:number|null){
  // Internal entry: the profile owner has captured all external authority before
@@ -212,7 +221,8 @@ function corpseControl(level:LevelData,session:TrainingSession,world:WorldState,
  }
  return result.outcome;
 }
-function storageControl(level:LevelData,session:TrainingSession,world:WorldState,id:number):string{
+function storageControl(level:LevelData,session:TrainingSession,world:WorldState,id:number,windowDomain=false):string{
+ const metadata=windowDomain?session.inventoryWindow!:session.storagePickup!;
  const wet=session.wet!,a=wet.actors[id]!;
  // Native dead guard runs after hazards. A fatal queued tick must still commit.
  if(!active(session,world,id)||a.body.windowType===7||!a.body.controlMethod)return 'caller-guard';
@@ -225,19 +235,19 @@ function storageControl(level:LevelData,session:TrainingSession,world:WorldState
   let ended=false;for(const slot of body.inventory.carried){if(!slot.itemId)ended=true;else if(ended)return 'profile-refusal';}
  }
  if(a.body.weight.tooHeavy||source.body.weight.tooHeavy||a.body.inventory.carried[29]!.itemId)return 'profile-refusal';
- const result=pickupCorpseStorage({actors:wet.actors.map(a=>a.body),deadWords:wet.actors.map(a=>a.runtimeDeadWord),players:wet.actors.map((_,j)=>({selection:0,lastPosition:session.storagePickup!.lastPositions[j]!,noRoom:0,heavyCount:0})),recipient:id,cell:{first,second,third:map.layers[2][i]!},redraw:session.wetLifecycle!.redraw},session.items);
+ const result=pickupCorpseStorage({actors:wet.actors.map(a=>a.body),deadWords:wet.actors.map(a=>a.runtimeDeadWord),players:wet.actors.map((_,j)=>({selection:0,lastPosition:metadata.lastPositions[j]!,noRoom:0,heavyCount:0})),recipient:id,cell:{first,second,third:map.layers[2][i]!},redraw:session.wetLifecycle!.redraw},session.items);
  if(result.outcome==='transferred'){
   if(result.state.actors[id]!.weight.tooHeavy||result.state.actors[owner]!.weight.tooHeavy)return 'profile-refusal';
   for(const j of [id,owner])wet.actors[j]!.body=result.state.actors[j]!;
   session.wetLifecycle!.redraw=result.state.redraw;
-  session.storagePickup!.lastPositions=result.state.players.map(p=>p.lastPosition);
+  metadata.lastPositions=result.state.players.map(p=>p.lastPosition);
  }
  return result.outcome;
 }
-function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null,pickupKind:'equipment'|'storage'='equipment'){
- validate(level,session,previous);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
+function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null,pickupKind:'equipment'|'storage'='equipment',windowDomain?:{operation:InventoryWindowOperation|null}){
+ validate(level,session,previous,!!windowDomain);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
  if(previous.tick>=tickLimit)fail('future tick budget');
- const next={...session,...(pickupKind==='storage'?{storagePickup:structuredClone(session.storagePickup!)}:{}),wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
+ const next={...session,...(windowDomain?{inventoryWindow:structuredClone(session.inventoryWindow!)}:{}),...(pickupKind==='storage'?{storagePickup:structuredClone(session.storagePickup!)}:{}),wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
  const wet=next.wet,prospective=structuredClone(previous);
  wet.drownCounter=(wet.drownCounter+1)&65535;wet.fallCounter=(wet.fallCounter+1)&65535;
  const effects:{tick:number;mercenaryId:number;kind:'damaged'|'died'}[]=[];
@@ -245,14 +255,20 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
   for(let id=0;id<4;id++){
    if(!active(next,prospective,id))continue;const a=wet.actors[id]!,result=transitionImmersion({actor:a.body,cellLong:level.layers[0][a.current]!,items:session.items});
    a.body=result.candidate;a.lastInventoryStatus=result.inventoryStatus;if(result.inventoryStatus==='processed')a.itemPasses++;
-   if(result.damageRequest!==null){applyWetDamage(level,next,prospective,id,result.damageRequest.requestedHit);effects.push({tick:previous.tick+1,mercenaryId:id,kind:a.runtimeDeadWord?'died':'damaged'});}
+   if(result.damageRequest!==null){applyWetDamage(level,next,prospective,id,result.damageRequest.requestedHit,!!windowDomain);effects.push({tick:previous.tick+1,mercenaryId:id,kind:a.runtimeDeadWord?'died':'damaged'});}
   }
  }
  if(wet.fallCounter>6){wet.fallCounter-=6;for(let id=0;id<4;id++){
   if(!active(next,prospective,id))continue;const a=wet.actors[id]!;a.delay=level.layers[0][a.current]!&4?(a.delay?a.delay-1:2):0;a.pending=0;
  }}
  for(const a of wet.actors)if(!a.runtimeDeadWord)a.old=a.current;
- const pickup=pickupActor===null?null:pickupKind==='storage'?storageControl(level,next,prospective,pickupActor):corpseControl(level,next,prospective,pickupActor);
+ const op=windowDomain?.operation;
+ let windowResult:string|null=null;
+ if(op&&op.kind!=='storage'){
+  const a=wet.actors[op.actor]!;const r=transitionInventoryWindow({actor:a.body,runtimeDeadWord:!active(next,prospective,op.actor)?0xff00:a.runtimeDeadWord,temp:next.inventoryWindow!.tempEntries[op.actor]!,redraw:next.wetLifecycle!.redraw},op.kind);
+  a.body=r.state.actor;next.inventoryWindow!.tempEntries[op.actor]=r.state.temp;next.wetLifecycle!.redraw=r.state.redraw;next.inventoryWindow!.windowOutcomes.push(r.outcome);windowResult=r.outcome;
+ }
+ const pickup=op?.kind==='storage'?storageControl(level,next,prospective,op.actor,true):pickupActor===null?null:pickupKind==='storage'?storageControl(level,next,prospective,pickupActor):corpseControl(level,next,prospective,pickupActor);
  // Immutable source geometry drives movement. Dynamic living occupancy is the source-wet dead-word guard.
  // Corpse aux7 is non-solid in source move; its inert presence does not replace stair geometry.
  const geometry=wet.corpses.length?wetLifecycleMap(level,next):level;
@@ -263,7 +279,7 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
  const inventory:TrainingSession['inventory']={commands:[],actors:wet.actors.map(a=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:0}))};
  const candidate={world:result.world,session:{...next,inventory}};
  if(record){const history=wet.history,last=history.at(-1);if(last&&equal(last.commands,commands))last.count++;else history.push({count:1,commands:structuredClone([...commands])});wet.history=lifecycleHistory(history);serializeWetLifecycle(candidate);}
- validate(level,candidate.session,candidate.world);return {...candidate,events:[...effects,...result.events],...(pickup===null?{}:{pickup})};
+ validate(level,candidate.session,candidate.world,!!windowDomain);return {...candidate,events:[...effects,...result.events],...(pickup===null?{}:{pickup}),...(windowResult===null?{}:{windowResult})};
 }
 export function serializeWetLifecycle(c:TrainingCandidate):string {
  const {history,...state}=c.session.wet!;

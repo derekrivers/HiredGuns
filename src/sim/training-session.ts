@@ -1,3 +1,4 @@
+import {hasInventoryWindow,exportInventoryWindow,importInventoryWindow,resetInventoryWindow,type TrainingInventoryWindow} from './training-inventory-window';
 import {hasStoragePickup,exportStoragePickup,importStoragePickup,resetStoragePickup,type TrainingStoragePickup} from './training-storage-pickup';
 import { exportWetParty, importWetParty, initialWetParty, ownedPartyProfile, type TrainingWetParty } from './training-wet-party';
 import {hasTimeoutProfile,exportTimeout,importTimeout,resetTimeout,type TimeoutRecoveryControl} from './training-timeout';
@@ -29,6 +30,7 @@ import { selectedFallLevel, type FallProfile } from './fall';
 export const MAX_SESSION_BYTES = 24 * 1024;
 export interface TrainingSources { roster: Uint8Array; items: Uint8Array; map?: Uint8Array }
 export interface TrainingSession {
+  readonly inventoryWindow?: TrainingInventoryWindow;
   readonly storagePickup?: TrainingStoragePickup;
   readonly corpsePickup?: TrainingCorpsePickup;
   readonly wetParty?: TrainingWetParty;
@@ -157,6 +159,7 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
   if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  if(hasInventoryWindow(session))return resetInventoryWindow(level!,session,rules);
   if(hasStoragePickup(session))return resetStoragePickup(level!,session,rules);
   if(hasCorpsePickup(session))return resetCorpsePickup(level!,session,rules);
   if(hasTimeoutProfile(session))return resetTimeout(level!,session,rules);
@@ -176,6 +179,7 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources, timeoutControl?:TimeoutRecoveryControl): Promise<string> {
   // Inspect the new extension without evaluating caller accessors before its snapshot.
   if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  if(hasInventoryWindow(session))return exportInventoryWindow(level,sources,session,world,timeoutControl);
   if(hasStoragePickup(session))return exportStoragePickup(level,sources,session,world,timeoutControl);
   if(hasCorpsePickup(session))return exportCorpsePickup(level,sources,session,world,timeoutControl);
   if(hasTimeoutProfile(session))return exportTimeout(level,sources,session,world,timeoutControl);
@@ -221,6 +225,7 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const versionDescriptor=Object.getOwnPropertyDescriptor(parsed,'version');
   const version=versionDescriptor&&Object.hasOwn(versionDescriptor,'value')?versionDescriptor.value:undefined;
+  if(version===22)return importInventoryWindow(level,sources,parsed,timeoutControl);
   if(version===21)return importStoragePickup(level,sources,parsed,timeoutControl);
   if(version===20)return importCorpsePickup(level,sources,parsed,timeoutControl);
   if(version===19)return importTimeout(level,sources,parsed,timeoutControl);
