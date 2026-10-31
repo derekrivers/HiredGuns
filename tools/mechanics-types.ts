@@ -41,7 +41,7 @@ export interface AcceptedProof {
   id: string; pr: number; merge: string; head: string; reviewSha256: string;
   ci: string[]; automatic: string; receipt: string;
   receiptKind: 'separate-receipt-comment' | 'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed';
-  // Required only for accepted118/120/122/124 source-versus-union identity records.
+  // Required only for accepted118/120/122/124/126 source-versus-union identity records.
   tree?: string; reviewedTree?: string; sourceProofBase?: string;
 }
 export interface Milestone {

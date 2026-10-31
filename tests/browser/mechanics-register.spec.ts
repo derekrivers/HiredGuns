@@ -211,7 +211,7 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
 test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#testbed-capability');
   await expect(page.locator('#testbed-capability')).toBeVisible();
-  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('12 listed milestones: 10 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('13 listed milestones: 11 playable · 0 partial · 1 open · 1 deferred');
   await expect(page.locator('#cap-food')).toContainText('medical64');
   await expect(page.locator('#cap-wet')).toContainText('including zero');
   await expect(page.locator('#cap-lifecycle')).toContainText('Accepted PR116');
@@ -220,7 +220,7 @@ test('separate capability and original-level summaries retain scope, lineage and
   await page.locator('#cap-food a[href="#INV-06"]').click();
   await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
   await page.goto('/docs/mechanics/index.html#training43-software');
-  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('11 listed milestones: 8 playable · 2 partial · 1 open · 0 deferred');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('12 listed milestones: 9 playable · 2 partial · 1 open · 0 deferred');
   await page.locator('#t43-entry a[href="#scenario-wet"]').click();
   await expect(page.locator('#scenario-wet')).toBeVisible();
   await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');
@@ -440,4 +440,34 @@ for(const width of [390,1440])test(`accepted124 offline export, hostile fields a
   download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).focus();await page.keyboard.press('Enter');expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
   await page.getByRole('link',{name:'02 · Mechanics register'}).click();await page.getByRole('searchbox',{name:'Find a mechanic'}).fill('no-such-mechanic124');await expect(page.locator('#no-results')).toBeVisible();
   expect(requests).toEqual([]);expect(errors).toEqual([]);
+});
+
+
+for(const width of [390,1440])test(`accepted126 controls and same-tree receipt at ${width}px`,async({page},testInfo)=>{
+ await page.setViewportSize({width,height:1000});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/docs/mechanics/index.html#cap-corpse-pickup');
+ await expect(page.locator('#cap-corpse-pickup')).toContainText('one current-cell');
+ await expect(page.locator('#t43-corpse-pickup')).toContainText('EMPTY hands');
+ await page.goto('/docs/mechanics/index.html#scenario-corpse-pickup');const entry=page.locator('#scenario-corpse-pickup');
+ for(const text of ['Enable corpse-item pickup (original99)','G once','Save progress / Load progress','Retry','both action rules'])await expect(entry).toContainText(text);
+ await page.screenshot({path:testInfo.outputPath(`corpse-controls-${width}.png`)});
+ await entry.getByRole('link',{name:'Instructions & limitations →'}).click();await expect(page.locator('body')).toContainText('Accepted126 bounded equipment pickup');
+ await page.goto('/docs/mechanics/index.html#proof-126');
+ for(const text of ['139dd370a6f559dc2a4ce7c91480460b6e175ae6','source-proof base (PR125)','9940b3c318d358b0c9b3bfde9ee90013710d6fc4','6537386819','no separate receipt comment observed'])await expect(page.locator('#proof-126')).toContainText(text);
+ expect(errors).toEqual([]);
+});
+
+for(const width of [390,1440])test(`accepted126 offline hostile proof export at ${width}px`,async({page},testInfo)=>{
+ const data=JSON.parse(await readFile(new URL('../../docs/mechanics/register.json',import.meta.url),'utf8')) as MechanicsRegister;
+ await page.setViewportSize({width,height:1000});await page.context().setOffline(true);const requests:string[]=[],errors:string[]=[];
+ page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(`${new URL('../../docs/mechanics/index.html',import.meta.url).href}#proof-126`);
+ let download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).click();expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+ const hostile='" & </script><img src=x onerror="window.__registerInjected=1"> [link](javascript:bad)';
+ Object.assign(data.acceptedProofs.find(p=>p.pr===126)!,{tree:hostile,reviewedTree:hostile,sourceProofBase:hostile,receiptKind:hostile});await expect(validateRegister(data)).rejects.toThrow();
+ const file=testInfo.outputPath('refused126.html');await writeFile(file,renderHtml(data));await page.goto(`${pathToFileURL(file).href}#proof-126`);
+ await expect(page.locator('#proof-126')).toContainText(hostile);await expect(page.locator('img,[onerror]')).toHaveCount(0);await expect(page.locator('script')).toHaveCount(2);
+ expect(await page.evaluate(()=>{let reads=0;const live={get value(){reads++;return true;}};return {value:live.value,reads,injected:Reflect.get(window,'__registerInjected')};})).toEqual({value:true,reads:1,injected:undefined});
+ download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).focus();await page.keyboard.press('Enter');expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+ expect(requests).toEqual([]);expect(errors).toEqual([]);
 });
