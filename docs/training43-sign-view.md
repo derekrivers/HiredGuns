@@ -93,6 +93,80 @@ Fresh results, failures, exact production identity, scoped unchanged-proof reuse
 and the complete hash/length manifest are recorded in `.local/handoff.md` for
 independent review. The prior real original99 wait and full source recovery are
 reused only for unchanged implementation blobs; they are not reported as a new
-live wait here. Model: gpt-6.1-sol medium; token usage unavailable. Independent
+live wait here. Model: gpt-6.1-sol medium; token usage unavailable. The source packet passed independent
 current-head HIGH review, relevant CI, actual automatic review/findings and the
-normal coordinator merge remain required. No acceptance percentage is claimed.
+normal expected-head merge; this metadata update has its own separate gates. No acceptance percentage is claimed.
+
+## Accepted124 proof, scoped runs and reuse
+
+Accepted30 October2026 at23:59:17Z, normal expected-head merge
+`d122d69db59a2a46226b25349b50bc46ec510d43`, actual union
+`b35ab9f0609cf667df966e48db57a8dacda10f44`, parents accepted123
+`82e6a4426e7d7e517b3a43de734986fbe0755881` and source
+`37ef7227b8c85528f85eca8c2d39a1f1790b18af`. Reviewed source tree
+`84a00052bdeaf50fac006325674b7a48a00fd4bd` and source-proof base accepted122
+`81353ad52118875195c925d668cc469ad72d106e` remain distinct from the union.
+Accepted123's17 disjoint metadata paths and124's6 source/test/doc paths explain
+the union; API and fetched-origin tree/parents were verified by the coordinator.
+
+Full stopped HIGH report27406B SHA256
+`c0f8723ae11ddfcd1d33e8734b469a4f4d01b0da5ceb3709f998275a37ec5152`,
+300-file manifest SHA256
+`dd3bf2a5f2f371bc0a01ffe39300b200fe9211a6ea64ee669d8a1dfe04492ce1`.
+Full stopped worker handoff18715B SHA256
+`381a30a2cbd5be64bc5e0f2b7da7506c92982762945b36e396464a687d620e9a`,
+505-file manifest SHA256
+`d7db91066e8aad88e8fa7d1525755d60604ef7d67dd662484aa4b07625513cbf`.
+All entries were reopened using each manifest's declared pathBase, including
+intentional nested config output paths, and full length/hash checked with zero
+mismatches. These are private stopped evidence locators, not public originals.
+
+Exact37ef CI41145099476 and41145081608 succeeded. Actual automatic summary
+6535904450 was COMPLETED exact37ef/no findings at23:46:13.416123Z. Its receipt
+is that SAME observed summary; no separate receipt comment was observed.
+Initial Ready occurred once; no manual request,0 unresolved review threads;
+read-only rules check found25871733 disabled, main unprotected, no CODEOWNERS.
+These source gates confer no self-approval on this metadata candidate.
+
+Fresh HIGH candidate check1105 public PASS/61 optional SKIP; union1108/61;
+builder86 rows/47 maps/165 links;311 union blobs and all3 dist files verified.
+ONE clean committed production browser run42/42 PASS in342.777s and ONE separate
+independent3/3 PASS run20.950s are two clean runs, not45 in one run. They include
+both actual signs/all four owners, genuine selected[1,3,0,5], Apply team,
+Enable original99, Start,1–4/WASD/QE/Esc with real keyboard staging and no
+teleports/fake flags/product autoroute. Main20 generation success/error
+cancellations, both retryable errors,8 legacy Retry/rules hooks and fresh
+390/1440 paused header readability are included. Dead/exited/invalid modes use
+synthetic counterexamples, not a newly claimed live death at a sign.
+
+Independent512 real cue queries at tick209 compared the ENTIRE184267B
+world/session pair and15604B canonical bytes, plus all3 full raw source buffers,
+before/after equal; this includes catalogs, inventories/actions, opaque planes,
+bodies, counters and history, not merely saved leaves. Native unfinished59498
+replay cancellation observed source clear at420 ticks/259ms and Retry at436
+ticks/262.5ms without stale installation. Those machine observations establish
+neither a universal8ms bound nor a general speedup.
+
+Worker earlier12PASS/1SKIP, separate2nativePASS and1extraPASS remain separate
+runs. Its old36 Main regressions in a two-sign-harness-failure run are retained
+as historical passes within a failed run, not a clean41. The final HIGH clean
+runs above independently cover the accepted source. Old footer captures are
+superseded by header readability evidence; no native glyph/pixel execution.
+
+The other75 pre-existing production modules are accepted122-identical.
+Original99/full recovery122 evidence is inherited ONLY for unchanged semantics:
+not a fresh31-minute ordinary wait or original CPU parity. Accepted122 HIGH
+report SHA256`c7ad6b0b461bd0ea049cfea8b9e1d957650c8b5b3ddc5c01e93f03155a95e180`,
+658-entry manifest`61ad954a548081f3afcf5b56184c86959351b14d966279c9bb44107248daa39b`;
+repair865-entry manifest`d51a85115f5956538c60c9f7b3a7b7470af0bace051f5e3068d1497785035cfa`.
+Full recovery remains about55–66s in accepted122 observations. Legacy1–18
+formats/caps/bytes retain45000 where applicable; v19 TOTAL59499,
+256 packed/513 internal, STRICT UTF8<24576 and native full-state authority stay
+unchanged. No new command, source-state or save-field admission follows.
+
+Frozen accepted source5399 serves index-B6Lq8Zvh.js776921B SHA256
+`16f30b08bd198486039e3b5afc7f41963b7d06688e70f1795406095a287eff03`.
+HTML365B and CSS9428B are identical across source/candidate/union. No source
+listener/dist is rebuilt, repointed or reused by this metadata packet.
+Whole R08 and Training43 remain INCOMPLETE; native appearance is deferred art,
+and general corpse interactions and other unknown branches remain open.

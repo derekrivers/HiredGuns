@@ -1,5 +1,11 @@
 # Training43 keyboard wet traversal — accepted PR115
 
+PR124 is accepted at merge `d122d69db59a2a46226b25349b50bc46ec510d43`, actual union tree `b35ab9f0609cf667df966e48db57a8dacda10f44`, parents `82e6a4426e7d7e517b3a43de734986fbe0755881` + `37ef7227b8c85528f85eca8c2d39a1f1790b18af`. Reviewed source head `37ef7227b8c85528f85eca8c2d39a1f1790b18af` has tree `84a00052bdeaf50fac006325674b7a48a00fd4bd` and source-proof base accepted122 `81353ad52118875195c925d668cc469ad72d106e`. Accepted123 metadata merge82e/head8593/tree2d0 is disjoint; its17 metadata paths explain why the reviewed source tree differs from the accepted union. It adds no source proof.
+
+PR124 accepts a source-derived **Sign ahead (placeholder)** header cue with genuine keyboard witnesses for both signs and all four current view owners. It reads the exact raw-admitted installed pair and clears during loading, turn/move away, dead/exited/invalid views, source clear and map replacement; Retry/both rules and full paused recovery recompute it. No new activation, gameplay write or save field. The generic label is not original text, pixels or CPU proof. Whole R08 stays UNKNOWN/OPEN and Training43 software **INCOMPLETE**; glyph appearance/art is separately DEFERRED, not a software gate. General corpse interactions remain unsupported/unknown, with no unaccepted source-lane credit.
+
+See [sign-view controls and exact evidence](training43-sign-view.md).
+
 Current assessment: accepted PR120 selected-team all-dead and v18 recovery are separate from the earlier mode below. See [current function/behavior register](training43-completion.md#requiredreachable-training43-software-register) and [selected-team controls](training43-selected-team-all-dead.md).
 
 ## Current accepted118 relationship

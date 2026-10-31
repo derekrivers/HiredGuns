@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "assessedOn": "2026-10-30",
-  "reviewedHead": "81353ad52118875195c925d668cc469ad72d106e",
+  "assessedOn": "2026-10-31",
+  "reviewedHead": "d122d69db59a2a46226b25349b50bc46ec510d43",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -53,7 +53,7 @@
     "Zero complete original levels are accepted. No whole-game completion percentage is calculated.",
     "Original archives, assembly, maps, routes and raw traces remain local/ignored. This page contains summaries and links, not original content.",
     "PR119 accepted metadata only: no new gameplay proof. PR120 accepted union tree differs from reviewed source tree; source-proof base remains accepted118. Legacy wetRegion panel/HUD inherited reads after API reconstruction are outside F4 full-API-hook proof; no broad UI or Proxy-security claim.",
-    "Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
+    "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
     "Accepted121 metadata identity: merge ad0bba84911e816778c0aaed2a3e9684ed2fc1ac, head3b3cf632b2b40f7d7857e51017e97ec3f6261456, tree72c872d4ba8ef5bd1bbb727734d55aa7e0b450f5; assessed120 only, no new gameplay proof. Accepted122 union07126 differs from reviewed source6f287; source-proof base is accepted1209c11."
   ],
   "scenarios": [
@@ -200,6 +200,14 @@
       "path": "docs/training43-source-timeout-recovery.md",
       "instructions": "Load local Training43, choose four distinct source characters and Apply team to Training43; Enable original 99-unit timeout at fresh PAUSED tick zero, then Start mission. Genuine proof team [1,3,0,5], races [0,0,3,4]. 1–4 select manually; W/S A/D move; Q/E turn; Esc pauses. Save progress / Load progress while paused reconstruct full history with visible progress; Retry/source-clear cancel obsolete work. Both action rules retain original99.",
       "scope": "Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable."
+    },
+    {
+      "id": "sign-view",
+      "title": "Both signs: bounded placeholder view cue",
+      "kind": "original",
+      "path": "docs/training43-sign-view.md",
+      "instructions": "In the existing four-view app load the pinned local Training43 map, roster and items; select four distinct source characters [1,3,0,5] and Apply team to Training43. Enable original 99-unit timeout at fresh PAUSED tick zero, then Start mission. Use 1–4, W/S A/D, Q/E and Esc; reach either sign by genuine dry movement, staging teammates through normal controls as occupancy requires. Each actor owns its own header cue; turn or move away to clear it. Save progress / Load progress while paused recompute from the complete installed pair. Retry and both action rules reset normally; source clear and another map remove admission. The generic label is not original text.",
+      "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue. Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim."
     }
   ],
   "mechanics": [
@@ -4111,7 +4119,7 @@
       "baseline": "ocs-3926",
       "original": "Dispatch cell signs and one-shot positional messages, including speaker and language conditions.",
       "source": "Main.s push_messages; Controls&Movement.s panel text dispatch",
-      "mappingScope": "Trigger records preserved; original message/sign gameplay not activated.",
+      "mappingScope": "Trigger records preserved; original message/sign gameplay not activated. PR124 accepts only the bounded source-derived placeholder view predicate and current-pair readback; all broad stage states remain unchanged.",
       "stages": {
         "mapping": "open",
         "reference": "open",
@@ -4132,13 +4140,43 @@
           "path": "docs/training43-completion.md",
           "label": "training43-completion.md",
           "scope": "Trigger records preserved; original message/sign gameplay not activated."
+        },
+        {
+          "path": "docs/training43-sign-view.md",
+          "label": "Accepted PR124 native predicate, controls and proof",
+          "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue."
         }
       ],
-      "tests": [],
-      "implementation": [],
-      "scenarios": [],
+      "tests": [
+        {
+          "path": "tests/training-sign.test.ts",
+          "label": "Synthetic predicate guards",
+          "scope": "Synthetic public fixtures only; source opt-in stays private."
+        },
+        {
+          "path": "tests/browser/training-sign.spec.ts",
+          "label": "Keyboard cue and full recovery definitions",
+          "scope": "Definitions identify supported workflows; linked files are not fresh execution receipts."
+        }
+      ],
+      "implementation": [
+        {
+          "path": "src/sim/training-sign.ts",
+          "label": "Raw admission and read-only cue",
+          "scope": "Exact raw map/level/facing-word WeakMap binding; synthetic projected admission is not provenance."
+        },
+        {
+          "path": "src/training-sign-panel.ts",
+          "label": "Four installed view headers",
+          "scope": "Own current actor/lifecycle/view guards; loading clears before any candidate installation."
+        }
+      ],
+      "scenarios": [
+        "sign-view"
+      ],
       "gaps": [
-        "Inactive panel actions must not be promoted into functioning switches."
+        "Inactive panel actions must not be promoted into functioning switches.",
+        "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim."
       ],
       "next": "Define the original branch conditions, make a bounded scenario and link its expected outcomes."
     },
@@ -9923,7 +9961,7 @@
         {
           "mechanic": "WORLD-03",
           "classification": "unknown",
-          "basis": "Reachable dry signs; button type0 dispatch is nop, followed by use_item, so whole activation is not proved nop. DrawViews.s2984–3044 and Equates.i480-byte/36 bitmap slots require separate rendering/readability proof. UNKNOWN/OPEN; unaccepted sign-view candidate receives no credit."
+          "basis": "Reachable dry signs: accepted PR124 supplies source-derived four-view placeholder cues, both actual keyboard sign witnesses and full installed-pair preservation. Controls type0 button dispatch is nop then use_item, not whole activation nop. Drawviews/Tables slot57 predicate is source-derived; generic cue is not original text/pixels/CPU proof. Whole R08 and unknown consequences remain UNKNOWN/OPEN; glyph art separately DEFERRED."
         },
         {
           "mechanic": "ENV-03",
@@ -10633,7 +10671,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 122,
+  "acceptedThrough": 124,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10741,13 +10779,30 @@
       "tree": "07126bf9a65a38fb15d3c4f75b6f915ad134b611",
       "reviewedTree": "6f28744d18198aa929c042d9ca2041ee816e22f1",
       "sourceProofBase": "9c11a985d79b28ef6c4e167966f1863647af5ba8"
+    },
+    {
+      "id": "proof-124",
+      "pr": 124,
+      "merge": "d122d69db59a2a46226b25349b50bc46ec510d43",
+      "head": "37ef7227b8c85528f85eca8c2d39a1f1790b18af",
+      "tree": "b35ab9f0609cf667df966e48db57a8dacda10f44",
+      "reviewedTree": "84a00052bdeaf50fac006325674b7a48a00fd4bd",
+      "sourceProofBase": "81353ad52118875195c925d668cc469ad72d106e",
+      "reviewSha256": "c0f8723ae11ddfcd1d33e8734b469a4f4d01b0da5ceb3709f998275a37ec5152",
+      "ci": [
+        "41145099476",
+        "41145081608"
+      ],
+      "automatic": "6535904450",
+      "receipt": "6535904450",
+      "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
     }
   ],
   "dashboards": [
     {
       "id": "testbed-capability",
       "title": "Current playable testbed capability",
-      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows.",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change.",
       "milestones": [
         {
           "id": "cap-start",
@@ -11087,9 +11142,53 @@
               "scope": "Source locators only; this metadata packet changes no src."
             }
           ],
-          "missing": "Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
+          "missing": "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows.",
           "proofs": [
             "proof-122"
+          ]
+        },
+        {
+          "id": "cap-sign-view",
+          "title": "Both source signs: four-owner placeholder view cue",
+          "status": "playable",
+          "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue.",
+          "lineage": [
+            "WORLD-03",
+            "T43-04",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "sign-view",
+          "evidence": [
+            {
+              "path": "docs/training43-sign-view.md",
+              "label": "Accepted PR124 native predicate, controls and proof",
+              "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue."
+            },
+            {
+              "path": "src/sim/training-sign.ts",
+              "label": "Raw admission and read-only cue",
+              "scope": "Exact raw map/level/facing-word WeakMap binding; synthetic projected admission is not provenance."
+            },
+            {
+              "path": "src/training-sign-panel.ts",
+              "label": "Four installed view headers",
+              "scope": "Own current actor/lifecycle/view guards; loading clears before any candidate installation."
+            },
+            {
+              "path": "tests/training-sign.test.ts",
+              "label": "Synthetic predicate guards",
+              "scope": "Synthetic public fixtures only; source opt-in stays private."
+            },
+            {
+              "path": "tests/browser/training-sign.spec.ts",
+              "label": "Keyboard cue and full recovery definitions",
+              "scope": "Definitions identify supported workflows; linked files are not fresh execution receipts."
+            }
+          ],
+          "missing": "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.",
+          "proofs": [
+            "proof-124"
           ]
         }
       ]
@@ -11097,7 +11196,7 @@
     {
       "id": "training43-software",
       "title": "Training43 software acceptance",
-      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows.",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change.",
       "milestones": [
         {
           "id": "t43-dry",
@@ -11396,9 +11495,53 @@
               "scope": "Source locators only; this metadata packet changes no src."
             }
           ],
-          "missing": "Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.",
+          "missing": "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows.",
           "proofs": [
             "proof-122"
+          ]
+        },
+        {
+          "id": "t43-sign-view",
+          "title": "Both source signs: four-owner placeholder view cue",
+          "status": "playable",
+          "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue.",
+          "lineage": [
+            "WORLD-03",
+            "T43-04",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "sign-view",
+          "evidence": [
+            {
+              "path": "docs/training43-sign-view.md",
+              "label": "Accepted PR124 native predicate, controls and proof",
+              "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue."
+            },
+            {
+              "path": "src/sim/training-sign.ts",
+              "label": "Raw admission and read-only cue",
+              "scope": "Exact raw map/level/facing-word WeakMap binding; synthetic projected admission is not provenance."
+            },
+            {
+              "path": "src/training-sign-panel.ts",
+              "label": "Four installed view headers",
+              "scope": "Own current actor/lifecycle/view guards; loading clears before any candidate installation."
+            },
+            {
+              "path": "tests/training-sign.test.ts",
+              "label": "Synthetic predicate guards",
+              "scope": "Synthetic public fixtures only; source opt-in stays private."
+            },
+            {
+              "path": "tests/browser/training-sign.spec.ts",
+              "label": "Keyboard cue and full recovery definitions",
+              "scope": "Definitions identify supported workflows; linked files are not fresh execution receipts."
+            }
+          ],
+          "missing": "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.",
+          "proofs": [
+            "proof-124"
           ]
         }
       ]

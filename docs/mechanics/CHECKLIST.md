@@ -2,7 +2,7 @@
 
 68 / 688 covered checkpoints / all registered evidence checkpoints (86 rows × 8 stages). Mapping, reference, rules, playable, integration, save/retry recovery, original-level acceptance and physical play each count once per row. Only covered earns credit; partial/open earn zero. Global across filters. Whole-game evidence coverage: 68 covered, 129 partial, 491 open. All eight stages have equal weight; 172 cells are original-level acceptance plus hardware, and 232 cells are PSI effects. Broad aggregate rows measure evidence, not software effort, playable-testbed completion, source parity or overall game completion. New accepted playable slices can leave broad rows partial and the percentage unchanged. The earlier roughly 60% was a subjective estimate of a smaller authored functional testbed, not this measured denominator. No replacement effort percentage is calculated. 100% requires every checkpoint covered; near-complete values are capped at 99.9%.
 
-Assessed 2026-10-30; accepted main through PR122: `81353ad52118875195c925d668cc469ad72d106e`.
+Assessed 2026-10-31; accepted main through PR124: `d122d69db59a2a46226b25349b50bc46ec510d43`.
 
 [Open the interactive HTML index](index.html) · [Canonical JSON](register.json)
 
@@ -14,9 +14,9 @@ Covered means only the stated slice. Linked files are not fresh run receipts. No
 
 ## Current playable testbed capability
 
-Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows.
+Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change.
 
-11 listed milestones: 9 playable · 0 partial · 1 open · 1 deferred.
+12 listed milestones: 10 playable · 0 partial · 1 open · 1 deferred.
 
 ### cap-start — Selected-team startup, movement and extraction: playable
 
@@ -136,7 +136,7 @@ Lineage: [LIFE-03](index.html#LIFE-03), [LIFE-04](index.html#LIFE-04), [T43-02](
 
 Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable.
 
-Missing dependency / boundary: Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.
+Missing dependency / boundary: Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows.
 
 Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08), [LIFE-03](index.html#LIFE-03), [LIFE-04](index.html#LIFE-04). [Entry and controls](index.html#scenario-source-timeout). [proof-122](index.html#proof-122)
 
@@ -145,11 +145,25 @@ Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08), [LIFE-03](ind
 - [Actual production controls and recovery definitions](../../tests/browser/training-timeout.spec.ts): Accepted HIGH49 committed definitions in one clean13.69min run plus9 independent definitions in one separate clean run; no count sum as coverage.
 - [Accepted full-history transition and cancellation](../../src/sim/training-timeout.ts): Source locators only; this metadata packet changes no src.
 
+### cap-sign-view — Both source signs: four-owner placeholder view cue: playable
+
+Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue.
+
+Missing dependency / boundary: Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.
+
+Lineage: [WORLD-03](index.html#WORLD-03), [T43-04](index.html#T43-04), [T43-07](index.html#T43-07), [T43-08](index.html#T43-08). [Entry and controls](index.html#scenario-sign-view). [proof-124](index.html#proof-124)
+
+- [Accepted PR124 native predicate, controls and proof](../../docs/training43-sign-view.md): Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue.
+- [Raw admission and read-only cue](../../src/sim/training-sign.ts): Exact raw map/level/facing-word WeakMap binding; synthetic projected admission is not provenance.
+- [Four installed view headers](../../src/training-sign-panel.ts): Own current actor/lifecycle/view guards; loading clears before any candidate installation.
+- [Synthetic predicate guards](../../tests/training-sign.test.ts): Synthetic public fixtures only; source opt-in stays private.
+- [Keyboard cue and full recovery definitions](../../tests/browser/training-sign.spec.ts): Definitions identify supported workflows; linked files are not fresh execution receipts.
+
 ## Training43 software acceptance
 
-First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows.
+First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change.
 
-10 listed milestones: 7 playable · 2 partial · 1 open · 0 deferred.
+11 listed milestones: 8 playable · 2 partial · 1 open · 0 deferred.
 
 ### t43-dry — Selected team and bounded dry route: playable
 
@@ -256,7 +270,7 @@ Lineage: [LIFE-03](index.html#LIFE-03), [LIFE-04](index.html#LIFE-04), [T43-02](
 
 Accepted PR122 original99 action deadline59499; full59498/59499 session/world, bodies/inventory/catalogs/opaque planes/corpse/counters/mission and canonical bytes; all-dead before timeout before exit, terminal freeze, Retry/both rules. Real task yields after16 ticks or8ms elapsed target, cancellation after raw awaits/before heavy work/during replay/before installation, visible progress and unavailable Start/Save/reentrant Load. Legacy1–18 formats/caps/bytes unchanged; their replay is not newly async-cancellable.
 
-Missing dependency / boundary: Whole Training43 software remains INCOMPLETE. R08 sign rendering/readability is UNKNOWN/OPEN; its unaccepted candidate gets no credit. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates.
+Missing dependency / boundary: Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows.
 
 Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08), [LIFE-03](index.html#LIFE-03), [LIFE-04](index.html#LIFE-04). [Entry and controls](index.html#scenario-source-timeout). [proof-122](index.html#proof-122)
 
@@ -264,6 +278,20 @@ Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08), [LIFE-03](ind
 - [Source-bound full replay definitions](../../tests/training-timeout.test.ts): Definitions; fresh accepted HIGH18 source cases and whole native expectations are distinct from this metadata verification.
 - [Actual production controls and recovery definitions](../../tests/browser/training-timeout.spec.ts): Accepted HIGH49 committed definitions in one clean13.69min run plus9 independent definitions in one separate clean run; no count sum as coverage.
 - [Accepted full-history transition and cancellation](../../src/sim/training-timeout.ts): Source locators only; this metadata packet changes no src.
+
+### t43-sign-view — Both source signs: four-owner placeholder view cue: playable
+
+Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue.
+
+Missing dependency / boundary: Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.
+
+Lineage: [WORLD-03](index.html#WORLD-03), [T43-04](index.html#T43-04), [T43-07](index.html#T43-07), [T43-08](index.html#T43-08). [Entry and controls](index.html#scenario-sign-view). [proof-124](index.html#proof-124)
+
+- [Accepted PR124 native predicate, controls and proof](../../docs/training43-sign-view.md): Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue.
+- [Raw admission and read-only cue](../../src/sim/training-sign.ts): Exact raw map/level/facing-word WeakMap binding; synthetic projected admission is not provenance.
+- [Four installed view headers](../../src/training-sign-panel.ts): Own current actor/lifecycle/view guards; loading clears before any candidate installation.
+- [Synthetic predicate guards](../../tests/training-sign.test.ts): Synthetic public fixtures only; source opt-in stays private.
+- [Keyboard cue and full recovery definitions](../../tests/browser/training-sign.spec.ts): Definitions identify supported workflows; linked files are not fresh execution receipts.
 
 ## Accepted proof receipts
 
@@ -274,6 +302,7 @@ Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08), [LIFE-03](ind
 - PR118: merge `decf689b2803772034bcae150544d1820395dcd5`; implementation `b3710c91d980597b1e13905c3afd432a491ff76e`; independent review SHA-256 `f117875e938d538cec7436be22ba5b2f7e71aa89528b550b38745bd2fe20f848`; CI 41071904326, 41071757626; automatic 6525460623; receipt 6525460623; kind actual-summary-state-completed-exact-no-findings;no separate receipt comment observed. Accepted union tree d78e3293e6f67e91c6d15c53631bb54f46510224; reviewed source tree a3b5964dbede6c20c16285c4db8661b3b176c8e4; source-proof base PR116 db5d2930eb07ef98ddda1d09bb1968efed0f57d3.
 - PR120: merge `9c11a985d79b28ef6c4e167966f1863647af5ba8`; implementation `79b3335571addf96c46464b25bb460ca28e9804d`; independent review SHA-256 `6153ae4bb86305701f2111eca59b6e67b5dd382a74ef5c48b2c64946e0ffce68`; CI 41110437096, 41110429681; automatic 6527929680; receipt 6531111769; kind separate-receipt-comment. Accepted union tree 574c5a954aa390883d79906bff80a803f2eb4009; reviewed source tree fdb34eb8a0f7229d46482e5319bd483961b04653; source-proof base PR118 decf689b2803772034bcae150544d1820395dcd5.
 - PR122: merge `81353ad52118875195c925d668cc469ad72d106e`; implementation `7540c012f8a7bb9ee343b09628eecb0c85c4fb85`; independent review SHA-256 `c7ad6b0b461bd0ea049cfea8b9e1d957650c8b5b3ddc5c01e93f03155a95e180`; CI 41136204108, 41136195941; automatic 6533377523; receipt 6534702086; kind separate-receipt-comment. Accepted union tree 07126bf9a65a38fb15d3c4f75b6f915ad134b611; reviewed source tree 6f28744d18198aa929c042d9ca2041ee816e22f1; source-proof base PR120 9c11a985d79b28ef6c4e167966f1863647af5ba8.
+- PR124: merge `d122d69db59a2a46226b25349b50bc46ec510d43`; implementation `37ef7227b8c85528f85eca8c2d39a1f1790b18af`; independent review SHA-256 `c0f8723ae11ddfcd1d33e8734b469a4f4d01b0da5ceb3709f998275a37ec5152`; CI 41145099476, 41145081608; automatic 6535904450; receipt 6535904450; kind actual-summary-state-completed-exact-no-findings;no separate receipt comment observed. Accepted union tree b35ab9f0609cf667df966e48db57a8dacda10f44; reviewed source tree 84a00052bdeaf50fac006325674b7a48a00fd4bd; source-proof base PR122 81353ad52118875195c925d668cc469ad72d106e.
 
 ## Training43: first original-level acceptance
 
@@ -1807,15 +1836,15 @@ Lineage: [T43-07](index.html#T43-07), [T43-08](index.html#T43-08), [LIFE-03](ind
 
 **Source:** Main.s push_messages; Controls&Movement.s panel text dispatch; baseline ocs-3926.
 
-**Mapped scope:** Trigger records preserved; original message/sign gameplay not activated.
+**Mapped scope:** Trigger records preserved; original message/sign gameplay not activated. PR124 accepts only the bounded source-derived placeholder view predicate and current-pair readback; all broad stage states remain unchanged.
 
-**Evidence:** [map-format.md](../../docs/map-format.md), [training43-completion.md](../../docs/training43-completion.md)
+**Evidence:** [map-format.md](../../docs/map-format.md), [training43-completion.md](../../docs/training43-completion.md), [Accepted PR124 native predicate, controls and proof](../../docs/training43-sign-view.md)
 
-**Tests:** Open
+**Tests:** [Synthetic predicate guards](../../tests/training-sign.test.ts), [Keyboard cue and full recovery definitions](../../tests/browser/training-sign.spec.ts)
 
-**Scenarios:** None linked
+**Scenarios:** sign-view
 
-**Gaps:** Inactive panel actions must not be promoted into functioning switches.
+**Gaps:** Inactive panel actions must not be promoted into functioning switches. Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.
 
 **Next:** Define the original branch conditions, make a bounded scenario and link its expected outcomes.
 
@@ -2818,7 +2847,7 @@ Maps/Game/Map43_Training/43.map; SHA-256 `646ce0f58ca9eca3e81be7e6090cb09a6bad53
 - [ENV-08](index.html#ENV-08): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass.
 - [LIFE-03](index.html#LIFE-03): **unknown** — PR115 supported wet entry/return plus PR116 bounded wet injury/death/corpse/head/control and v16 recovery accepted. Standing22 is accepted PR118; unsupported and whole-level outcomes remain open. Original classification unchanged; actual keyboard standing22 visits add bounded evidence, not a whole-level pass.
 - [WORLD-02](index.html#WORLD-02): **required** — Exact editor Training43: all four actors replay the bounded dry exit route; checkpoints after retirement. Original dead/control and wall-clock parity remain unproved.
-- [WORLD-03](index.html#WORLD-03): **unknown** — Reachable dry signs; button type0 dispatch is nop, followed by use_item, so whole activation is not proved nop. DrawViews.s2984–3044 and Equates.i480-byte/36 bitmap slots require separate rendering/readability proof. UNKNOWN/OPEN; unaccepted sign-view candidate receives no credit.
+- [WORLD-03](index.html#WORLD-03): **unknown** — Reachable dry signs: accepted PR124 supplies source-derived four-view placeholder cues, both actual keyboard sign witnesses and full installed-pair preservation. Controls type0 button dispatch is nop then use_item, not whole activation nop. Drawviews/Tables slot57 predicate is source-derived; generic cue is not original text/pixels/CPU proof. Whole R08 and unknown consequences remain UNKNOWN/OPEN; glyph art separately DEFERRED.
 - [ENV-03](index.html#ENV-03): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
 - [ENV-04](index.html#ENV-04): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.
 - [ENV-06](index.html#ENV-06): **unknown** — Stored button/item/monster metadata alone cannot establish an active call, valid target or required interaction. Dedicated runtime/caller audit needed.

@@ -1,5 +1,11 @@
 # Training43 original99 timeout and paused recovery
 
+PR124 is accepted at merge `d122d69db59a2a46226b25349b50bc46ec510d43`, actual union tree `b35ab9f0609cf667df966e48db57a8dacda10f44`, parents `82e6a4426e7d7e517b3a43de734986fbe0755881` + `37ef7227b8c85528f85eca8c2d39a1f1790b18af`. Reviewed source head `37ef7227b8c85528f85eca8c2d39a1f1790b18af` has tree `84a00052bdeaf50fac006325674b7a48a00fd4bd` and source-proof base accepted122 `81353ad52118875195c925d668cc469ad72d106e`. Accepted123 metadata merge82e/head8593/tree2d0 is disjoint; its17 metadata paths explain why the reviewed source tree differs from the accepted union. It adds no source proof.
+
+PR124 accepts a source-derived **Sign ahead (placeholder)** header cue with genuine keyboard witnesses for both signs and all four current view owners. It reads the exact raw-admitted installed pair and clears during loading, turn/move away, dead/exited/invalid views, source clear and map replacement; Retry/both rules and full paused recovery recompute it. No new activation, gameplay write or save field. The generic label is not original text, pixels or CPU proof. Whole R08 stays UNKNOWN/OPEN and Training43 software **INCOMPLETE**; glyph appearance/art is separately DEFERRED, not a software gate. General corpse interactions remain unsupported/unknown, with no unaccepted source-lane credit.
+
+See [sign-view controls and exact evidence](training43-sign-view.md).
+
 PR122 is accepted at merge `81353ad52118875195c925d668cc469ad72d106e`, actual union tree `07126bf9a65a38fb15d3c4f75b6f915ad134b611`, parents `ad0bba84911e816778c0aaed2a3e9684ed2fc1ac` + `7540c012f8a7bb9ee343b09628eecb0c85c4fb85`. Source head `7540c012f8a7bb9ee343b09628eecb0c85c4fb85` has reviewed tree `6f28744d18198aa929c042d9ca2041ee816e22f1`; source-proof base remains accepted120 `9c11a985d79b28ef6c4e167966f1863647af5ba8`. These three identities are distinct. Accepted121 metadata (head `3b3cf632b2b40f7d7857e51017e97ec3f6261456`, merge `ad0bba84911e816778c0aaed2a3e9684ed2fc1ac`, tree `72c872d4ba8ef5bd1bbb727734d55aa7e0b450f5`) assesses120 and adds no gameplay proof.
 
 ## Keyboard workflow and actual scope

@@ -172,11 +172,11 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });
 
-test('accepted122 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+test('accepted124 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
   const data = await load();
-  expect(data.acceptedThrough).toBe(122);
-  expect(data.reviewedHead).toBe('81353ad52118875195c925d668cc469ad72d106e');
-  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120,122]);
+  expect(data.acceptedThrough).toBe(124);
+  expect(data.reviewedHead).toBe('d122d69db59a2a46226b25349b50bc46ec510d43');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120,122,124]);
   const before = registerCompletion(data.mechanics);
   expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
   expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(129);
@@ -186,7 +186,7 @@ test('accepted122 dashboard separates capability lineage, proof and broad eviden
   extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
   await validateRegister(extended);
   expect(registerCompletion(extended.mechanics)).toEqual(before);
-  expect(renderHtml(extended)).toContain('12 listed milestones');
+  expect(renderHtml(extended)).toContain('13 listed milestones');
   const food = data.mechanics.find(m => m.id === 'INV-06')!;
   expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
   expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
@@ -323,7 +323,7 @@ test('accepted118 records actual summary receipt and distinct accepted/source id
     receiptKind: 'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed',
     tree: 'd78e3293e6f67e91c6d15c53631bb54f46510224', reviewedTree: 'a3b5964dbede6c20c16285c4db8661b3b176c8e4',
     sourceProofBase: 'db5d2930eb07ef98ddda1d09bb1968efed0f57d3' });
-  expect(data.acceptedProofs.filter(p => p.pr !== 118).every(p => p.receiptKind === 'separate-receipt-comment' && p.automatic !== p.receipt)).toBe(true);
+  expect(data.acceptedProofs.filter(p => p.pr !== 118 && p.pr !== 124).every(p => p.receiptKind === 'separate-receipt-comment' && p.automatic !== p.receipt)).toBe(true);
   for (const change of [
     { receiptKind: 'separate-receipt-comment' }, { receipt: '6525460624' },
     { receiptKind: 'unknown' }, { tree: '../bad' }, { reviewedTree: 42 }, { sourceProofBase: null },
@@ -342,7 +342,7 @@ test('accepted118 records actual summary receipt and distinct accepted/source id
   }
 });
 
-for (const pr of [118,120,122]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
+for (const pr of [118,120,122,124]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
   const original = await load();
   for (const field of Object.keys(original.acceptedProofs.find(p => p.pr === pr)!)) {
     for (const api of [validateRegister, renderHtml, renderMarkdown]) for (const throwing of [false,true]) {
@@ -440,4 +440,35 @@ test('122 malformed records and late accessors refuse before any public API invo
   }
   // Live own-accessor positive control distinguishes an inactive canary from refusal.
   let reads=0;const control={get tree(){reads++;return 'live';}};expect(control.tree).toBe('live');expect(reads).toBe(1);
+});
+
+test('accepted124 preserves source/union identity, same-summary receipt and bounded read-only scope', async () => {
+  const data = await load(), p = data.acceptedProofs.find(p => p.pr === 124)!;
+  expect(p).toEqual({id:'proof-124',pr:124,merge:'d122d69db59a2a46226b25349b50bc46ec510d43',head:'37ef7227b8c85528f85eca8c2d39a1f1790b18af',tree:'b35ab9f0609cf667df966e48db57a8dacda10f44',reviewedTree:'84a00052bdeaf50fac006325674b7a48a00fd4bd',sourceProofBase:'81353ad52118875195c925d668cc469ad72d106e',reviewSha256:'c0f8723ae11ddfcd1d33e8734b469a4f4d01b0da5ceb3709f998275a37ec5152',ci:['41145099476','41145081608'],automatic:'6535904450',receipt:'6535904450',receiptKind:'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed'});
+  for(const change of [{receipt:'6535904451'},{receiptKind:'separate-receipt-comment'},{tree:null},{reviewedTree:'bad'},{sourceProofBase:42}]) {
+    const bad=structuredClone(data);Object.assign(bad.acceptedProofs.find(p=>p.pr===124)!,change);await expect(validateRegister(bad)).rejects.toThrow();
+  }
+  for(const board of data.dashboards) {
+    expect(board.milestones.find(m=>m.id.endsWith('-sign-view'))).toMatchObject({status:'playable',scenario:'sign-view',proofs:['proof-124']});
+    expect(board.milestones.find(m=>m.id.endsWith('-sign-view'))!.missing).toContain('UNKNOWN/OPEN');
+  }
+  expect(registerCompletion(data.mechanics)).toMatchObject({covered:68,total:688,display:'9.9%'});
+  const doc=await readFile(new URL('../docs/training43-completion.md',import.meta.url),'utf8');
+  for(const text of ['T43-R08','NO gameplay writes','slot57','UNKNOWN/OPEN','T43-R09','T43-R10'])expect(doc).toContain(text);
+});
+
+test('124 missing own fields and malformed descriptors refuse with live accessor controls', async () => {
+  const original=await load();
+  for(const api of [validateRegister,renderHtml,renderMarkdown]) for(const field of ['tree','reviewedTree','sourceProofBase','receiptKind']) {
+    for(const mode of ['missing','hidden','own-accessor','inherited-value']) {
+      const data=structuredClone(original),p=data.acceptedProofs.find(p=>p.pr===124)!;let reads=0;
+      const value=Reflect.get(p,field);Reflect.deleteProperty(p,field);
+      if(mode==='hidden')Object.defineProperty(p,field,{value,enumerable:false});
+      if(mode==='own-accessor')Object.defineProperty(p,field,{enumerable:true,get(){reads++;throw new Error('LIVE124');}});
+      if(mode==='inherited-value')Object.setPrototypeOf(p,{[field]:value});
+      let error:unknown;try{await api(data);}catch(caught){error=caught;}
+      expect(error,`${api.name}/${field}/${mode}`).toBeInstanceOf(Error);expect(reads).toBe(0);
+    }
+  }
+  let reads=0;const live={get tree(){reads++;return 'active';}};expect(live.tree).toBe('active');expect(reads).toBe(1);
 });
