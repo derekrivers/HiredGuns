@@ -1,3 +1,5 @@
+import {transitionInventorySelection} from '../items/inventory-selection';
+import type {InventorySelectionOperation} from './training-inventory-selection';
 import {transitionInventoryWindow} from '../items/inventory-window';
 import type {InventoryWindowOperation} from './training-inventory-window';
 import {pickupCorpseStorage} from '../items/corpse-storage-pickup';
@@ -185,6 +187,13 @@ export function stepInventoryWindowLifecycle(level:LevelData,session:TrainingSes
  if(session.wet!.actors.some(a=>a.body.windowType===1)&&(commands.length||operation&&operation.kind!=='close'))fail('unsupported open-window controls');
  return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD,null,'equipment',{operation});
 }
+/** Distinct selection owner: hazards first, native caller second, world once. */
+export function stepInventorySelectionLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],operation:InventorySelectionOperation|null){
+ if(session.inventorySelection?.profile!=='one-native-inventory-selection-cycle-v1'||session.wetParty?.profile!=='four-controlled-timeout-v1'||previous.mission.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(previous.mission.rules.mode))fail('inventory selection owner/rules');
+ if(operation&&(!uint(operation.actor,3)||commands.length))fail('sole selection operation');
+ if(session.wet!.actors.some(a=>a.body.windowType===1)&&commands.length)fail('unsupported open-window controls');
+ return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD,null,'equipment',{operation,selection:true});
+}
 /** New-profile domain command only. No arbitrary mutable control callback. */
 export function stepStoragePickupLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],actor:number|null){
  // Internal entry: the profile owner has captured all external authority before
@@ -222,7 +231,7 @@ function corpseControl(level:LevelData,session:TrainingSession,world:WorldState,
  return result.outcome;
 }
 function storageControl(level:LevelData,session:TrainingSession,world:WorldState,id:number,windowDomain=false):string{
- const metadata=windowDomain?session.inventoryWindow!:session.storagePickup!;
+ const metadata=windowDomain?(session.inventorySelection??session.inventoryWindow!):session.storagePickup!;
  const wet=session.wet!,a=wet.actors[id]!;
  // Native dead guard runs after hazards. A fatal queued tick must still commit.
  if(!active(session,world,id)||a.body.windowType===7||!a.body.controlMethod)return 'caller-guard';
@@ -244,10 +253,10 @@ function storageControl(level:LevelData,session:TrainingSession,world:WorldState
  }
  return result.outcome;
 }
-function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null,pickupKind:'equipment'|'storage'='equipment',windowDomain?:{operation:InventoryWindowOperation|null}){
+function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null,pickupKind:'equipment'|'storage'='equipment',windowDomain?:{operation:InventoryWindowOperation|InventorySelectionOperation|null;selection?:boolean}){
  validate(level,session,previous,!!windowDomain);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
  if(previous.tick>=tickLimit)fail('future tick budget');
- const next={...session,...(windowDomain?{inventoryWindow:structuredClone(session.inventoryWindow!)}:{}),...(pickupKind==='storage'?{storagePickup:structuredClone(session.storagePickup!)}:{}),wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
+ const next={...session,...(windowDomain?.selection?{inventorySelection:structuredClone(session.inventorySelection!)}:windowDomain?{inventoryWindow:structuredClone(session.inventoryWindow!)}:{}),...(pickupKind==='storage'?{storagePickup:structuredClone(session.storagePickup!)}:{}),wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
  const wet=next.wet,prospective=structuredClone(previous);
  wet.drownCounter=(wet.drownCounter+1)&65535;wet.fallCounter=(wet.fallCounter+1)&65535;
  const effects:{tick:number;mercenaryId:number;kind:'damaged'|'died'}[]=[];
@@ -264,9 +273,14 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
  for(const a of wet.actors)if(!a.runtimeDeadWord)a.old=a.current;
  const op=windowDomain?.operation;
  let windowResult:string|null=null;
- if(op&&op.kind!=='storage'){
-  const a=wet.actors[op.actor]!;const r=transitionInventoryWindow({actor:a.body,runtimeDeadWord:!active(next,prospective,op.actor)?0xff00:a.runtimeDeadWord,temp:next.inventoryWindow!.tempEntries[op.actor]!,redraw:next.wetLifecycle!.redraw},op.kind);
-  a.body=r.state.actor;next.inventoryWindow!.tempEntries[op.actor]=r.state.temp;next.wetLifecycle!.redraw=r.state.redraw;next.inventoryWindow!.windowOutcomes.push(r.outcome);windowResult=r.outcome;
+ const metadata=windowDomain?.selection?next.inventorySelection!:next.inventoryWindow!;
+ if(op&&(op.kind==='forward'||op.kind==='backward')){
+  const a=wet.actors[op.actor]!,m=next.inventorySelection!;
+  const r=transitionInventorySelection({actor:a.body,runtimeDeadWord:!active(next,prospective,op.actor)?0xff00:a.runtimeDeadWord,temp:m.tempEntries[op.actor]!,redraw:next.wetLifecycle!.redraw,selection:m.selections[op.actor]!},op.kind);
+  m.selections[op.actor]=r.state.selection;m.selectionOutcomes.push(r.outcome);next.wetLifecycle!.redraw=r.state.redraw;
+ }else if(op&&(op.kind==='open'||op.kind==='close')){
+  const a=wet.actors[op.actor]!;const r=transitionInventoryWindow({actor:a.body,runtimeDeadWord:!active(next,prospective,op.actor)?0xff00:a.runtimeDeadWord,temp:metadata.tempEntries[op.actor]!,redraw:next.wetLifecycle!.redraw},op.kind);
+  a.body=r.state.actor;metadata.tempEntries[op.actor]=r.state.temp;next.wetLifecycle!.redraw=r.state.redraw;metadata.windowOutcomes.push(r.outcome);windowResult=r.outcome;
  }
  const pickup=op?.kind==='storage'?storageControl(level,next,prospective,op.actor,true):pickupActor===null?null:pickupKind==='storage'?storageControl(level,next,prospective,pickupActor):corpseControl(level,next,prospective,pickupActor);
  // Immutable source geometry drives movement. Dynamic living occupancy is the source-wet dead-word guard.
@@ -276,7 +290,7 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
  const result=stepWorld(geometry,prospective,commands,p=>admitLifecycle(geometry,next,p),true,missionResolver);
  for(let id=0;id<4;id++){const a=wet.actors[id]!,i=cellIndex(level,result.world.mercenaries[id]!);if(!(level.layers[0][a.current]!&4)&&(level.layers[0][i]!&4)&&result.events.some(e=>e.mercenaryId===id&&e.kind==='moved'))a.entries++;}
  heads(level,next,result.world,previous,session);
- const inventory:TrainingSession['inventory']={commands:[],actors:wet.actors.map(a=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:0}))};
+ const inventory:TrainingSession['inventory']={commands:[],actors:wet.actors.map((a,i)=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:windowDomain?.selection?next.inventorySelection!.selections[i]!:0}))};
  const candidate={world:result.world,session:{...next,inventory}};
  if(record){const history=wet.history,last=history.at(-1);if(last&&equal(last.commands,commands))last.count++;else history.push({count:1,commands:structuredClone([...commands])});wet.history=lifecycleHistory(history);serializeWetLifecycle(candidate);}
  validate(level,candidate.session,candidate.world,!!windowDomain);return {...candidate,events:[...effects,...result.events],...(pickup===null?{}:{pickup}),...(windowResult===null?{}:{windowResult})};
