@@ -1,8 +1,13 @@
 # Training43 selected-team wet lifecycle (v18)
 
+## Accepted130 window extension
+
+[One native inventory-window cycle and full profile22 proof](training43-inventory-window.md) is accepted separately: ONE successful B storage transfer, then N open–idle-water–N close on the same living controlled recipient; N is direct native10/9 letter adaptation, not native Tab/directional cycling. Window1 remains ACTIVE with hazards; other controls are unsupported whole-candidate refusals. Close clears32 fourth bytes (equipment + SEPARATE TEMP +30 store including empty tails), preserving first3 bytes/actions/count/weight/opaque state except ordinary hazards. TEMP zero is initializer-clear inference, lastPositions adapter zero, scroll unrepresented. Exact PAUSED OPEN/CLOSED/continued-water/dry restores, full raw59498/59499, terminal freeze and Retry BOTH rules are accepted at the linked scope/cost/provenance. Whole Training43/R08/general inventory and future selection remain OPEN; no CPU timing/cache fidelity claim. Legacy1–21/caps unchanged.
+
+
 ## Accepted128 storage extension
 
-[Native22 storage pickup and complete profile21 proof](training43-storage-pickup.md) is accepted separately from G20 equipment pickup. ONE B-binding attempt across the entire history at a different source-owned DEAD teammate CURRENT CELL, source equipment empty/first store, canonical room/selection0/window0/spells clear/nonheavy. Recipient equipment retained, FF outline/full4 shifts/source weight before recipient; lastPositions4 are adapter zeros, not observed RAM. Full raw3 chronology/continued water/dry/terminal recovery/Retry BOTH rules; saved leaves compare-only and legacy1–20 unchanged. WholeTraining43/R08/general inventory INCOMPLETE; outline clearing/window transition and wider source branches remain OPEN, not inactive. This adds no upcoming window-admission/future22 credit or CPU execution. See the linked proof for honest run unions/costs/cancellation and accepted gates.
+[Native22 storage pickup and complete profile21 proof](training43-storage-pickup.md) is accepted separately from G20 equipment pickup. ONE B-binding attempt across the entire history at a different source-owned DEAD teammate CURRENT CELL, source equipment empty/first store, canonical room/selection0/window0/spells clear/nonheavy. Recipient equipment retained, FF outline/full4 shifts/source weight before recipient; lastPositions4 are adapter zeros, not observed RAM. Full raw3 chronology/continued water/dry/terminal recovery/Retry BOTH rules; saved leaves compare-only and legacy1–20 unchanged. WholeTraining43/R08/general inventory INCOMPLETE; outline clearing/window transition is separately accepted in bounded PR130; wider source branches remain OPEN, not inactive. This adds no upcoming window-admission/future22 credit or CPU execution. See the linked proof for honest run unions/costs/cancellation and accepted gates.
 
 
 ## Accepted126 bounded equipment pickup
