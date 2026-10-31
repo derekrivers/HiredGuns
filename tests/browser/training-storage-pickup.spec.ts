@@ -1,0 +1,70 @@
+import {expect,test,type Page} from '@playwright/test';
+import {readFile,writeFile} from 'node:fs/promises';
+const privateInputs=process.env.HIRED_GUNS_STORAGE_PROVIDER;
+async function selected(page:Page,enable=true){
+ await page.goto('/');await page.locator('#local-test-preset').click();await expect(page.locator('#local-test-status')).toContainText('Ready: verified');
+ await page.locator('#roster-panel').evaluate((e:HTMLDetailsElement)=>e.open=true);
+ for(const [i,n]of [1,3,0,5].entries())await page.getByLabel(`Character for team slot ${i+1}`).selectOption(String(n));
+ await page.locator('#roster-apply').click();await expect(page.locator('#recovery-status')).toContainText('Selected team applied');
+ if(enable){await page.locator('#storage-pickup-enable').click();await expect(page.locator('#storage-pickup-feedback')).toContainText('enabled');}
+}
+async function save(page:Page,name?:string){const p=page.waitForEvent('download');await page.locator('#save-checkpoint').click();const json=await readFile((await(await p).path())!,'utf8');if(name)await writeFile(test.info().outputPath(name+'.json'),json);return json;}
+async function restore(page:Page,json:string){await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'checkpoint.json',mimeType:'application/json',buffer:Buffer.from(json)});await expect(page.locator('#recovery-status')).toContainText('Checkpoint restored');}
+async function key(page:Page,key:string){await page.locator('h1').click();await page.keyboard.press(key);}
+test('storage pickup is opt-in and has a readable adapted binding',async({page})=>{
+ await page.goto('/');await expect(page.locator('#storage-pickup-queue')).toBeDisabled();await expect(page.locator('#training-storage-pickup')).toContainText('browser binding adaptation');await expect(page.locator('#storage-pickup-enable')).toBeDisabled();
+ await key(page,'b');await expect(page.locator('#storage-pickup-state')).toContainText('Inactive');
+});
+test('actual selected setup, one refusal attempt, paused recovery and both rules Retry',async({page})=>{
+ test.skip(!privateInputs,'Private opt-in sources required');await selected(page);const initial=await save(page,'initial');expect(JSON.parse(initial).version).toBe(21);
+ await key(page,'b');expect(await save(page)).toBe(initial);await page.locator('#play').click();await key(page,'b');await expect(page.locator('#storage-pickup-state')).toContainText('profile-refusal');await key(page,'Escape');const attempted=await save(page,'attempted');
+ expect(JSON.parse(attempted).history.filter((t:number[])=>t.slice(2).some(n=>n>=24))).toHaveLength(1);await restore(page,attempted);expect(await save(page,'restored')).toBe(attempted);
+ await page.locator('#reset').click();expect(await save(page,'retry')).toBe(initial);
+ for(const mode of ['first-exit','cooperative-extraction']){await page.getByLabel('Mission rules').selectOption(mode);const fresh=JSON.parse(await save(page,'rules-'+mode));expect(fresh.history).toEqual([]);expect(fresh.checkpoint.state.actors).toEqual(JSON.parse(initial).checkpoint.state.actors);}
+});
+for(const operation of ['enable','restore','save']as const)for(const reject of [false,true])for(const cancel of ['retry','rules','selection','source-clear','apply','mode'])test(`storage generation ${operation}/${reject?'error':'success'} after ${cancel}`,async({page})=>{
+ test.skip(!privateInputs,'Private opt-in sources required');await selected(page,operation!=='enable');const before=await save(page);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.evaluate(reject=>{const digest=SubtleCrypto.prototype.digest;SubtleCrypto.prototype.digest=async function(...args:Parameters<SubtleCrypto['digest']>){SubtleCrypto.prototype.digest=digest;const w=window as unknown as {held:boolean;release:()=>void};w.held=true;await new Promise<void>(r=>w.release=r);if(reject)throw Error('obsolete storage verification error');return digest.apply(this,args);};},reject);
+ if(operation==='enable')await page.locator('#storage-pickup-enable').click();else if(operation==='restore')await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'held.json',mimeType:'application/json',buffer:Buffer.from(before)});else await page.locator('#save-checkpoint').click();
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {held:boolean}).held)).toBe(true);await expect(page.locator('#play')).toBeDisabled();await expect(page.locator('#save-checkpoint')).toBeDisabled();await expect(page.getByLabel('Load navigation checkpoint')).toBeDisabled();
+ if(cancel==='retry')await page.locator('#reset').click();else if(cancel==='rules')await page.getByLabel('Mission rules').selectOption('first-exit');else if(cancel==='mode')await page.locator('#demo').click();else if(cancel==='apply'){await page.locator('#roster-apply').click();await expect(page.locator('#recovery-status')).toContainText('Selected team applied');}else if(cancel==='selection')await page.getByLabel('Character for team slot 1').selectOption('2');else await page.locator('#items-clear').click();
+ const current=await save(page),status=await page.locator('#recovery-status').textContent(),feedback=await page.locator('#storage-pickup-feedback').textContent(),error=await page.locator('#error').textContent();
+ await page.evaluate(()=>(window as unknown as {release:()=>void}).release());await page.waitForTimeout(100);expect(await save(page)).toBe(current);expect(await page.locator('#recovery-status').textContent()).toBe(status);expect(await page.locator('#storage-pickup-feedback').textContent()).toBe(feedback);expect(await page.locator('#error').textContent()).toBe(error);expect(errors).toEqual([]);
+});
+for(const operation of ['enable','restore','save']as const)test(`storage current ${operation} error releases loading and permits retry`,async({page})=>{
+ test.skip(!privateInputs,'Private opt-in sources required');await selected(page,operation!=='enable');const canonical=await save(page);
+ await page.evaluate(()=>{const digest=SubtleCrypto.prototype.digest;SubtleCrypto.prototype.digest=async function(){SubtleCrypto.prototype.digest=digest;throw Error('current storage verification error');};});
+ if(operation==='enable'){await page.locator('#storage-pickup-enable').click();await expect(page.locator('#storage-pickup-feedback')).toContainText('current storage verification error');await expect(page.locator('#storage-pickup-enable')).toBeEnabled();await page.locator('#storage-pickup-enable').click();await expect(page.locator('#storage-pickup-feedback')).toContainText('enabled');}
+ else {if(operation==='restore')await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'current.json',mimeType:'application/json',buffer:Buffer.from(canonical)});else await page.locator('#save-checkpoint').click();await expect(page.locator('#error')).toContainText('current storage verification error');expect(await save(page)).toBe(canonical);await restore(page,canonical);expect(await save(page)).toBe(canonical);}
+ await expect(page.locator('#play')).toBeEnabled();await expect(page.locator('#save-checkpoint')).toBeEnabled();
+});
+for(const tick of [59498,59499])for(const cancel of ['retry','source-clear']as const)test(`storage native CPU replay cancellation ${tick}/${cancel}`,async({page})=>{
+ test.skip(!privateInputs||!process.env.HIRED_GUNS_STORAGE_DEADLINE,'Private complete current-profile deadline evidence required');
+ const bundle=JSON.parse(await readFile(process.env.HIRED_GUNS_STORAGE_DEADLINE!,'utf8')),canonical=JSON.stringify(tick===59498?bundle.before:bundle.terminal);expect(JSON.parse(canonical).checkpoint.world.tick).toBe(tick);await selected(page);const initial=await save(page);
+ await page.evaluate(cancel=>{
+  const w=window as unknown as {native:{progress:number[];scheduled:number;fired:number;completed:boolean;controls:boolean[]}};w.native={progress:[],scheduled:0,fired:0,completed:false,controls:[]};
+  const observer=new MutationObserver(()=>{const text=document.querySelector('#recovery-status')!.textContent!,m=/Reconstructing checkpoint: (\d+) \/ (\d+)/.exec(text);if(!m)return;const n=Number(m[1]);w.native.progress.push(n);if(n===Number(m[2]))w.native.completed=true;if(n>=128&&!w.native.scheduled){w.native.scheduled=performance.now();setTimeout(()=>{w.native.fired=performance.now();w.native.controls=['#play','#save-checkpoint','#checkpoint-file'].map(s=>(document.querySelector(s)as HTMLButtonElement).disabled);(document.querySelector(cancel==='retry'?'#reset':'#items-clear')as HTMLButtonElement).click();observer.disconnect();},250);}});observer.observe(document.querySelector('#recovery-status')!,{childList:true,subtree:true,characterData:true});
+ },cancel);
+ let downloads=0;page.on('download',()=>downloads++);await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'native.json',mimeType:'application/json',buffer:Buffer.from(canonical)});
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {native:{fired:number}}).native.fired),{timeout:30000}).toBeGreaterThan(0);await expect(page.locator('#tick')).toContainText('tick 0');await page.waitForTimeout(100);
+ const observed=await page.evaluate(()=>(window as unknown as {native:{progress:number[];scheduled:number;fired:number;completed:boolean;controls:boolean[]}}).native);expect(observed.completed).toBe(false);expect(observed.controls).toEqual([true,true,true]);expect(observed.fired-observed.scheduled).toBeLessThan(1000);expect(observed.progress.at(-1)).toBeLessThan(tick);expect(downloads).toBe(0);await expect(page.locator('#error')).toBeEmpty();
+ const current=await save(page);if(cancel==='retry')expect(current).toBe(initial);const status=await page.locator('#recovery-status').textContent();await page.waitForTimeout(100);expect(await page.locator('#recovery-status').textContent()).toBe(status);expect(await save(page)).toBe(current);await writeFile(test.info().outputPath('native-cancel.json'),JSON.stringify({tick,cancel,observed},null,2));
+});
+
+for(const action of ['pause','blur','digit-selection','manual-selection','retry','rules','apply','source-clear','mode','map'])test('captured pending B cleared by '+action,async({page})=>{
+ test.skip(!privateInputs,'Private opt-in sources required');const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.locator('#local-test-preset').click();await expect(page.locator('#local-test-status')).toContainText('Ready: verified');await page.locator('#roster-panel').evaluate((e:HTMLDetailsElement)=>e.open=true);
+ for(const [i,n]of[1,3,0,5].entries())await page.getByLabel(`Character for team slot ${i+1}`).selectOption(String(n));await page.locator('#roster-apply').click();await expect(page.locator('#recovery-status')).toContainText('Selected team applied');await page.locator('#storage-pickup-enable').click();await expect(page.locator('#storage-pickup-feedback')).toContainText('enabled');
+ await page.locator('#play').click();const queued=await page.evaluate(async action=>{
+  const bytes=action==='map'?await(await fetch('/__local-training43/map')).arrayBuffer():null;
+  const target=document.querySelector('h1')!;target.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyB',bubbles:true}));const feedback=document.querySelector('#storage-pickup-feedback')!.textContent;
+  if(action==='pause')target.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}));
+  else if(action==='blur')window.dispatchEvent(new Event('blur'));
+  else if(action==='digit-selection'){target.dispatchEvent(new KeyboardEvent('keydown',{code:'Digit2',bubbles:true}));target.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}));}
+  else if(action==='manual-selection'){const s=document.querySelector('#assign-1')as HTMLSelectElement;s.value='key:0';s.dispatchEvent(new Event('change',{bubbles:true}));target.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}));}
+  else if(action==='rules'){const s=document.querySelector('#mission-mode')as HTMLSelectElement;s.value='first-exit';s.dispatchEvent(new Event('change',{bubbles:true}));}
+  else if(action==='map'){const input=document.querySelector('#map-file')as HTMLInputElement,transfer=new DataTransfer();transfer.items.add(new File([bytes!],'review.map'));input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));}
+  else(document.querySelector(action==='retry'?'#reset':action==='apply'?'#roster-apply':action==='source-clear'?'#items-clear':'#demo')as HTMLButtonElement).click();
+  target.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyB',bubbles:true}));return feedback;
+ },action);expect(queued).toContain('queued');await expect(page.locator('#save-checkpoint')).toBeEnabled();await page.waitForTimeout(100);
+ const download=page.waitForEvent('download');await page.locator('#save-checkpoint').click();const text=await readFile((await(await download).path())!,'utf8'),value=JSON.parse(text);if(value.version===21){expect(value.checkpoint.storagePickup.outcome).toBeNull();expect(value.history.some((t:number[])=>t.slice(2).some(n=>n>=24))).toBe(false);}await writeFile(test.info().outputPath('after.json'),text);expect(errors).toEqual([]);
+});

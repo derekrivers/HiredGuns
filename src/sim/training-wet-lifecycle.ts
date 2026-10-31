@@ -1,3 +1,4 @@
+import {pickupCorpseStorage} from '../items/corpse-storage-pickup';
 import { cellIndex, inBounds, type Position, type LevelData, type MissionRules, type PlayerCommand, type WorldState, type SimulationEvent } from '../contracts';
 import { computeNormalDamage } from '../character/damage-arithmetic';
 import { sourceDeathSearch, type DeathSearch } from '../character/source-death-search';
@@ -176,6 +177,14 @@ export function stepTimeoutLifecycle(level:LevelData,session:TrainingSession,pre
  return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD);
 }
 /** New-profile domain command only. No arbitrary mutable control callback. */
+export function stepStoragePickupLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],actor:number|null){
+ // Internal entry: the profile owner has captured all external authority before
+ // arriving here. No runtime callback receives this candidate or its geometry.
+ if(session.storagePickup?.profile!=='one-native-storage-pickup-v1'||session.wetParty?.profile!=='four-controlled-timeout-v1'||previous.mission.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(previous.mission.rules.mode))fail('corpse pickup owner/rules');
+ if(actor!==null&&(!uint(actor,3)||commands.length))fail('pickup-only domain command');
+ return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD,actor,'storage');
+}
+/** New-profile domain command only. No arbitrary mutable control callback. */
 export function stepCorpsePickupLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],actor:number|null){
  // Internal entry: the profile owner has captured all external authority before
  // arriving here. No runtime callback receives this candidate or its geometry.
@@ -203,10 +212,32 @@ function corpseControl(level:LevelData,session:TrainingSession,world:WorldState,
  }
  return result.outcome;
 }
-function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null){
+function storageControl(level:LevelData,session:TrainingSession,world:WorldState,id:number):string{
+ const wet=session.wet!,a=wet.actors[id]!;
+ // Native dead guard runs after hazards. A fatal queued tick must still commit.
+ if(!active(session,world,id)||a.body.windowType===7||!a.body.controlMethod)return 'caller-guard';
+ const map=wetLifecycleMap(level,session),i=a.current,first=map.layers[0][i]!,second=map.layers[1][i]!,owner=(second>>>12)&255;
+ if(((first&0xf0000020)>>>0)!==0x70000020||!wet.corpses.includes(i)||owner>3||owner===id)return 'profile-refusal';
+ const source=wet.actors[owner]!;
+ if(source.runtimeDeadWord!==0xff00||source.body.statsDeadWord!==0xff00||session.wetLifecycle!.actors[owner]!.death?.target!==i||a.body.windowType!==0||a.body.controlMethod!==1||a.body.inventory.equipped.itemId||source.body.inventory.equipped.itemId)return 'profile-refusal';
+ for(const body of [a.body,source.body]){
+  if(body.spellWater||body.spellWings)return 'profile-refusal';
+  let ended=false;for(const slot of body.inventory.carried){if(!slot.itemId)ended=true;else if(ended)return 'profile-refusal';}
+ }
+ if(a.body.weight.tooHeavy||source.body.weight.tooHeavy||a.body.inventory.carried[29]!.itemId)return 'profile-refusal';
+ const result=pickupCorpseStorage({actors:wet.actors.map(a=>a.body),deadWords:wet.actors.map(a=>a.runtimeDeadWord),players:wet.actors.map((_,j)=>({selection:0,lastPosition:session.storagePickup!.lastPositions[j]!,noRoom:0,heavyCount:0})),recipient:id,cell:{first,second,third:map.layers[2][i]!},redraw:session.wetLifecycle!.redraw},session.items);
+ if(result.outcome==='transferred'){
+  if(result.state.actors[id]!.weight.tooHeavy||result.state.actors[owner]!.weight.tooHeavy)return 'profile-refusal';
+  for(const j of [id,owner])wet.actors[j]!.body=result.state.actors[j]!;
+  session.wetLifecycle!.redraw=result.state.redraw;
+  session.storagePickup!.lastPositions=result.state.players.map(p=>p.lastPosition);
+ }
+ return result.outcome;
+}
+function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null,pickupKind:'equipment'|'storage'='equipment'){
  validate(level,session,previous);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
  if(previous.tick>=tickLimit)fail('future tick budget');
- const next={...session,wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
+ const next={...session,...(pickupKind==='storage'?{storagePickup:structuredClone(session.storagePickup!)}:{}),wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
  const wet=next.wet,prospective=structuredClone(previous);
  wet.drownCounter=(wet.drownCounter+1)&65535;wet.fallCounter=(wet.fallCounter+1)&65535;
  const effects:{tick:number;mercenaryId:number;kind:'damaged'|'died'}[]=[];
@@ -221,7 +252,7 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
   if(!active(next,prospective,id))continue;const a=wet.actors[id]!;a.delay=level.layers[0][a.current]!&4?(a.delay?a.delay-1:2):0;a.pending=0;
  }}
  for(const a of wet.actors)if(!a.runtimeDeadWord)a.old=a.current;
- const pickup=pickupActor===null?null:corpseControl(level,next,prospective,pickupActor);
+ const pickup=pickupActor===null?null:pickupKind==='storage'?storageControl(level,next,prospective,pickupActor):corpseControl(level,next,prospective,pickupActor);
  // Immutable source geometry drives movement. Dynamic living occupancy is the source-wet dead-word guard.
  // Corpse aux7 is non-solid in source move; its inert presence does not replace stair geometry.
  const geometry=wet.corpses.length?wetLifecycleMap(level,next):level;
