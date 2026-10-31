@@ -69,7 +69,7 @@ it.skipIf(!provider)('private pinned2548-open2549-idle2550-water-before-close en
  for(const [index,operation]of [{kind:'open' as const,actor:2},null,{kind:'close' as const,actor:2}].entries()){
   const independent=await read(`vectors/future-cycle-${index+1}-DRAFT.json`),expected=independent.pair;delete expected.session.storagePickup;
   history.push({count:1,codes:operation?[operation.kind==='open'?30:34]:[]});
-  expected.session.inventoryWindow={...source,profile:INVENTORY_WINDOW_PROFILE,history:structuredClone(history),tempEntries:Array.from({length:4},emptyInventoryTemp),phase:index===2?'closed':'opened',recipient:2,windowOutcomes:index===2?['applied','applied']:['applied']};
+  expected.session.inventoryWindow={...source,profile:INVENTORY_WINDOW_PROFILE,history:structuredClone(history),tempEntries:independent.aux.map((a:{tempHex:string})=>({itemId:parseInt(a.tempHex.slice(0,2),16),damage:parseInt(a.tempHex.slice(2,4),16),ammo:parseInt(a.tempHex.slice(4,6),16),fourthByte:parseInt(a.tempHex.slice(6,8),16),rawHex:a.tempHex})),phase:index===2?'closed':'opened',recipient:2,windowOutcomes:index===2?['applied','applied']:['applied']};
   const next=stepInventoryWindow(level,c.session,c.world,[],operation);expect({session:next.session,world:next.world}).toEqual(expected);expect(next.events).toEqual([]);c=next;
  }
  expect(c.session.wet.drownCounter).toBe(0);expect(c.session.wet.actors[2].itemPasses).toBe(5);
