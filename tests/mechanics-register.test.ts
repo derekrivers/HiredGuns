@@ -172,11 +172,11 @@ test('HTML and text report exact canonical counts without changing acceptance cl
   await expect(validateRegister(claim)).rejects.toThrow('reviewed receipt');
 });
 
-test('accepted126 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
+test('accepted128 dashboard separates capability lineage, proof and broad evidence arithmetic', async () => {
   const data = await load();
-  expect(data.acceptedThrough).toBe(126);
-  expect(data.reviewedHead).toBe('583aec99f50306988bf2b675fbc7c6b0c0c8b71e');
-  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120,122,124,126]);
+  expect(data.acceptedThrough).toBe(128);
+  expect(data.reviewedHead).toBe('0cba4240a7f44bfd95b3a324520f97fc6ba061dc');
+  expect(data.acceptedProofs.map(p => p.pr)).toEqual([112,114,115,116,118,120,122,124,126,128]);
   const before = registerCompletion(data.mechanics);
   expect(before).toMatchObject({ covered: 68, total: 688, display: '9.9%' });
   expect(data.mechanics.reduce((n,m) => n + STAGES.filter(s => m.stages[s] === 'partial').length, 0)).toBe(129);
@@ -186,7 +186,7 @@ test('accepted126 dashboard separates capability lineage, proof and broad eviden
   extended.dashboards[0]!.milestones.push({ ...structuredClone(extended.dashboards[0]!.milestones[0]!), id: 'cap-extra-narrow-slice' });
   await validateRegister(extended);
   expect(registerCompletion(extended.mechanics)).toEqual(before);
-  expect(renderHtml(extended)).toContain('14 listed milestones');
+  expect(renderHtml(extended)).toContain('15 listed milestones');
   const food = data.mechanics.find(m => m.id === 'INV-06')!;
   expect(food.stages.playable).toBe('partial'); expect(food.scenarios).toContain('consumables');
   expect(food.tests.some(t => t.path === 'tests/browser/training-consumables.spec.ts')).toBe(true);
@@ -323,7 +323,7 @@ test('accepted118 records actual summary receipt and distinct accepted/source id
     receiptKind: 'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed',
     tree: 'd78e3293e6f67e91c6d15c53631bb54f46510224', reviewedTree: 'a3b5964dbede6c20c16285c4db8661b3b176c8e4',
     sourceProofBase: 'db5d2930eb07ef98ddda1d09bb1968efed0f57d3' });
-  expect(data.acceptedProofs.filter(p => p.pr !== 118 && p.pr !== 124 && p.pr !== 126).every(p => p.receiptKind === 'separate-receipt-comment' && p.automatic !== p.receipt)).toBe(true);
+  expect(data.acceptedProofs.filter(p => p.pr !== 118 && p.pr !== 124 && p.pr !== 126 && p.pr !== 128).every(p => p.receiptKind === 'separate-receipt-comment' && p.automatic !== p.receipt)).toBe(true);
   for (const change of [
     { receiptKind: 'separate-receipt-comment' }, { receipt: '6525460624' },
     { receiptKind: 'unknown' }, { tree: '../bad' }, { reviewedTree: 42 }, { sourceProofBase: null },
@@ -342,7 +342,7 @@ test('accepted118 records actual summary receipt and distinct accepted/source id
   }
 });
 
-for (const pr of [118,120,122,124,126]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
+for (const pr of [118,120,122,124,126,128]) test(`every${pr} proof field rejects inherited replacement and accessors before all API reads`, async () => {
   const original = await load();
   for (const field of Object.keys(original.acceptedProofs.find(p => p.pr === pr)!)) {
     for (const api of [validateRegister, renderHtml, renderMarkdown]) for (const throwing of [false,true]) {
@@ -484,13 +484,13 @@ test('accepted126 requires same accepted/reviewed tree and honest same-summary r
     bad.dashboards[0]!.milestones[0]!.evidence[0]!.path='docs/absent126.md';
     await expect(validateRegister(bad)).rejects.toThrow(/Invalid (accepted|summary)/);
   }
-  for(const [board,n] of data.dashboards.map((d,i)=>[d,i===0?13:12] as const)) {
+  for(const [board,n] of data.dashboards.map((d,i)=>[d,i===0?14:13] as const)) {
     expect(board.milestones).toHaveLength(n);
     expect(board.milestones.filter(m=>m.id.endsWith('-corpse-pickup'))).toHaveLength(1);
-    expect(board.milestones.at(-1)).toMatchObject({status:'playable',scenario:'corpse-pickup',proofs:['proof-126']});
+    expect(board.milestones.find(m=>m.scenario==='corpse-pickup')).toMatchObject({status:'playable',scenario:'corpse-pickup',proofs:['proof-126']});
   }
-  expect(data.dashboards[0]!.milestones.filter(m=>m.status==='playable')).toHaveLength(11);
-  expect(data.dashboards[1]!.milestones.filter(m=>m.status==='playable')).toHaveLength(9);
+  expect(data.dashboards[0]!.milestones.filter(m=>m.status==='playable')).toHaveLength(12);
+  expect(data.dashboards[1]!.milestones.filter(m=>m.status==='playable')).toHaveLength(10);
 });
 
 test('126 malformed shapes and getters refuse before all three public API reads with live controls',async()=>{
@@ -516,3 +516,50 @@ test('126 preview escaping retains hostile data as text and raw JSON less-than e
  const html=renderHtml(data);expect(html).not.toContain('<img');expect(html).toContain('\\u003c/script>');
  expect(renderMarkdown(data)).not.toContain('<img');expect(renderMarkdown(data)).not.toContain('[link](javascript:bad)');
 });
+
+test('128 malformed shapes and getters refuse before all three public API reads with live controls',async()=>{
+ const original=await load();
+ for(const api of [validateRegister,renderHtml,renderMarkdown]) for(const mode of ['null','custom','null-prototype','hidden','extra','own-accessor']) {
+  const data=structuredClone(original),i=data.acceptedProofs.findIndex(p=>p.pr===128),p=data.acceptedProofs[i]!;let reads=0;
+  const control={get value(){reads++;return true;}};expect(control.value).toBe(true);expect(reads).toBe(1);reads=0;
+  if(mode==='null')Reflect.set(data.acceptedProofs,i,null);
+  else if(mode==='custom')Object.setPrototypeOf(p,{marker:true});
+  else if(mode==='null-prototype')Object.setPrototypeOf(p,null);
+  else if(mode==='hidden')Object.defineProperty(p,'tree',{value:p.tree,enumerable:false});
+  else if(mode==='extra')Object.assign(p,{security:'passed'});
+  else Object.defineProperty(p,'tree',{enumerable:true,get(){reads++;throw Error('LIVE128');}});
+  let error:unknown;try{await api(data);}catch(e){error=e;}expect(error).toBeInstanceOf(Error);expect(reads).toBe(0);
+ }
+});
+
+test('128 every supported own proof field refuses inherited and active replacements before all public reads',async()=>{
+ const original=await load();
+ for(const api of [validateRegister,renderHtml,renderMarkdown])for(const field of Object.keys(original.acceptedProofs.find(p=>p.pr===128)!))for(const throwing of [false,true]){
+  const data=structuredClone(original),proof=data.acceptedProofs.find(p=>p.pr===128)!,value=Reflect.get(proof,field);let reads=0;
+  const canary={get value(){reads++;if(throwing)throw Error('ACTIVE128');return value;}};
+  try{Reflect.get(canary,'value');}catch{/* deliberately active throwing control */}expect(reads).toBe(1);reads=0;
+  Object.defineProperty(proof,field,{enumerable:true,get(){reads++;return Reflect.get(canary,'value');}});
+  let error:unknown;try{await api(data);}catch(e){error=e;}expect(error).toBeInstanceOf(Error);expect(reads).toBe(0);
+ }
+});
+
+test('128 preview escaping retains hostile data as text and raw JSON less-than escapes',async()=>{
+ const data=await load(),p=data.acceptedProofs.find(p=>p.pr===128)!;
+ const hostile='</script><img src=x onerror="bad()"> [link](javascript:bad)';
+ Object.assign(p,{tree:hostile,reviewedTree:hostile,sourceProofBase:hostile,receiptKind:hostile});
+ await expect(validateRegister(data)).rejects.toThrow();
+ const html=renderHtml(data);expect(html).not.toContain('<img');expect(html).toContain('\\u003c/script>');
+ expect(renderMarkdown(data)).not.toContain('<img');expect(renderMarkdown(data)).not.toContain('[link](javascript:bad)');
+});
+
+ test('128 full lineage and receipt errors precede first filesystem microtask, with valid FS-error control',async()=>{
+ const original=await load(),p=original.acceptedProofs.find(p=>p.pr===128)!;
+ expect(p).toEqual({id:'proof-128',pr:128,merge:'0cba4240a7f44bfd95b3a324520f97fc6ba061dc',head:'101db041f18e422284c5d93e7992dff79bc512c3',tree:'c63adffffaaa81d539e5f35601c04012bbd317b3',reviewedTree:'c63adffffaaa81d539e5f35601c04012bbd317b3',sourceProofBase:'d3672a2b073e07c162d874a039a102f58e5ded01',reviewSha256:'22a474510fe92085f8a0f0073802ecb5da01aee2711f43cd7b57c8f32f367ef0',ci:['41164082492','41164070234'],automatic:'6538468338',receipt:'6538468338',receiptKind:'actual-summary-state-completed-exact-no-findings;no separate receipt comment observed'});
+ for(const change of [{id:'proof-129'},{pr:129},{merge:'bad'},{head:null},{reviewSha256:'bad'},{ci:['0']},{ci:['1','1']},{automatic:'0'},{receipt:'6538468339'},{receiptKind:'separate-receipt-comment'},{receiptKind:'completed'},{tree:null},{reviewedTree:p.head},{sourceProofBase:p.tree},{sourceProofBase:p.head},{sourceProofBase:p.merge}]){
+ const bad=structuredClone(original);Object.assign(bad.acceptedProofs.find(p=>p.pr===128)!,change);let error:unknown;
+ const pending=validateRegister(bad,'/absent128-root').catch(e=>{error=e;});await Promise.resolve();expect(error).toBeInstanceOf(Error);expect((error as Error).message).not.toContain('Missing evidence');await pending;
+ }
+ await expect(validateRegister(original,'/absent128-root')).rejects.toThrow('Missing evidence file');await validateRegister(original);
+ for(const board of original.dashboards){expect(board.milestones.filter(m=>m.scenario==='storage-pickup')).toHaveLength(1);expect(board.milestones.at(-1)).toMatchObject({status:'playable',scenario:'storage-pickup',proofs:['proof-128']});expect(board.milestones.at(-1)!.missing).toContain('clear_new_items');}
+ const text=await readFile(new URL('../docs/training43-storage-pickup.md',import.meta.url),'utf8');for(const claim of ['771307.7229','467123.6151','278024','COMPARE ONLY','terminal','BOTH rules','ONE attempt','Original CPU'])expect(text).toContain(claim);
+ });

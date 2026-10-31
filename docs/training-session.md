@@ -1,10 +1,15 @@
 # Standalone selected-team Training43 session
 
+## Accepted128 storage extension
+
+[Native22 storage pickup and complete profile21 proof](training43-storage-pickup.md) is accepted separately from G20 equipment pickup. ONE B-binding attempt across the entire history at a different source-owned DEAD teammate CURRENT CELL, source equipment empty/first store, canonical room/selection0/window0/spells clear/nonheavy. Recipient equipment retained, FF outline/full4 shifts/source weight before recipient; lastPositions4 are adapter zeros, not observed RAM. Full raw3 chronology/continued water/dry/terminal recovery/Retry BOTH rules; saved leaves compare-only and legacy1–20 unchanged. WholeTraining43/R08/general inventory INCOMPLETE; outline clearing/window transition and wider source branches remain OPEN, not inactive. This adds no upcoming window-admission/future22 credit or CPU execution. See the linked proof for honest run unions/costs/cancellation and accepted gates.
+
+
 ## Accepted126 bounded equipment pickup
 
 PR126 normal expected-head merge 583aec99f50306988bf2b675fbc7c6b0c0c8b71e at2026-10-31T02:14:20Z, parents accepted125 9940b3c318d358b0c9b3bfde9ee90013710d6fc4 + reviewed head1c246469ceebc2f56b82ead74898e4a5ed200041. Accepted and reviewed tree BOTH139dd370a6f559dc2a4ce7c91480460b6e175ae6: same actual union, no disjoint-candidate exception. Source-proof base is accepted1259940. API, commit API and fetched origin verified by coordinator.
 
-Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented.
+Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile.
 
 Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.
 
