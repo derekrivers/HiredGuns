@@ -6,7 +6,7 @@ Training43 is the first complete original-level acceptance target, confirmed by 
 
 The register contains original behaviour and source locators, revision, mapping scope, eight separate evidence stages, implementation/test/document links, playable scenarios, remaining gaps and original-level relationships. It is an initial discovery inventory, not a certificate that every source branch has been found. Item categories, enemy-specific behaviours and interactions must be split into further stable IDs as their mapping advances. The 29 identified psi dispatch entries each have their own open row.
 
-The baseline is accepted main through PR122 (`81353ad52118875195c925d668cc469ad72d106e`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
+The baseline is accepted main through PR124 (`d122d69db59a2a46226b25349b50bc46ec510d43`). The player-only authored pad consumer is accepted; original pad runtime selection and other callers remain open. Date and head describe the gameplay assessment; the register tooling added afterwards does not upgrade gameplay claims.
 
 Seven inspected older OCS source files are individually SHA-256 pinned in the baseline and HTML method section. This disambiguates the reference beyond the shared 39.26 version string without copying original assembly into the checkout.
 
@@ -80,7 +80,7 @@ Hardware is deferred separately and does not block keyboard software work.
 
 Each milestone has stable ID, strict status, scoped evidence, missing dependency,
 scenario/controls, lineage to existing mechanics/checklist and optional accepted
-registry proof references. PR112/114/115/116/118/120/122 receipts retain exact merge/implementation,
+registry proof references. PR112/114/115/116/118/120/122/124 receipts retain exact merge/implementation,
 independent review hash, CI and completed automatic IDs. Earlier accepted slices
 remain linked to their public proof documents. File presence is not a fresh run.
 
@@ -91,7 +91,7 @@ embedded JSON escapes less-than; evidence links accept only existing repository
 paths. Synthetic hostile metadata and positive offline canaries exercise the
 runtime-accepted boundary. Prior PR113 injection repair remains covered.
 
-This metadata candidate remains UNREVIEWED until its own independent HIGH/current CI/actual automatic/findings/normal-merge gates. Candidate verification uses5401; reviewer5403 is reserved. Released register5385 is forever frozen at accepted121 and assesses120. Released keyboard5391 is frozen at7540/merge81353. No new index is published or opened by this worker.
+This metadata candidate remains UNREVIEWED until its own independent HIGH/current CI/actual automatic/findings/normal-merge gates. Candidate verification uses5407; reviewer5409 is reserved. Released register5385 is forever frozen at accepted121 and assesses120. Released keyboard5391 is frozen at7540/merge81353. No new index is published or opened by this worker.
 
 PR118 accepts [standing wet-region exploration](../training43-wet-region.md): actual keyboard visits to all **22 standing wet CASE cells**, by nonimmune race4 and source-immune race1, four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. The 23rd water cell is solid/nonstanding. Visits are replay-derived observations, not movement authority, hypothetical BFS proof or a whole-level percentage. The new corridor same-cell corpse/manual-survivor witness is distinct from PR116 stair aux10 NORTH corpse proof.
 
@@ -108,4 +108,10 @@ PR120 requires own tree/reviewedTree/sourceProofBase data fields before all thre
 
 PR122 accepts [original99 timeout and full responsive v19 recovery](../training43-source-timeout-recovery.md), recorded as one new milestone per growing list. Its actual accepted union07126, reviewed source tree6f287 and source-proof base accepted1209c11 remain distinct. Proof122 requires own tree/reviewedTree/sourceProofBase and receiptKind data before all three public APIs read them; separate receipt6534702086 remains distinct from actual completed exact7540 automatic6533377523. PR118 retains its same-summary receipt rule. Accepted121 metadata mergead0/head3b3/tree72c remains preserved and assesses120 only.
 
-The22 standing cells and accepted120 all-dead outcome remain bounded inherited proof. R08 sign rendering/readability stays UNKNOWN/OPEN: a type0 button nop is followed by use_item, and does not establish whole activation nop. Whole Training43 software remains incomplete. All86×8 stage states remain68 covered/129 partial/491 open,9.9%; the testbed11/software10 chosen lists are not fixed completion denominators. Legacy1–18 caps/bytes and replay responsiveness scope remain unchanged. The8ms yield target is not a universal bound; full recovery remains costly.
+The22 standing cells and accepted120 all-dead outcome remain bounded inherited proof. Whole R08 stays UNKNOWN/OPEN beyond accepted124 placeholder readback: a type0 button nop is followed by use_item, and does not establish whole activation nop. Whole Training43 software remains incomplete. All86×8 stage states remain68 covered/129 partial/491 open,9.9%; the testbed12/software11 chosen lists are not fixed completion denominators. Legacy1–18 caps/bytes and replay responsiveness scope remain unchanged. The8ms yield target is not a universal bound; full recovery remains costly.
+
+PR124 is accepted at merge `d122d69db59a2a46226b25349b50bc46ec510d43`, actual union tree `b35ab9f0609cf667df966e48db57a8dacda10f44`, parents `82e6a4426e7d7e517b3a43de734986fbe0755881` + `37ef7227b8c85528f85eca8c2d39a1f1790b18af`. Reviewed source head `37ef7227b8c85528f85eca8c2d39a1f1790b18af` has tree `84a00052bdeaf50fac006325674b7a48a00fd4bd` and source-proof base accepted122 `81353ad52118875195c925d668cc469ad72d106e`. Accepted123 metadata merge82e/head8593/tree2d0 is disjoint; its17 metadata paths explain why the reviewed source tree differs from the accepted union. It adds no source proof.
+
+PR124 accepts a source-derived **Sign ahead (placeholder)** header cue with genuine keyboard witnesses for both signs and all four current view owners. It reads the exact raw-admitted installed pair and clears during loading, turn/move away, dead/exited/invalid views, source clear and map replacement; Retry/both rules and full paused recovery recompute it. No new activation, gameplay write or save field. The generic label is not original text, pixels or CPU proof. Whole R08 stays UNKNOWN/OPEN and Training43 software **INCOMPLETE**; glyph appearance/art is separately DEFERRED, not a software gate. General corpse interactions remain unsupported/unknown, with no unaccepted source-lane credit.
+
+Proof124 requires own tree/reviewedTree/sourceProofBase/receiptKind data before all three APIs read values. Its receipt is the SAME actual completed exact37ef automatic summary6535904450; no separate receipt comment was observed. PR118 retains its same-summary rule;120/122 retain separate actual receipts. One new narrow milestone per chosen list grows each denominator by one. No broad stage/classification/gate, baseline pin or map identity changes. This metadata candidate requires independent current-head HIGH5409/current CI/actual automatic/findings/normal expected-head merge and union proof before coordinator publication. Own verification5407 is not an accepted release.

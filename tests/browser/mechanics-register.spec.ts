@@ -211,7 +211,7 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
 test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#testbed-capability');
   await expect(page.locator('#testbed-capability')).toBeVisible();
-  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('11 listed milestones: 9 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('12 listed milestones: 10 playable · 0 partial · 1 open · 1 deferred');
   await expect(page.locator('#cap-food')).toContainText('medical64');
   await expect(page.locator('#cap-wet')).toContainText('including zero');
   await expect(page.locator('#cap-lifecycle')).toContainText('Accepted PR116');
@@ -220,7 +220,7 @@ test('separate capability and original-level summaries retain scope, lineage and
   await page.locator('#cap-food a[href="#INV-06"]').click();
   await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
   await page.goto('/docs/mechanics/index.html#training43-software');
-  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('10 listed milestones: 7 playable · 2 partial · 1 open · 0 deferred');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('11 listed milestones: 8 playable · 2 partial · 1 open · 0 deferred');
   await page.locator('#t43-entry a[href="#scenario-wet"]').click();
   await expect(page.locator('#scenario-wet')).toBeVisible();
   await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');
@@ -402,5 +402,42 @@ for (const width of [390,1440]) test(`accepted122 canonical offline proof lineag
   await expect(page.locator('#proof-122')).toContainText(payload);await expect(page.locator('img,[onerror]')).toHaveCount(0);await expect(page.locator('script')).toHaveCount(2);
   expect(await page.evaluate(()=>Reflect.get(window,'__registerInjected'))).toBeUndefined();
   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).click();expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+  expect(requests).toEqual([]);expect(errors).toEqual([]);
+});
+
+for(const width of [390,1440])test(`accepted124 links and actual sign control semantics at ${width}px`,async({page},testInfo)=>{
+  await page.setViewportSize({width,height:1000});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/docs/mechanics/index.html#t43-sign-view');
+  await expect(page.locator('#t43-sign-view .badge')).toHaveText('playable');
+  await expect(page.locator('#t43-sign-view')).toContainText('UNKNOWN/OPEN');
+  await page.locator('#t43-sign-view').getByRole('link',{name:'Runnable entry / controls'}).focus();await page.keyboard.press('Enter');
+  const entry=page.locator('#scenario-sign-view');
+  for(const text of ['Apply team to Training43','Enable original 99-unit timeout','fresh PAUSED tick zero','[1,3,0,5]','Retry','Save progress / Load progress','not original text'])await expect(entry).toContainText(text);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await entry.screenshot({path:testInfo.outputPath(`sign-controls-${width}.png`)});
+  await entry.getByRole('link',{name:'Instructions & limitations →'}).click();await expect(page.locator('body')).toContainText('Accepted124 proof');
+  await page.goto('/docs/mechanics/index.html#proof-124');
+  for(const text of ['b35ab9f0609cf667df966e48db57a8dacda10f44','84a00052bdeaf50fac006325674b7a48a00fd4bd','source-proof base (PR122)','6535904450','no separate receipt comment observed'])await expect(page.locator('#proof-124')).toContainText(text);
+  await page.goto('/');await expect(page.getByRole('button',{name:'Enable original 99-unit timeout',exact:true})).toBeDisabled();
+  await expect(page.locator('#training-timeout')).toContainText('fresh PAUSED tick zero');
+  await expect(page.locator('[id^="sign-"]')).toHaveCount(4);
+  await expect(page.locator('[id^="sign-"]:visible')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+for(const width of [390,1440])test(`accepted124 offline export, hostile fields and live positive controls at ${width}px`,async({page},testInfo)=>{
+  const data=JSON.parse(await readFile(new URL('../../docs/mechanics/register.json',import.meta.url),'utf8')) as MechanicsRegister;
+  await page.setViewportSize({width,height:1000});await page.context().setOffline(true);const requests:string[]=[],errors:string[]=[];
+  page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(`${new URL('../../docs/mechanics/index.html',import.meta.url).href}#proof-124`);
+  await expect(page.locator('#proof-124')).toContainText('6535904450');
+  let download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).click();expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+  const payload='" & </script><img src=x onerror="window.__registerInjected=1"> [link](javascript:bad)';
+  Object.assign(data.acceptedProofs.find(p=>p.pr===124)!,{tree:payload,reviewedTree:payload,sourceProofBase:payload,receiptKind:payload});await expect(validateRegister(data)).rejects.toThrow();
+  const file=testInfo.outputPath('refused124.html');await writeFile(file,renderHtml(data));await page.goto(`${pathToFileURL(file).href}#proof-124`);
+  await expect(page.locator('#proof-124')).toContainText(payload);await expect(page.locator('img,[onerror]')).toHaveCount(0);await expect(page.locator('script')).toHaveCount(2);
+  expect(await page.evaluate(()=>{let reads=0;const live={get value(){reads++;return true;}};return {value:live.value,reads,injected:Reflect.get(window,'__registerInjected')};})).toEqual({value:true,reads:1,injected:undefined});
+  download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).focus();await page.keyboard.press('Enter');expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+  await page.getByRole('link',{name:'02 · Mechanics register'}).click();await page.getByRole('searchbox',{name:'Find a mechanic'}).fill('no-such-mechanic124');await expect(page.locator('#no-results')).toBeVisible();
   expect(requests).toEqual([]);expect(errors).toEqual([]);
 });

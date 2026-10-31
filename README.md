@@ -1,5 +1,11 @@
 # Hired Guns Revival
 
+PR124 is accepted at merge `d122d69db59a2a46226b25349b50bc46ec510d43`, actual union tree `b35ab9f0609cf667df966e48db57a8dacda10f44`, parents `82e6a4426e7d7e517b3a43de734986fbe0755881` + `37ef7227b8c85528f85eca8c2d39a1f1790b18af`. Reviewed source head `37ef7227b8c85528f85eca8c2d39a1f1790b18af` has tree `84a00052bdeaf50fac006325674b7a48a00fd4bd` and source-proof base accepted122 `81353ad52118875195c925d668cc469ad72d106e`. Accepted123 metadata merge82e/head8593/tree2d0 is disjoint; its17 metadata paths explain why the reviewed source tree differs from the accepted union. It adds no source proof.
+
+PR124 accepts a source-derived **Sign ahead (placeholder)** header cue with genuine keyboard witnesses for both signs and all four current view owners. It reads the exact raw-admitted installed pair and clears during loading, turn/move away, dead/exited/invalid views, source clear and map replacement; Retry/both rules and full paused recovery recompute it. No new activation, gameplay write or save field. The generic label is not original text, pixels or CPU proof. Whole R08 stays UNKNOWN/OPEN and Training43 software **INCOMPLETE**; glyph appearance/art is separately DEFERRED, not a software gate. General corpse interactions remain unsupported/unknown, with no unaccepted source-lane credit.
+
+See [sign-view controls and exact evidence](docs/training43-sign-view.md).
+
 **Whole-game evidence coverage and playable milestones:** [Master Mechanics Register](docs/mechanics/index.html) · [text checklist](docs/mechanics/CHECKLIST.md). The percentage counts covered evidence checkpoints across broad rows and equal stages; partial/open earn zero. It is not an effort or playable-testbed percentage. The earlier roughly 60% was a subjective estimate of a smaller authored functional testbed. Separate capability and Training43 software milestones now show the accepted slices through PR122. Training43 is the first complete original-level acceptance target; no complete original level is accepted yet.
 
 Browser revival in progress. Four synchronized 3D views support independent local navigation and a bounded extraction mission flow. One complete original level is the birthday fallback; full campaign is a stretch target. No complete faithful original level is validated yet.
