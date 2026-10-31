@@ -1,3 +1,5 @@
+import {activateInventoryWindow,advanceOwnedInventoryWindow,hasInventoryWindow,type InventoryWindowOperation} from './sim/training-inventory-window';
+import {installTrainingInventoryWindowPanel} from './training-inventory-window-panel';
 import {activateStoragePickup,advanceOwnedStoragePickup,hasStoragePickup} from './sim/training-storage-pickup';
 import {installTrainingStoragePickupPanel} from './training-storage-pickup-panel';
 import {activateTimeout,stepTimeout,hasTimeoutProfile,type TimeoutRecoveryControl} from './sim/training-timeout';
@@ -117,6 +119,7 @@ let signSource: SignSource | null = null;
 const sessionSources = () => { const raw=rosterPanel.sources();return raw ? {...raw,map:importedMapBytes} : null; };
 let pendingGateActor: number | null = null;
 let pendingStorageActor:number|null=null;
+let pendingInventoryOperation:InventoryWindowOperation|null=null;
 let pendingCorpseActor:number|null=null;
 let pendingDoorAction: DoorAction = 16;
 const activationKeys = new Set<string>();
@@ -228,6 +231,22 @@ function queueStoragePickup(){
  const actor=router.assignments.findIndex(source=>source?.kind==='keyboard'&&source.index===0);
  if(actor<0){storagePanel.feedback('Assign WASD to a living mercenary first.');return;}
  if(pendingStorageActor===null){pendingStorageActor=actor;storagePanel.feedback(`Storage pickup queued for actor ${actor+1}.`);}
+}
+const inventoryWindowHost=document.createElement('section');inventoryWindowHost.id='training-inventory-window';storageHost.before(inventoryWindowHost);
+const inventoryWindowPanel=installTrainingInventoryWindowPanel(inventoryWindowHost,()=>({session,world,paused,loading,actor:Math.max(0,router.assignments.findIndex(source=>source?.kind==='keyboard'&&source.index===0)),canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
+ let generation=loadGeneration,started=false;const isCurrent=()=>generation===loadGeneration;
+ try{if(loading||!session)throw Error('Load the fresh selected Training43 team first.');const raw=sessionSources();if(!raw)throw Error('Raw sources required.');generation=++loadGeneration;started=true;loading=true;setPaused(true);
+ const candidate=await activateInventoryWindow(level,raw,session,world,paused,corpseRecoveryControl(generation));if(!isCurrent())return {status:'cancelled',isCurrent};session=candidate.session;world=candidate.world;showSession();setPaused(true);get('recovery-status').textContent='Inventory window cycle enabled, PAUSED.';return {status:'installed',isCurrent};
+ }catch(error){if(isCurrent())get('recovery-status').textContent='Inventory window setup failed; current team retained. Review the error and retry.';return isCurrent()?{status:'failed',error,isCurrent}:{status:'cancelled',isCurrent};}finally{if(started&&isCurrent()){loading=false;setPaused(true);rosterPanel.refresh();}}
+},()=>queueInventoryOperation('storage'),()=>queueInventoryOperation('window'));
+function queueInventoryOperation(kind:'storage'|'window'){
+ if(!hasInventoryWindow(session)||loading||paused||!renderer||graphicsLost||world.mission.outcome!=='active'){inventoryWindowPanel.feedback('Unavailable. Enable this mode and Start mission.');return;}
+ const actor=router.assignments.findIndex(source=>source?.kind==='keyboard'&&source.index===0),p=session!.inventoryWindow!;
+ if(actor<0){inventoryWindowPanel.feedback('Assign WASD to a living mercenary first.');return;}
+ if(kind==='storage'&&p.phase==='opened'){setPaused(true);inventoryWindowPanel.feedback('Unsupported open-window pickup; entire candidate refused. Resume and N closes.');get('error').textContent='Unsupported open-window pickup; state retained.';return;}
+ if(kind==='storage'&&(p.phase!=='waiting'||p.outcome!==null)){inventoryWindowPanel.feedback('One storage attempt already consumed; Retry resets it.');return;}
+ if(kind==='window'&&(!['ready','opened'].includes(p.phase)||p.recipient!==actor)){inventoryWindowPanel.feedback('Conservative admission: one cycle for the successful transferred recipient only.');return;}
+ if(!pendingInventoryOperation){pendingInventoryOperation={kind:kind==='storage'?'storage':p.phase==='opened'?'close':'open',actor};inventoryWindowPanel.feedback(`Queued ${pendingInventoryOperation.kind} for actor ${actor+1}.`);}
 }
 const timeoutPanel=installTrainingTimeoutPanel(timeoutHost,()=>({session,world,paused,loading,recovering:loading&&timeoutRecoveryGeneration===loadGeneration,canSetup:!!session&&level.source.kind==='editor-map'&&!session.wet&&!session.ground&&!session.gate&&!session.consumables&&!session.inventory.commands.length&&world.tick===0}),async()=>{
  let generation=loadGeneration;let started=false;const isCurrent=()=>generation===loadGeneration;
@@ -393,7 +412,7 @@ function showSession(): void {
   groundHost.style.display = session?.gate ? 'none' : '';
   sessionInfo.replaceChildren();
   const label = document.createElement('p'); label.id = 'session-status';
-  label.textContent = hasStoragePickup(session) ? 'Training43 native storage pickup: full source-bound v21 recovery; one current-cell dead-teammate first-store insertion, equipment unchanged. B / fixed50Hz adaptations; original level incomplete and CPU timing unproven.' : hasCorpsePickup(session) ? 'Training43 corpse equipment pickup: full source-bound v20 recovery; one current-cell dead-teammate first-store pickup into empty equipment. G / fixed50Hz adaptations; original level incomplete and CPU timing unproven.' : hasTimeoutProfile(session) ? 'Training43 original99 timeout: full source-bound v19 recovery; all-dead / timeout / exit priority. Fixed50Hz adaptation; original CPU timing unproven.' : hasOwnWetParty(session) ? 'Training43 selected-team wet lifecycle: source-bound v18 recovery and all-dead failure. Explicit survivor selection; selected-team adaptation, original level incomplete.' : session?.wetRegion ? 'Training43 wet-region exploration: actual visited cells, full lifecycle and source-bound v17 recovery; explicit survivor selection, original level incomplete.' : session?.wetLifecycle ? 'Training43 wet damage/lifecycle: source-derived injury, death and bounded corpse search; v16 chronological recovery. Explicit survivor selection; retained display feedback adapter, original level incomplete.' : session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
+  label.textContent = hasInventoryWindow(session) ? 'Training43 bounded inventory window cycle: B native22 storage, N direct10/9 browser adaptations; active hazards, unsupported open controls; complete v22 chronology, original level incomplete.' : hasStoragePickup(session) ? 'Training43 native storage pickup: full source-bound v21 recovery; one current-cell dead-teammate first-store insertion, equipment unchanged. B / fixed50Hz adaptations; original level incomplete and CPU timing unproven.' : hasCorpsePickup(session) ? 'Training43 corpse equipment pickup: full source-bound v20 recovery; one current-cell dead-teammate first-store pickup into empty equipment. G / fixed50Hz adaptations; original level incomplete and CPU timing unproven.' : hasTimeoutProfile(session) ? 'Training43 original99 timeout: full source-bound v19 recovery; all-dead / timeout / exit priority. Fixed50Hz adaptation; original CPU timing unproven.' : hasOwnWetParty(session) ? 'Training43 selected-team wet lifecycle: source-bound v18 recovery and all-dead failure. Explicit survivor selection; selected-team adaptation, original level incomplete.' : session?.wetRegion ? 'Training43 wet-region exploration: actual visited cells, full lifecycle and source-bound v17 recovery; explicit survivor selection, original level incomplete.' : session?.wetLifecycle ? 'Training43 wet damage/lifecycle: source-derived injury, death and bounded corpse search; v16 chronological recovery. Explicit survivor selection; retained display feedback adapter, original level incomplete.' : session?.wet ? 'Training43 supported keyboard wet traversal: exact editor geometry; source-bound v15 chronology. No wet damage/death composition. Fixed-step adaptation; original level incomplete.' : session?.consumables ? 'Authored consumable dry-fall extension | H uses equipped food/repair while PAUSED and settled. Full chronological v14 recovery; Retry resets team, health and inventory.' : session ? `Standalone imported Training43 session | PAUSED on apply, retry and restore. ${selectedFallLevel(level) ? 'Authored dry-fall geometry; verified selected stats/current inventory weight; adapted incapacitation and occupancy. ' : ''}Paused equip, occupied exchange and return are standalone source-deduced adapters in Inventory & equipment; authored isolated combat is beside the live display; original world combat and hazards remain unavailable.` : 'No active selected-team session.';
   sessionInfo.append(label);
   inventoryPanel.render(session);
   refreshEncounterPanel(); patrolPanel.refresh(); doorPanel.refresh();
@@ -472,13 +491,13 @@ get('local-test-preset').addEventListener('click', async () => {
 
 function errorText(error: unknown): string { return error instanceof Error ? error.message : String(error); }
 function setPaused(value: boolean): void {
-  paused = value; pendingStorageActor=null;pendingCorpseActor=null; pendingGateActor = null; pendingDoorAction = 16; keys.clear(); router.reset(); clock.reset();
-  storagePanel.feedback('');corpsePanel.feedback('');
+  paused = value; pendingInventoryOperation=null;pendingStorageActor=null;pendingCorpseActor=null; pendingGateActor = null; pendingDoorAction = 16; keys.clear(); router.reset(); clock.reset();
+  activationKeys.delete('KeyN');activationKeys.delete('KeyB');inventoryWindowPanel.feedback('');storagePanel.feedback('');corpsePanel.feedback('');
   updateMissionHud();
   inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
 }
 function updateMissionHud(): void {
-  storagePanel.refresh();corpsePanel.refresh();timeoutHost.hidden=hasStoragePickup(session)||hasCorpsePickup(session);
+  inventoryWindowPanel.refresh();storagePanel.refresh();corpsePanel.refresh();timeoutHost.hidden=hasInventoryWindow(session)||hasStoragePickup(session)||hasCorpsePickup(session);
   signPanel.refresh({source:signSource,level,world,session,loading});
   const challenge = patrolMissionLevel(level);
   gateHost.querySelector('h3')!.textContent = challenge ? 'Challenge gate · C at the front-cell panel' : 'Authored button / static gate practice';
@@ -552,7 +571,7 @@ selects.forEach((select, i) => select.addEventListener('change', () => {
     const pad = readPads().find(p => `pad:${p.index}:${p.id}` === value);
     if (pad) source = { kind: 'gamepad', index: pad.index, id: pad.id };
   }
-  router.assign(i, source); pendingStorageActor=null;pendingCorpseActor=null;pendingGateActor = null;
+  router.assign(i, source); activationKeys.delete('KeyN');activationKeys.delete('KeyB');pendingInventoryOperation=null;pendingStorageActor=null;pendingCorpseActor=null;pendingGateActor = null;
   if (source?.kind === 'keyboard' && source.index === 0) gatePanel.select(i);
   keys.clear(); refreshAssignments(readPads(), true); select.blur();
 }));
@@ -683,7 +702,7 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
   try {
     const sources = sessionSources();
     if (session && !sources) throw new Error('Reopen the matching roster and items before saving this session.');
-    const json = session ? await exportTrainingSession(level, world, session, sources!,(hasStoragePickup(session)||hasCorpsePickup(session))?corpseRecoveryControl(generation):timeoutRecoveryControl(generation)) : await exportCheckpoint(level, world);
+    const json = session ? await exportTrainingSession(level, world, session, sources!,(hasInventoryWindow(session)||hasStoragePickup(session)||hasCorpsePickup(session))?corpseRecoveryControl(generation):timeoutRecoveryControl(generation)) : await exportCheckpoint(level, world);
     if (generation !== loadGeneration) return;
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `hired-guns-checkpoint-${world.tick}.json`;
@@ -706,7 +725,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     if (isTrainingSessionSave(json)) {
       const sources = sessionSources();
       if (!sources) throw new Error('Open the matching verified OCS roster and item table before restoring a session.');
-      const candidate = await importTrainingSession(level, sources, json,[20,21].includes(JSON.parse(json).version)?corpseRecoveryControl(generation):timeoutRecoveryControl(generation));
+      const candidate = await importTrainingSession(level, sources, json,[20,21,22].includes(JSON.parse(json).version)?corpseRecoveryControl(generation):timeoutRecoveryControl(generation));
       restoredSession = candidate.session; restored = candidate.world;
     } else {
       if (session) throw new Error('An active selected team requires a Training43 session save. Clear the session by opening a map before loading a legacy checkpoint.');
@@ -745,6 +764,8 @@ window.addEventListener('keydown', event => {
     }
     return;
   }
+  if(hasInventoryWindow(session)&&['KeyB','KeyN'].includes(event.code)){event.preventDefault();if(!event.repeat&&!activationKeys.has(event.code)){activationKeys.add(event.code);queueInventoryOperation(event.code==='KeyB'?'storage':'window');}return;}
+  if(hasInventoryWindow(session)&&session!.inventoryWindow!.phase==='opened'&&['KeyG','KeyV','KeyH','KeyF','KeyT','KeyR','KeyI'].includes(event.code)){event.preventDefault();setPaused(true);inventoryWindowPanel.feedback('Unsupported open-window control; entire candidate refused. Resume and use N to close.');get('error').textContent='Unsupported open-window control; state retained.';return;}
   if(event.code==='KeyH'){event.preventDefault();if(!event.repeat)consumablePanel.keyboard();return;}
   if(event.code==='KeyB'&&hasStoragePickup(session)){event.preventDefault();if(!event.repeat&&!activationKeys.has(event.code)){activationKeys.add(event.code);queueStoragePickup();}return;}
   if(event.code==='KeyG'&&hasCorpsePickup(session)){event.preventDefault();if(!event.repeat&&!activationKeys.has(event.code)){activationKeys.add(event.code);queueCorpsePickup();}return;}
@@ -756,7 +777,7 @@ window.addEventListener('keydown', event => {
     return;
   }
   if (/^Digit[1-4]$/.test(event.code)) {
-    pendingStorageActor=null;pendingCorpseActor=null;
+    activationKeys.delete('KeyN');activationKeys.delete('KeyB');pendingInventoryOperation=null;pendingStorageActor=null;pendingCorpseActor=null;
     consumablePanel.select(Number(event.code.slice(-1)) - 1);
     groundPanel.select(Number(event.code.slice(-1)) - 1);
     gatePanel.select(Number(event.code.slice(-1)) - 1); pendingGateActor = null;
@@ -776,15 +797,16 @@ function frame(now: number): void {
     try { clock.advance(elapsed, () => {
       const previousTick = world.tick;
       const commands = router.commands(world.tick, keys, pads);
-      const storage=pendingStorageActor,pickup=pendingCorpseActor;pendingStorageActor=null;pendingCorpseActor=null;
+      const inventoryOperation=pendingInventoryOperation,storage=pendingStorageActor,pickup=pendingCorpseActor;pendingInventoryOperation=null;pendingStorageActor=null;pendingCorpseActor=null;
       const activation = pendingGateActor, action = pendingDoorAction; pendingGateActor = null; pendingDoorAction = 16;
       const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation,action) : null;
       const consumableResult=session?.consumables?stepConsumables(level,session,world,commands):null;
-      const wetResult=hasStoragePickup(session)?advanceOwnedStoragePickup(level,session!,world,storage===null?commands:[],storage):hasCorpsePickup(session)?advanceOwnedCorpsePickup(level,session!,world,pickup===null?commands:[],pickup):hasTimeoutProfile(session)?stepTimeout(level,session!,world,commands):hasOwnWetParty(session)?stepWetParty(level,session,world,commands):session?.wetRegion?stepWetRegion(level,session,world,commands):session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
+      const wetResult=hasInventoryWindow(session)?advanceOwnedInventoryWindow(level,session!,world,commands,inventoryOperation):hasStoragePickup(session)?advanceOwnedStoragePickup(level,session!,world,storage===null?commands:[],storage):hasCorpsePickup(session)?advanceOwnedCorpsePickup(level,session!,world,pickup===null?commands:[],pickup):hasTimeoutProfile(session)?stepTimeout(level,session!,world,commands):hasOwnWetParty(session)?stepWetParty(level,session,world,commands):session?.wetRegion?stepWetRegion(level,session,world,commands):session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
       const result = wetResult ?? consumableResult ?? gateResult ?? stepWorld(level,world,commands);
       const nextSession = wetResult ? wetResult.session : consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
       replaceGateRenderer(nextSession);
       world = result.world; session = nextSession;
+      if(inventoryOperation&&hasInventoryWindow(session)){inventoryPanel.render(session);inventoryWindowPanel.feedback(`Phase: ${session!.inventoryWindow!.phase}; ${session!.inventoryWindow!.windowOutcomes.at(-1)??session!.inventoryWindow!.outcome}.`);}
       if(storage!==null&&hasStoragePickup(session)){inventoryPanel.render(session);storagePanel.feedback(`Pickup: ${session!.storagePickup!.outcome}.`);}
       if(pickup!==null&&hasCorpsePickup(session)){inventoryPanel.render(session);corpsePanel.feedback(`Pickup: ${session!.corpsePickup!.outcome}.`);}
       if(wetResult && world.tick%50===0)inventoryPanel.render(session);
@@ -795,7 +817,7 @@ function frame(now: number): void {
     if (world.mission.outcome !== 'active' || teamDead(world)) setPaused(true);
   }
   inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh();
-  wetPanel.refresh(); lifecyclePanel.refresh(); regionPanel.refresh(); partyPanel.refresh();
+  inventoryWindowPanel.refresh();wetPanel.refresh(); lifecyclePanel.refresh(); regionPanel.refresh(); partyPanel.refresh();
   renderer?.render(world, elapsed); updateHud(pads); requestAnimationFrame(frame);
 }
 try { installLevel(level); } catch (error) { get('error').textContent = errorText(error); }
