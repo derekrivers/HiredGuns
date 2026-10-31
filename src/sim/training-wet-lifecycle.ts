@@ -10,6 +10,7 @@ import { equalConsumableState as equal } from './training-consumables';
 import { TRAINING_43_SHA256 } from './mission-profile';
 import { stepWorld } from './world';
 import { SOURCE_CLOCK_PERIOD, resolveSelectedPartyMission } from './mission';
+import { pickupCorpseEquipment } from '../items/corpse-pickup';
 
 export const WET_LIFECYCLE_SCENARIO='training43-wet-lifecycle-v1';
 export interface WetHealth {
@@ -174,7 +175,35 @@ export function stepTimeoutLifecycle(level:LevelData,session:TrainingSession,pre
  if(!s.party||Object.keys(s.party).join(',')!=='profile'||s.party.profile!=='four-controlled-timeout-v1'||Object.keys(s.rules).sort().join(',')!=='mode,timeLimit'||s.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(s.rules.mode))fail('timeout profile/rules');
  return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD);
 }
-function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number){
+/** New-profile domain command only. No arbitrary mutable control callback. */
+export function stepCorpsePickupLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],actor:number|null){
+ // Internal entry: the profile owner has captured all external authority before
+ // arriving here. No runtime callback receives this candidate or its geometry.
+ if(session.corpsePickup?.profile!=='one-native-equipment-pickup-v1'||session.wetParty?.profile!=='four-controlled-timeout-v1'||previous.mission.rules.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(previous.mission.rules.mode))fail('corpse pickup owner/rules');
+ if(actor!==null&&(!uint(actor,3)||commands.length))fail('pickup-only domain command');
+ return stepLifecycle(level,session,previous,commands,false,resolveSelectedPartyMission,99*SOURCE_CLOCK_PERIOD,actor);
+}
+function corpseControl(level:LevelData,session:TrainingSession,world:WorldState,id:number):string{
+ const wet=session.wet!,a=wet.actors[id]!;
+ // Native dead guard runs after hazards. A fatal queued tick must still commit.
+ if(!active(session,world,id)||a.body.windowType===7||!a.body.controlMethod)return 'caller-guard';
+ const map=wetLifecycleMap(level,session),i=a.current,first=map.layers[0][i]!,second=map.layers[1][i]!,owner=(second>>>12)&255;
+ if(((first&0xf0000020)>>>0)!==0x70000020||!wet.corpses.includes(i)||owner>3||owner===id)return 'profile-refusal';
+ const source=wet.actors[owner]!;
+ if(source.runtimeDeadWord!==0xff00||source.body.statsDeadWord!==0xff00||session.wetLifecycle!.actors[owner]!.death?.target!==i||a.body.windowType!==0||a.body.controlMethod!==1||a.body.inventory.equipped.itemId||source.body.inventory.equipped.itemId)return 'profile-refusal';
+ for(const body of [a.body,source.body]){
+  if(body.spellWater||body.spellWings)return 'profile-refusal';
+  let ended=false;for(const slot of body.inventory.carried){if(!slot.itemId)ended=true;else if(ended)return 'profile-refusal';}
+ }
+ const result=pickupCorpseEquipment({actors:wet.actors.map(a=>a.body),deadWords:wet.actors.map(a=>a.runtimeDeadWord),players:wet.actors.map(()=>({selection:0,lastPosition:0,noRoom:0,heavyCount:0})),recipient:id,cell:{first,second,third:map.layers[2][i]!},redraw:session.wetLifecycle!.redraw},session.items);
+ if(result.outcome==='transferred'){
+  if(result.state.actors[id]!.weight.tooHeavy||result.state.actors[owner]!.weight.tooHeavy)return 'profile-refusal';
+  for(const j of [id,owner])wet.actors[j]!.body=result.state.actors[j]!;
+  session.wetLifecycle!.redraw=result.state.redraw;
+ }
+ return result.outcome;
+}
+function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldState,commands:readonly PlayerCommand[],record:boolean,missionResolver:((world:WorldState,events:SimulationEvent[])=>void)|undefined,tickLimit:number,pickupActor:number|null=null){
  validate(level,session,previous);if(previous.mission.outcome!=='active')return {world:previous,session,events:[]};
  if(previous.tick>=tickLimit)fail('future tick budget');
  const next={...session,wet:structuredClone(session.wet!),wetLifecycle:structuredClone(session.wetLifecycle!)};
@@ -192,6 +221,7 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
   if(!active(next,prospective,id))continue;const a=wet.actors[id]!;a.delay=level.layers[0][a.current]!&4?(a.delay?a.delay-1:2):0;a.pending=0;
  }}
  for(const a of wet.actors)if(!a.runtimeDeadWord)a.old=a.current;
+ const pickup=pickupActor===null?null:corpseControl(level,next,prospective,pickupActor);
  // Immutable source geometry drives movement. Dynamic living occupancy is the source-wet dead-word guard.
  // Corpse aux7 is non-solid in source move; its inert presence does not replace stair geometry.
  const geometry=wet.corpses.length?wetLifecycleMap(level,next):level;
@@ -202,7 +232,7 @@ function stepLifecycle(level:LevelData,session:TrainingSession,previous:WorldSta
  const inventory:TrainingSession['inventory']={commands:[],actors:wet.actors.map(a=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:0}))};
  const candidate={world:result.world,session:{...next,inventory}};
  if(record){const history=wet.history,last=history.at(-1);if(last&&equal(last.commands,commands))last.count++;else history.push({count:1,commands:structuredClone([...commands])});wet.history=lifecycleHistory(history);serializeWetLifecycle(candidate);}
- validate(level,candidate.session,candidate.world);return {...candidate,events:[...effects,...result.events]};
+ validate(level,candidate.session,candidate.world);return {...candidate,events:[...effects,...result.events],...(pickup===null?{}:{pickup})};
 }
 export function serializeWetLifecycle(c:TrainingCandidate):string {
  const {history,...state}=c.session.wet!;

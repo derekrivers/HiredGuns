@@ -1,0 +1,15 @@
+# Training43 corpse equipment pickup
+
+Apply four character choices in the existing four-view application at fresh paused tick zero. Choose **Enable corpse-item pickup (original99)**, then Start mission. Walk a living teammate onto a different teammate’s source-owned skeleton. Press **G** or the pickup button to queue one equipment pickup for the next controls tick. Equipment must be empty; only the corpse’s first stored item is admitted. The panel shows equipped item, both weights, corpse stored-item count and the derived outcome.
+
+G is a browser binding adaptation of the original inventory mouse gadget’s action15. The original bare keyboard pickup selected action22 into storage. The fixed50Hz editor adaptation does not establish original CPU timing or runtime parity.
+
+The native policy copies ID, damage and ammo while retaining the destination outline byte. Source removal shifts complete occupied entries and clears only the final ID, preserving opaque tails and all action buffers. Source corpse weight is recalculated before recipient weight. The skeleton, owner, body health and position survive the isolated transfer. The surrounding tick still runs ordinary hazards, counters and mission resolution exactly once: fatal drowning skips pickup, while timeout is resolved after controls.
+
+One command attempt is permitted per run. A refused attempt still consumes its real tick and the one-attempt history slot. Retry resets the complete selected team. Occupied equipment, equipped corpse items, noncanonical storage, nonzero selection, newly overweight results, repeat pickup, general item use/drop and ground transfer are outside the live profile. Wider native using-first, occupied insertion and full-store behavior have isolated synthetic tests; they do not establish reachability through the unchanged initializer.
+
+Version20 uses the distinct `one-native-equipment-pickup-v1` profile and replays the complete source-bound history. Saved inventories and outcome leaves are comparisons, never authority. Limits are59499 ticks,256 packed records,513 expanded events and strictly less than24576 UTF8 bytes; versions1–19 retain their formats and limits. A live candidate must fit the complete future save before Main installs its world/session pair. Budget errors pause and retain the preceding pair.
+
+Save, Load and activation verify the raw map, roster and items and reconstruct every tick. Load returns paused. Progress and cancellation use real task yields after16ticks or an8ms chunk target; reconstruction may take more than a minute. Retry, rules, roster selection/Apply, source clear and map/mode replacement cancel obsolete work. A stale success, error, progress or finally handler cannot replace the current pair or clear newer loading. Pending G is cleared on pause, blur, selection and replacement.
+
+This bounded feature does not complete Training43, general corpse inventory, campaign travel, original runtime parity, artwork or physical controller acceptance. Private original sources, routes and evidence remain outside Git and CI artifacts.
