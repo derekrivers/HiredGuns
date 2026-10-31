@@ -1,5 +1,6 @@
 import { exportWetParty, importWetParty, initialWetParty, ownedPartyProfile, type TrainingWetParty } from './training-wet-party';
 import {hasTimeoutProfile,exportTimeout,importTimeout,resetTimeout,type TimeoutRecoveryControl} from './training-timeout';
+import {hasCorpsePickup,exportCorpsePickup,importCorpsePickup,resetCorpsePickup,type TrainingCorpsePickup} from './training-corpse-pickup';
 import { exportWet, importWet, initialWet, type TrainingWet } from './training-wet';
 import { exportWetRegion, importWetRegion, initialWetRegion, type TrainingWetRegion } from './training-wet-region';
 import { exportWetLifecycle, importWetLifecycle, initialWetLifecycle, type TrainingWetLifecycle } from './training-wet-lifecycle';
@@ -27,6 +28,7 @@ import { selectedFallLevel, type FallProfile } from './fall';
 export const MAX_SESSION_BYTES = 24 * 1024;
 export interface TrainingSources { roster: Uint8Array; items: Uint8Array; map?: Uint8Array }
 export interface TrainingSession {
+  readonly corpsePickup?: TrainingCorpsePickup;
   readonly wetParty?: TrainingWetParty;
   readonly wetRegion?: TrainingWetRegion;
   readonly wetLifecycle?: TrainingWetLifecycle;
@@ -153,6 +155,7 @@ function sessionJSON(session: TrainingSession, checkpoint: string, selectedFall 
 /** Retry and rule restart reset the overlay to the same immutable initialization. */
 export function resetTrainingInventory(session: TrainingSession, level?: LevelData, rules?: MissionRules): TrainingSession {
   if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  if(hasCorpsePickup(session))return resetCorpsePickup(level!,session,rules);
   if(hasTimeoutProfile(session))return resetTimeout(level!,session,rules);
   const party = Object.getOwnPropertyDescriptor(session, 'wetParty');
   if (party && (!party.enumerable || !('value' in party))) throw new Error('Training43 session data descriptors required.');
@@ -170,6 +173,7 @@ export function resetTrainingInventory(session: TrainingSession, level?: LevelDa
 export async function exportTrainingSession(level: LevelData, world: WorldState, session: TrainingSession, sources: TrainingSources, timeoutControl?:TimeoutRecoveryControl): Promise<string> {
   // Inspect the new extension without evaluating caller accessors before its snapshot.
   if (!session || Object.getPrototypeOf(session) !== Object.prototype) throw new Error('Training43 session prototype.');
+  if(hasCorpsePickup(session))return exportCorpsePickup(level,sources,session,world,timeoutControl);
   if(hasTimeoutProfile(session))return exportTimeout(level,sources,session,world,timeoutControl);
   const party = Object.getOwnPropertyDescriptor(session, 'wetParty');
   if (party && (!party.enumerable || !('value' in party))) throw new Error('Training43 session data descriptors required.');
@@ -213,6 +217,7 @@ export async function importTrainingSession(level: LevelData, sources: TrainingS
   if (!parsed || typeof parsed !== 'object') throw new Error('Malformed Training43 session.');
   const versionDescriptor=Object.getOwnPropertyDescriptor(parsed,'version');
   const version=versionDescriptor&&Object.hasOwn(versionDescriptor,'value')?versionDescriptor.value:undefined;
+  if(version===20)return importCorpsePickup(level,sources,parsed,timeoutControl);
   if(version===19)return importTimeout(level,sources,parsed,timeoutControl);
   if(version===18)return importWetParty(level,sources,parsed);
   if(version===17)return importWetRegion(level,sources,parsed);
