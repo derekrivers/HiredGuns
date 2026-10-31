@@ -211,7 +211,7 @@ test('accepted hostile prose survives offline text, attribute, search and JSON e
 test('separate capability and original-level summaries retain scope, lineage and runnable controls', async ({ page }) => {
   await page.goto('/docs/mechanics/index.html#testbed-capability');
   await expect(page.locator('#testbed-capability')).toBeVisible();
-  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('13 listed milestones: 11 playable · 0 partial · 1 open · 1 deferred');
+  await expect(page.locator('#testbed-capability .milestone-counts')).toHaveText('14 listed milestones: 12 playable · 0 partial · 1 open · 1 deferred');
   await expect(page.locator('#cap-food')).toContainText('medical64');
   await expect(page.locator('#cap-wet')).toContainText('including zero');
   await expect(page.locator('#cap-lifecycle')).toContainText('Accepted PR116');
@@ -220,7 +220,7 @@ test('separate capability and original-level summaries retain scope, lineage and
   await page.locator('#cap-food a[href="#INV-06"]').click();
   await expect(page.locator('#INV-06')).toHaveAttribute('open', '');
   await page.goto('/docs/mechanics/index.html#training43-software');
-  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('12 listed milestones: 9 playable · 2 partial · 1 open · 0 deferred');
+  await expect(page.locator('#training43-software .milestone-counts')).toHaveText('13 listed milestones: 10 playable · 2 partial · 1 open · 0 deferred');
   await page.locator('#t43-entry a[href="#scenario-wet"]').click();
   await expect(page.locator('#scenario-wet')).toBeVisible();
   await expect(page.locator('#scenario-wet')).toContainText('Enable Training43 wet traversal');
@@ -470,4 +470,31 @@ for(const width of [390,1440])test(`accepted126 offline hostile proof export at 
  expect(await page.evaluate(()=>{let reads=0;const live={get value(){reads++;return true;}};return {value:live.value,reads,injected:Reflect.get(window,'__registerInjected')};})).toEqual({value:true,reads:1,injected:undefined});
  download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).focus();await page.keyboard.press('Enter');expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
  expect(requests).toEqual([]);expect(errors).toEqual([]);
+});
+
+for(const width of [390,1440])test(`accepted128 offline hostile proof export at ${width}px`,async({page},testInfo)=>{
+ const data=JSON.parse(await readFile(new URL('../../docs/mechanics/register.json',import.meta.url),'utf8')) as MechanicsRegister;
+ await page.setViewportSize({width,height:1000});await page.context().setOffline(true);const requests:string[]=[],errors:string[]=[];
+ page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(`${new URL('../../docs/mechanics/index.html',import.meta.url).href}#proof-128`);
+ let download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).click();expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+ const hostile='" & </script><img src=x onerror="window.__registerInjected=1"> [link](javascript:bad)';
+ Object.assign(data.acceptedProofs.find(p=>p.pr===128)!,{tree:hostile,reviewedTree:hostile,sourceProofBase:hostile,receiptKind:hostile});await expect(validateRegister(data)).rejects.toThrow();
+ const file=testInfo.outputPath('refused128.html');await writeFile(file,renderHtml(data));await page.goto(`${pathToFileURL(file).href}#proof-128`);
+ await expect(page.locator('#proof-128')).toContainText(hostile);await expect(page.locator('img,[onerror]')).toHaveCount(0);await expect(page.locator('script')).toHaveCount(2);
+ expect(await page.evaluate(()=>{let reads=0;const live={get value(){reads++;return true;}};return {value:live.value,reads,injected:Reflect.get(window,'__registerInjected')};})).toEqual({value:true,reads:1,injected:undefined});
+ download=page.waitForEvent('download');await page.getByRole('button',{name:'Export register JSON'}).focus();await page.keyboard.press('Enter');expect(JSON.parse(await readFile((await(await download).path())!,'utf8'))).toEqual(data);
+ expect(requests).toEqual([]);expect(errors).toEqual([]);
+});
+
+for(const width of [390,1440])test(`accepted128 controls, full proof links and live adapter at ${width}px`,async({page},testInfo)=>{
+ await page.setViewportSize({width,height:1000});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/docs/mechanics/index.html#t43-storage-pickup');await expect(page.locator('#t43-storage-pickup .badge')).toHaveText('playable');
+ await expect(page.locator('#cap-storage-pickup')).toContainText('CURRENT CELL');await expect(page.locator('#t43-storage-pickup')).toContainText('clear_new_items');
+ await page.locator('#t43-storage-pickup').getByRole('link',{name:'Runnable entry / controls'}).click();const entry=page.locator('#scenario-storage-pickup');
+ for(const text of ['Enable storage pickup (original99)','B once','equipment unchanged','Save progress / Load progress','both action rules'])await expect(entry).toContainText(text);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await entry.screenshot({path:testInfo.outputPath(`storage-controls-${width}.png`)});
+ await entry.getByRole('link',{name:'Instructions & limitations →'}).click();await expect(page.locator('body')).toContainText('Accepted128 bounded native storage pickup');await expect(page.locator('body')).toContainText('771307.7229');
+ await page.goto('/docs/mechanics/index.html#proof-128');for(const text of ['c63adffffaaa81d539e5f35601c04012bbd317b3','source-proof base (PR127)','d3672a2b073e07c162d874a039a102f58e5ded01','6538468338','no separate receipt comment observed'])await expect(page.locator('#proof-128')).toContainText(text);
+ await page.goto('/');await expect(page.getByRole('button',{name:'Enable storage pickup (original99)',exact:true})).toBeDisabled();await expect(page.locator('#training-storage-pickup')).toContainText('B');await expect(page.getByRole('button',{name:'Pick up into storage · B',exact:true})).toBeDisabled();expect(errors).toEqual([]);
 });

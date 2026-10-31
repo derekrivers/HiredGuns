@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-31",
-  "reviewedHead": "583aec99f50306988bf2b675fbc7c6b0c0c8b71e",
+  "reviewedHead": "0cba4240a7f44bfd95b3a324520f97fc6ba061dc",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,7 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
-    "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented. Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.",
+    "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile. Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.",
     "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Exact v1-v16 remain; v15 refuses every non-null requested hit including zero.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
@@ -216,7 +216,15 @@
       "kind": "original",
       "path": "docs/training43-corpse-pickup.md",
       "instructions": "In the same four-view app load the pinned local Training43 map, roster and items; choose four distinct source characters [1,3,0,5], Apply team at fresh PAUSED tick zero. Choose Enable corpse-item pickup (original99), then Start mission. Use 1–4, W/S A/D, Q/E and Esc. Walk a living teammate onto a different source-owned dead teammate skeleton with first stored item and EMPTY equipment, then press G once or the pickup button. Observe equipment, both weights, stored count and outcome. Pause; Save progress / Load progress verifies the whole source-bound pair and returns paused. Continue normally; Retry and both action rules rebuild fresh. Loading/source clear/replacement cancel obsolete work.",
-      "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented. Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required."
+      "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile. Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required."
+    },
+    {
+      "id": "storage-pickup",
+      "title": "One native storage pickup and full v21 recovery",
+      "kind": "original",
+      "path": "docs/training43-storage-pickup.md",
+      "instructions": "In the same four-view app load pinned local Training43 map/roster/items; choose four distinct source characters [1,3,0,5] with races[0,0,3,4], Apply team to Training43 at fresh PAUSED tick zero. Choose Enable storage pickup (original99), then Start mission. Use 1–4/W/S A/D/Q/E/Esc. Walk a living controlled teammate onto a different source-owned DEAD teammate corpse, source equipment empty/first store nonempty, recipient storage with space and canonical prefixes/spells clear/both nonheavy/window0/selection0. Press B once or Pick up into storage · B. Observe full slot0 FF outline, equipment unchanged, source/recipient counts and weights. Pause; Save progress / Load progress; continue water processing and dry return, terminal recovery and Retry under both action rules. G equipment pickup uses a separate profile. One attempt TOTAL over the entire history; Retry resets complete baseline. Private actual route remains local; no route/name/coordinate/raw original is public.",
+      "scope": "Accepted PR128 native22 keyboard pickup INTO STORE, with B as browser binding ADAPTATION; separate G20 equipment profile retained. ONE attempt across the entire fresh profile21 history: living controlled window0 recipient at the CURRENT CELL of a different source-owned DEAD teammate, source equipment empty/first store nonempty, known canonical prefixes/space/spells clear/fixed selection0/both nonheavy. Full4-byte insertion shift including opaque empty tails, lastPosition before full-store check, copy ID/damage/ammo then FF outline; recipient equipment byte-exact retained. Source full4 prefix shift/final ID-only clear and source CORPSE weight BEFORE recipient. Display counts derived; native count_items NOT called. Four lastPositions are explicit ADAPTER zero baselines, replay-derived/compared/reset, not observed native RAM. Hazards/dead guards BEFORE storage controls BEFORE world/mission ONCE; fatal caller-guard commits normal death/counters/mission. Pickup-only tick; full bodies/catalogs/actions/opaque planes and whole pair/events checked. Full profile21 raw3 chronology and paused recovery/continued water/dry return/terminal/Retry BOTH rules accepted; legacy1–20 canonical unchanged. Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition remains unimplemented; no upcoming inventory-window or future format22 credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained."
     }
   ],
   "mechanics": [
@@ -10680,7 +10688,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 126,
+  "acceptedThrough": 128,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10822,13 +10830,30 @@
       "automatic": "6537386819",
       "receipt": "6537386819",
       "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
+    },
+    {
+      "id": "proof-128",
+      "pr": 128,
+      "merge": "0cba4240a7f44bfd95b3a324520f97fc6ba061dc",
+      "head": "101db041f18e422284c5d93e7992dff79bc512c3",
+      "tree": "c63adffffaaa81d539e5f35601c04012bbd317b3",
+      "reviewedTree": "c63adffffaaa81d539e5f35601c04012bbd317b3",
+      "sourceProofBase": "d3672a2b073e07c162d874a039a102f58e5ded01",
+      "reviewSha256": "22a474510fe92085f8a0f0073802ecb5da01aee2711f43cd7b57c8f32f367ef0",
+      "ci": [
+        "41164082492",
+        "41164070234"
+      ],
+      "automatic": "6538468338",
+      "receipt": "6538468338",
+      "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
     }
   ],
   "dashboards": [
     {
       "id": "testbed-capability",
       "title": "Current playable testbed capability",
-      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts.",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts. Accepted128 adds ONE bounded native22 storage-pickup milestone to this growing list; no fixed software denominator/completion/effort/time percentage or broad-stage credit.",
       "milestones": [
         {
           "id": "cap-start",
@@ -11221,7 +11246,7 @@
           "id": "cap-corpse-pickup",
           "title": "One current-cell corpse equipment pickup and v20 recovery",
           "status": "playable",
-          "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented.",
+          "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile.",
           "lineage": [
             "INV-01",
             "INV-02",
@@ -11235,7 +11260,7 @@
             {
               "path": "docs/training43-corpse-pickup.md",
               "label": "Accepted126 proof, controls and limits",
-              "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented."
+              "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile."
             },
             {
               "path": "src/items/corpse-pickup.ts",
@@ -11257,13 +11282,54 @@
           "proofs": [
             "proof-126"
           ]
+        },
+        {
+          "id": "cap-storage-pickup",
+          "title": "One native storage pickup and v21 full recovery",
+          "status": "playable",
+          "scope": "Accepted PR128 native22 keyboard pickup INTO STORE, with B as browser binding ADAPTATION; separate G20 equipment profile retained. ONE attempt across the entire fresh profile21 history: living controlled window0 recipient at the CURRENT CELL of a different source-owned DEAD teammate, source equipment empty/first store nonempty, known canonical prefixes/space/spells clear/fixed selection0/both nonheavy. Full4-byte insertion shift including opaque empty tails, lastPosition before full-store check, copy ID/damage/ammo then FF outline; recipient equipment byte-exact retained. Source full4 prefix shift/final ID-only clear and source CORPSE weight BEFORE recipient. Display counts derived; native count_items NOT called. Four lastPositions are explicit ADAPTER zero baselines, replay-derived/compared/reset, not observed native RAM. Hazards/dead guards BEFORE storage controls BEFORE world/mission ONCE; fatal caller-guard commits normal death/counters/mission. Pickup-only tick; full bodies/catalogs/actions/opaque planes and whole pair/events checked. Full profile21 raw3 chronology and paused recovery/continued water/dry return/terminal/Retry BOTH rules accepted; legacy1–20 canonical unchanged.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "LIFE-03",
+            "T43-06",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "storage-pickup",
+          "evidence": [
+            {
+              "path": "docs/training43-storage-pickup.md",
+              "label": "Accepted128 controls, proof and limits",
+              "scope": "PR128 normal expected-head merge 0cba4240a7f44bfd95b3a324520f97fc6ba061dc at2026-10-31T03:59:35Z; parents accepted127 d3672a2b073e07c162d874a039a102f58e5ded01 + source 101db041f18e422284c5d93e7992dff79bc512c3. Accepted/reviewed union tree BOTH c63adffffaaa81d539e5f35601c04012bbd317b3. Source-proof base is actual accepted127, not initial126. Merge API/commit API/fetched origin verified; independently checked fetched Git parents/tree. HIGH report22511B SHA25622a474510fe92085f8a0f0073802ecb5da01aee2711f43cd7b57c8f32f367ef0 APPROVE exact101/treec63, NO actionable P0–P3. CI41164082492 +41164070234 SUCCESS exact101. Actual automatic6538468338 COMPLETED exact101 NO FINDINGS at03:35:27.618572Z; receipt SAME actual summary, no separate receipt observed. Security null is not a security pass. Initial Ready ONCE03:33:57, no manual request; threads0/main unprotected/rule25871733 disabled/no CODEOWNERS were coordinator read-only acceptance checks."
+            },
+            {
+              "path": "src/items/corpse-storage-pickup.ts",
+              "label": "Native22 function",
+              "scope": "Full source-function/native locators,17 complete native vectors/114 raw definitions/15 refusals/getter0 and complete4 bodies/31 equipment-store entries plus10 actions/catalogs/opaque heads/three planes/corpse-owner-search/weight-health-dead/counters/mission preserved. Primitive110diff leaves differ from whole ordinary next tick SIX cadence/delay/clock/history leaves; independent ENTIRE next-pair/events oracle accepted, not selected bytes. Original CPU NOT executed."
+            },
+            {
+              "path": "src/sim/training-storage-pickup.ts",
+              "label": "Profile21 complete raw3 reconstruction",
+              "scope": "Profile one-native-storage-pickup-v1/scenario training43-storage-pickup-v1, strict ONE storage24–27 count1; nav0–23. All3 full raw buffers and own data descriptors captured BEFORE first await and callback getters. Rehash/reparse baseline/all catalogs/every ordinary chronological tick; saved leaves COMPARE ONLY. Full future pair/new fields prospectively checked every tick; atomic pair, real setTimeout yields and cancellation after raw awaits/every tick/before comparison/serialization/after serialization-return/install/download. Caps59499/256packed/513expanded/strict UTF8<24576/depth24/50000visits/32000collection/65536string/1000000aggregate unchanged. Max canonical20605B/256packed/512expanded/59499 is encoding/work shape, not invented-history replay. Independent HIGH42045visits/278024aggregate/depth9/collection10580/string572; worker281692 conservative accounting differs, not exact independent value. HIGH full post-event59498 raw canonical17533B771307.7229ms and independently reconstructed terminal59499 17559B467123.6151ms; step from complete59498 equals ENTIRE terminal. Worker775640.2981/465603.7148ms are distinct prior observations. Every ordinary tick/all fields/source hashes stable. Real CPU250ms cancellation timers261.8–279.7ms/210–229 processed unfinished, complete current pair/HUD/loading/no download safe. Measured machine wall time under concurrent load, no universal latency or original CPU parity."
+            },
+            {
+              "path": "tests/browser/training-storage-pickup.spec.ts",
+              "label": "Production definitions",
+              "scope": "Evidence reused from STOPPED exact-source packets, not rerun CPU work for metadata. HIGH fresh public1256PASS/102SKIP/67files; browser58PASS+4signSKIP first run then corrected4PASS =62 distinct across TWO runs, not one clean62. Private24PASS+1stage180sTIMEOUT then unchanged focused1PASS107.32s =25 distinct across TWO runs. Worker initial50PASS/5original60s timeouts/focused180s reruns retained; separate worker62 ONE clean run and fresh witness1 are distinct. No performance pass follows from larger waits. HIGH genuine NORMAL-clock ordinary-key extended witness1PASS261337.779ms (4.4min), selected[1,3,0,5]/races[0,0,3,4], ticks0/wet415/dead2018/pre2537/post2547/continued2653/dry3111: store4f0000ff,10→11 recipient/9→8 source,equipment unchanged,+750/−750; full canonical post/continued/dry restores, independently derived water all-entry/action/tail weights and BOTH first-exit/cooperative Retry baseline. No teleport/fake clock/autoroute/checkpoint injection for fresh reachability. Private routes/names/coordinates/screenshots stay ignored; inherited post-storage.png shows final paused Retry, not pickup."
+            }
+          ],
+          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition remains unimplemented; no upcoming inventory-window or future format22 credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained.",
+          "proofs": [
+            "proof-128"
+          ]
         }
       ]
     },
     {
       "id": "training43-software",
       "title": "Training43 software acceptance",
-      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts.",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts. Accepted128 adds ONE bounded native22 storage-pickup milestone to this growing list; no fixed software denominator/completion/effort/time percentage or broad-stage credit.",
       "milestones": [
         {
           "id": "t43-dry",
@@ -11615,7 +11681,7 @@
           "id": "t43-corpse-pickup",
           "title": "One current-cell corpse equipment pickup and v20 recovery",
           "status": "playable",
-          "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented.",
+          "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile.",
           "lineage": [
             "INV-01",
             "INV-02",
@@ -11629,7 +11695,7 @@
             {
               "path": "docs/training43-corpse-pickup.md",
               "label": "Accepted126 proof, controls and limits",
-              "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented."
+              "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is separately accepted by PR128 in the storage profile."
             },
             {
               "path": "src/items/corpse-pickup.ts",
@@ -11650,6 +11716,47 @@
           "missing": "Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.",
           "proofs": [
             "proof-126"
+          ]
+        },
+        {
+          "id": "t43-storage-pickup",
+          "title": "One native storage pickup and v21 full recovery",
+          "status": "playable",
+          "scope": "Accepted PR128 native22 keyboard pickup INTO STORE, with B as browser binding ADAPTATION; separate G20 equipment profile retained. ONE attempt across the entire fresh profile21 history: living controlled window0 recipient at the CURRENT CELL of a different source-owned DEAD teammate, source equipment empty/first store nonempty, known canonical prefixes/space/spells clear/fixed selection0/both nonheavy. Full4-byte insertion shift including opaque empty tails, lastPosition before full-store check, copy ID/damage/ammo then FF outline; recipient equipment byte-exact retained. Source full4 prefix shift/final ID-only clear and source CORPSE weight BEFORE recipient. Display counts derived; native count_items NOT called. Four lastPositions are explicit ADAPTER zero baselines, replay-derived/compared/reset, not observed native RAM. Hazards/dead guards BEFORE storage controls BEFORE world/mission ONCE; fatal caller-guard commits normal death/counters/mission. Pickup-only tick; full bodies/catalogs/actions/opaque planes and whole pair/events checked. Full profile21 raw3 chronology and paused recovery/continued water/dry return/terminal/Retry BOTH rules accepted; legacy1–20 canonical unchanged.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "LIFE-03",
+            "T43-06",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "storage-pickup",
+          "evidence": [
+            {
+              "path": "docs/training43-storage-pickup.md",
+              "label": "Accepted128 controls, proof and limits",
+              "scope": "PR128 normal expected-head merge 0cba4240a7f44bfd95b3a324520f97fc6ba061dc at2026-10-31T03:59:35Z; parents accepted127 d3672a2b073e07c162d874a039a102f58e5ded01 + source 101db041f18e422284c5d93e7992dff79bc512c3. Accepted/reviewed union tree BOTH c63adffffaaa81d539e5f35601c04012bbd317b3. Source-proof base is actual accepted127, not initial126. Merge API/commit API/fetched origin verified; independently checked fetched Git parents/tree. HIGH report22511B SHA25622a474510fe92085f8a0f0073802ecb5da01aee2711f43cd7b57c8f32f367ef0 APPROVE exact101/treec63, NO actionable P0–P3. CI41164082492 +41164070234 SUCCESS exact101. Actual automatic6538468338 COMPLETED exact101 NO FINDINGS at03:35:27.618572Z; receipt SAME actual summary, no separate receipt observed. Security null is not a security pass. Initial Ready ONCE03:33:57, no manual request; threads0/main unprotected/rule25871733 disabled/no CODEOWNERS were coordinator read-only acceptance checks."
+            },
+            {
+              "path": "src/items/corpse-storage-pickup.ts",
+              "label": "Native22 function",
+              "scope": "Full source-function/native locators,17 complete native vectors/114 raw definitions/15 refusals/getter0 and complete4 bodies/31 equipment-store entries plus10 actions/catalogs/opaque heads/three planes/corpse-owner-search/weight-health-dead/counters/mission preserved. Primitive110diff leaves differ from whole ordinary next tick SIX cadence/delay/clock/history leaves; independent ENTIRE next-pair/events oracle accepted, not selected bytes. Original CPU NOT executed."
+            },
+            {
+              "path": "src/sim/training-storage-pickup.ts",
+              "label": "Profile21 complete raw3 reconstruction",
+              "scope": "Profile one-native-storage-pickup-v1/scenario training43-storage-pickup-v1, strict ONE storage24–27 count1; nav0–23. All3 full raw buffers and own data descriptors captured BEFORE first await and callback getters. Rehash/reparse baseline/all catalogs/every ordinary chronological tick; saved leaves COMPARE ONLY. Full future pair/new fields prospectively checked every tick; atomic pair, real setTimeout yields and cancellation after raw awaits/every tick/before comparison/serialization/after serialization-return/install/download. Caps59499/256packed/513expanded/strict UTF8<24576/depth24/50000visits/32000collection/65536string/1000000aggregate unchanged. Max canonical20605B/256packed/512expanded/59499 is encoding/work shape, not invented-history replay. Independent HIGH42045visits/278024aggregate/depth9/collection10580/string572; worker281692 conservative accounting differs, not exact independent value. HIGH full post-event59498 raw canonical17533B771307.7229ms and independently reconstructed terminal59499 17559B467123.6151ms; step from complete59498 equals ENTIRE terminal. Worker775640.2981/465603.7148ms are distinct prior observations. Every ordinary tick/all fields/source hashes stable. Real CPU250ms cancellation timers261.8–279.7ms/210–229 processed unfinished, complete current pair/HUD/loading/no download safe. Measured machine wall time under concurrent load, no universal latency or original CPU parity."
+            },
+            {
+              "path": "tests/browser/training-storage-pickup.spec.ts",
+              "label": "Production definitions",
+              "scope": "Evidence reused from STOPPED exact-source packets, not rerun CPU work for metadata. HIGH fresh public1256PASS/102SKIP/67files; browser58PASS+4signSKIP first run then corrected4PASS =62 distinct across TWO runs, not one clean62. Private24PASS+1stage180sTIMEOUT then unchanged focused1PASS107.32s =25 distinct across TWO runs. Worker initial50PASS/5original60s timeouts/focused180s reruns retained; separate worker62 ONE clean run and fresh witness1 are distinct. No performance pass follows from larger waits. HIGH genuine NORMAL-clock ordinary-key extended witness1PASS261337.779ms (4.4min), selected[1,3,0,5]/races[0,0,3,4], ticks0/wet415/dead2018/pre2537/post2547/continued2653/dry3111: store4f0000ff,10→11 recipient/9→8 source,equipment unchanged,+750/−750; full canonical post/continued/dry restores, independently derived water all-entry/action/tail weights and BOTH first-exit/cooperative Retry baseline. No teleport/fake clock/autoroute/checkpoint injection for fresh reachability. Private routes/names/coordinates/screenshots stay ignored; inherited post-storage.png shows final paused Retry, not pickup."
+            }
+          ],
+          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition remains unimplemented; no upcoming inventory-window or future format22 credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained.",
+          "proofs": [
+            "proof-128"
           ]
         }
       ]
