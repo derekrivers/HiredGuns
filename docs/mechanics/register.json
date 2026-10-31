@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-31",
-  "reviewedHead": "0cba4240a7f44bfd95b3a324520f97fc6ba061dc",
+  "reviewedHead": "362f5013d559e46d7738f92c478ce822ba85e909",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -225,6 +225,14 @@
       "path": "docs/training43-storage-pickup.md",
       "instructions": "In the same four-view app load pinned local Training43 map/roster/items; choose four distinct source characters [1,3,0,5] with races[0,0,3,4], Apply team to Training43 at fresh PAUSED tick zero. Choose Enable storage pickup (original99), then Start mission. Use 1–4/W/S A/D/Q/E/Esc. Walk a living controlled teammate onto a different source-owned DEAD teammate corpse, source equipment empty/first store nonempty, recipient storage with space and canonical prefixes/spells clear/both nonheavy/window0/selection0. Press B once or Pick up into storage · B. Observe full slot0 FF outline, equipment unchanged, source/recipient counts and weights. Pause; Save progress / Load progress; continue water processing and dry return, terminal recovery and Retry under both action rules. G equipment pickup uses a separate profile. One attempt TOTAL over the entire history; Retry resets complete baseline. Private actual route remains local; no route/name/coordinate/raw original is public.",
       "scope": "Accepted PR128 native22 keyboard pickup INTO STORE, with B as browser binding ADAPTATION; separate G20 equipment profile retained. ONE attempt across the entire fresh profile21 history: living controlled window0 recipient at the CURRENT CELL of a different source-owned DEAD teammate, source equipment empty/first store nonempty, known canonical prefixes/space/spells clear/fixed selection0/both nonheavy. Full4-byte insertion shift including opaque empty tails, lastPosition before full-store check, copy ID/damage/ammo then FF outline; recipient equipment byte-exact retained. Source full4 prefix shift/final ID-only clear and source CORPSE weight BEFORE recipient. Display counts derived; native count_items NOT called. Four lastPositions are explicit ADAPTER zero baselines, replay-derived/compared/reset, not observed native RAM. Hazards/dead guards BEFORE storage controls BEFORE world/mission ONCE; fatal caller-guard commits normal death/counters/mission. Pickup-only tick; full bodies/catalogs/actions/opaque planes and whole pair/events checked. Full profile21 raw3 chronology and paused recovery/continued water/dry return/terminal/Retry BOTH rules accepted; legacy1–20 canonical unchanged. Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition remains unimplemented; no upcoming inventory-window or future format22 credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained."
+    },
+    {
+      "id": "inventory-window",
+      "title": "One native inventory-window cycle and full v22 recovery",
+      "kind": "original",
+      "path": "docs/training43-inventory-window.md",
+      "instructions": "Load pinned local Training43 map/roster/items in the existing four-view app. Choose four distinct source choices [1,3,0,5]/races[0,0,3,4], Apply team to Training43, Enable Inventory window cycle at fresh PAUSED tick zero, then Start mission. Use 1–4/WASD/QE/Esc. Walk the living controlled recipient to the admitted different source-owned DEAD teammate current cell, source equipment empty/first store nonempty/selection0/room/spells clear/both nonheavy. B once transfers into storage; N opens the same recipient, idle water hazards continue, release N then N closes once (held repeat latched until keyup). Observe FF→00 outlines and all32 fourth-byte clear including separate TEMP/empty tails. While open only idle/close supported; movement/selection/other actor co-commands refuse the WHOLE candidate. Pause; Save progress / Load progress restores exact OPEN/CLOSED PAUSED pair; continue water/dry, terminal freeze and Retry BOTH rules. Private route/names/raw originals remain local. N is direct native10/9 letter adaptation, not native Tab/directional cycle.",
+      "scope": "Accepted PR130 ONE successful native22 storage transfer followed by ONE same controlled living recipient open–idle-water–close cycle. B adapts native22; N adapts direct native10 store / native9 views, NOT native Tab or directional cycling. Held N repeats latch until keyup. Current-cell first-store source-owned other DEAD teammate, source equipment empty, selection0, space, spells clear, both nonheavy, window0. Window1 is ACTIVE: hazards continue; movement/selection/equip/drop/use/info/pickup/other-actor co-commands are unsupported WHOLE candidate refusals, not inactive or world movement behind the panel. Close clears32 FOURTH bytes: equipment + SEPARATE TEMP +30 store entries including empty tails; first3 bytes, count/weight/action10/opaque data preserved except ordinary hazards. TEMP4 zero is source initializer-clear inference, not observed RAM or actions alias; lastPositions4 are ADAPTER zeros, scroll unrepresented. No renderer-cache/follower/native CPU fidelity claim. Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Wider selection/directional cycling/equip/drop/use/info/follower and later corpse replacement remain unsupported or unknown, not inactive; no future selection credit. Fatal queued open on a distinct admitted wet cell commits ordinary death/counters/mission before caller-guard retains window0; no freeze/cap/autoclose/half-tick. Original CPU timing/parity UNPROVEN. Art/sprites/audio/polish/integration/hardware separately DEFERRED, not software gates; original behavior reference still required."
     }
   ],
   "mechanics": [
@@ -10688,7 +10696,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 128,
+  "acceptedThrough": 130,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10847,13 +10855,30 @@
       "automatic": "6538468338",
       "receipt": "6538468338",
       "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
+    },
+    {
+      "id": "proof-130",
+      "pr": 130,
+      "merge": "362f5013d559e46d7738f92c478ce822ba85e909",
+      "head": "2be27a957be321aa799312b808ace0a4c3d1939e",
+      "tree": "8088458a14a86ead0f3bf9e6bc69ac0cdf877965",
+      "reviewedTree": "8088458a14a86ead0f3bf9e6bc69ac0cdf877965",
+      "sourceProofBase": "2d3d1fccc77dabc25e986f55e994453373b88986",
+      "reviewSha256": "084890d44f063b5b5cf922826fa395286b5cd9665ce25f8b487451cc1ca2fafa",
+      "ci": [
+        "41174613410",
+        "41174608463"
+      ],
+      "automatic": "6539986818",
+      "receipt": "6539986818",
+      "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
     }
   ],
   "dashboards": [
     {
       "id": "testbed-capability",
       "title": "Current playable testbed capability",
-      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts. Accepted128 adds ONE bounded native22 storage-pickup milestone to this growing list; no fixed software denominator/completion/effort/time percentage or broad-stage credit.",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts. Accepted128 adds ONE bounded native22 storage-pickup milestone to this growing list; no fixed software denominator/completion/effort/time percentage or broad-stage credit. Accepted130 appends ONE bounded inventory-window cycle to this growing milestone list; no fixed software denominator, completion/effort/time percentage or broad-stage credit.",
       "milestones": [
         {
           "id": "cap-start",
@@ -11319,9 +11344,50 @@
               "scope": "Evidence reused from STOPPED exact-source packets, not rerun CPU work for metadata. HIGH fresh public1256PASS/102SKIP/67files; browser58PASS+4signSKIP first run then corrected4PASS =62 distinct across TWO runs, not one clean62. Private24PASS+1stage180sTIMEOUT then unchanged focused1PASS107.32s =25 distinct across TWO runs. Worker initial50PASS/5original60s timeouts/focused180s reruns retained; separate worker62 ONE clean run and fresh witness1 are distinct. No performance pass follows from larger waits. HIGH genuine NORMAL-clock ordinary-key extended witness1PASS261337.779ms (4.4min), selected[1,3,0,5]/races[0,0,3,4], ticks0/wet415/dead2018/pre2537/post2547/continued2653/dry3111: store4f0000ff,10→11 recipient/9→8 source,equipment unchanged,+750/−750; full canonical post/continued/dry restores, independently derived water all-entry/action/tail weights and BOTH first-exit/cooperative Retry baseline. No teleport/fake clock/autoroute/checkpoint injection for fresh reachability. Private routes/names/coordinates/screenshots stay ignored; inherited post-storage.png shows final paused Retry, not pickup."
             }
           ],
-          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition remains unimplemented; no upcoming inventory-window or future format22 credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained.",
+          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition is separately accepted in bounded PR130 profile22; no wider inventory/selection credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained.",
           "proofs": [
             "proof-128"
+          ]
+        },
+        {
+          "id": "cap-inventory-window",
+          "title": "One native inventory-window cycle and v22 full recovery",
+          "status": "playable",
+          "scope": "Accepted PR130 ONE successful native22 storage transfer followed by ONE same controlled living recipient open–idle-water–close cycle. B adapts native22; N adapts direct native10 store / native9 views, NOT native Tab or directional cycling. Held N repeats latch until keyup. Current-cell first-store source-owned other DEAD teammate, source equipment empty, selection0, space, spells clear, both nonheavy, window0. Window1 is ACTIVE: hazards continue; movement/selection/equip/drop/use/info/pickup/other-actor co-commands are unsupported WHOLE candidate refusals, not inactive or world movement behind the panel. Close clears32 FOURTH bytes: equipment + SEPARATE TEMP +30 store entries including empty tails; first3 bytes, count/weight/action10/opaque data preserved except ordinary hazards. TEMP4 zero is source initializer-clear inference, not observed RAM or actions alias; lastPositions4 are ADAPTER zeros, scroll unrepresented. No renderer-cache/follower/native CPU fidelity claim.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "LIFE-03",
+            "T43-06",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "inventory-window",
+          "evidence": [
+            {
+              "path": "docs/training43-inventory-window.md",
+              "label": "Accepted130 controls, scope and gates",
+              "scope": "PR130 normal expected-head merge 362f5013d559e46d7738f92c478ce822ba85e909 at2026-10-31T07:00:33Z; parents actual accepted129 2d3d1fccc77dabc25e986f55e994453373b88986 + source 2be27a957be321aa799312b808ace0a4c3d1939e. Accepted union and independently reviewed tree BOTH 8088458a14a86ead0f3bf9e6bc69ac0cdf877965; sourceProofBase is ACTUAL accepted129 (PR129 metadata only, latest changed gameplay130), not accepted128 or a candidate. Merge API + commit API + fetched origin exact tree/parents verified by coordinator. FULL STOPPED HIGH report21868B SHA256084890d44f063b5b5cf922826fa395286b5cd9665ce25f8b487451cc1ca2fafa APPROVE exact2be, NO P0–P3. ALL639 own +10551 external rows length/SHA0; worker703 separately verified. CI41174613410 +41174608463 SUCCESS exact2be. ACTUAL automatic6539986818 COMPLETED exact2be NO FINDINGS at06:18:24.124400Z; receipt SAME actual summary, no separate receipt observed. Security null is NOT pass. Ready130 ONCE06:16:53/no manualrequest; threads0/main unprotected/rule25871733 disabled/no CODEOWNERS were read-only coordinator gates, never repeated here."
+            },
+            {
+              "path": "src/items/inventory-window.ts",
+              "label": "Native10/9 and32-byte clear transcription",
+              "scope": "Source Controls actions10/9 store0→1 / views1→0; clear_new_items DBF31 writes32 fourth bytes from equipment through separate TEMP and30 stores, preserving first3 bytes and all10 actions. Runtime dead/window7/control guards precede control consumption; hazards precede guarded controls then world/mission ONCE. Independent native source transcription28 checks/48 branch vectors/11 whole vectors, full four-body/31+10entries/catalog/opaque planes/heads/corpse ownership/health/weight/counters/mission/events; source transcription JS, never original CPU execution. Fatal distinct-wet-cell ordinary chronology reaches death BEFORE queued open; later replacement remains unsupported. Full native function reach exceeds the bounded current-player profile."
+            },
+            {
+              "path": "src/sim/training-inventory-window.ts",
+              "label": "Profile22 full raw3 chronology/recovery",
+              "scope": "Version22 / one-native-inventory-window-cycle-v1 / training43-inventory-window-cycle-v1: strict single chronological storage + open + close owner; navigation0–23, storage24–27, open28–31, close32–35 count1. Full raw3 + ALL caller OWN data captured BEFORE await AND runtime callback getters. Rehash/reparse full catalog baseline EVERY chronology tick, every saved leaf COMPARE ONLY, whole session/world pair atomic, postserialization current/cancel guard, mutation/cancel at every digest. PAUSED exact OPEN/CLOSED restores, continued water/dry return, Retry BOTH rules, current errors/loading/HUD and stale finally/download guards; zero stale downloads. Legacy1–21 immutable; total59499/packed256/expanded513/strictUTF8<24576; capture depth24/visits50000/collection32000/string65536/aggregate1000000 unchanged. Max22241B/256packed/512expanded canonical CODE WORK SHAPE uses42069visits/278277units; it is NOT a valid source playthrough. Full source recovery can take many minutes;16ticks OR8ms is a yield target, not universal8ms/instant/speedup/CPU parity."
+            },
+            {
+              "path": "tests/browser/training-inventory-window.spec.ts",
+              "label": "Accepted production definitions and honest run provenance",
+              "scope": "Inherited exact-source evidence, not fresh metadata CPU execution: independent public1287PASS/109opt-inSKIP/69files/fullcheck;21 private profile definitions incl7opt-in plus12 pure inside public check are NOT33 in one private run (worker33 ONE private clean is distinct). Independent67 changed browser definitions ONE clean611723.966ms; separate9 legacy ONE clean +1 visibility. NORMAL-clock test320255ms/report323641.427ms, source[1,3,0,5]/races[0,0,3,4], B2488/open2517/close2573/continued2677/dry3097; full canonical OPEN/CLOSED/continued/dry restores and Retry BOTH rules. Final screenshot shows paused Retry, not pickup. Independent full raw59498 reconstruct625730.9344ms/17882B/59500serializations and59499 import641504.014ms/17908B/59503serializations: ENTIRE terminal pair/events equals step from FULL59498 including failed:time expired event. Separate full terminal UI453824.3121ms/terminal freeze/Retry BOTH rules. Four real250ms CPU cancellation timers265.5–273.4ms/206–233processed UNFINISHED source-JS work, NOT original68000CPU. Extra349 authority cases:342 all114catalog mutations +4static +3maxAPI; digest counts14/8/8/8 and finalserialization cancel. Retained failures/reassessments are not performance passes from longer waits or false combined counts. Machine wall time under documented concurrent load, no universal latency."
+            }
+          ],
+          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Wider selection/directional cycling/equip/drop/use/info/follower and later corpse replacement remain unsupported or unknown, not inactive; no future selection credit. Fatal queued open on a distinct admitted wet cell commits ordinary death/counters/mission before caller-guard retains window0; no freeze/cap/autoclose/half-tick. Original CPU timing/parity UNPROVEN. Art/sprites/audio/polish/integration/hardware separately DEFERRED, not software gates; original behavior reference still required.",
+          "proofs": [
+            "proof-130"
           ]
         }
       ]
@@ -11329,7 +11395,7 @@
     {
       "id": "training43-software",
       "title": "Training43 software acceptance",
-      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts. Accepted128 adds ONE bounded native22 storage-pickup milestone to this growing list; no fixed software denominator/completion/effort/time percentage or broad-stage credit.",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts. Accepted128 adds ONE bounded native22 storage-pickup milestone to this growing list; no fixed software denominator/completion/effort/time percentage or broad-stage credit. Accepted130 appends ONE bounded inventory-window cycle to this growing milestone list; no fixed software denominator, completion/effort/time percentage or broad-stage credit.",
       "milestones": [
         {
           "id": "t43-dry",
@@ -11754,9 +11820,50 @@
               "scope": "Evidence reused from STOPPED exact-source packets, not rerun CPU work for metadata. HIGH fresh public1256PASS/102SKIP/67files; browser58PASS+4signSKIP first run then corrected4PASS =62 distinct across TWO runs, not one clean62. Private24PASS+1stage180sTIMEOUT then unchanged focused1PASS107.32s =25 distinct across TWO runs. Worker initial50PASS/5original60s timeouts/focused180s reruns retained; separate worker62 ONE clean run and fresh witness1 are distinct. No performance pass follows from larger waits. HIGH genuine NORMAL-clock ordinary-key extended witness1PASS261337.779ms (4.4min), selected[1,3,0,5]/races[0,0,3,4], ticks0/wet415/dead2018/pre2537/post2547/continued2653/dry3111: store4f0000ff,10→11 recipient/9→8 source,equipment unchanged,+750/−750; full canonical post/continued/dry restores, independently derived water all-entry/action/tail weights and BOTH first-exit/cooperative Retry baseline. No teleport/fake clock/autoroute/checkpoint injection for fresh reachability. Private routes/names/coordinates/screenshots stay ignored; inherited post-storage.png shows final paused Retry, not pickup."
             }
           ],
-          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition remains unimplemented; no upcoming inventory-window or future format22 credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained.",
+          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Source-using/window1/noRoom150/new-heavy50/nonzero selections/ground/spells/wider inventory remain unsupported live, not inactive. clear_new_items/window transition is separately accepted in bounded PR130 profile22; no wider inventory/selection credit. Original CPU never executed. Fixed50Hz/B/cooperative exits are adaptations;16ticks OR8ms is a yield target, not universal8ms/instant recovery/speedup/CPU parity. Art/audio/hardware deferred, not software gates; private original evidence retained.",
           "proofs": [
             "proof-128"
+          ]
+        },
+        {
+          "id": "t43-inventory-window",
+          "title": "One native inventory-window cycle and v22 full recovery",
+          "status": "playable",
+          "scope": "Accepted PR130 ONE successful native22 storage transfer followed by ONE same controlled living recipient open–idle-water–close cycle. B adapts native22; N adapts direct native10 store / native9 views, NOT native Tab or directional cycling. Held N repeats latch until keyup. Current-cell first-store source-owned other DEAD teammate, source equipment empty, selection0, space, spells clear, both nonheavy, window0. Window1 is ACTIVE: hazards continue; movement/selection/equip/drop/use/info/pickup/other-actor co-commands are unsupported WHOLE candidate refusals, not inactive or world movement behind the panel. Close clears32 FOURTH bytes: equipment + SEPARATE TEMP +30 store entries including empty tails; first3 bytes, count/weight/action10/opaque data preserved except ordinary hazards. TEMP4 zero is source initializer-clear inference, not observed RAM or actions alias; lastPositions4 are ADAPTER zeros, scroll unrepresented. No renderer-cache/follower/native CPU fidelity claim.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "LIFE-03",
+            "T43-06",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "inventory-window",
+          "evidence": [
+            {
+              "path": "docs/training43-inventory-window.md",
+              "label": "Accepted130 controls, scope and gates",
+              "scope": "PR130 normal expected-head merge 362f5013d559e46d7738f92c478ce822ba85e909 at2026-10-31T07:00:33Z; parents actual accepted129 2d3d1fccc77dabc25e986f55e994453373b88986 + source 2be27a957be321aa799312b808ace0a4c3d1939e. Accepted union and independently reviewed tree BOTH 8088458a14a86ead0f3bf9e6bc69ac0cdf877965; sourceProofBase is ACTUAL accepted129 (PR129 metadata only, latest changed gameplay130), not accepted128 or a candidate. Merge API + commit API + fetched origin exact tree/parents verified by coordinator. FULL STOPPED HIGH report21868B SHA256084890d44f063b5b5cf922826fa395286b5cd9665ce25f8b487451cc1ca2fafa APPROVE exact2be, NO P0–P3. ALL639 own +10551 external rows length/SHA0; worker703 separately verified. CI41174613410 +41174608463 SUCCESS exact2be. ACTUAL automatic6539986818 COMPLETED exact2be NO FINDINGS at06:18:24.124400Z; receipt SAME actual summary, no separate receipt observed. Security null is NOT pass. Ready130 ONCE06:16:53/no manualrequest; threads0/main unprotected/rule25871733 disabled/no CODEOWNERS were read-only coordinator gates, never repeated here."
+            },
+            {
+              "path": "src/items/inventory-window.ts",
+              "label": "Native10/9 and32-byte clear transcription",
+              "scope": "Source Controls actions10/9 store0→1 / views1→0; clear_new_items DBF31 writes32 fourth bytes from equipment through separate TEMP and30 stores, preserving first3 bytes and all10 actions. Runtime dead/window7/control guards precede control consumption; hazards precede guarded controls then world/mission ONCE. Independent native source transcription28 checks/48 branch vectors/11 whole vectors, full four-body/31+10entries/catalog/opaque planes/heads/corpse ownership/health/weight/counters/mission/events; source transcription JS, never original CPU execution. Fatal distinct-wet-cell ordinary chronology reaches death BEFORE queued open; later replacement remains unsupported. Full native function reach exceeds the bounded current-player profile."
+            },
+            {
+              "path": "src/sim/training-inventory-window.ts",
+              "label": "Profile22 full raw3 chronology/recovery",
+              "scope": "Version22 / one-native-inventory-window-cycle-v1 / training43-inventory-window-cycle-v1: strict single chronological storage + open + close owner; navigation0–23, storage24–27, open28–31, close32–35 count1. Full raw3 + ALL caller OWN data captured BEFORE await AND runtime callback getters. Rehash/reparse full catalog baseline EVERY chronology tick, every saved leaf COMPARE ONLY, whole session/world pair atomic, postserialization current/cancel guard, mutation/cancel at every digest. PAUSED exact OPEN/CLOSED restores, continued water/dry return, Retry BOTH rules, current errors/loading/HUD and stale finally/download guards; zero stale downloads. Legacy1–21 immutable; total59499/packed256/expanded513/strictUTF8<24576; capture depth24/visits50000/collection32000/string65536/aggregate1000000 unchanged. Max22241B/256packed/512expanded canonical CODE WORK SHAPE uses42069visits/278277units; it is NOT a valid source playthrough. Full source recovery can take many minutes;16ticks OR8ms is a yield target, not universal8ms/instant/speedup/CPU parity."
+            },
+            {
+              "path": "tests/browser/training-inventory-window.spec.ts",
+              "label": "Accepted production definitions and honest run provenance",
+              "scope": "Inherited exact-source evidence, not fresh metadata CPU execution: independent public1287PASS/109opt-inSKIP/69files/fullcheck;21 private profile definitions incl7opt-in plus12 pure inside public check are NOT33 in one private run (worker33 ONE private clean is distinct). Independent67 changed browser definitions ONE clean611723.966ms; separate9 legacy ONE clean +1 visibility. NORMAL-clock test320255ms/report323641.427ms, source[1,3,0,5]/races[0,0,3,4], B2488/open2517/close2573/continued2677/dry3097; full canonical OPEN/CLOSED/continued/dry restores and Retry BOTH rules. Final screenshot shows paused Retry, not pickup. Independent full raw59498 reconstruct625730.9344ms/17882B/59500serializations and59499 import641504.014ms/17908B/59503serializations: ENTIRE terminal pair/events equals step from FULL59498 including failed:time expired event. Separate full terminal UI453824.3121ms/terminal freeze/Retry BOTH rules. Four real250ms CPU cancellation timers265.5–273.4ms/206–233processed UNFINISHED source-JS work, NOT original68000CPU. Extra349 authority cases:342 all114catalog mutations +4static +3maxAPI; digest counts14/8/8/8 and finalserialization cancel. Retained failures/reassessments are not performance passes from longer waits or false combined counts. Machine wall time under documented concurrent load, no universal latency."
+            }
+          ],
+          "missing": "Whole Training43/R08/general inventory INCOMPLETE/UNKNOWN/OPEN. Wider selection/directional cycling/equip/drop/use/info/follower and later corpse replacement remain unsupported or unknown, not inactive; no future selection credit. Fatal queued open on a distinct admitted wet cell commits ordinary death/counters/mission before caller-guard retains window0; no freeze/cap/autoclose/half-tick. Original CPU timing/parity UNPROVEN. Art/sprites/audio/polish/integration/hardware separately DEFERRED, not software gates; original behavior reference still required.",
+          "proofs": [
+            "proof-130"
           ]
         }
       ]
