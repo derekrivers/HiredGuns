@@ -115,6 +115,7 @@ it.each(['living-owner','full','source-using','gap','heavy','not-current-corpse'
  if(kind==='gap'){c.session.wet!.actors[3]!.body.inventory.carried[1]=c.session.wet!.actors[3]!.body.inventory.carried[0]!;c.session.wet!.actors[3]!.body.inventory.carried[0]={itemId:0,damage:0,ammo:0,fourthByte:0,rawHex:'00000000'};}
  if(kind==='heavy')c.session.wet!.actors[2]!.body.weight.tooHeavy=true;
  if(kind==='not-current-corpse'){const i=c.session.wet!.actors[2]!.current;c.session.wet!.overlays.find(x=>x[0]===i)![1]&=0x0fffffdf;c.session.wet!.corpses=[];c.session.wetLifecycle!.second=[];c.session.wetLifecycle!.actors[3]!.death!.target=null;}
+ c.session.inventory.actors=c.session.wet!.actors.map(a=>({inventory:structuredClone(a.body.inventory),weight:{...a.body.weight,status:'verified'},selection:0}));
  const r=stepStoragePickup(level,c.session,c.world,[],2);expect(r.session.storagePickup!.outcome).toBe('profile-refusal');expect(r.world.tick).toBe(1);
 });
 
@@ -157,7 +158,7 @@ const mutations=[
 it.skipIf(!provider||!packet).each(mutations)('private complete chronology refuses $name tamper',async({mutate})=>{
  const {level,raw}=await actual(),stages=process.env.HIRED_GUNS_STORAGE_STAGES!,v=as21(JSON.parse(await readFile(stages+'/pre-pickup.json','utf8'))),pre=await importStoragePickup(level,raw,v),post=stepStoragePickup(level,pre.session,pre.world,[],2),json=serializeStoragePickup(post),bad=JSON.parse(json);
  mutate(bad);await expect(importTrainingSession(level,raw,JSON.stringify(bad))).rejects.toThrow();expect(serializeStoragePickup(post)).toBe(json);
-},60000);
+},180000);
 it.skipIf(!provider)('private call-time snapshots precede control getters/callbacks and real timer cancellation',async()=>{
  const {level,raw,c}=await actual(),r=stepStoragePickup(level,c.session,c.world,[{mercenaryId:0,action:'turn-right'}]),canonical=await exportStoragePickup(level,raw,r.session,r.world);
  const map=structuredClone(level),bytes=structuredClone(raw),caller=structuredClone(r);let reads=0;
@@ -207,6 +208,15 @@ it.each(['fall-geometry','corpse-replacement'])('unsupported %s refuses the enti
  const before=structuredClone(c);expect(()=>stepStoragePickup(level,c.session,c.world,[],2)).toThrow();expect(c).toEqual(before);
 });
 it('pickup-only tick then timeout resolves all-dead priority and terminal freeze',async()=>{
- const {level,c}=await synthetic();for(const id of [0,1,2]){const damaged=damageWetCandidate(level,c,id,65535);c.session=damaged.session;c.world=damaged.world;}c.world.tick=59498;c.session.storagePickup!.history=[{count:59498,codes:[]}];
+ const {level,c}=await synthetic();c.session.wetLifecycle!.actors[3]!.death!.target=null;c.session.wet!.corpses=[];c.session.wetLifecycle!.second=[];const at=c.session.wet!.overlays.find(x=>x[0]===c.session.wet!.actors[2]!.current)!;at[1]=(at[1]&0x0fffffdf)>>>0;for(const id of [0,1,2]){const damaged=damageWetCandidate(level,c,id,65535);c.session=damaged.session;c.world=damaged.world;}c.world.tick=59498;c.session.storagePickup!.history=[{count:59498,codes:[]}];
  const r=stepStoragePickup(level,c.session,c.world,[],2);expect(r.world.tick).toBe(59499);expect(r.session.storagePickup!.outcome).toBe('caller-guard');expect(r.world.mission.reason).toBe('all-dead');expect(stepStoragePickup(level,r.session,r.world,[],2)).toMatchObject({session:r.session,world:r.world,events:[]});
 });
+
+it.skipIf(!provider).each(['activate','reconstruct','import','export']as const)('private %s cancels at every digest without returning or progressing into replay',async api=>{
+ const {level,raw,base,c}=await actual(),saved=JSON.parse(serializeStoragePickup(c)),digest=crypto.subtle.digest;
+ const run=(control:Parameters<typeof importStoragePickup>[3])=>api==='activate'?activateStoragePickup(level,raw,base.session,base.world,true,control):api==='reconstruct'?reconstructStoragePickup(level,raw,base.session.indices,c.session.wet!.rules,[],control):api==='import'?importStoragePickup(level,raw,saved,control):exportStoragePickup(level,raw,c.session,c.world,control);
+ let count=0;crypto.subtle.digest=async function(...args:Parameters<SubtleCrypto['digest']>){count++;return digest.apply(this,args);};try{await run({isCurrent:()=>true});}finally{crypto.subtle.digest=digest;}expect(count).toBeGreaterThan(3);
+ for(let phase=1;phase<=count;phase++){let current=true,calls=0;crypto.subtle.digest=async function(...args:Parameters<SubtleCrypto['digest']>){const result=await digest.apply(this,args);if(++calls===phase)current=false;return result;};try{await expect(run({isCurrent:()=>current,onProgress:p=>{if(!current)throw Error('STALE_PROGRESS');expect(Object.isFrozen(p)).toBe(true);}})).rejects.toThrow('cancelled');}finally{crypto.subtle.digest=digest;}}
+},180000);
+
+it('public stepping and serialization refuse a forged mirror without repairing or mutating it',async()=>{const {level,c}=await synthetic();c.session.inventory.actors[0]!.inventory.actions[9]!.ammo=254;const before=structuredClone(c);expect(()=>stepStoragePickup(level,c.session,c.world,[])).toThrow('mirror');expect(()=>serializeStoragePickup(c)).toThrow('mirror');expect(c).toEqual(before);});

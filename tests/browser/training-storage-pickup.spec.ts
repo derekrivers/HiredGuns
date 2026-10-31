@@ -50,3 +50,21 @@ for(const tick of [59498,59499])for(const cancel of ['retry','source-clear']as c
  const observed=await page.evaluate(()=>(window as unknown as {native:{progress:number[];scheduled:number;fired:number;completed:boolean;controls:boolean[]}}).native);expect(observed.completed).toBe(false);expect(observed.controls).toEqual([true,true,true]);expect(observed.fired-observed.scheduled).toBeLessThan(1000);expect(observed.progress.at(-1)).toBeLessThan(tick);expect(downloads).toBe(0);await expect(page.locator('#error')).toBeEmpty();
  const current=await save(page);if(cancel==='retry')expect(current).toBe(initial);const status=await page.locator('#recovery-status').textContent();await page.waitForTimeout(100);expect(await page.locator('#recovery-status').textContent()).toBe(status);expect(await save(page)).toBe(current);await writeFile(test.info().outputPath('native-cancel.json'),JSON.stringify({tick,cancel,observed},null,2));
 });
+
+for(const action of ['pause','blur','digit-selection','manual-selection','retry','rules','apply','source-clear','mode','map'])test('captured pending B cleared by '+action,async({page})=>{
+ test.skip(!privateInputs,'Private opt-in sources required');const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.locator('#local-test-preset').click();await expect(page.locator('#local-test-status')).toContainText('Ready: verified');await page.locator('#roster-panel').evaluate((e:HTMLDetailsElement)=>e.open=true);
+ for(const [i,n]of[1,3,0,5].entries())await page.getByLabel(`Character for team slot ${i+1}`).selectOption(String(n));await page.locator('#roster-apply').click();await expect(page.locator('#recovery-status')).toContainText('Selected team applied');await page.locator('#storage-pickup-enable').click();await expect(page.locator('#storage-pickup-feedback')).toContainText('enabled');
+ await page.locator('#play').click();const queued=await page.evaluate(async action=>{
+  const bytes=action==='map'?await(await fetch('/__local-training43/map')).arrayBuffer():null;
+  const target=document.querySelector('h1')!;target.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyB',bubbles:true}));const feedback=document.querySelector('#storage-pickup-feedback')!.textContent;
+  if(action==='pause')target.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}));
+  else if(action==='blur')window.dispatchEvent(new Event('blur'));
+  else if(action==='digit-selection'){target.dispatchEvent(new KeyboardEvent('keydown',{code:'Digit2',bubbles:true}));target.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}));}
+  else if(action==='manual-selection'){const s=document.querySelector('#assign-1')as HTMLSelectElement;s.value='key:0';s.dispatchEvent(new Event('change',{bubbles:true}));target.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}));}
+  else if(action==='rules'){const s=document.querySelector('#mission-mode')as HTMLSelectElement;s.value='first-exit';s.dispatchEvent(new Event('change',{bubbles:true}));}
+  else if(action==='map'){const input=document.querySelector('#map-file')as HTMLInputElement,transfer=new DataTransfer();transfer.items.add(new File([bytes!],'review.map'));input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));}
+  else(document.querySelector(action==='retry'?'#reset':action==='apply'?'#roster-apply':action==='source-clear'?'#items-clear':'#demo')as HTMLButtonElement).click();
+  target.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyB',bubbles:true}));return feedback;
+ },action);expect(queued).toContain('queued');await expect(page.locator('#save-checkpoint')).toBeEnabled();await page.waitForTimeout(100);
+ const download=page.waitForEvent('download');await page.locator('#save-checkpoint').click();const text=await readFile((await(await download).path())!,'utf8'),value=JSON.parse(text);if(value.version===21){expect(value.checkpoint.storagePickup.outcome).toBeNull();expect(value.history.some((t:number[])=>t.slice(2).some(n=>n>=24))).toBe(false);}await writeFile(test.info().outputPath('after.json'),text);expect(errors).toEqual([]);
+});

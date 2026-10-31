@@ -45,6 +45,12 @@ function owner(s:TrainingSession){
   }
  }
 }
+/** A public caller cannot use stepping to repair a forged derived mirror. */
+function mirrors(s:TrainingSession){
+ owner(s);
+ if(Object.keys(s.inventory).sort().join(',')!=='actors,commands'||s.inventory.commands.length)fail('derived inventory fields');
+ for(const [i,a]of s.wet!.actors.entries())if(!equal(s.inventory.actors[i],{inventory:a.body.inventory,weight:{...a.body.weight,status:'verified'},selection:0}))fail('derived inventory mirror');
+}
 function policy(r:MissionRules){if(!r||Object.keys(r).sort().join(',')!=='mode,timeLimit'||r.timeLimit!==99||!['first-exit','cooperative-extraction'].includes(r.mode))fail('original99 rules');}
 /** Structural authority checks precede runtime callback-reference reads. Raw
  * equality and complete derived-state comparisons follow source reconstruction. */
@@ -99,7 +105,7 @@ function serializeOwned(c:TrainingCandidate):string{
  const json=JSON.stringify({format:'hired-guns-training-session',version:21,scenario:STORAGE_SCENARIO,sources:{map:TRAINING_43_SHA256,...c.session.team.sources},indices:c.session.indices,rules:state.rules,history:encodeStorageHistory(p.history),checkpoint:{world:c.world,state,lifecycle:c.session.wetLifecycle,party:c.session.wetParty,storagePickup:{profile:p.profile,outcome:p.outcome,lastPositions:p.lastPositions}}});
  if(new TextEncoder().encode(json).length>=STORAGE_LIMITS.bytes)fail('future save byte budget');return json;
 }
-export function serializeStoragePickup(c:TrainingCandidate){return serializeOwned(wetSnapshot(c));}
+export function serializeStoragePickup(c:TrainingCandidate){const captured=wetSnapshot(c);mirrors(captured.session);return serializeOwned(captured);}
 function codes(commands:readonly PlayerCommand[],actor:number|null){
  if(actor!==null){if(!Number.isInteger(actor)||actor<0||actor>3||commands.length)fail('pickup-only command');return [24+actor];}
  const result=commands.map(c=>{if(!c||Object.keys(c).sort().join(',')!=='action,mercenaryId'||!Number.isInteger(c.mercenaryId)||c.mercenaryId<0||c.mercenaryId>3||!actions.includes(c.action))fail('navigation command');return c.mercenaryId*6+actions.indexOf(c.action);}).sort((a,b)=>a-b);
@@ -107,7 +113,7 @@ function codes(commands:readonly PlayerCommand[],actor:number|null){
 }
 /** Prospective full tick; only the returned pair may be installed by Main. */
 export function stepStoragePickup(level:LevelData,session:TrainingSession,world:WorldState,commands:readonly PlayerCommand[],actor:number|null=null){
- const s=wetSnapshot({level,session,world,commands,actor});return stepOwned(s.level,s.session,s.world,s.commands,s.actor);
+ const s=wetSnapshot({level,session,world,commands,actor});mirrors(s.session);return stepOwned(s.level,s.session,s.world,s.commands,s.actor);
 }
 /** Internal Main entry: sole-owned committed pair, immutable imported geometry,
  * and router-created commands. No await/runtime callback occurs here. The core
@@ -169,7 +175,7 @@ export async function activateStoragePickup(level:LevelData,sources:TrainingSour
  if(!equal(baseline.session,s.session)||!equal(createWorld(s.level,undefined,s.world.mission.rules),s.world))fail('unmodified source baseline required');run.check();return c;
 }
 export async function exportStoragePickup(level:LevelData,sources:TrainingSources,session:TrainingSession,world:WorldState,control?:TimeoutRecoveryControl):Promise<string>{
- const s=wetSnapshot({level,session,world}),raw=rawSnapshot(sources);owner(s.session);const history=decodeStorageHistory(encodeStorageHistory(s.session.storagePickup!.history));
+ const s=wetSnapshot({level,session,world}),raw=rawSnapshot(sources);mirrors(s.session);const history=decodeStorageHistory(encodeStorageHistory(s.session.storagePickup!.history));
  authority(s.level,s.session.indices,s.session.wet!.rules);
  const run=runtime(control),c=await rebuild(s.level,raw,s.session.indices,s.session.wet!.rules,history,run);run.check();if(!equal(c,{session:s.session,world:s.world}))fail('complete source/history/pair mismatch');run.check();const json=serializeOwned(c);run.check();return json;
 }
