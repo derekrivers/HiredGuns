@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessedOn": "2026-10-31",
-  "reviewedHead": "d122d69db59a2a46226b25349b50bc46ec510d43",
+  "reviewedHead": "583aec99f50306988bf2b675fbc7c6b0c0c8b71e",
   "title": "Hired Guns · Master Mechanics Register",
   "baseline": {
     "id": "ocs-3926",
@@ -46,6 +46,7 @@
   },
   "scope": "Initial game-wide traceability register. Discovery inventory is broad but not certified exhaustive; unclassified item, enemy and source branches remain explicit work. Training43 is first original-level acceptance target.",
   "limitations": [
+    "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented. Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.",
     "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage. Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates. Exact v1-v16 remain; v15 refuses every non-null requested hit including zero.",
     "Covered means the row’s stated slice is covered, not that every original branch or interaction is proven. Read mapping scope and gaps.",
     "A linked test is a traceable test file, not a fresh passing run. Original-dependent tests may skip without local resources; public CI uses synthetic data.",
@@ -208,6 +209,14 @@
       "path": "docs/training43-sign-view.md",
       "instructions": "In the existing four-view app load the pinned local Training43 map, roster and items; select four distinct source characters [1,3,0,5] and Apply team to Training43. Enable original 99-unit timeout at fresh PAUSED tick zero, then Start mission. Use 1–4, W/S A/D, Q/E and Esc; reach either sign by genuine dry movement, staging teammates through normal controls as occupancy requires. Each actor owns its own header cue; turn or move away to clear it. Save progress / Load progress while paused recompute from the complete installed pair. Retry and both action rules reset normally; source clear and another map remove admission. The generic label is not original text.",
       "scope": "Accepted PR124 source-derived read-only Sign ahead (placeholder) in each current view header. Genuine keyboard witnesses reach both raw-admitted type0 signs and all four view owners; toward/away, pause, Retry/both rules, source clear, map replacement and full paused recovery derive only from the installed pair. No command, gameplay write or saved cue. Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim."
+    },
+    {
+      "id": "corpse-pickup",
+      "title": "One native corpse equipment pickup and full v20 recovery",
+      "kind": "original",
+      "path": "docs/training43-corpse-pickup.md",
+      "instructions": "In the same four-view app load the pinned local Training43 map, roster and items; choose four distinct source characters [1,3,0,5], Apply team at fresh PAUSED tick zero. Choose Enable corpse-item pickup (original99), then Start mission. Use 1–4, W/S A/D, Q/E and Esc. Walk a living teammate onto a different source-owned dead teammate skeleton with first stored item and EMPTY equipment, then press G once or the pickup button. Observe equipment, both weights, stored count and outcome. Pause; Save progress / Load progress verifies the whole source-bound pair and returns paused. Continue normally; Retry and both action rules rebuild fresh. Loading/source clear/replacement cancel obsolete work.",
+      "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented. Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required."
     }
   ],
   "mechanics": [
@@ -10671,7 +10680,7 @@
       "scope": "47-map static flags/sentinels with digest verification. Inspect differences before updating the register; never upgrades acceptance automatically."
     }
   ],
-  "acceptedThrough": 124,
+  "acceptedThrough": 126,
   "acceptedProofs": [
     {
       "id": "proof-112",
@@ -10796,13 +10805,30 @@
       "automatic": "6535904450",
       "receipt": "6535904450",
       "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
+    },
+    {
+      "id": "proof-126",
+      "pr": 126,
+      "merge": "583aec99f50306988bf2b675fbc7c6b0c0c8b71e",
+      "head": "1c246469ceebc2f56b82ead74898e4a5ed200041",
+      "tree": "139dd370a6f559dc2a4ce7c91480460b6e175ae6",
+      "reviewedTree": "139dd370a6f559dc2a4ce7c91480460b6e175ae6",
+      "sourceProofBase": "9940b3c318d358b0c9b3bfde9ee90013710d6fc4",
+      "reviewSha256": "dadeb8b12a8302ed9ab04c648356c9fd2eb08084c59c996775391260e40592ac",
+      "ci": [
+        "41156144749",
+        "41156099523"
+      ],
+      "automatic": "6537386819",
+      "receipt": "6537386819",
+      "receiptKind": "actual-summary-state-completed-exact-no-findings;no separate receipt comment observed"
     }
   ],
   "dashboards": [
     {
       "id": "testbed-capability",
       "title": "Current playable testbed capability",
-      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change.",
+      "scope": "Same four-view keyboard app with selected original team; explicitly authored practice and bounded original-editor traversal are separate modes, not one complete original level. Counts describe only the listed milestones, not fixed software scope or effort. No capability percentage: scope will grow as source branches are discovered. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts.",
       "milestones": [
         {
           "id": "cap-start",
@@ -10854,7 +10880,7 @@
               "scope": "Paused bounded source-owned inventory plus authored ground cache; no general arbitrary transfer caller."
             }
           ],
-          "missing": "Original map generators/corpse items, general carried/cross-actor callers and interleaved ground-fall.",
+          "missing": "Original map generators/general corpse items beyond accepted126, general carried/cross-actor callers and interleaved ground-fall.",
           "proofs": []
         },
         {
@@ -10955,7 +10981,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-115"
           ]
@@ -10976,7 +11002,7 @@
               "scope": "Accepted bounded slices do not constitute programme acceptance."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": []
         },
         {
@@ -11010,7 +11036,7 @@
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-116"
           ]
@@ -11067,7 +11093,7 @@
               "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-118"
           ]
@@ -11103,7 +11129,7 @@
               "scope": "Own shape before optional discriminator reads; entire history and source-bound state reconstruction."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-120"
           ]
@@ -11139,10 +11165,10 @@
             {
               "path": "src/sim/training-timeout.ts",
               "label": "Accepted full-history transition and cancellation",
-              "scope": "Source locators only; this metadata packet changes no src."
+              "scope": "Source locators only; timeout semantics unchanged. Sole product edit is the Main advanced v20 label."
             }
           ],
-          "missing": "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows.",
+          "missing": "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows from sign readback; PR126 equipment pickup is separately registered.",
           "proofs": [
             "proof-122"
           ]
@@ -11186,9 +11212,50 @@
               "scope": "Definitions identify supported workflows; linked files are not fresh execution receipts."
             }
           ],
-          "missing": "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.",
+          "missing": "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. Beyond accepted126 one current-cell first-store equipment transfer, general corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.",
           "proofs": [
             "proof-124"
+          ]
+        },
+        {
+          "id": "cap-corpse-pickup",
+          "title": "One current-cell corpse equipment pickup and v20 recovery",
+          "status": "playable",
+          "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "LIFE-03",
+            "T43-06",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "corpse-pickup",
+          "evidence": [
+            {
+              "path": "docs/training43-corpse-pickup.md",
+              "label": "Accepted126 proof, controls and limits",
+              "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented."
+            },
+            {
+              "path": "src/items/corpse-pickup.ts",
+              "label": "Native transfer primitive",
+              "scope": "Source locators; wider pure branches do not establish live admission."
+            },
+            {
+              "path": "src/sim/training-corpse-pickup.ts",
+              "label": "v20 source-bound replay",
+              "scope": "Raw3 authority, full caller capture, canonical chronology and prospective bytes."
+            },
+            {
+              "path": "tests/browser/training-corpse-pickup.spec.ts",
+              "label": "Production recovery and cancellation definitions",
+              "scope": "Definitions only; accepted executions and retained failed run described separately."
+            }
+          ],
+          "missing": "Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.",
+          "proofs": [
+            "proof-126"
           ]
         }
       ]
@@ -11196,7 +11263,7 @@
     {
       "id": "training43-software",
       "title": "Training43 software acceptance",
-      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change.",
+      "scope": "First original-level target is map43, not map45A. Narrow subrecords below inherit existing checklist IDs without closing the compound gates. Counts are a dated list, not an acceptance percentage. Hardware is deferred separately. Editor identity is not runtime parity; Locations CRC df31 versus archived 5c21 still blocks campaign substitution. Accepted118 adds one narrow standing22 record to this chosen list; the list denominator changes by one, with no fixed complete-software denominator or effort percentage. Whole-game rows/stages and covered credit do not change. Accepted120 adds one selected-team/all-dead milestone to this chosen list: denominator increases by one only for the list, without any change to broad row/stage counts or software effort percentage. Accepted122 adds one original99/full responsive recovery milestone to this growing chosen list; all broad stage/gate states stay unchanged. No fixed software denominator or completion/effort percentage follows. Accepted124 adds one bounded sign-view milestone to this chosen list; its denominator grows by one, without a software completion, effort or time percentage. Broad stages and acceptance gates do not change. Accepted126 adds ONE bounded native equipment pickup milestone; the chosen list grows by one with no fixed software completion/effort denominator and unchanged broad stage/gate counts.",
       "milestones": [
         {
           "id": "t43-dry",
@@ -11267,7 +11334,7 @@
               "scope": "PR115 actual 29-command dry approach, supported wet entry/return, race4 breath and inventory/weight/fitness, race1 keyboard parking, full four-head ownership, v15 paused replay before wet/after item/after return, Retry, first exit and single cooperative retirement. Stops before every non-null requested hit including zero; no injury/death/corpse."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-115"
           ]
@@ -11326,7 +11393,7 @@
               "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-116",
             "proof-118"
@@ -11363,7 +11430,7 @@
               "scope": "Accepted PR116 bounded original-editor wet injury/death, north-search corpse, owned four-head/dead-input guards, explicit manual survivor selection, freed-body/corpse walk, first exit, v16 paused chronological recovery and Retry. Broad original family remains partial."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-116"
           ]
@@ -11384,7 +11451,7 @@
               "scope": "No complete original level accepted."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": []
         },
         {
@@ -11420,7 +11487,7 @@
               "scope": "Accepted PR118 actual keyboard traversal of all 22 standing wet CASE cells by nonimmune race4 and source-immune race1, full four-actor occupancy, dry reverse, first exit, v17 paused recovery and Retry. Separate corridor same-cell corpse/dead-input guard/manual survivor/return/terminal recovery supplements PR116 stair aux10 NORTH corpse proof. Observed visits are replay-derived, never movement authority or whole-level coverage."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-118"
           ]
@@ -11456,7 +11523,7 @@
               "scope": "Own shape before optional discriminator reads; entire history and source-bound state reconstruction."
             }
           ],
-          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. General corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
+          "missing": "Accepted PR122 proves the admitted original99 timeout at59499 total ticks, full source-bound v19 paused recovery at59498/59499, terminal freeze, complete Retry/both action rules and responsive generation cancellation. The8ms yield target is not a universal bound; full recovery remains costly. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported geometry/search/source modes remain unsupported or unknown, requiring reachable evidence before closure. Whole Training43 software acceptance and runtime CPU parity remain open. Assets, sprites, sound, polish and physical controller/TV acceptance are separately DEFERRED, not software gates.",
           "proofs": [
             "proof-120"
           ]
@@ -11492,10 +11559,10 @@
             {
               "path": "src/sim/training-timeout.ts",
               "label": "Accepted full-history transition and cancellation",
-              "scope": "Source locators only; this metadata packet changes no src."
+              "scope": "Source locators only; timeout semantics unchanged. Sole product edit is the Main advanced v20 label."
             }
           ],
-          "missing": "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. General corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows.",
+          "missing": "Whole Training43 software remains INCOMPLETE. Whole R08 remains UNKNOWN/OPEN beyond accepted PR124 bounded placeholder readback; original glyph appearance is separately deferred. Beyond accepted126 one current-cell first-store equipment transfer, general corpse items/replacement and unsupported source/search/geometry modes remain open where reachable. Full successful recovery55.5–66.4s and Node80s+ remain costly; no speedup, universal latency bound or CPU-runtime parity. Assets/hardware separately DEFERRED, not software gates. PR124 now accepts only the bounded placeholder view witness; whole R08 stays UNKNOWN/OPEN and no corpse credit follows from sign readback; PR126 equipment pickup is separately registered.",
           "proofs": [
             "proof-122"
           ]
@@ -11539,9 +11606,50 @@
               "scope": "Definitions identify supported workflows; linked files are not fresh execution receipts."
             }
           ],
-          "missing": "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. General corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.",
+          "missing": "Whole T43-R08 and its unknown consequences stay UNKNOWN/OPEN; whole Training43 software is INCOMPLETE. Original text/glyphs/pixels are DEFERRED presentation, not a software gate. Beyond accepted126 one current-cell first-store equipment transfer, general corpse pickup/replacement and other unsupported reachable branches receive no credit. Main verified-pair authority is bounded; no arbitrary JavaScript or Proxy security claim.",
           "proofs": [
             "proof-124"
+          ]
+        },
+        {
+          "id": "t43-corpse-pickup",
+          "title": "One current-cell corpse equipment pickup and v20 recovery",
+          "status": "playable",
+          "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented.",
+          "lineage": [
+            "INV-01",
+            "INV-02",
+            "LIFE-03",
+            "T43-06",
+            "T43-07",
+            "T43-08"
+          ],
+          "scenario": "corpse-pickup",
+          "evidence": [
+            {
+              "path": "docs/training43-corpse-pickup.md",
+              "label": "Accepted126 proof, controls and limits",
+              "scope": "Accepted PR126 one current-cell source-owned DEAD teammate first stored native action15 equipment transfer into EMPTY hands. Copies ID/damage/ammo, retains destination outline, shifts complete four-byte source prefix and clears only final ID; source corpse weight precedes recipient. One attempt TOTAL; hazards before controls before mission, supported fatal hazards commit death/tick once. Full source-bound v20 chronology, canonical paused restore/continuation/Retry and both rules; complete catalogs/opaque state retained. G adapts mouse gadget action15; native bare keyboard22 INTO STORE is not implemented."
+            },
+            {
+              "path": "src/items/corpse-pickup.ts",
+              "label": "Native transfer primitive",
+              "scope": "Source locators; wider pure branches do not establish live admission."
+            },
+            {
+              "path": "src/sim/training-corpse-pickup.ts",
+              "label": "v20 source-bound replay",
+              "scope": "Raw3 authority, full caller capture, canonical chronology and prospective bytes."
+            },
+            {
+              "path": "tests/browser/training-corpse-pickup.spec.ts",
+              "label": "Production recovery and cancellation definitions",
+              "scope": "Definitions only; accepted executions and retained failed run described separately."
+            }
+          ],
+          "missing": "Whole Training43 and R08 remain INCOMPLETE/UNKNOWN. Wider occupied/no-room/heavy/repeat/general corpse inventory, replacement and fatal-fall geometry remain OPEN where reachable or unknown, never inactive. Fixed50Hz, G and cooperative exit are adaptations; no original CPU parity, instant recovery or universal8ms promise. Artwork/audio/hardware are separately DEFERRED, not software gates; private original evidence remains required.",
+          "proofs": [
+            "proof-126"
           ]
         }
       ]
