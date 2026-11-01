@@ -1,6 +1,6 @@
 # Hired Guns Revival
 
-Standalone synthetic teaching scenario: [Static tree support — authored demonstration](docs/training43-tree-support.md). Use the labelled Synthetic Training43 button for a static step and return with existing checkpoints. This is authored geometry; browser validation and independent review are pending, with no original-map or acceptance credit.
+Standalone synthetic teaching scenario: [Static tree support — authored demonstration](docs/training43-tree-support.md). Use the labelled Synthetic Training43 button for a static step and return with existing checkpoints. This authored scenario was accepted in PR133 after exact-head independent review, bounded same-app QA, both CI jobs and automated code review completed successfully. QA used a QA-only Vite config; full production/provider validation, native/original-map parity and whole Training43 acceptance remain unproven. No original-map reachability credit is claimed.
 
 ## Accepted130 bounded inventory-window cycle
 
