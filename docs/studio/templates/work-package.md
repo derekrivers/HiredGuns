@@ -14,11 +14,12 @@ Use with the [studio policy](../POLICY.md). Fill this into ignored local records
 | Routing | Task class under the [routing policy](../POLICY.md#model-and-reasoning-routing), requested model/reasoning, selection reason, high/Astra escalation evidence if applicable, target-host support |
 | Dispatch | Fresh chat, authority, attempt, start time or unknown; observed execution model/reasoning when exposed, otherwise unknown, kept separate from requested routing |
 | Stop/decision | Stop condition, receiving owner, decision owner, review trigger; two-repair checkpoint |
+| Discovered issues | [Issue workflow](../POLICY.md#bugs-issue-reporting-and-triage), deduplication result, actual issue/comment URL or unposted draft, material new evidence, affected/blocking scope and next owner; report then retain assigned scope |
 | Measures | Lifecycle timestamps, blocked cause/age, attempts, measured tokens or unavailable |
 
 ## Handoff
 
-Sender: candidate identity, changed paths, output/evidence references, executed checks and failures/NOT_RUN, reused-evidence rationale, findings, running/stopped processes and resource-release status.
+Sender: candidate identity, changed paths, output/evidence references, executed checks and failures/NOT_RUN, reused-evidence rationale, findings and discovered-issue links, running/stopped processes and resource-release status.
 
 Receiver: acknowledged / needs_information / rejected; timestamp, received candidate/evidence identity, next action and ownership disposition. Product acceptance remains separate.
 

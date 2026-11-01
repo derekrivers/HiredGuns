@@ -13,4 +13,6 @@ Check existing workers and department ownership before any authorized dispatch. 
 
 For receipt, inspect the exact candidate and evidence rather than trusting the sender's summary. Record acknowledged, needs_information or rejected, with the next action. Keep report completion, resource relinquishment, independent review and product acceptance distinct. A silence or stale status cannot transfer a shared resource.
 
+Include the [issue-reporting workflow](../../../docs/studio/POLICY.md#bugs-issue-reporting-and-triage) in the brief and handoff. Assigned workers can report actionable discoveries: search first, add material new evidence to a match or create a distinct public-safe issue, and return its actual link or unposted-draft status. Identify the affected/blocking scope without expanding the worker's repair assignment.
+
 Use the sender/receiver sections of the template in existing owner records. Preserve active tasks and failed attempts; apply new fields at natural handoffs. Asset handoffs include the template's consumer-backed package fields. Return the bounded brief or receipt and any unresolved prerequisite, without claiming execution or acceptance that did not occur.

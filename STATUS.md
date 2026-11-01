@@ -6,6 +6,8 @@ Added the [shared studio policy](docs/studio/POLICY.md), production-review, work
 
 The policy now includes task-based model/reasoning allocation for all studio roles, explicit escalation and requested-versus-observed execution settings. All three skills and both templates use that shared table; existing work and pauses remain intact.
 
+All coordinators and assigned workers also have an explicit issue-reporting path: search and read matches before creation, add material evidence without duplicate comments or lost history, and link discoveries in handoffs. Existing issue triage manages severity/routing; producer sets delivery priority, with independent repairs bounded by current ownership and gates.
+
 ## Accepted PR133 MOV-02 standalone synthetic tree support
 
 Added one [authored static step-and-return teaching fixture](docs/training43-tree-support.md), separate from original Training43 maps and profiles, through existing four-view navigation/save3 entry points. Focused checks pass (43 tests); npm run check passes (70 files, 1303 tests passed, 109 skipped), with final registration lint also passing. PR133 merged as f92be5f9b93b0735d9c1f989a374102313546854. Its sole code head 53ab1b220da975b6e1e41fd1fb08312b1221fc1f received exact-head independent Sol High APPROVE, bounded same-app QA PASS, both exact-head CI jobs passing and completed Codex automated code review with has_any_findings=false and has_unresolved_findings=false. QA used a QA-only Vite config, not full production/provider validation; acceptance covers only this standalone synthetic scenario. No native parity, original-map reachability, whole-level or general support claim.
