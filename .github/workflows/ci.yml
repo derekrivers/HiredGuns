@@ -12,6 +12,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: python3 -m unittest discover -s tools/studio -p test_review_receipt.py
       - run: npm run check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser

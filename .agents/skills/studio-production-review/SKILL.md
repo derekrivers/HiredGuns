@@ -11,6 +11,8 @@ Read the identified production plan, relevant owner statuses/ledgers and bounded
 
 Explain which player outcome is delayed, where it waits, who owns the next action and what evidence supports the cause. Use existing measurements; avoid inventing timing, cost or whole-game completion percentages. Reconcile conflicting observations with their owner through authorized channels.
 
+Specifically compare a department's reported active assignment with the actual worker/reviewer state. A finished worker without an owner receipt is a handoff gap; ask the owning coordinator to receive it and record the next receiver. Check that accepting review claims have a valid [review receipt](../../../docs/studio/review-receipts.md); producer records the qualification rather than repairing department evidence or waiving its gate.
+
 Use the [issue workflow](../../../docs/studio/POLICY.md#bugs-issue-reporting-and-triage) for actionable recurring defects. Reuse matching issues and add material evidence rather than opening duplicates. Triage manages severity/routing; producer sets delivery priority and distinguishes the affected blocked work from work that can continue within existing capacity and gates.
 
 For a demonstrated recurring problem, use the [process-change template](../../../docs/studio/templates/process-change.md). Propose one bounded experiment with baseline, success measure and rollback. Identify whether it is routine sequencing within producer authority, a department-owned workflow/tooling change, or a product-owner decision. A recommendation does not dispatch workers, resume schedules or waive acceptance.

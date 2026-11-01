@@ -107,6 +107,8 @@ Validate this protocol through an actual handoff: sender evidence, receiver ackn
 
 ## Review and acceptance
 
+Before crediting an accepting review, the receiver verifies the actual new user-visible reviewer chat, distinct author/reviewer identities, exact head/tree, report and manifest bytes/digests, and the current owner-status references. Follow [review receipt integrity](review-receipts.md), using the portable helper or equivalent recorded checks. A correct report elsewhere does not repair a wrong current link; a subagent result does not satisfy a required fresh-chat review. Retain historical evidence and keep the gate pending until its current receipt is valid.
+
 Product candidates require independent review of the current head, required checks/CI, disposition of actual automatic-review findings and normal expected-head/protected-branch merge by gameplay. A changed candidate requires renewed head-specific review. Reused evidence needs an explicit unchanged-dependency justification; stale checks and summaries are insufficient. Keep failures and retries separate; after two failed repairs without new evidence, reassess scope/evidence before another attempt.
 
 Run the repository's required checks and relevant browser checks for the affected boundary. A process-only change does not need a heavy gameplay replay merely to produce a status report. A required check that was not run remains NOT_RUN with its reason. No review skill may relax an assertion, timeout, product contract or access restriction to obtain a pass.
@@ -124,6 +126,8 @@ Producer may adjust future sequencing within existing delegated scope. The relev
 Compare trial results with the baseline using known timestamps and comparable scope: ready-to-accepted lead time, review wait, blocked age by cause, repairs and accepted player outcomes. Include failed attempts. Missing measurements stay unknown; token counts are measured or unavailable. Do not infer performance, cost savings or delivery dates from task counts. Adopt, revise or roll back based on evidence; update this policy once and keep skills linked to it.
 
 ## Reporting and operational dashboards
+
+On existing authorized coordination wakes, inspect current worker/reviewer identities across the relevant departments as well as coordinator chats. A completed worker with an unacknowledged owner receipt needs a targeted owner handoff; an idle coordinator is not evidence that its worker is still running. Sender/watch owner retains the task/candidate/transition until the receiver acknowledges a next action. Persist that follow-through before returning, check receiver evidence before a repeat, and leave department writes/dispatch to its owner. This uses existing wakes and capacity, not an additional polling schedule. A coordinator that returns after dispatch must leave an actual authorized watcher/next check for completion; a promise to monitor is insufficient.
 
 Forecast remaining outcomes, dependencies, estimate ranges/basis or unknowns, implementation/review capacity and rehearsal reserve. Escalate concrete options when the target is unsupported or a decision exceeds authority. Notifications are for material changes, failures, completion or required decisions; unchanged/non-actionable state stays quiet.
 
