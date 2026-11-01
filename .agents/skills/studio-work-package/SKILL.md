@@ -7,6 +7,8 @@ Read the canonical [studio policy](../../../docs/studio/POLICY.md) and [work-pac
 
 Produce a concise brief linking the player outcome, exact scope, owned paths, evidence, dependencies, verification method, receiver and resource reservation. Risky recovery/cancellation work needs a feasible observation agreement with QA. Unknown prerequisites prevent a ready claim; they may justify a separately authorized research package.
 
+Select the [model and reasoning route](../../../docs/studio/POLICY.md#model-and-reasoning-routing) by task class and semantic risk, not the coordinator's title. Include the requested model/effort, selection reason, high/Astra evidence when applicable and target-host support. Record observed settings separately when exposed, otherwise unknown. The skill neither switches its own model nor grants dispatch authority; an unavailable route returns a clear limitation, not silent substitution or inherited settings.
+
 Check existing workers and department ownership before any authorized dispatch. Apply the policy's fresh-chat requirement and routing; unavailable dispatch tooling is a limitation, not permission to substitute a fork or inherited-context worker. A prepared brief alone does not create a task. Record the actual worker identity only after dispatch succeeds.
 
 For receipt, inspect the exact candidate and evidence rather than trusting the sender's summary. Record acknowledged, needs_information or rejected, with the next action. Keep report completion, resource relinquishment, independent review and product acceptance distinct. A silence or stale status cannot transfer a shared resource.

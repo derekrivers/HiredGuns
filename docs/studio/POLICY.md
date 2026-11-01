@@ -24,11 +24,44 @@ On a configured studio host, `.local/studio/coordinators.json` locates owners an
 
 A fresh clone can read this policy and skills without local records. Missing local records mean operational state is unavailable; do not invent owners, tasks, accepted builds or an active schedule, and do not silently initialize a competing studio. Use the user's identified authoritative records when available. A generated view or active chat is not evidence of gameplay progress.
 
+## Model and reasoning routing
+
+Choose the route for the judgement required in the current task, not permanently for its job title. A routine coordinator turn collects facts and applies established rules; new planning, source interpretation, test design or acceptance judgement uses the appropriate substantive route. Use scripts/tools for deterministic hashes, schemas, counts and status collection where practical.
+
+| Task class | Model | Reasoning | Selection boundary |
+|---|---|---|---|
+| Routine administration and established execution | `gpt-6-luna` | `low` | Known-fact extraction, queue/ownership checks, manifests, established test execution and report assembly |
+| Bounded classification | `gpt-6-luna` | `medium` | Explicit rules and verifiable outputs; unfamiliar semantics or uncertain root cause move to substantive analysis |
+| Substantive analysis, implementation and ordinary review | `gpt-6.1-sol` | `medium` | Producer dependency/forecast decisions, new process experiments, gameplay implementation, test design, unfamiliar source interpretation and ordinary independent code review |
+| Difficult correctness analysis and review | `gpt-6.1-sol` | `high` | Difficult simulation, binary-format, save/replay, cancellation or state-ownership reasoning; substantive simulation/binary/save review uses this route |
+| Bounded expert consultation | `gpt-6-astra` | `high` | Only after documented evidence-based failed Sol attempts, with an unresolved question, evidence and stop condition; return implementation/administration to normal routes afterward |
+
+### Apply the routes to studio roles
+
+| Role or subtask | Routine work | Substantive work / escalation |
+|---|---|---|
+| Studio producer | Established plan/status reconciliation and reporting | New priorities, cross-department dependencies, forecast assumptions and process diagnosis use substantive analysis; difficult interacting correctness/architecture constraints justify bounded high reasoning |
+| Gameplay/design coordinator | Queue, ownership, readiness and handoff checks | Gameplay/design/architecture decisions and implementation use substantive analysis; difficult simulation/save/binary work uses correctness analysis |
+| QA/release | Scheduling, established checks and evidence assembly | Test selection/design and ordinary independent review use substantive analysis; simulation/binary/save and difficult recovery/cancellation reviews use correctness analysis |
+| Issue triage | Deduplication and known-owner routing | Explicit-rule classification uses bounded classification; uncertain causes and unfamiliar source semantics use substantive analysis |
+| Assets/technical art | Inventories, manifests and deterministic pack checks | Source/style/consumer requirements and rendering ambiguity use substantive analysis; risky binary interpretation/review uses correctness analysis. Image generation remains its separate tool workflow |
+| Audio | Catalogue, metadata and established checks when authorized | Cue mapping, loop intent and integration use substantive analysis; difficult binary/state reasoning uses correctness analysis. Listening evidence and current pause still apply |
+| Build/test tooling and performance diagnosis | Execute known commands and aggregate results | New testability seams, profiling design and unfamiliar failures use substantive analysis; difficult replay/state/cancellation analysis uses correctness analysis |
+| Screenshot/video capture | Known deterministic capture steps | Difficult interactions or unfamiliar capture flows use substantive analysis. Capture does not establish source parity, visual acceptance or physical playtesting |
+
+### Dispatch, escalation and measurement
+
+Record task class, requested model/reasoning, why that route fits, and any high/Astra escalation evidence in the work package. Check support on the target host before dispatch; do not silently inherit an expensive parent route or substitute a cheaper model when the selected route is unavailable. Preserve requested settings separately from observed execution settings when the platform exposes them; otherwise observed values remain unknown. A prompt or registry label is not enforcement, and a skill cannot change the model of its own running turn. If a different route is needed, return the bounded handoff to the authorized coordinator; do not recursively delegate. Apply the fresh-chat rule to each new package, repair or review.
+
+There is no standing Astra coordinator and no xhigh/max/ultra default. Escalate for semantic risk, ambiguity or evidenced failed approaches, not task duration, file size or a slow replay alone. After two failed repairs without new evidence, reassess before another attempt; this is not automatic permission for another repair or Astra. Luna output containing new semantic claims receives the appropriate independent Sol review before acceptance. Reviewer independence and all gates apply regardless of model.
+
+Record actual exposed token usage or unavailable, including failed attempts and repairs. Do not infer tokens from elapsed time, impose an invented numeric cap, or claim savings without comparable accepted-outcome evidence. Review routing using comparable task scope, correction/rework, escaped findings, latency and measured usage. A model change never changes ownership, authority, resource capacity, acceptance or a programme pause. Adopt this routing prospectively; do not interrupt or restart existing work to retrofit it.
+
 ## Work and handoffs
 
 Organize small packages under player-visible outcomes. Discovery, implementation, bounded acceptance, whole-level software acceptance, presentation integration and physical rehearsal are distinct milestones. Unknown relevance remains an open question, not inactive behaviour or an automatic implementation dependency. Existing software scope does not acquire asset/audio/hardware prerequisites merely because a broader backlog lists them.
 
-Use the [work-package template](templates/work-package.md). New packages/repairs/reviews need a fresh user-visible chat with concise context and explicit model/reasoning under the existing routing policy. No forks, reused worker chats, recursive worker delegation or duplicate active tasks. Check current owner records before dispatch, and use only available, authorized chat tooling. If the required dispatch capability is unavailable, report that limit rather than silently substituting another execution model.
+Use the [work-package template](templates/work-package.md). New packages/repairs/reviews need a fresh user-visible chat with concise context and explicit model/reasoning under the [routing policy](#model-and-reasoning-routing). No forks, reused worker chats, recursive worker delegation or duplicate active tasks. Check current owner records before dispatch, and use only available, authorized chat tooling. If the required dispatch capability is unavailable, report that limit rather than silently substituting another execution model.
 
 Lifecycle: proposed -> ready -> in_progress -> ready_for_review -> in_review -> accepted. Blocking is recorded separately with cause, owner, next action, exit criterion and timestamp when known. Preserve historical status vocabularies and failed attempts. Ready requires bounded scope, necessary evidence, feasible verification, prerequisite ownership and a receiving owner. Dispatch also requires current authority and resource availability.
 

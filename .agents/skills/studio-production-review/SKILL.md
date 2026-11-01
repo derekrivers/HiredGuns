@@ -5,6 +5,8 @@ description: Review Hired Guns delivery flow, recurring blockers and rework, and
 
 Read the canonical [studio policy](../../../docs/studio/POLICY.md), especially roles, local records and continuous process improvement. Do not duplicate or amend its rules inside this skill.
 
+Apply its [model and reasoning routing](../../../docs/studio/POLICY.md#model-and-reasoning-routing) to the current judgement: distinguish established reporting from new dependency/forecast decisions or causal process analysis. Record the task class, requested route and reason in the existing producer record; keep observed execution settings unknown unless exposed. A skill does not switch its running model. Return a bounded routing need to the authorized coordinator when necessary; do not create a worker or resume work merely to change models.
+
 Read the identified production plan, relevant owner statuses/ledgers and bounded evidence. Resolve actual record locations through the configured local registry; a fresh clone may lack those records. Distinguish missing/stale observations from stopped progress and a normal worker wait from an actionable blocker.
 
 Explain which player outcome is delayed, where it waits, who owns the next action and what evidence supports the cause. Use existing measurements; avoid inventing timing, cost or whole-game completion percentages. Reconcile conflicting observations with their owner through authorized channels.

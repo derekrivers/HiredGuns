@@ -11,7 +11,8 @@ Use with the [studio policy](../POLICY.md). Fill this into ignored local records
 | Verification agreement | Invariant, independent expectation, observable result, fixture/race setup, direct/browser/source-bound layers, QA acknowledgement where required |
 | Acceptance | Success, refusal/failure, unchanged-state guarantees, applicable recovery/Retry and scope limits |
 | Capacity | Required resource, holder/task, acquisition/check time, release condition; unneeded resources explicit |
-| Dispatch | Fresh chat, model/reasoning, authority, attempt, start time or unknown |
+| Routing | Task class under the [routing policy](../POLICY.md#model-and-reasoning-routing), requested model/reasoning, selection reason, high/Astra escalation evidence if applicable, target-host support |
+| Dispatch | Fresh chat, authority, attempt, start time or unknown; observed execution model/reasoning when exposed, otherwise unknown, kept separate from requested routing |
 | Stop/decision | Stop condition, receiving owner, decision owner, review trigger; two-repair checkpoint |
 | Measures | Lifecycle timestamps, blocked cause/age, attempts, measured tokens or unavailable |
 

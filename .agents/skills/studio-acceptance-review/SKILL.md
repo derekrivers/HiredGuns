@@ -5,6 +5,8 @@ description: Independently assess a Hired Guns candidate or claimed playable mil
 
 Read the canonical [studio policy](../../../docs/studio/POLICY.md), repository rules and the identified candidate's acceptance contract. Confirm independence from authorship and pin accepted base, current candidate head/tree and intended scope. Missing local evidence means unavailable, not passed or not applicable.
 
+Apply [model and reasoning routing](../../../docs/studio/POLICY.md#model-and-reasoning-routing) separately to established evidence collection and substantive independent review. Select the review route for the candidate's semantic risk; a routine executor's passing report is not semantic acceptance. Record requested and exposed observed settings separately, and return any unmet routing need to the authorized coordinator. Model strength never replaces reviewer independence or proves a gate passed.
+
 Map each required obligation to observed evidence: deterministic rules, relevant browser/UI behaviour, source-bound expectations, applicable refusal/failure, outcomes/Retry and supported paused recovery. Separate bounded behaviour, integrated journeys, whole-level software, presentation and physical rehearsal. Keep unknown/reachable unsupported behaviour open.
 
 Inspect required checks/CI and actual automatic findings at the candidate identity. Preserve original failures, retries and NOT_RUN cases. Reuse evidence only with an unchanged-dependency justification. A changed head needs renewed review. Partial replay progress, synthetic fixtures, task counts or source maps cannot establish unobserved acceptance.
