@@ -37,6 +37,7 @@ import { createTrainingEncounter, fireTrainingEncounter, resetTrainingEncounter,
 import { installTrainingEncounterPanel, type EncounterCommand } from './training-encounter-panel';
 import type { LevelData, MissionMode, SimulationEvent } from './contracts';
 import { createDemoLevel, createExtractionDemo, createStairsDemo, createFallDemo } from './demo';
+import { createTreeSupportLevel, TREE_SUPPORT_ID, TREE_SUPPORT_TITLE } from './world/training-tree-support';
 import { extractionProfile, missionRulesForLevel } from './sim/mission-profile';
 import { InputRouter, KEY_GROUPS, type InputSource, type PadSnapshot } from './input/router';
 import { FixedClock } from './sim/clock';
@@ -76,6 +77,9 @@ const testControls = document.createElement('section'); testControls.className =
 testControls.innerHTML = '<h2>2. Choose and start a test</h2><p>Training43 includes an isolated authored gun encounter. Other scenarios test navigation, extraction, stairs or falling.</p><div id="scenario-actions" class="actions"></div><div class="actions" id="run-actions"><span id="run-state" role="status"></span></div>';
 setup.after(testControls);
 get('scenario-actions').append(get('demo'), get('drill'), get('stairs'), get('fall'));
+const treeSupportButton = document.createElement('button'); treeSupportButton.id = 'tree-support';
+treeSupportButton.textContent = `Synthetic Training43: ${TREE_SUPPORT_TITLE}`;
+get('scenario-actions').append(treeSupportButton);
 get('run-actions').append(get('play'), get('reset'));
 const manual = document.createElement('details'); manual.id = 'manual-setup';
 manual.innerHTML = '<summary>Advanced test tools: manual map setup</summary>';
@@ -533,6 +537,10 @@ function updateMissionHud(): void {
     time = `TIME ${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
   }
   get('mission-time').textContent = time;
+  if (level.id === TREE_SUPPORT_ID) {
+    get('prototype-label').textContent = 'STANDALONE SYNTHETIC TRAINING43 / AUTHORED DEMONSTRATION';
+    get('mission-objective').textContent = 'Slot 1: W steps from (2,2,2) to (3,2,2), S returns. Facing east and Z=2 stay fixed. Watch MOVED and position. Esc pauses; Save/Load checkpoint restores the same fixture; Reset positions retries. Static support only; no original-map route or native retention claim.';
+  }
   const overlay = get('pause-overlay'); overlay.hidden = !paused && !terminal;
   overlay.querySelector('b')!.textContent = hasOwnWetParty(session) && mission.reason==='all-dead' ? 'ALL MERCENARIES DEAD' : allDead ? 'TEAM INCAPACITATED' : mission.outcome === 'failed' ? 'TIME EXPIRED' : mission.outcome === 'complete' ? mission.winner === null ? 'TEAM EXTRACTED' : `MERCENARY ${mission.winner + 1} WINS` : 'TEAM STANDING BY';
   overlay.querySelector('small')!.textContent = terminal ? 'Retry or load an earlier checkpoint' : 'Assign controls, then start';
@@ -620,6 +628,11 @@ function installLevel(nextLevel: LevelData, diagnostics = '', nextSignSource: Si
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
   loadGeneration++; loading = false;
+  if (level.id === TREE_SUPPORT_ID) {
+    get('error').textContent = '';
+    try { installLevel(createTreeSupportLevel()); } catch (error) { get('error').textContent = errorText(error); }
+    return;
+  }
   const nextSession = session ? resetTrainingInventory(session, level, world.mission.rules) : null;
   const nextWorld = createWorld(level, undefined, world.mission.rules, nextSession && selectedFallLevel(level) ? selectedFallProfile(nextSession) : undefined);
   if(nextSession?.wetLifecycle)nextWorld.physics={mode:'source-wet',deadWords:[0,0,0,0]};
@@ -645,7 +658,11 @@ get<HTMLButtonElement>('fall').addEventListener('click', () => {
   loadGeneration++; loading = false; get('error').textContent = '';
   try { installLevel(createFallDemo()); } catch (error) { get('error').textContent = errorText(error); }
 });
-for (const id of ['demo', 'drill', 'stairs', 'fall']) get(id).addEventListener('click', () => get('play').focus());
+treeSupportButton.addEventListener('click', () => {
+  loadGeneration++; loading = false; get('error').textContent = '';
+  try { installLevel(createTreeSupportLevel()); } catch (error) { get('error').textContent = errorText(error); }
+});
+for (const id of ['demo', 'drill', 'stairs', 'fall', 'tree-support']) get(id).addEventListener('click', () => get('play').focus());
 selectedFallButton.addEventListener('click', async () => {
   if (loading || !session || session.wet || session.ground || session.gate) return;
   const sources = sessionSources(); if (!sources) return;
