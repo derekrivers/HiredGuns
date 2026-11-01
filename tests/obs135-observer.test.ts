@@ -23,6 +23,25 @@ function deferred<T>() {
   return { promise, resolve, reject };
 }
 
+async function preWriteFailureEvidence(priorWrite = false) {
+  const { runtime, advance, state } = fixture();
+  if (priorWrite) runtime.retry(advance(), op => runtime.pair(op, () => runtime.write(1, () => { state.pair.world = createWorld(state.level); })));
+  const before = runtime.port.observer.readInstalled();
+  const staleBeforeStart = runtime.port.observer.readInstalled();
+  const caught = deferred<void>(), cleanup = deferred<void>();
+  const pending = runtime.restoreHandler(async (_, context) => {
+    const op = context.op = runtime.start('restore', advance());
+    try { await runtime.delivery(op, Promise.reject(Error('synthetic native refusal'))); }
+    catch (error) { runtime.failure(op, error, 'caught'); }
+    caught.resolve(); await cleanup.promise;
+  })(null);
+  await caught.promise;
+  const beforeSettlement = runtime.port.observer.readInstalled();
+  cleanup.resolve(); await pending;
+  return { restoreId: priorWrite ? 2 : 1, before, after: runtime.port.observer.readInstalled(),
+    journal: runtime.port.observer.readJournal(0), staleBeforeStart, beforeSettlement };
+}
+
 describe('OBS135 detached state and lifecycle mechanics (synthetic)', () => {
   it('copies complete own graphs, holes, aliases, cycles, optional absence and undefined without retaining references', () => {
     const inventory = [1, 2, undefined, 4]; delete inventory[1];
@@ -75,6 +94,61 @@ describe('OBS135 detached state and lifecycle mechanics (synthetic)', () => {
     expect(after.revision).toBe(before.revision);
     expect(after.pair).toEqual(before.pair);
     assertPreWriteFailure({restoreId:1,journal:runtime.port.observer.readJournal(0),before,after});
+  });
+  it('rejects pre-write snapshots that do not bracket the exact Restore lifecycle', async () => {
+    const evidence = await preWriteFailureEvidence();
+    assertPreWriteFailure(evidence);
+    expect(() => assertPreWriteFailure({...evidence,after:evidence.staleBeforeStart})).toThrow();
+    expect(() => assertPreWriteFailure({...evidence,after:evidence.beforeSettlement})).toThrow();
+    expect(() => assertPreWriteFailure({...evidence,before:evidence.beforeSettlement})).toThrow();
+  });
+  it('rejects pre-write snapshots and terminal records belonging to another generation', async () => {
+    const evidence = await preWriteFailureEvidence();
+    expect(() => assertPreWriteFailure({...evidence,before:{...evidence.before,generation:evidence.before.generation+1}})).toThrow();
+    expect(() => assertPreWriteFailure({...evidence,after:{...evidence.after,generation:evidence.after.generation+1}})).toThrow();
+    const records = evidence.journal.records.map(row => row.kind === 'settled' ? {...row,currentGeneration:row.currentGeneration+1} : row);
+    expect(() => assertPreWriteFailure({...evidence,journal:{...evidence.journal,records}})).toThrow();
+  });
+  it('rejects an additional terminal record instead of selecting only an error terminal', async () => {
+    const evidence = await preWriteFailureEvidence();
+    const records = evidence.journal.records.map(row => row.kind === 'engine-settled' ? {...row,kind:'settled',outcome:'success',installedRevision:null} : row);
+    expect(() => assertPreWriteFailure({...evidence,journal:{...evidence.journal,records}})).toThrow();
+  });
+  it('preserves the full pair at a nonzero revision and generation', async () => {
+    const evidence = await preWriteFailureEvidence(true);
+    assertPreWriteFailure(evidence);
+    const after = {...evidence.after,pair:{...evidence.after.pair,world:{...evidence.after.pair.world,rng:evidence.after.pair.world.rng+1}}};
+    expect(() => assertPreWriteFailure({...evidence,after})).toThrow();
+  });
+  it('accepts a pre-import failure whose actual outer handler rejects', async () => {
+    const { runtime, advance } = fixture();
+    const before = runtime.port.observer.readInstalled(), reason = Error('synthetic pre-import refusal');
+    const pending = runtime.restoreHandler(async (_, context) => {
+      context.op = runtime.start('restore', advance()); throw reason;
+    })(null);
+    await expect(pending).rejects.toBe(reason);
+    assertPreWriteFailure({restoreId:1,journal:runtime.port.observer.readJournal(0),before,after:runtime.port.observer.readInstalled()});
+  });
+  it('rejects mismatched documents, forged revisions and invalid snapshot frontiers', async () => {
+    const evidence = await preWriteFailureEvidence();
+    expect(() => assertPreWriteFailure({...evidence,after:{...evidence.after,documentId:'another-document'}})).toThrow();
+    expect(() => assertPreWriteFailure({...evidence,before:{...evidence.before,revision:1},after:{...evidence.after,revision:1}})).toThrow();
+    for (const throughSequence of [-1, 0.5, NaN, evidence.journal.throughSequence + 1]) {
+      expect(() => assertPreWriteFailure({...evidence,before:{...evidence.before,throughSequence}})).toThrow();
+      expect(() => assertPreWriteFailure({...evidence,after:{...evidence.after,throughSequence}})).toThrow();
+    }
+  });
+  it('rejects duplicate starts, unordered lifecycle records and stale failure ownership', async () => {
+    const evidence = await preWriteFailureEvidence();
+    for (const replacement of [
+      {kind:'start',action:'retry'},
+      {kind:'failure',stage:'importer',generation:evidence.after.generation+1},
+    ]) {
+      const records = evidence.journal.records.map(row => row.kind === 'engine-settled' ? {...row,...replacement} : row);
+      expect(() => assertPreWriteFailure({...evidence,journal:{...evidence.journal,records}})).toThrow();
+    }
+    const records = [...evidence.journal.records].reverse().map((row, index) => ({...row,sequence:index+1,at:index+1}));
+    expect(() => assertPreWriteFailure({...evidence,journal:{...evidence.journal,records}})).toThrow();
   });
   it.each(['fulfilled', 'rejected'] as const)('holds identical genuine %s delivery through synchronous Retry supersession', async kind => {
     const { runtime, advance, journal, state } = fixture();

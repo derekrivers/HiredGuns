@@ -74,9 +74,30 @@ export function assertPreWriteFailure(input: { restoreId: number; journal: Journ
   const { restoreId, journal, before, after } = input;
   validateJournal(journal, [before, after]);
   const owned = journal.records.filter(row => row.operation === restoreId);
-  assert.equal(owned.filter(row => row.kind === 'start' && row.action === 'restore').length, 1);
-  assert.equal(owned.filter(row => row.kind === 'settled' && row.outcome === 'error' && row.installedRevision === null).length, 1);
-  assert.ok(owned.some(row => row.kind === 'failure' && ['pre-import','importer','pre-write'].includes(String(row.stage))));
+  const starts = owned.filter(row => row.kind === 'start'), terminals = owned.filter(row => row.kind === 'settled');
+  assert.equal(starts.length, 1); assert.equal(terminals.length, 1);
+  const start = starts[0]!, settled = terminals[0]!;
+  assert.equal(start.action, 'restore');
+  assert.equal(settled.outcome, 'error'); assert.equal(settled.installedRevision, null);
+  assert.ok(settled.handlerPromise === 'fulfilled' || settled.handlerPromise === 'rejected');
+  assert.ok(before.throughSequence < start.sequence && start.sequence < settled.sequence && settled.sequence <= after.throughSequence);
+  // Restore advances the current load generation once; both captures must belong
+  // to this transition, not to a superseding operation with an identical pair.
+  assert.equal(start.generation, before.generation + 1);
+  assert.equal(after.generation, start.generation);
+  for (const row of owned) {
+    assert.equal(row.generation, start.generation);
+    assert.equal(row.currentGeneration, start.generation);
+    assert.ok(start.sequence <= row.sequence && row.sequence <= settled.sequence);
+  }
+  for (const snapshot of [before, after]) {
+    assert.ok(Number.isSafeInteger(snapshot.throughSequence) && snapshot.throughSequence >= 0);
+    const frontier = journal.records[snapshot.throughSequence - 1];
+    if (frontier) assert.equal(snapshot.generation, frontier.currentGeneration);
+    const writes = journal.records.filter(row => row.kind === 'pair-write' && row.sequence <= snapshot.throughSequence);
+    assert.equal(snapshot.revision, writes.at(-1)?.revision ?? 0);
+  }
+  assert.ok(owned.some(row => row.kind === 'failure' && start.sequence < row.sequence && row.sequence < settled.sequence && ['pre-import','importer','pre-write'].includes(String(row.stage))));
   assert.deepEqual(owned.filter(row => ['pair-write','install'].includes(row.kind)), []);
   assert.deepEqual(after.pair, before.pair); assert.deepEqual(after.level, before.level);
   assert.equal(after.revision, before.revision);
