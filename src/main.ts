@@ -586,7 +586,7 @@ function updateMissionHud(): void {
     get('mission-mode-label').hidden=true;
     get('prototype-label').textContent='SYNTHETIC THREE-PLAYER / MISSION CONTROL';
     get('mission-objective').textContent='Three assigned actors / fourth inactive. First active exit wins; all three dead precedes timeout, then exit. Save/Load and Retry retain 3+1.';
-    get('mission-progress').textContent=`${escaped} / 3 extracted · ${mission.reason??mission.outcome}`;
+    get('mission-progress').textContent=`${escaped} / 3 extracted Â· ${mission.reason??mission.outcome}`;
     get('three-player-snapshot').textContent=JSON.stringify(threePlayer);
     get<HTMLButtonElement>('three-player-deaths').disabled=terminal||loading;
   }
