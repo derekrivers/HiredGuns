@@ -31,7 +31,14 @@ class ReceiptTests(unittest.TestCase):
         self.status = {"head": self.head, "headTree": self.tree,
                        "reviewThreadId": self.reviewer, "reviewDisposition": "ACCEPT"}
         self.documents = {}
-        self.write_evidence("report", "Synthetic scoped review: ACCEPT; no findings.")
+        self.documents["report"] = {
+            "schema": "studio-review-report-v1", "author_thread_id": self.author,
+            "review_thread_id": self.reviewer, "verdict": "ACCEPT", "findings": [],
+            "candidate": {"accepted_base": self.git_base, "commit": self.head,
+                          "tree": self.tree, "changed_paths": self.paths, "review_base": self.git_base},
+            "summary": "Synthetic scoped review", "checks": [], "limitations": ["static review only"],
+        }
+        self.write_evidence("report", self.documents["report"])
         self.documents["manifest"] = {
             "schema": "studio-review-manifest-v1",
             "candidate": {"accepted_base": self.git_base, "commit": self.head,
@@ -108,7 +115,35 @@ class ReceiptTests(unittest.TestCase):
     def test_competing_status_identity_rejected(self):
         status = dict(self.status, commit="d" * 40, independentReview="COMPLETE_REQUEST_CHANGES")
         self.assertIn("owner status has competing current commit identities", self.errors(status=status))
-        self.assertIn("owner status retains a competing current rejection", self.errors(status=status))
+        self.assertIn("owner status retains a competing current rejection or unknown disposition", self.errors(status=status))
+
+    def test_rejecting_or_ambiguous_current_status_cannot_coexist_with_accept(self):
+        for disposition in ("REJECT", "COMPLETE_REJECT", "FAIL", "pending", "accept with conditions"):
+            with self.subTest(disposition=disposition):
+                self.assertTrue(self.errors(status=dict(self.status, independentReview=disposition)))
+
+    def test_conflicting_legacy_parent_and_review_base_fail(self):
+        self.receipt["schema"] = "obs135-current-review-receipt-v3"
+        self.receipt["candidate"]["parent"] = "d" * 40
+        manifest = self.documents["manifest"]
+        manifest["schema"] = "obs135-independent-exact-candidate-review-v1"
+        manifest["candidate"]["parent"] = "d" * 40
+        self.write_evidence("manifest", manifest)
+        errors = self.errors()
+        self.assertIn("receipt has competing legacy review-base identities", errors)
+        self.assertIn("manifest has competing legacy review-base identities", errors)
+
+    def test_resealed_rejecting_or_unrelated_report_cannot_pass(self):
+        original = copy.deepcopy(self.documents["report"])
+        for field, value in (("verdict", "REQUEST_CHANGES"), ("review_thread_id", self.author),
+                             ("findings", ["blocking defect"]), ("candidate", {})):
+            with self.subTest(field=field):
+                report = copy.deepcopy(original)
+                report[field] = value
+                self.write_evidence("report", report)  # also updates the manifest seal
+                self.assertTrue(self.errors())
+        self.write_evidence("report", "Unrelated prose with a fresh hash")
+        self.assertIn("report evidence is not supported unambiguous review JSON", self.errors())
 
     def test_duplicate_json_keys_rejected(self):
         path = self.base / "duplicate.json"
@@ -215,6 +250,8 @@ class ReceiptTests(unittest.TestCase):
         review_base = "d" * 40
         self.receipt["candidate"]["reviewBase"] = review_base
         self.documents["manifest"]["candidate"]["review_base"] = review_base
+        self.documents["report"]["candidate"]["review_base"] = review_base
+        self.write_evidence("report", self.documents["report"])
         self.write_evidence("manifest", self.documents["manifest"])
         self.assertEqual(validate(self.receipt, self.base, self.head, self.tree, self.reviewer,
                                   self.author, expected_base=review_base,

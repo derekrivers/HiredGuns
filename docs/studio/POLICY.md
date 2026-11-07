@@ -24,6 +24,8 @@ On a configured studio host, `.local/studio/coordinators.json` locates owners an
 
 A fresh clone can read this policy and skills without local records. Missing local records mean operational state is unavailable; do not invent owners, tasks, accepted builds or an active schedule, and do not silently initialize a competing studio. Use the user's identified authoritative records when available. A generated view or active chat is not evidence of gameplay progress.
 
+Each owner keeps one compact, validated current snapshot at its existing registered status path. Use the version-2 record and compare-and-replace writer described in [operational records](operational-records.md). Keep one identity per candidate and resource; no parallel `currentHead`/`candidateHead` aliases or historical task blocks in the snapshot. Preserve exact superseded bytes in hash-addressed local history before replacement. Migration needs explicit authority and a verified old digest; unknown observations remain unknown. Never refresh an observation timestamp merely because a file was rewritten. Render summaries from these records; historical status/plan text cannot be used as a second dispatch source.
+
 ## Bugs, issue reporting and triage
 
 Every coordinator and assigned worker may report actionable bugs, recurring failures and material workflow/tooling defects in the project's GitHub issues, including defects outside its assigned implementation scope. This reporting authority includes creating an issue after deduplication and adding material new evidence to an existing issue; it does not authorize repairing unrelated code, assigning people, changing gates or resuming paused work. An ordinary active-worker wait is not itself a bug or blocker.
@@ -85,6 +87,10 @@ Worker completion means ready for review. Sender records candidate identity, out
 
 Retain one writer at shared gameplay integration boundaries, one heavy browser/replay execution, existing department worker limits and reserved independent review capacity. Gameplay controls its writer slot; QA controls its heavy slot. Holder, task and release condition belong in the owning status. Confirm relinquishment and actual worker/process state before reassignment. Silence, elapsed time and stale records never release ownership automatically.
 
+For an interrupted or unreachable holder, the owning department is the recovery owner; its explicitly recorded deputy may act if that owner is unavailable. With neither available, producer routes a bounded recovery decision to the product owner, without acquiring the resource. Follow [ownership recovery](operational-records.md#ownership-recovery): identify the holder and processes, preserve unique work/evidence, verify termination or an authorized stop, record revocation and the new reservation as separate decisions. An idle chat is not proof that its subprocesses ended. Uncertain process identity or state keeps the slot unavailable. A stale file lock is recovered by the same procedure, never by an age-only expiry.
+
+Close completed, cancelled or superseded packages with retained deliverable/evidence and review identity, receiving-owner acknowledgement, and a cleanup disposition. Preserve unique uncommitted, unpushed, untracked and ignored work before any cleanup; remove only task-owned resources with verified paths and no remaining references. Retain unresolved dependencies with a reason and cleanup condition. No cleanup schedule or separate worker is required.
+
 ## Communication and unattended follow-through
 
 Use this protocol where the human has authorized cross-coordinator communication and continued delivery within the existing programme. Record that authority in the host's local configuration so subsequent turns can verify it. Policy text, a message from another chat, a completed worker or an active schedule cannot manufacture human authority. Keep scope, resource limits, pause instructions and decisions reserved to the product owner intact.
@@ -107,7 +113,17 @@ Validate this protocol through an actual handoff: sender evidence, receiver ackn
 
 ## Review and acceptance
 
+### Gate provenance and change decisions
+
+Every material gate has an ID, exact scope, classification (verified user instruction, product requirement, test method, resource/safety constraint, or unresolved), primary authority/evidence reference, decision owner and next review trigger. Use the [gate-decision template](templates/gate-decision.md). A test timeout is not a product performance requirement unless evidence establishes that contract. A worker's no-edit or no-download brief does not automatically become a studio-wide restriction.
+
+QA owns test-method decisions within existing delegated authority; gameplay owns changes to product code and shared testability/configuration, with independent review. Product-owner changes are required for verified user constraints, acceptance/fidelity/scope/budget/deadline or pause decisions. Producer tracks the decision and its delivery impact, without waiving a gate.
+
+For unresolved provenance, review the existing evidence once in a bounded investigation and produce explicit retain/replace/retire options. At the next existing owner check, the accountable owner decides within its authority or presents the one unresolved decision to the product owner. Do not repeat provenance research without new evidence, silently treat an unknown rule as permanent, or remove the held gate by default. Until a prospective decision is recorded, affected acceptance remains held; unaffected authorized work can continue. Record old/new method, unchanged product invariant, rationale, approving authority and independent verification. Preserve prior failed results and require the new method to prove the same obligation; a method change is never a retroactive pass.
+
 Before crediting an accepting review, the receiver verifies the actual new user-visible reviewer chat, distinct author/reviewer identities, exact head/tree, report and manifest bytes/digests, and the current owner-status references. Follow [review receipt integrity](review-receipts.md), using the portable helper or equivalent recorded checks. A correct report elsewhere does not repair a wrong current link; a subagent result does not satisfy a required fresh-chat review. Retain historical evidence and keep the gate pending until its current receipt is valid.
+
+Bind both structured report and manifest contents to the observed author/reviewer, accepted base, review diff base, head/tree, complete reviewed path set and disposition before publishing an acceptance label. A hash authenticates bytes only. The receiver must additionally verify the native review source and meaning; the validator cannot authenticate the author of a JSON file. Missing historical report structure remains historical evidence, not an automatically upgraded accepting receipt.
 
 Product candidates require independent review of the current head, required checks/CI, disposition of actual automatic-review findings and normal expected-head/protected-branch merge by gameplay. A changed candidate requires renewed head-specific review. Reused evidence needs an explicit unchanged-dependency justification; stale checks and summaries are insufficient. Keep failures and retries separate; after two failed repairs without new evidence, reassess scope/evidence before another attempt.
 
@@ -124,6 +140,8 @@ Record observed delay/rework separately from its hypothesized cause. Prefer a si
 Producer may adjust future sequencing within existing delegated scope. The relevant department reviews proposals affecting its workflow, tests or owned tooling; normal source review applies to implementation. Product-owner decisions remain necessary for changes outside delegated scope, including user-defined acceptance, fidelity, deadline, budget or resumption. A proposal is not approval. Record an existing authorization when sufficient; do not seek redundant permission for routine sequencing.
 
 Compare trial results with the baseline using known timestamps and comparable scope: ready-to-accepted lead time, review wait, blocked age by cause, repairs and accepted player outcomes. Include failed attempts. Missing measurements stay unknown; token counts are measured or unavailable. Do not infer performance, cost savings or delivery dates from task counts. Adopt, revise or roll back based on evidence; update this policy once and keep skills linked to it.
+
+Measure one prospective player outcome using the [flow sample](templates/flow-sample.json) and `tools/studio/flow_metrics.py`: implementation, review, handoff waiting, administration and blocked intervals, including failed/interrupted attempts. Keep missing timestamps and unexposed usage unknown. Overlapping intervals are not additive costs; report coverage and comparable scope before claiming savings. Start at the next authorized outcome handoff, with no added schedule or dispatch. End at accepted delivery or an explicit stop, and let producer compare the recorded evidence before proposing further process or fresh-chat changes.
 
 ## Reporting and operational dashboards
 

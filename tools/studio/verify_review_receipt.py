@@ -75,6 +75,8 @@ def check_candidate(actual, review_base, accepted_base, head, tree, paths, label
             or set(actual[paths_key]) != set(paths)):
         errors.append(label + " candidate differs from observed base/head/tree/paths")
     if isinstance(actual, dict):
+        if legacy and review_key in actual and "parent" in actual and actual[review_key] != actual["parent"]:
+            errors.append(label + " has competing legacy review-base identities")
         if "parent" in actual and not is_sha(actual["parent"], 40):
             errors.append(label + " parent must be a full Git identity")
         if "accepted_base_is_ancestor" in actual and actual["accepted_base_is_ancestor"] is not True:
@@ -182,6 +184,26 @@ def validate(receipt, base, head, tree, observed_thread, author_thread,
         except (OSError, ValueError, TypeError):
             errors.append("manifest evidence is not supported unambiguous review JSON")
 
+    if "report" in evidence:
+        try:
+            report = parse_json(evidence["report"][2])
+            allowed = {"schema", "author_thread_id", "review_thread_id", "candidate",
+                       "verdict", "findings", "summary", "checks", "limitations"}
+            if (not isinstance(report, dict) or set(report) != allowed
+                    or report["schema"] != "studio-review-report-v1"):
+                raise ValueError("unsupported report schema")
+            errors.extend(check_candidate(report["candidate"], expected_base, accepted_base,
+                                          head, tree, changed_paths, "report", manifest=True))
+            if report["author_thread_id"] != author_thread or report["review_thread_id"] != observed_thread:
+                errors.append("report author/reviewer differs from observed chats")
+            if not accepting(report["verdict"]) or report["verdict"] != receipt.get("disposition") or report["findings"] != []:
+                errors.append("report has no matching unqualified accepting disposition")
+            if (not isinstance(report["summary"], str) or not report["summary"].strip()
+                    or not isinstance(report["checks"], list) or not isinstance(report["limitations"], list)):
+                errors.append("report summary/checks/limitations are missing")
+        except (OSError, ValueError, TypeError):
+            errors.append("report evidence is not supported unambiguous review JSON")
+
     if status is not None:
         if not isinstance(status, dict):
             return errors + ["current owner status block must be an object"]
@@ -203,8 +225,10 @@ def validate(receipt, base, head, tree, observed_thread, author_thread,
             errors.append("owner status changed paths differ from observed review scope")
         if status.get("reviewDisposition") != receipt.get("disposition"):
             errors.append("owner status review disposition differs from receipt")
-        if "REQUEST_CHANGES" in str(status.get("independentReview", "")):
-            errors.append("owner status retains a competing current rejection")
+        if "independentReview" in status:
+            old_disposition = status["independentReview"]
+            if not isinstance(old_disposition, str) or old_disposition not in {"ACCEPT", "PASS", "APPROVE", "COMPLETE_ACCEPT", "COMPLETE_PASS", "COMPLETE_APPROVE"}:
+                errors.append("owner status retains a competing current rejection or unknown disposition")
         for label, (path, digest, _) in evidence.items():
             prefix = "review" + label.title()
             try:
