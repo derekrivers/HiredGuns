@@ -65,7 +65,10 @@ test('export, reset and restore recover navigation, then reject a mismatched che
 test('oversized checkpoint is rejected before replacing the current state', async ({ page }) => {
   await page.goto('/');
   const initial = await page.locator('#position-0').textContent();
-  await page.getByLabel('Load navigation checkpoint').setInputFiles({ name: 'large.json', mimeType: 'application/json', buffer: Buffer.alloc(16384, ' ') });
+  const oversized = Buffer.from(JSON.stringify({ padding: 'x'.repeat(16 * 1024) }));
+  expect(oversized.byteLength).toBeGreaterThanOrEqual(16 * 1024);
+  expect(oversized.byteLength).toBeLessThan(24 * 1024);
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({ name: 'large.json', mimeType: 'application/json', buffer: oversized });
   await expect(page.getByRole('alert')).toContainText('smaller than 16 KiB');
   await expect(page.locator('#position-0')).toHaveText(initial!);
 });
