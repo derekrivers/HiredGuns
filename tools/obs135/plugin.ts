@@ -4,7 +4,7 @@ import type { Plugin } from 'vite';
 
 // Hashes cover UTF-8 source after CRLF -> LF normalization only. No fuzzy matching.
 export const insertionInputs = Object.freeze({
-  'src/main.ts': 'cd632e8982fe65faa3595991a841dcc8b1f9051085010ff35e700f08ad1bc6f3',
+  'src/main.ts': 'eddddc963fb48bdb13e260aff530b2b1404deab1c4c405ebcce7e95b3be7fe0c',
   'src/input/router.ts': 'f4b349b32c0c7517e7226045b4d967dc9ce669da5eb1fb181d28c45d38906497',
   'src/sim/clock.ts': 'c86e640ecfbdfed4c1d60b5d0eeadc09671ad6fd58f0abcc5226ab06f44784ef',
 });

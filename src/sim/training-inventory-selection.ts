@@ -179,7 +179,8 @@ function verifyPublicPair(c:TrainingCandidate){
  const a=publicAuthority(c.session);let expected=initial(a.level,a.session,a.races,c.session.wet!.rules);
  for(const e of c.session.inventorySelection!.history)for(let n=0;n<e.count;n++){
   if(expected.world.mission.outcome!=='active')fail('history after terminal');
-  sourceMap(a.level,expected.session);const {commands,operation}=decodeCommands(e.codes),r=stepOwned(a.level,expected.session,expected.world,commands,operation);expected={session:r.session,world:r.world};
+  // The map belongs to the private raw-source authority; no caller can mutate it.
+  const {commands,operation}=decodeCommands(e.codes),r=stepOwned(a.level,expected.session,expected.world,commands,operation);expected={session:r.session,world:r.world};
  }
  if(!equal(expected,c))fail('complete public source/history/pair mismatch');return expected;
 }
@@ -248,7 +249,8 @@ async function rebuild(map:LevelData,raw:Required<TrainingSources>,indices:reado
  const total=history.reduce((n,e)=>n+e.count,0);run.report('replaying',0,total);
  for(const e of history)for(let n=0;n<e.count;n++){
   run.check();if(c.world.mission.outcome!=='active')fail('history after terminal');
-  sourceMap(imported.level,c.session);
+  // Complete geometry was compared at import. This loop owns that map; progress
+  // callbacks receive only primitive counts, and ticks copy their overlay planes.
   const {commands,operation}=decodeCommands(e.codes);
   const r=stepOwned(imported.level,c.session,c.world,commands,operation);
   c={session:r.session,world:r.world};processed++;chunk++;

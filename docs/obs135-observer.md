@@ -82,7 +82,6 @@ QA selected historical v19 only for the future bounded case. Actual-launch byte
 binding, exact candidate/CI, access and heavy-slot preflight, and a fresh independent
 implementation review must precede it. The separate v23 dry-return failure at
 2,891/3,176 advancing ticks, 47 passed properties and the unchanged 30,000 ms
-assertion remains open. The static `src/main.ts:774` assignment before presentation
-and `:776` "current state retained" discrepancy remains a separate product
-atomicity/error-policy gap. This seam changes neither product behavior nor that
-wording. Other PR132 gates and issue closure remain with their owners.
+assertion remains open. The installation-before-presentation ordering remains explicit. The recovery
+closeout now distinguishes a post-install display failure from a pre-install
+refusal; this observer still records the actual write and never promises rollback. Other PR132 gates and issue closure remain with their owners.

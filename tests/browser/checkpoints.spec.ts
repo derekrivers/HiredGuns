@@ -1,6 +1,37 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
+test('restore distinguishes pre-install refusal from a post-install display failure', async ({ page }) => {
+  await page.goto('/');
+  const save = async () => {
+    const download = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Save checkpoint', exact: true }).click();
+    return JSON.parse(await readFile((await (await download).path())!, 'utf8'));
+  };
+  const initial = await save(), restored = structuredClone(initial);
+  restored.world.tick = 42;
+  // Throw once inside showSession, after the validated pair has been installed.
+  await page.locator('#training-session').evaluate(element => {
+    const native = element.replaceChildren;
+    element.replaceChildren = function (...nodes) {
+      element.replaceChildren = native;
+      void nodes;
+      throw Error('test display failure');
+    };
+  });
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'valid.json', mimeType:'application/json', buffer:Buffer.from(JSON.stringify(restored))});
+  await expect(page.locator('#error')).toContainText('Checkpoint loaded, but display update failed');
+  await expect(page.locator('#recovery-status')).toContainText('Restored state retained, PAUSED');
+  await expect(page.locator('#pause-overlay')).toBeVisible();
+  expect(await save()).toEqual(restored);
+
+  const invalid = structuredClone(initial); invalid.levelHash = '0'.repeat(64);
+  await page.getByLabel('Load navigation checkpoint').setInputFiles({name:'invalid.json', mimeType:'application/json', buffer:Buffer.from(JSON.stringify(invalid))});
+  await expect(page.locator('#error')).toContainText('Checkpoint not loaded');
+  await expect(page.locator('#recovery-status')).toContainText('current state retained');
+  expect(await save()).toEqual(restored);
+});
+
 test('export, reset and restore recover navigation, then reject a mismatched checkpoint', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');

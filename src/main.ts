@@ -753,6 +753,7 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
   if (!file) return;
   if(loading&&timeoutRecoveryGeneration===loadGeneration)return;
   const generation = ++loadGeneration; loading = true; setPaused(true); get('error').textContent = '';
+  let installed = false;
   try {
     if (file.size >= MAX_SESSION_BYTES) throw new Error('Session save must be smaller than 24 KiB.');
     const json = await file.text();
@@ -771,9 +772,14 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     }
     if (generation !== loadGeneration) return;
     const restoredLevel = patrolMissionLevel(level) && restored.levelId === createTrainingGateLevel().id ? createTrainingGateLevel() : level;
-    replaceGateRenderer(restoredSession,restoredLevel); level = restoredLevel; session = restoredSession; world = restored; showSession(); updateLevelInfo(); events.fill('RESTORED'); updateHud(readPads());
+    replaceGateRenderer(restoredSession,restoredLevel); level = restoredLevel; session = restoredSession; world = restored; installed = true; showSession(); updateLevelInfo(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
-  } catch (error) { if (generation === loadGeneration) {get('error').textContent = `Checkpoint not loaded: ${errorText(error)}`;if(timeoutRecoveryGeneration===generation)get('recovery-status').textContent='Checkpoint load failed; current state retained. Review the error and retry.';} }
+  } catch (error) { if (generation === loadGeneration) {
+    get('error').textContent = `${installed ? 'Checkpoint loaded, but display update failed' : 'Checkpoint not loaded'}: ${errorText(error)}`;
+    get('recovery-status').textContent = installed
+      ? 'Restored state retained, PAUSED. Display update failed; review the error and retry.'
+      : 'Checkpoint load failed; current state retained. Review the error and retry.';
+  } }
   finally { if (generation === loadGeneration) { loading = false; updateMissionHud(); rosterPanel.refresh(); inventoryPanel.refresh(session); refreshEncounterPanel(); groundPanel.refresh(); gatePanel.refresh(); patrolPanel.refresh(); doorPanel.refresh(); } }
 });
 

@@ -68,6 +68,26 @@ it.skipIf(!provider)('private full35 independent source pairs and events through
  }
 });
 async function actual(){const raw={map:new Uint8Array(await readFile(provider+'/raw/map.bin')),roster:new Uint8Array(await readFile(provider+'/raw/roster.bin')),items:new Uint8Array(await readFile(provider+'/raw/items.bin'))},level=(await importEditorMap(raw.map)).level,base=await createTrainingSession(level,raw,[1,3,0,5]);base.world.mission.rules={mode:'first-exit',timeLimit:99};const c=await activateInventorySelection(level,raw,base.session,base.world,true);return {raw,level,base,c};}
+it.skipIf(!provider)('private source history reaches both collection bounds and refuses the next packed event atomically',async()=>{
+ const {raw,level,c:initial}=await actual();
+ const history=Array.from({length:256},()=>[1,1,4,10,16,22]);
+ const c=await reconstructInventorySelection(level,raw,[1,3,0,5],initial.world.mission.rules,history);
+ expect(c.world.tick).toBe(512);expect(c.session.inventorySelection!.history).toHaveLength(512);
+ const saved=await exportInventorySelection(level,raw,c.session,c.world);
+ expect(JSON.parse(saved).history).toHaveLength(256);
+ expect(await importInventorySelection(level,raw,JSON.parse(saved))).toEqual(c);
+ const before=structuredClone(c);
+ expect(()=>publicStepInventorySelection(level,c.session,c.world,[{mercenaryId:0,action:'turn-right'}])).toThrow('packed budget');
+ expect(c).toEqual(before);
+},180000);
+it.skipIf(!provider)('private replay owns geometry and raw bytes across nonempty progress callbacks',async()=>{
+ const {raw,level,c}=await actual(),history=[[0,32,4]],expected=await reconstructInventorySelection(level,raw,[1,3,0,5],c.world.mission.rules,history);
+ const map=structuredClone(level),sources=structuredClone(raw);let mutated=false;
+ const actualPair=await reconstructInventorySelection(map,sources,[1,3,0,5],c.world.mission.rules,history,{isCurrent:()=>true,onProgress:p=>{
+  if(p.phase==='replaying'&&p.processed>0&&!mutated){mutated=true;map.layers[0].fill(0);sources.map.fill(0);sources.roster.fill(0);sources.items.fill(0);}
+ }});
+ expect(mutated).toBe(true);expect(actualPair).toEqual(expected);
+},180000);
 it.skipIf(!provider).each(['activate','reconstruct','import','export']as const)('private %s captures full graph/raw3 before BOTH callback getters and every digest; frozen primitive progress',async api=>{
  const {level,raw,base,c}=await actual(),canonical=serializeInventorySelection(c),digest=crypto.subtle.digest;
  const inputs=()=>({map:structuredClone(level),raw:structuredClone(raw),base:structuredClone(base),c:structuredClone(c),wrapper:JSON.parse(canonical),indices:[1,3,0,5],rules:structuredClone(c.session.wet!.rules),history:[]as number[][]});

@@ -1,5 +1,14 @@
 # Hired Guns status
 
+Current bounded closeout: [restore investigation](docs/training43-recovery-investigation.md).
+The exact historical dry-return fixture restored within the unchanged 30-second
+assertion both before and after the narrow private-map replay repair (27.4s and
+17.1s, one observation each), with complete canonical save equality. Restore now
+distinguishes pre-install refusal from post-install display failure. Live v19
+observer cases establish full-pair Retry supersession and current-error
+preservation at that scope. Final inventory acceptance remains pending; the
+studio and its schedules remain paused. Historical failures are retained below.
+
 R132-01 unaccepted repair candidate: v23-only equality loop avoids per-object callback closures and primitive recursive calls, retaining complete keys/types/array lengths/values and all replay/source/serialization checks. Differential and malformed-capture tests accompany it. Original PR132 browser result remains26pass/9fail at the unchanged30s restore assertions; complete new-head recovery proof and independent review remain required. No selection acceptance or end-to-end performance claim. Private evidence: `.local/repair-r132-01/`; token usage unavailable-not-measured.
 
 ## Studio workflow skills (process documentation only)
