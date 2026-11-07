@@ -4,7 +4,7 @@ import type { Plugin } from 'vite';
 
 // Hashes cover UTF-8 source after CRLF -> LF normalization only. No fuzzy matching.
 export const insertionInputs = Object.freeze({
-  'src/main.ts': 'eddddc963fb48bdb13e260aff530b2b1404deab1c4c405ebcce7e95b3be7fe0c',
+  'src/main.ts': '916852db3948313cbc79d52617b0c185c86e48a94b10d2970516c2d90c600b91',
   'src/input/router.ts': 'f4b349b32c0c7517e7226045b4d967dc9ce669da5eb1fb181d28c45d38906497',
   'src/sim/clock.ts': 'c86e640ecfbdfed4c1d60b5d0eeadc09671ad6fd58f0abcc5226ab06f44784ef',
 });
@@ -26,7 +26,7 @@ function prepareMain(source: string): string {
   restore = once(restore, '  try {', "  try {\n    __obs.emit(__obsOp, {kind:'phase', phase:'reading'});");
   restore = once(restore, 'const json = await file.text();\n    if (generation !== loadGeneration) return;', "const json = await file.text();\n    if (generation !== loadGeneration) { __obs.recognized(__obsOp, 'pre-import'); return; }\n    __obsOp.stage = 'importer'; __obs.emit(__obsOp, {kind:'phase', phase:'importing'});");
   restore = once(restore, '    if (generation !== loadGeneration) return;', "    if (generation !== loadGeneration) { __obs.recognized(__obsOp, 'install-guard'); return; }\n    __obsOp.stage = 'pre-write';");
-  restore = once(restore, 'level = restoredLevel; session = restoredSession; world = restored;', '__obs.pair(__obsOp, () => { level = restoredLevel; session = restoredSession; world = restored; }, true);');
+  restore = once(restore, 'level = restoredLevel; session = restoredSession; threePlayer=restoredThree; world = restored;', '__obs.pair(__obsOp, () => { level = restoredLevel; session = restoredSession; threePlayer=restoredThree; world = restored; }, true);');
   restore = once(restore, '} catch (error) { if (generation === loadGeneration)', "} catch (error) { __obs.failure(__obsOp, error, 'caught'); if (generation !== loadGeneration) __obs.recognized(__obsOp, 'error-guard'); if (generation === loadGeneration)");
   restore = once(restore, 'finally { if (generation === loadGeneration)', "finally { __obsOp.stage = 'cleanup'; if (generation === loadGeneration)");
   restore = once(restore, '\n});', '\n}));');
@@ -48,7 +48,7 @@ function prepareMain(source: string): string {
   // Test-only copies live inside the private class scopes in the isolated graph.
   const registration = `
 const __obs = createObserver({generation:()=>loadGeneration, state:()=>({
-  pair:{session,world},level,presentation:{paused,loading,graphicsLost,rendererPresent:!!renderer,
+  pair:{session,world,threePlayer},level,presentation:{paused,loading,graphicsLost,rendererPresent:!!renderer,
   timeoutRecoveryGeneration,corpseRecoveryGeneration,...presentationDOM(app),
   assignments:router.assignments, keys:[...keys],activationKeys:[...activationKeys],
   routerRepeat:router.__obs135CopyRepeat(),clockAccumulator:clock.__obs135CopyAccumulator(),events,
@@ -77,7 +77,7 @@ export function transformInput(input: string, path: InputPath): { code: string; 
   if (path === 'src/sim/clock.ts') return { code: once(normalized, '  reset(): void', '  __obs135CopyAccumulator() { return this.accumulator; }\n  reset(): void'), sites: [{kind:'class-copy',line:11,text:'FixedClock.accumulator'}] };
   const original = ts.createSourceFile(path, normalized, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const sites: InsertionSite[] = [];
-  const pairNames = new Set(['session', 'world', 'level']);
+  const pairNames = new Set(['session', 'world', 'level', 'threePlayer']);
   function inventory(node: ts.Node): void {
     if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.EqualsToken && ts.isIdentifier(node.left) && pairNames.has(node.left.text)) sites.push({ kind:'pair-assignment',line:original.getLineAndCharacterOfPosition(node.getStart()).line+1,text:node.getText(original) });
     ts.forEachChild(node, inventory);
@@ -114,6 +114,7 @@ export function transformInput(input: string, path: InputPath): { code: string; 
       if (ts.isCallExpression(node)) {
         const callee = node.expression;
         if (ts.isIdentifier(callee) && ['importTrainingSession','importCheckpoint'].includes(callee.text)) visited = call('delivery', [f.createIdentifier('__obsOp'), visited as ts.Expression]);
+        else if (ts.isIdentifier(callee) && callee.text === 'importThreePlayerSession') visited = call('deliverySync', [f.createIdentifier('__obsOp'), arrow(visited as ts.Expression)]);
         else if ((ts.isIdentifier(callee) && effectFunctions.has(callee.text)) || (ts.isPropertyAccessExpression(callee) && effectMethods.has(callee.name.text) && callee.expression.getText(file) !== 'renderer')) {
           // Helper calls need a synchronous owner scope; simple leaf effects retain
           // their original evaluation in the caller (including TS flow narrowing).
@@ -139,7 +140,7 @@ export function transformInput(input: string, path: InputPath): { code: string; 
         const wrapped = f.updateArrowFunction(callback, callback.modifiers, callback.typeParameters, callback.parameters, callback.type, callback.equalsGreaterThanToken, call('pair', [current(), arrow(callback.body)]));
         visited = f.updateCallExpression(visited, visited.expression, visited.typeArguments, [visited.arguments[0]!, wrapped]);
       }
-      if (ts.isFunctionDeclaration(visited) && visited.name?.text === 'installLevel' && visited.body) visited = f.updateFunctionDeclaration(visited, visited.modifiers, visited.asteriskToken, visited.name, visited.typeParameters, visited.parameters, visited.type,
+      if (ts.isFunctionDeclaration(visited) && ['installLevel','installThreePlayer'].includes(visited.name?.text ?? '') && visited.body) visited = f.updateFunctionDeclaration(visited, visited.modifiers, visited.asteriskToken, visited.name, visited.typeParameters, visited.parameters, visited.type,
         f.createBlock([f.createReturnStatement(call('pair',[current(),arrow(visited.body)]))],true));
       lexicalOwner = prior;
       return visited;
