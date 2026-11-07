@@ -1,5 +1,7 @@
 # Hired Guns status
 
+PROD-03 issue #141: synthetic three-assigned / one-inactive mission-control candidate prepared in an isolated checkout. Focused deterministic checks pass; same-app browser Save/Load, Retry and outcome verification plus independent exact-head review remain reserved for QA. Candidate only; no acceptance or T43-R05/native reachability claim. See [bounded oracle and handoff](docs/three-player-mission-control.md).
+
 Current bounded closeout: [restore investigation](docs/training43-recovery-investigation.md).
 The exact historical dry-return fixture restored within the unchanged 30-second
 assertion both before and after the narrow private-map replay repair (27.4s and

@@ -1,8 +1,11 @@
+import {createThreePlayerSession,stepThreePlayerSession,serializeThreePlayerSession,importThreePlayerSession} from '../src/sim/three-player-mission';
+import {isDead} from '../src/sim/fall';
+import {InputRouter} from '../src/input/router';
 import { describe, expect, it } from 'vitest';
 import { cellIndex, type LevelData, type MissionRules, type PlayerCommand, type WorldState } from '../src/contracts';
 import { createDemoLevel, createExtractionDemo } from '../src/demo';
 import { createWorld, stepWorld } from '../src/sim/world';
-import { isExitBlock, sourceClockAtTick } from '../src/sim/mission';
+import { isExitBlock, sourceClockAtTick,sourcePartyDecision,resolveSelectedPartyMission } from '../src/sim/mission';
 import { TRAINING_43_SHA256 } from '../src/sim/mission-profile';
 import { exportCheckpoint, importCheckpoint } from '../src/sim/checkpoint';
 
@@ -129,5 +132,81 @@ describe('bounded extraction missions', () => {
     expect(stepWorld(level,saved,[forward(2)])).toEqual({world:terminal,events:[]});
     const failed = run(level,createWorld(level),1202);
     expect(await importCheckpoint(level,await exportCheckpoint(level,failed))).toEqual(failed);
+  });
+});
+
+
+describe('synthetic three-assigned / one-inactive mission oracle',()=>{
+  it('maps exactly three control1 slots, with inactive biology and occupancy unchanged',()=>{
+    const s=createThreePlayerSession();
+    expect(s.controls).toEqual([1,1,1,0]);
+    expect(s.world.physics).toEqual({mode:'source-wet',deadWords:[0,0,0,0]});
+    expect(isDead(s.world,3)).toBe(false);
+    const moved=stepThreePlayerSession(s,[{mercenaryId:1,action:'strafe-left'}]).session;
+    expect(moved.world.mercenaries[1].x).toBe(s.world.mercenaries[1].x-1);
+    for(const id of [0,2,3])expect(moved.world.mercenaries[id]).toEqual(s.world.mercenaries[id]);
+    expect(moved.world.mission.outcome).toBe('active');
+    const atFourth=structuredClone(s);atFourth.world.mercenaries[2]={...s.world.mercenaries[3],id:2,x:s.world.mercenaries[3].x-1};
+    expect(stepThreePlayerSession(atFourth,[{mercenaryId:2,action:'strafe-right'}]).events[0]).toMatchObject({kind:'blocked',reason:'occupied'});
+  });
+  it('refuses invalid setup and whole mixed inactive-command batches before mutation/history',()=>{
+    const s=createThreePlayerSession(),before=structuredClone(s),router=new InputRouter();
+    router.assign(3,null);const assignments=structuredClone(router.assignments);
+    for(const controls of [[1,1,1,1],[1,1,0,0],[0,1,1,1],[],[1,1,1,2]])expect(()=>createThreePlayerSession(controls)).toThrow('atomically');
+    for(const commands of [[forward(3)],[forward(0),forward(3)],[{mercenaryId:3,action:'turn-left'} as PlayerCommand]]){
+      expect(()=>stepThreePlayerSession(s,commands)).toThrow('atomically');expect(s).toEqual(before);
+    }
+    expect(router.assignments).toEqual(assignments);
+    expect(router.commands(0,new Set(['Numpad8']),[])).toEqual([]);
+    const malformed=structuredClone(s);malformed.controls=[1,1,1,1] as unknown as typeof s.controls;
+    expect(()=>stepThreePlayerSession(malformed,[])).toThrow('atomically');
+    expect(s.history).toEqual([]);
+  });
+  it('counts inactive control0 separately from deadWord and preserves source decision priority',()=>{
+    const slots=[0,1,2,3].map(id=>({deadWord:0,control:id===3?0:1,window:0}));
+    expect(sourcePartyDecision(slots,true,false)).toBeNull();
+    slots[3]!.window=7;expect(sourcePartyDecision(slots,true,false)).toBeNull();
+    slots[1]!.window=7;expect(sourcePartyDecision(slots,true,false)).toBe('exit');
+    expect(sourcePartyDecision(slots,true,true)).toBe('time-expired');
+    for(const id of [0,1,2])slots[id]!.deadWord=0xff00;
+    expect(sourcePartyDecision(slots,true,true)).toBe('all-dead');
+    expect(sourcePartyDecision(slots,true,false)).toBe('all-dead');
+    expect(slots[3]!.deadWord).toBe(0);
+  });
+  it('continues without exit; stable active exit ties complete and terminal input freezes',()=>{
+    const s=stepThreePlayerSession(createThreePlayerSession(),[]).session;
+    expect(s.world.mission.outcome).toBe('active');
+    const a=stepThreePlayerSession(s,[forward(2),forward(0)]);
+    expect(a.world).toEqual(stepThreePlayerSession(s,[forward(0),forward(2)]).world);
+    expect(a.world.mission).toMatchObject({outcome:'complete',winner:0,exited:[true,false,true,false]});
+    expect(stepThreePlayerSession(a.session,[forward(1)])).toEqual({session:a.session,world:a.world,events:[]});
+  });
+  it('fails all-three-dead with inactive alive, and gives all-dead > timeout > exit',()=>{
+    const dead=stepThreePlayerSession(createThreePlayerSession(),[],[0,1,2]);
+    expect(dead.world.mission).toMatchObject({outcome:'failed',reason:'all-dead',winner:null});
+    expect(isDead(dead.world,3)).toBe(false);
+    expect(dead.world.mercenaries).toEqual(createThreePlayerSession().world.mercenaries);
+    let s=createThreePlayerSession();for(let i=0;i<1201;i++)s=stepThreePlayerSession(s,[]).session;
+    expect(s.world.mission.outcome).toBe('active');
+    const timeout=stepThreePlayerSession(s,[forward(0),forward(2)]);
+    expect(timeout.world.mission).toMatchObject({outcome:'failed',reason:'time-expired',winner:null,exited:[true,false,true,false]});
+    expect(importThreePlayerSession(serializeThreePlayerSession(timeout.session))).toEqual(timeout.session);
+    expect(stepThreePlayerSession(timeout.session,[]).session).toEqual(timeout.session);
+    expect(stepThreePlayerSession(s,[],[0,1,2]).world.mission.reason).toBe('all-dead');
+    const tie=structuredClone(s.world);tie.tick=1202;tie.mission.exited[0]=true;
+    if(tie.physics.mode==='source-wet')tie.physics.deadWords=[0xff00,0xff00,0xff00,0];
+    resolveSelectedPartyMission(tie,[],[1,1,1,0]);expect(tie.mission.reason).toBe('all-dead');
+  });
+  it('replays full save/load state and refuses tampering; Retry restores same profile',()=>{
+    let s=stepThreePlayerSession(createThreePlayerSession(),[{mercenaryId:1,action:'strafe-left'}]).session;
+    for(const variant of [s,stepThreePlayerSession(s,[forward(0)]).session,stepThreePlayerSession(s,[],[0,1,2]).session]){
+      const loaded=importThreePlayerSession(serializeThreePlayerSession(variant));expect(loaded).toEqual(variant);
+      expect(stepThreePlayerSession(loaded,[])).toEqual(stepThreePlayerSession(variant,[]));
+    }
+    const saved=JSON.parse(serializeThreePlayerSession(s));saved.session.world.physics.deadWords[3]=0xff00;
+    expect(()=>importThreePlayerSession(JSON.stringify(saved))).toThrow('atomically');
+    saved.session.world.physics.deadWords[3]=0;saved.session.controls=[1,1,1,1];
+    expect(()=>importThreePlayerSession(JSON.stringify(saved))).toThrow('atomically');
+    s=createThreePlayerSession(s.controls);expect(s).toEqual(createThreePlayerSession());
   });
 });

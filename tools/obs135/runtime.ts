@@ -1,6 +1,7 @@
 // Imported exclusively by the explicitly selected OBS135 test-server graph.
 import type { LevelData, WorldState } from '../../src/contracts';
 import type { TrainingSession } from '../../src/sim/training-session';
+import type { ThreePlayerSession } from '../../src/sim/three-player-mission';
 
 export type DeepRead<T> = T extends object ? { readonly [K in keyof T]: DeepRead<T[K]> } : T;
 export type Outcome = 'success' | 'error' | 'cancelled' | 'superseded';
@@ -10,7 +11,7 @@ export type Observation = Body & {
   operation: number; generation: number; currentGeneration: number;
 };
 export interface InstalledState {
-  pair: { session: TrainingSession | null; world: WorldState };
+  pair: { session: TrainingSession | null; world: WorldState; threePlayer: ThreePlayerSession | null };
   level: LevelData;
   presentation: Record<string, unknown>;
 }
@@ -168,6 +169,21 @@ export function createObserver(options: {
     emit(op, { kind: 'cancel-recognized', site });
     for (const target of ['status', 'error', 'loading', 'controls']) emit(op, { kind: 'effect', target, applied: false });
   }
+  function deliverySync<T>(op: Operation, work: () => T): T {
+    // Async delivery tickets cannot hold a synchronous importer. Fail closed for
+    // evidence while preserving the native return/throw and scheduling exactly.
+    if (ticket?.operation === op) invalidate();
+    let value: T;
+    try { value = work(); op.candidateProduced = true; }
+    catch (error) {
+      emit(op, { kind: 'engine-settled', mode: 'synchronous', outcome: 'rejected', error: describe(error) });
+      emit(op, { kind: 'phase', phase: 'handler-delivery' });
+      throw error;
+    }
+    emit(op, { kind: 'engine-settled', mode: 'synchronous', outcome: 'fulfilled', error: null });
+    emit(op, { kind: 'phase', phase: 'handler-delivery' });
+    return value;
+  }
   async function delivery<T>(op: Operation, promise: Promise<T>): Promise<T> {
     let value!: T, reason: unknown, fulfilled = false;
     try { value = await promise; fulfilled = true; op.candidateProduced = true; }
@@ -247,7 +263,7 @@ export function createObserver(options: {
     }),
   });
   return {
-    port, start, scope, write, written, pair, effect, effectValue, recognized, delivery, restoreHandler, retry, owner, engineCurrent, uncoveredGeneration,
+    port, start, scope, write, written, pair, effect, effectValue, recognized, delivery, deliverySync, restoreHandler, retry, owner, engineCurrent, uncoveredGeneration,
     failure, emit, invalidate,
     get current() { return current; },
     ready() { if (ready) invalidate(); else ready = true; },

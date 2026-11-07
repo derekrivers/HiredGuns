@@ -11,7 +11,7 @@ import testConfig from '../vite.obs135.config';
 function fixture(capacity?: number) {
   let generation = 0, time = 0;
   const level = createDemoLevel();
-  const state: InstalledState = { level, pair: { session: null, world: createWorld(level) }, presentation: { paused: true, loading: false } };
+  const state: InstalledState = { level, pair: { session: null, world: createWorld(level), threePlayer: null }, presentation: { paused: true, loading: false } };
   const runtime = createObserver({ generation: () => generation, state: () => state, now: () => ++time, documentId: 'synthetic-only', capacity });
   runtime.ready();
   return { runtime, state, advance: () => ++generation,

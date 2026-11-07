@@ -10,7 +10,7 @@ export function extractionProfile(level: LevelData): { title: string; timeLimit:
   if (level.source.kind === 'editor-map' && level.source.sha256 === TRAINING_43_SHA256) {
     return { title: 'Training 43', timeLimit: 99 };
   }
-  if (level.source.kind === 'synthetic' && level.id === 'synthetic-extraction-v1') {
+  if (level.source.kind === 'synthetic' && ['synthetic-extraction-v1','synthetic-three-player-v1'].includes(level.id)) {
     return { title: 'Extraction drill', timeLimit: 2 };
   }
   return null;
