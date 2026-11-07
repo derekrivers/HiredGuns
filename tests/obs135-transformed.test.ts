@@ -18,7 +18,7 @@ function statement(predicate: (node: ts.Statement) => boolean) {
   return matches[0]!.getText(file);
 }
 const registration = statement(node => ts.isVariableStatement(node) && node.declarationList.declarations.some(d => d.name.getText(file) === '__obs'));
-const functions = ['installLevel', 'installThreePlayer'].map(name => statement(node => ts.isFunctionDeclaration(node) && node.name?.text === name));
+const functions = ['installLevel', 'installThreePlayer', 'corpseRecoveryControl', 'timeoutRecoveryControl'].map(name => statement(node => ts.isFunctionDeclaration(node) && node.name?.text === name));
 const handlers = ['checkpoint-file', 'reset'].map(id => statement(node => ts.isExpressionStatement(node) && node.getText(file).startsWith(`get<`) && node.getText(file).includes(`('${id}').addEventListener(`)));
 const ticks: string[] = [];
 function findTick(node: ts.Node) {
@@ -28,7 +28,7 @@ function findTick(node: ts.Node) {
 findTick(file); expect(ticks).toHaveLength(1);
 const executable = ts.transpileModule([registration, ...functions, ...handlers, `__obs.ready(); return {runtime:__obs,tick:${ticks[0]}};`].join('\n'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
 
-function harness() {
+function harness(mode: 'three-player' | 'checkpoint' | 'selected-party' = 'three-player') {
   const callbacks = new Map<string, (event: unknown) => Promise<void> | void>();
   const controls = new Map<string, { value: string; textContent: string; disabled: boolean; addEventListener: (type: string, callback: (event: unknown) => Promise<void> | void) => void }>();
   const get = (id: string) => {
@@ -37,10 +37,13 @@ function harness() {
   };
   const noop = () => {};
   const initial = createThreePlayerSession();
+  if (mode !== 'three-player') initial.world.tick = 9;
   const assignments: unknown[] = [];
   const env: Record<string, unknown> = {
     loadGeneration: 0, loading: false, paused: true, graphicsLost: false, renderer: null,
-    threePlayer: initial, session: null, world: initial.world, level: createThreePlayerLevel(),
+    threePlayer: mode === 'three-player' ? initial : null,
+    session: mode === 'selected-party' ? { syntheticSelectedParty: true, history: ['before Retry'] } : null,
+    world: initial.world, level: createThreePlayerLevel(),
     timeoutRecoveryGeneration: null, corpseRecoveryGeneration: null,
     pendingGateActor: null, pendingDoorAction: 16, pendingStorageActor: null, pendingCorpseActor: null,
     pendingSelectionOperation: null, pendingInventoryOperation: null,
@@ -54,7 +57,8 @@ function harness() {
     importTrainingSession: async () => ({ session: { syntheticSelectedParty: true }, world: createWorld(createThreePlayerLevel()) }),
     isTrainingSessionSave: (json: string) => JSON.parse(json).training === true,
     sessionSources: () => ({ syntheticSources: true }),
-    corpseRecoveryControl: noop, timeoutRecoveryControl: noop, patrolMissionLevel: () => false,
+    resetTrainingInventory: () => ({ syntheticSelectedParty: true, history: [] }), selectedFallLevel: () => false,
+    patrolMissionLevel: () => false,
     replaceGateRenderer: noop, showSession: noop, updateLevelInfo: noop, updateHud: noop,
     readPads: () => [], teamDead: () => false, updateMissionHud: noop, refreshEncounterPanel: noop,
     refreshAssignments: noop, setPaused: (value: boolean) => { env.paused = value; },
@@ -187,7 +191,7 @@ describe('OBS135 actual transformed data flow with synthetic boundaries', () => 
   });
 
   it.each(['checkpoint', 'selected-party'] as const)('preserves the legacy async %s delivery and full candidate installation', async kind => {
-    const h = harness(); h.env.threePlayer = null;
+    const h = harness('checkpoint');
     const candidateWorld = createWorld(createThreePlayerLevel()), candidateSession = { syntheticSelectedParty: true };
     let resolve!: (value: unknown) => void;
     const promise = new Promise(yes => { resolve = yes; });
@@ -201,17 +205,82 @@ describe('OBS135 actual transformed data flow with synthetic boundaries', () => 
     expect(h.journal().records.filter(row => row.kind === 'install')).toHaveLength(1);
   });
 
-  it.each(['fulfilled', 'rejected'] as const)('retains actual async %s held delivery through three-player Retry supersession', async outcome => {
-    const h = harness(); h.env.threePlayer = null;
+  it.each([
+    ['checkpoint', 'fulfilled'], ['checkpoint', 'rejected'],
+    ['selected-party', 'fulfilled'], ['selected-party', 'rejected'],
+  ] as const)('retains actual async %s %s held delivery through its reachable Retry branch', async (kind, outcome) => {
+    const h = harness(kind);
+    // Establish the full expected reset pair before invoking either operation.
+    const expectedTickZeroPair = {
+      session: kind === 'selected-party' ? { syntheticSelectedParty: true, history: [] } : null,
+      world: createWorld(createThreePlayerLevel(), undefined, h.initial.world.mission.rules), threePlayer: null,
+    };
+    let resets = 0;
+    h.env.resetTrainingInventory = (session: unknown, level: unknown, rules: unknown) => {
+      expect(session).toBe(h.env.session); expect(level).toBe(h.env.level); expect(rules).toBe(h.initial.world.mission.rules);
+      resets++; return structuredClone(expectedTickZeroPair.session);
+    };
     const ticket = h.runtime.port.scheduler.armNextRestore('delivery');
-    h.env.importCheckpoint = () => outcome === 'fulfilled' ? Promise.resolve(createWorld(createThreePlayerLevel())) : Promise.reject(Error('synthetic legacy refusal'));
-    const pending = h.restore('{}');
+    h.env[kind === 'checkpoint' ? 'importCheckpoint' : 'importTrainingSession'] = () => outcome === 'fulfilled'
+      ? Promise.resolve(kind === 'checkpoint' ? createWorld(createThreePlayerLevel()) : { session: { restored: true }, world: createWorld(createThreePlayerLevel()) })
+      : Promise.reject(Error('synthetic legacy refusal'));
+    const pending = h.restore(JSON.stringify({ training: kind === 'selected-party', version: 23 }));
     await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
     expect(h.journal().records.filter(row => row.kind === 'held')).toHaveLength(1);
-    // Simulate the active three-player state at the independent Retry boundary.
-    h.env.threePlayer = h.initial;
     h.retry(); const beforeRelease = h.snapshot();
+    expect(resets).toBe(kind === 'selected-party' ? 1 : 0);
     h.runtime.port.scheduler.release(ticket); await pending;
-    assertRetrySupersession({ restoreId: 1, retryId: 2, journal: h.journal(), beforeRelease, afterSettlement: h.snapshot(), expectedTickZeroPair: beforeRelease.pair, engineOutcome: outcome });
+    // The extracted handlers deliberately use a synthetic session at the import
+    // boundary; this assertion compares it structurally without simulating it.
+    assertRetrySupersession({ restoreId: 1, retryId: 2, journal: h.journal(), beforeRelease, afterSettlement: h.snapshot(), expectedTickZeroPair: expectedTickZeroPair as unknown as Parameters<typeof assertRetrySupersession>[0]['expectedTickZeroPair'], engineOutcome: outcome });
+  });
+
+  it.each([19, 23])('keeps version %s recovery callbacks owned by the restore across selected-party Retry', async version => {
+    const h = harness('selected-party');
+    const expectedTickZeroPair = {
+      session: { syntheticSelectedParty: true, history: [] },
+      world: createWorld(createThreePlayerLevel(), undefined, h.initial.world.mission.rules), threePlayer: null,
+    };
+    let control!: { isCurrent: () => boolean; onProgress: (progress: { phase: string; processed: number; total: number }) => void };
+    let resolve!: (value: unknown) => void;
+    h.env.importTrainingSession = (_level: unknown, _sources: unknown, _json: string, recovery: typeof control) => {
+      control = recovery; return new Promise(yes => { resolve = yes; });
+    };
+    let hudUpdates = 0;
+    h.env.updateMissionHud = () => { hudUpdates++; };
+    const pending = h.restore(JSON.stringify({ training: true, version }));
+    await Promise.resolve();
+    expect(control.isCurrent()).toBe(true);
+    expect(h.env.corpseRecoveryGeneration).toBe(version === 23 ? 1 : null);
+    control.onProgress({ phase: 'verifying', processed: 0, total: 12 });
+    expect(h.get('recovery-status').textContent).toContain('Verifying all recovery sources');
+    expect(h.env.timeoutRecoveryGeneration).toBe(1); expect(hudUpdates).toBe(1);
+    expect(h.journal().records.filter(row => row.kind === 'progress')).toMatchObject([{ operation: 1, generation: 1, currentGeneration: 1, phase: 'verifying' }]);
+    h.retry();
+    const afterRetry = h.snapshot(), frontier = h.journal().throughSequence;
+    expect(afterRetry.pair).toEqual(expectedTickZeroPair);
+    expect(control.isCurrent()).toBe(false);
+    const progressFrontier = h.journal().throughSequence;
+    control.onProgress({ phase: 'replaying', processed: 6, total: 12 });
+    expect(h.snapshot().presentation).toEqual(afterRetry.presentation); expect(hudUpdates).toBe(1);
+    const stale = h.journal().records.filter(row => row.sequence > frontier);
+    expect(stale.filter(row => row.kind === 'cancel-recognized')).toMatchObject([{ operation: 1, generation: 1, currentGeneration: 2, site: 'engine-check' }]);
+    expect(stale.filter(row => row.kind === 'progress')).toMatchObject([{ operation: 1, generation: 1, currentGeneration: 2, phase: 'replaying', processed: 6 }]);
+    // engineCurrent separately records the suppressed effect classes. Require
+    // the progress callback itself to emit its two guarded effects as well.
+    expect(stale.filter(row => row.sequence > progressFrontier && row.kind === 'effect')).toMatchObject([
+      { operation: 1, generation: 1, currentGeneration: 2, target: 'status', applied: false },
+      { operation: 1, generation: 1, currentGeneration: 2, target: 'controls', applied: false },
+    ]);
+    expect(stale.filter(row => row.kind === 'effect' && row.applied === true)).toEqual([]);
+    resolve({ session: { restored: true }, world: createWorld(createThreePlayerLevel()) }); await pending;
+    const after = h.snapshot();
+    expect(after.pair).toEqual(expectedTickZeroPair); expect(after.revision).toBe(afterRetry.revision);
+    expect(after.presentation).toEqual(afterRetry.presentation);
+    expect(h.journal().complete).toBe(true);
+    expect(h.journal().records.filter(row => row.operation === 1 && ['pair-write', 'install'].includes(row.kind))).toEqual([]);
+    expect(h.journal().records.filter(row => row.kind === 'settled')).toMatchObject([
+      { operation: 2, outcome: 'success' }, { operation: 1, outcome: 'superseded' },
+    ]);
   });
 });
