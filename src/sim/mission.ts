@@ -7,7 +7,7 @@ export const SOURCE_CLOCK_PERIOD = 601;
 
 /** Main.s check_exit: dead_flag2 OR control_method=0 counts in BOTH d0/d1;
  * window7 counts only in d0. Four dead precedes action timeout, then exit.
- * Pure source decision only; the live selected-party adapter admits control1.
+ * Pure source decision only; selected-party defaults to four control1 slots.
  */
 export function sourcePartyDecision(actors:readonly {deadWord:number;control:number;window:number}[], action:boolean, timeUp:boolean): 'all-dead'|'time-expired'|'exit'|null {
   if(actors.length!==4)throw Error('Four source slots required');
@@ -17,13 +17,13 @@ export function sourcePartyDecision(actors:readonly {deadWord:number;control:num
   if(action&&timeUp)return 'time-expired';
   return (action?inside>dead:inside===4)?'exit':null;
 }
-/** V18 only. First-exit is the source multi-player action decision; cooperative
+/** Selected-party and explicitly controlled synthetic caller. First-exit is the source multi-player action decision; cooperative
  * extraction remains the explicitly labelled all-four-exited adaptation. */
-export function resolveSelectedPartyMission(world:WorldState,events:SimulationEvent[]):void {
+export function resolveSelectedPartyMission(world:WorldState,events:SimulationEvent[],controls:readonly number[]=[1,1,1,1]):void {
   if(world.physics.mode!=='source-wet')throw Error('Selected party physics required');
   const m=world.mission,action=m.rules.mode!=='navigation';
   m.clock=action?sourceClockAtTick(m.rules.timeLimit!,world.tick):null;
-  const decision=sourcePartyDecision(world.physics.deadWords.map((deadWord,id)=>({deadWord,control:1,window:m.exited[id]?7:0})),action,!!m.clock&&m.clock.tens===0&&m.clock.units===0);
+  const decision=sourcePartyDecision(world.physics.deadWords.map((deadWord,id)=>({deadWord,control:controls[id]!,window:m.exited[id]?7:0})),action,!!m.clock&&m.clock.tens===0&&m.clock.units===0);
   if(decision==='all-dead'||decision==='time-expired'){
     m.outcome='failed';m.reason=decision;m.winner=null;
     events.push({tick:world.tick,mercenaryId:0,kind:'failed',reason:decision==='all-dead'?'all controlled mercenaries dead':'time expired'});return;

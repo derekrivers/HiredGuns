@@ -1,3 +1,4 @@
+import {createThreePlayerLevel,createThreePlayerSession,stepThreePlayerSession,serializeThreePlayerSession,importThreePlayerSession,THREE_PLAYER_PROFILE,type ThreePlayerSession} from './sim/three-player-mission';
 import {activateInventorySelection,advanceOwnedInventorySelection,hasInventorySelection,type InventorySelectionOperation} from './sim/training-inventory-selection';
 import {installTrainingInventorySelectionPanel} from './training-inventory-selection-panel';
 import {activateInventoryWindow,advanceOwnedInventoryWindow,hasInventoryWindow,type InventoryWindowOperation} from './sim/training-inventory-window';
@@ -83,6 +84,22 @@ const treeSupportButton = document.createElement('button'); treeSupportButton.id
 treeSupportButton.textContent = `Synthetic Training43: ${TREE_SUPPORT_TITLE}`;
 get('scenario-actions').append(treeSupportButton);
 get('run-actions').append(get('play'), get('reset'));
+let threePlayer:ThreePlayerSession|null=null;
+const threeButton=document.createElement('button');threeButton.id='three-player';threeButton.textContent='Synthetic three-player mission';get('scenario-actions').append(threeButton);
+const threeTools=document.createElement('section');threeTools.id='three-player-tools';threeTools.hidden=true;
+threeTools.innerHTML='<p>Synthetic oracle: three assigned actors; slot 4 inactive, biologically alive. W / I / Up exits; sidestep to explore. Death injection changes only synthetic dead words, without native corpse or inventory effects.</p><button id="three-player-deaths">Synthetic: mark three active actors dead</button><details><summary>Synthetic session diagnostics</summary><pre id="three-player-snapshot"></pre></details>';
+get('run-actions').after(threeTools);
+function installThreePlayer(candidate=createThreePlayerSession()):void {
+  installLevel(createThreePlayerLevel());threePlayer=candidate;world=candidate.world;
+  for(let id=0;id<4;id++)router.assign(id,id===3?null:{kind:'keyboard',index:id});
+  refreshAssignments(readPads(),true);setPaused(true);updateHud(readPads());
+}
+threeButton.addEventListener('click',()=>{loadGeneration++;loading=false;installThreePlayer();});
+get('three-player-deaths').addEventListener('click',()=>{
+  if(!threePlayer||loading)return;
+  const result=stepThreePlayerSession(threePlayer,[],[0,1,2]);threePlayer=result.session;world=result.world;setPaused(true);updateHud(readPads());
+});
+
 const manual = document.createElement('details'); manual.id = 'manual-setup';
 manual.innerHTML = '<summary>Advanced test tools: manual map setup</summary>';
 manual.append(get('map-file').closest('label')!); setup.append(manual); headerActions.remove();
@@ -498,6 +515,8 @@ get('local-test-preset').addEventListener('click', async () => {
     const nextRenderer = new FourViews(canvas, panes, nextLevel);
     try { commitRoster(); } catch (error) { nextRenderer.dispose(); throw error; }
     renderer?.dispose(); renderer = nextRenderer; graphicsLost = false;
+    if(threePlayer)for(let id=0;id<4;id++)router.assign(id,{kind:'keyboard',index:id});
+    threePlayer=null;
     level = nextLevel; signSource = nextSignSource; importedMapBytes = new Uint8Array(map); world = candidate.world;
     session = Object.freeze({ ...candidate.session, encounter });
     extraDiagnostics = `Import report: ${JSON.stringify(report, null, 2)}`;
@@ -561,8 +580,19 @@ function updateMissionHud(): void {
     get('prototype-label').textContent = 'STANDALONE SYNTHETIC TRAINING43 / AUTHORED DEMONSTRATION';
     get('mission-objective').textContent = 'Slot 1: W steps from (2,2,2) to (3,2,2), S returns. Facing east and Z=2 stay fixed. Watch MOVED and position. Esc pauses; Save/Load checkpoint restores the same fixture; Reset positions retries. Static support only; no original-map route or native retention claim.';
   }
+  threeTools.hidden=!threePlayer;
+  for(const select of selects)select.disabled=!!threePlayer;
+  if(threePlayer){
+    get('mission-mode-label').hidden=true;
+    get('prototype-label').textContent='SYNTHETIC THREE-PLAYER / MISSION CONTROL';
+    get('mission-objective').textContent='Three assigned actors / fourth inactive. First active exit wins; all three dead precedes timeout, then exit. Save/Load and Retry retain 3+1.';
+    get('mission-progress').textContent=`${escaped} / 3 extracted � ${mission.reason??mission.outcome}`;
+    get('three-player-snapshot').textContent=JSON.stringify(threePlayer);
+    get<HTMLButtonElement>('three-player-deaths').disabled=terminal||loading;
+  }
   const overlay = get('pause-overlay'); overlay.hidden = !paused && !terminal;
   overlay.querySelector('b')!.textContent = hasOwnWetParty(session) && mission.reason==='all-dead' ? 'ALL MERCENARIES DEAD' : allDead ? 'TEAM INCAPACITATED' : mission.outcome === 'failed' ? 'TIME EXPIRED' : mission.outcome === 'complete' ? mission.winner === null ? 'TEAM EXTRACTED' : `MERCENARY ${mission.winner + 1} WINS` : 'TEAM STANDING BY';
+  if(threePlayer&&mission.reason==='all-dead')overlay.querySelector('b')!.textContent='ALL THREE ACTIVE ACTORS DEAD';
   overlay.querySelector('small')!.textContent = terminal ? 'Retry or load an earlier checkpoint' : 'Assign controls, then start';
   for (let i = 0; i < 4; i++) {
     get(`dead-${i}`).hidden = !isDead(world,i);
@@ -592,6 +622,7 @@ function refreshAssignments(pads: PadSnapshot[], force = false): void {
   });
 }
 selects.forEach((select, i) => select.addEventListener('change', () => {
+  if(threePlayer){refreshAssignments(readPads(),true);return;}
   const value = select.value;
   let source: InputSource = null;
   if (value.startsWith('key:')) source = { kind: 'keyboard', index: Number(value.slice(4)) };
@@ -613,7 +644,7 @@ function updateHud(pads: PadSnapshot[]): void {
     fitness.textContent = world.physics.mode === 'dry-fall' ? `FIT ${Math.floor(world.physics.actors[i]!.fitness / 655)}%${selectedFallLevel(level) ? ` · ${world.physics.actors[i]!.fitness} · FALL ${world.physics.actors[i]!.fallDamage} · WT ${world.physics.actors[i]!.weight}` : ''}` : '';
     if(session?.wetLifecycle)fitness.textContent=`FIT ${session.wet!.actors[i]!.body.fitness} · ${isDead(world,i)?'DEAD':'ALIVE'}`;
     const pad = source?.kind === 'gamepad' ? pads.find(pad => pad.index === source.index && pad.id === source.id && pad.connected) : null;
-    get(`device-${i}`).textContent = !source ? 'UNASSIGNED' : source.kind === 'keyboard' ? `KEYBOARD ${String.fromCharCode(65 + source.index)}` : pad?.mapping === 'standard' ? `PAD ${source.index + 1} CONNECTED` : 'PAD DISCONNECTED / CHECK ASSIGNMENT';
+    get(`device-${i}`).textContent = threePlayer&&i===3 ? 'INACTIVE / CONTROL 0 / ALIVE' : !source ? 'UNASSIGNED' : source.kind === 'keyboard' ? `KEYBOARD ${String.fromCharCode(65 + source.index)}` : pad?.mapping === 'standard' ? `PAD ${source.index + 1} CONNECTED` : 'PAD DISCONNECTED / CHECK ASSIGNMENT';
   }
   get('tick').textContent = `· tick ${world.tick} · ${frameMs.toFixed(1)} ms/frame`;
   updateMissionHud();
@@ -635,7 +666,8 @@ function updateLevelInfo(): void {
 }
 function installLevel(nextLevel: LevelData, diagnostics = '', nextSignSource: SignSource | null = null): void {
   const nextWorld = createWorld(nextLevel); // Validate before replacing the current working level.
-  setPaused(true); session = null; showSession();
+  if(threePlayer)for(let id=0;id<4;id++)router.assign(id,{kind:'keyboard',index:id});
+  setPaused(true); threePlayer=null; session = null; showSession();
   renderer?.dispose(); renderer = null;
   try { renderer = new FourViews(canvas, panes, nextLevel); graphicsLost = false; }
   catch (error) { get<HTMLButtonElement>('play').disabled = true; throw new Error(`WebGL2 unavailable: ${errorText(error)}`); }
@@ -648,6 +680,7 @@ function installLevel(nextLevel: LevelData, diagnostics = '', nextSignSource: Si
 get<HTMLButtonElement>('play').addEventListener('click', () => { if (!loading && renderer) setPaused(!paused); });
 get<HTMLButtonElement>('reset').addEventListener('click', () => {
   loadGeneration++; loading = false;
+  if(threePlayer){installThreePlayer();return;}
   if (level.id === TREE_SUPPORT_ID) {
     get('error').textContent = '';
     try { installLevel(createTreeSupportLevel()); } catch (error) { get('error').textContent = errorText(error); }
@@ -702,6 +735,7 @@ selectedFallButton.addEventListener('click', async () => {
   finally { if (generation === loadGeneration) { loading = false; setPaused(true); rosterPanel.refresh(); } }
 });
 get<HTMLSelectElement>('mission-mode').addEventListener('change', event => {
+  if(threePlayer)return;
   const mode = (event.currentTarget as HTMLSelectElement).value as MissionMode;
   loadGeneration++; loading = false; setPaused(true);
   try {
@@ -739,7 +773,7 @@ get<HTMLButtonElement>('save-checkpoint').addEventListener('click', async () => 
   try {
     const sources = sessionSources();
     if (session && !sources) throw new Error('Reopen the matching roster and items before saving this session.');
-    const json = session ? await exportTrainingSession(level, world, session, sources!,(hasInventorySelection(session)||hasInventoryWindow(session)||hasStoragePickup(session)||hasCorpsePickup(session))?corpseRecoveryControl(generation):timeoutRecoveryControl(generation)) : await exportCheckpoint(level, world);
+    const json = threePlayer ? serializeThreePlayerSession(threePlayer) : session ? await exportTrainingSession(level, world, session, sources!,(hasInventorySelection(session)||hasInventoryWindow(session)||hasStoragePickup(session)||hasCorpsePickup(session))?corpseRecoveryControl(generation):timeoutRecoveryControl(generation)) : await exportCheckpoint(level, world);
     if (generation !== loadGeneration) return;
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `hired-guns-checkpoint-${world.tick}.json`;
@@ -760,19 +794,24 @@ get<HTMLInputElement>('checkpoint-file').addEventListener('change', async event 
     if (generation !== loadGeneration) return;
     let restoredSession: TrainingSession | null = null;
     let restored;
-    if (isTrainingSessionSave(json)) {
+    let restoredThree:ThreePlayerSession|null=null;
+    if(JSON.parse(json)?.format===THREE_PLAYER_PROFILE){
+      if(!threePlayer)throw Error('Open the synthetic three-player mission before loading its checkpoint');
+      restoredThree=importThreePlayerSession(json);restored=restoredThree.world;
+    } else if (isTrainingSessionSave(json)) {
       const sources = sessionSources();
       if (!sources) throw new Error('Open the matching verified OCS roster and item table before restoring a session.');
       const candidate = await importTrainingSession(level, sources, json,[20,21,22,23].includes(JSON.parse(json).version)?corpseRecoveryControl(generation):timeoutRecoveryControl(generation));
       restoredSession = candidate.session; restored = candidate.world;
     } else {
+      if(threePlayer)throw Error('Three-player mission requires its own checkpoint');
       if (session) throw new Error('An active selected team requires a Training43 session save. Clear the session by opening a map before loading a legacy checkpoint.');
       if (file.size >= MAX_CHECKPOINT_BYTES) throw new Error('Checkpoint must be smaller than 16 KiB.');
       restored = await importCheckpoint(level, json);
     }
     if (generation !== loadGeneration) return;
     const restoredLevel = patrolMissionLevel(level) && restored.levelId === createTrainingGateLevel().id ? createTrainingGateLevel() : level;
-    replaceGateRenderer(restoredSession,restoredLevel); level = restoredLevel; session = restoredSession; world = restored; installed = true; showSession(); updateLevelInfo(); events.fill('RESTORED'); updateHud(readPads());
+    replaceGateRenderer(restoredSession,restoredLevel); level = restoredLevel; session = restoredSession; threePlayer=restoredThree; world = restored; installed = true; showSession(); updateLevelInfo(); events.fill('RESTORED'); updateHud(readPads());
     get('recovery-status').textContent = `Checkpoint restored at tick ${world.tick}. ${teamDead(world) ? 'Retry the drill to start again.' : world.physics.mode === 'dry-fall' ? 'Review controls, then start drill.' : world.mission.outcome !== 'active' ? 'Use Retry mission to start again.' : world.mission.rules.mode === 'navigation' ? 'Review controls, then start navigation.' : 'Review controls, then start mission.'}`;
   } catch (error) { if (generation === loadGeneration) {
     get('error').textContent = `${installed ? 'Checkpoint loaded, but display update failed' : 'Checkpoint not loaded'}: ${errorText(error)}`;
@@ -824,6 +863,7 @@ window.addEventListener('keydown', event => {
     if (!event.repeat) encounterCommand({ kind: event.code === 'KeyF' ? 'fire' : event.code === 'KeyT' ? 'target' : 'reset' });
     return;
   }
+  if(threePlayer&&/^Digit[1-4]$/.test(event.code)){event.preventDefault();return;}
   if (/^Digit[1-4]$/.test(event.code)) {
     activationKeys.delete('KeyW');activationKeys.delete('KeyS');activationKeys.delete('KeyN');activationKeys.delete('KeyB');pendingSelectionOperation=null;pendingInventoryOperation=null;pendingStorageActor=null;pendingCorpseActor=null;
     consumablePanel.select(Number(event.code.slice(-1)) - 1);
@@ -850,9 +890,11 @@ function frame(now: number): void {
       const gateResult = session?.gate ? advanceGateTrainingSession(level,session,world,commands,activation,action) : null;
       const consumableResult=session?.consumables?stepConsumables(level,session,world,commands):null;
       const wetResult=hasInventorySelection(session)?advanceOwnedInventorySelection(level,session!,world,commands,selectionOperation):hasInventoryWindow(session)?advanceOwnedInventoryWindow(level,session!,world,commands,inventoryOperation):hasStoragePickup(session)?advanceOwnedStoragePickup(level,session!,world,storage===null?commands:[],storage):hasCorpsePickup(session)?advanceOwnedCorpsePickup(level,session!,world,pickup===null?commands:[],pickup):hasTimeoutProfile(session)?stepTimeout(level,session!,world,commands):hasOwnWetParty(session)?stepWetParty(level,session,world,commands):session?.wetRegion?stepWetRegion(level,session,world,commands):session?.wetLifecycle?stepWetLifecycle(level,session,world,commands):session?.wet?stepWet(level,session,world,commands):null;
-      const result = wetResult ?? consumableResult ?? gateResult ?? stepWorld(level,world,commands);
+      const threeResult=threePlayer?stepThreePlayerSession(threePlayer,commands):null;
+      const result = threeResult ?? wetResult ?? consumableResult ?? gateResult ?? stepWorld(level,world,commands);
       const nextSession = wetResult ? wetResult.session : consumableResult ? consumableResult.session : gateResult ? gateResult.session : session ? recordTrainingGroundStep(session,world,result.world,commands) : null;
       replaceGateRenderer(nextSession);
+      if(threeResult)threePlayer=threeResult.session;
       world = result.world; session = nextSession;
       if(selectionOperation&&hasInventorySelection(session)){inventoryPanel.render(session);const p=session!.inventorySelection!,outcome=['forward','backward'].includes(selectionOperation.kind)?p.selectionOutcomes.at(-1):selectionOperation.kind==='storage'?p.outcome:p.windowOutcomes.at(-1);inventorySelectionPanel.feedback(`Phase: ${p.phase}; selection ${p.selections[selectionOperation.actor]}; ${outcome}.`);}
       if(inventoryOperation&&hasInventoryWindow(session)){inventoryPanel.render(session);inventoryWindowPanel.feedback(`Phase: ${session!.inventoryWindow!.phase}; ${session!.inventoryWindow!.windowOutcomes.at(-1)??session!.inventoryWindow!.outcome}.`);}
