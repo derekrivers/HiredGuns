@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "test:studio": "python -m unittest discover -s tools/studio -p test_*.py",
     "test:browser": "playwright test",
     "import:map": "tsx tools/import-map.ts",
     "import:characters": "tsx tools/import-characters.ts",

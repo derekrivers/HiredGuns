@@ -11,6 +11,8 @@ Map each required obligation to observed evidence: deterministic rules, relevant
 
 Inspect required checks/CI and actual automatic findings at the candidate identity. Preserve original failures, retries and NOT_RUN cases. Reuse evidence only with an unchanged-dependency justification. A changed head needs renewed review. Partial replay progress, synthetic fixtures, task counts or source maps cannot establish unobserved acceptance.
 
+Apply [review receipt integrity](../../../docs/studio/review-receipts.md) before crediting the review: actual fresh reviewer chat distinct from author, exact head/tree, report/manifest paths and digests, and matching current owner-status references. Preserve old or subagent reports as supporting history; do not substitute them for required fresh-chat evidence or copy a new digest onto an old report path.
+
 Report actionable discoveries through the [issue workflow](../../../docs/studio/POLICY.md#bugs-issue-reporting-and-triage): deduplicate, add material evidence to a match or create a public-safe issue, and link the result. Filing an issue never turns an acceptance failure into a pass; identify affected obligations and leave unrelated repair dispatch to the owning department.
 
 Run only checks permitted by the current task and resource ownership. Do not change product code while independently reviewing it, relax assertions/timeouts, take the heavy slot from another owner, or turn this skill into merge authority. Route an unobservable invariant to the engineering/QA verification agreement; report the gate held until sufficient evidence exists.
