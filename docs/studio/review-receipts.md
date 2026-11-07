@@ -1,5 +1,7 @@
 # Review receipt integrity
 
+New receipt, report and manifest candidates must not contain `parent`; use the explicit review-base field. Only the named legacy schemas below support `parent`, and conflicting aliases fail. This also rejects a freshly resealed new-format packet with an otherwise unused parent identity.
+
 Use this with the [review policy](POLICY.md#review-and-acceptance). A passing hash check is not independent review, CI, runtime proof, diagnostic admission or product acceptance.
 
 The receiving coordinator verifies the exact candidate and reviewer using current native chat/Git evidence, then checks the report/manifest and its current status references. An old report with a newly copied digest is an invalid reference even if a different, correct report exists elsewhere. Preserve previous reports and findings as history; current receipt fields must identify one reviewed candidate.

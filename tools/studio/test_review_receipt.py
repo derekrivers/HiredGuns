@@ -145,6 +145,22 @@ class ReceiptTests(unittest.TestCase):
         self.write_evidence("report", "Unrelated prose with a fresh hash")
         self.assertIn("report evidence is not supported unambiguous review JSON", self.errors())
 
+    def test_new_schemas_reject_parent_even_when_resealed(self):
+        original = copy.deepcopy(self.documents)
+        for label in ("report", "manifest"):
+            for parent in (self.git_base, "d" * 40):
+                with self.subTest(label=label, parent=parent):
+                    self.documents = copy.deepcopy(original)
+                    self.documents[label]["candidate"]["parent"] = parent
+                    self.write_evidence("report", self.documents["report"])
+                    self.write_evidence("manifest", self.documents["manifest"])
+                    self.assertIn(label + " candidate differs from observed base/head/tree/paths", self.errors())
+        self.documents = copy.deepcopy(original)
+        self.write_evidence("report", self.documents["report"])
+        self.write_evidence("manifest", self.documents["manifest"])
+        self.receipt["candidate"]["parent"] = self.git_base
+        self.assertIn("receipt candidate differs from observed base/head/tree/paths", self.errors())
+
     def test_duplicate_json_keys_rejected(self):
         path = self.base / "duplicate.json"
         path.write_text('{"disposition":"REQUEST_CHANGES","disposition":"ACCEPT"}')

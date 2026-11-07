@@ -65,7 +65,9 @@ def check_candidate(actual, review_base, accepted_base, head, tree, paths, label
     base_key, head_key, paths_key = (("accepted_base", "commit", "changed_paths") if manifest
                                     else ("base", "head", "changedPaths"))
     review_key = "review_base" if manifest else "reviewBase"
-    allowed = {base_key, head_key, paths_key, review_key, "tree", "parent"}
+    allowed = {base_key, head_key, paths_key, review_key, "tree"}
+    if legacy:
+        allowed.add("parent")
     if manifest:
         allowed.add("accepted_base_is_ancestor")
     if (not isinstance(actual, dict) or not set(actual) <= allowed
